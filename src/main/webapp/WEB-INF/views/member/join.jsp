@@ -47,6 +47,7 @@ h2 {
 
 form input[type="text"], 
 form input[type="password"],
+form input[type="tel"],
 form input[type="email"] {
     width: calc(100% - 20px);
     padding: 10px;
@@ -54,6 +55,42 @@ form input[type="email"] {
     border-radius: 5px;
     font-size: 16px;
     color: #333;
+}
+
+.date-gender-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.gender-wrapper {
+	width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+}
+
+.address-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#findAddress {
+	margin-left:10px;
+    background-color: #000000;
+    color: #fff;
+    width: 150px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#findAddress:hover {
+    background-color: ##b3b3b3;
 }
 
 form input[type="submit"] {
@@ -69,6 +106,12 @@ form input[type="submit"] {
 
 form input[type="submit"]:hover {
     background-color: #b3b3b3;
+}
+
+.error-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* 필요한 경우 간격 조정 */
 }
 
 .error {
@@ -121,26 +164,33 @@ p a:hover {
 			<input type="text" name="memberName" id="memberName" placeholder="*이름" ><br>
 			<span id="memberNameType" class="error"></span>
 			
-			<input type="text" name="memberBirthday" id="memberBirthday" placeholder="*생년월일 8자리" ><br>
-			<span id="memberBirthdayType" class="error"></span>
-			
-			<input type="text" name="memberGender" id="memberGender" placeholder="*성별 (M/F)" ><br>
-            <span id="memberGenderType" class="error"></span>
-			
-			<input type="tel" id="memberPhone" name="memberPhone" placeholder="*전화번호" maxlength="16"><br>
+			<div class="date-gender-wrapper">
+    			<input type="text" name="memberBirthday" id="memberBirthday" placeholder="*생년월일 8자리 (ex 19990101)" maxlength="8">
+    			<div class="gender-wrapper">
+        			<label><input type="radio" name="memberGender" value="M">남자</label>
+        			<label><input type="radio" name="memberGender" value="F">여자</label>
+    			</div>
+			</div>
+			<div class="error-wrapper">
+				<span id="memberBirthdayType" class="error"></span>
+				<span id="memberGenderType" class="error"></span>
+			</div>
+			<input type="tel" id="memberPhone" name="memberPhone" placeholder="*전화번호 (ex 010-1234-5678)" maxlength="13"><br>
 			<span id="memberPhoneType" class="error"></span>
 			
 			<input type="email" name="memberEmail" id="memberEmail" placeholder="*이메일" ><br>
 			<span id="memberEmailType" class="error"></span>
 			
-			<input type="text" name="memberAddress" id="memberAddress" placeholder="*우편번호" readonly>
-            <button type="button" id="findAddress">주소 검색</button><br>
+			<div class="address-wrapper">
+                <input type="text" name="memberAddress" id="memberAddress" placeholder="*우편번호" readonly>
+                <button type="button" id="findAddress">주소 검색</button>
+            </div>
             <span id="memberAddressCodeType" class="error"></span>
 
             <input type="text" name="memberStreetAddress" id="memberStreetAddress" placeholder="*도로명주소" readonly><br>
             <span id="memberStreetAddressType" class="error"></span>
 
-            <input type="text" name="memberDetailAddress" id="memberDetailAddress" placeholder="*상세주소" readonly><br>
+            <input type="text" name="memberDetailAddress" id="memberDetailAddress" placeholder="상세주소" readonly><br>
             <span id="memberDetailAddressType" class="error"></span>
 			
 			<input type="text" name="memberNickname" id="memberNickname" placeholder="*닉네임" ><br>
@@ -165,15 +215,15 @@ p a:hover {
 	
 	<script>
 		$(document).ready(function() {
-			var enrollResult = '${enroll_result}';
+			let enrollResult = '${enroll_result}';
 			if(enrollResult === 'fail') {
 				alert("회원가입에 실패하였습니다.");
 			}
 			
 			// 주소 검색 버튼 클릭
-			 $("#findAddress").click(function() {
-			        execution_daum_address();
-			    });
+			$("#findAddress").click(function() {
+			    execution_daum_address();
+			});
 
 		    // 아이디 입력 필드 실시간 유효성 검사
 		    $("#memberId").on('input', function() {
@@ -200,10 +250,10 @@ p a:hover {
 		        validatememberBirthday();
 		    });
 		 	
-		 	// 성별 입력 필드 실시간 유효성 검사
-		    $("#memberGender").on('input', function() {
-		        validatememberGender();
-		    });
+		 	// 성별 실시간 유효성 검사
+		    $("input[name='memberGender']").on('change', function() {
+        		validatememberGender();
+    		});
 		 	
 		 	// 전화번호 입력 필드 실시간 유효성 검사
 		    $("#memberPhone").on('input', function() {
@@ -226,7 +276,6 @@ p a:hover {
 		        validatememberNickname();
 		    });
 
-		    
 
 		    // 이용약관 동의 체크박스 실시간 유효성 검사
 		    $("#agreeTerms").on('change', function() {
@@ -299,7 +348,6 @@ p a:hover {
 		    // 비밀번호 유효성 검사 함수
 		    // 특수문자(!@#$%^&*?_) 가능
 		    function validatememberPwd() {
- 		        /* let memberPwdPattern = /^(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[!@#$%^&*?_])|(?=.*\d)(?=.*[!@#$%^&*?_])[A-Za-z\d!@#$%^&*?_]{8,16}$/; */
  		        let memberPwdPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*?_])[A-Za-z\d!@#$%^&*?_]{8,16}$/;
 		        let memberPwd = $("#memberPwd").val().trim();
 
@@ -342,12 +390,39 @@ p a:hover {
 		    
 		    // 생년월일 유효성 검사 함수
 		    function validatememberBirthday() {
-		    	
+		    	let memberBirthdayPattern = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+		        let memberBirthday = $("#memberBirthday").val();
+		        if (memberBirthday === '') {
+		            $("#memberBirthdayType").text("생년월일을 입력해주세요.").removeClass('valid').addClass('invalid');
+		        } else if (!memberBirthdayPattern.test(memberBirthday)) {
+		            $("#memberBirthdayType").text("생년월일은 8자리 숫자로 입력해주세요.").removeClass('valid').addClass('invalid');
+		        } else {
+		            $("#memberBirthdayType").text("").removeClass('invalid').addClass('valid');
+		        }
 		    }
-		    
+
 		    // 성별 유효성 검사 함수
-		    
+		    function validatememberGender() {
+        		let memberGender = $("input[name='memberGender']:checked").val();
+        		if (memberGender === undefined) {
+            		$("#memberGenderType").text("성별을 선택해야 합니다.").removeClass('valid').addClass('invalid');
+        		} else {
+            		$("#memberGenderType").text("").removeClass('invalid').addClass('valid');
+        		}
+    		}
+
 		    // 전화번호 유효성 검사 함수
+		    function validatememberPhone() {
+		        let memberPhonePattern = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/;
+		        let memberPhone = $("#memberPhone").val();
+		        if (memberPhone === '') {
+		            $("#memberPhoneType").text("전화번호를 입력해주세요.").removeClass('valid').addClass('invalid');
+		        } else if (!memberPhonePattern.test(memberPhone)) {
+		            $("#memberPhoneType").text("전화번호 형식으로 입력해주세요.").removeClass('valid').addClass('invalid');
+		        } else {
+		            $("#memberPhoneType").text("").removeClass('invalid').addClass('valid');
+		        }
+		    }
 		    
 			// 이메일 유효성 검사 함수
 		    function validatememberEmail() {
@@ -384,7 +459,44 @@ p a:hover {
 		        });
 		    }
 		 	
-		 	// 다음 주소 연동
+		 	// 주소 유효성 검사 함수
+		 	function validatememberAddress() {
+		 		let memberAddress = $("#memberAddress").val();
+		 		if (memberAddress === '') {
+		            $("#memberAddressCodeType").text("주소를 입력해주세요.").removeClass('valid').addClass('invalid');
+		        } else {
+		            $("#memberAddressCodeType").text("").removeClass('invalid').addClass('valid');
+		        }
+		 	}
+		 	
+		 	
+
+		    // 닉네임 유효성 검사 함수
+		    function validatememberNickname() {
+		        let memberNicknamePattern = /^[가-힣a-zA-Z0-9]{2,15}$/;
+		        let memberNickname = $("#memberNickname").val().trim();
+
+		        if (memberNickname === "") {
+		            $("#memberNicknameType").text("닉네임은 필수입니다.").removeClass('valid').addClass('invalid');
+		        } else if (memberNicknamePattern.test(memberNickname)) {
+		        	$("#memberNicknameType").text("").removeClass('invalid').addClass('valid');
+		        } else {
+		            $("#memberNicknameType").text("닉네임은 2~15자의 한글, 영문자, 숫자만 사용 가능합니다.").removeClass('valid').addClass('invalid');
+		        }
+		    }
+
+		    
+
+		    // 이용약관 동의 유효성 검사 함수
+		    function validateAgreeTerms() {
+		        if (!$("#agreeTerms").is(":checked")) {
+		            $("#agreeTermsType").text("이용약관에 동의해야 합니다.").removeClass('valid').addClass('invalid');
+		        } else {
+		            $("#agreeTermsType").text("").removeClass('invalid')
+		        }
+		    }
+		    
+		    // 다음 주소 연동
 			function execution_daum_address() {
 				new daum.Postcode(
 						{
@@ -443,31 +555,7 @@ p a:hover {
 							}
 						}).open();
 			}
-
-		    // 닉네임 유효성 검사 함수
-		    function validatememberNickname() {
-		        let memberNicknamePattern = /^[가-힣a-zA-Z0-9]{2,15}$/;
-		        let memberNickname = $("#memberNickname").val().trim();
-
-		        if (memberNickname === "") {
-		            $("#memberNicknameType").text("닉네임은 필수입니다.").removeClass('valid').addClass('invalid');
-		        } else if (memberNicknamePattern.test(memberNickname)) {
-		            dupCheckmemberNickname(memberNickname);
-		        } else {
-		            $("#memberNicknameType").text("닉네임은 2~15자의 한글, 영문자, 숫자만 사용 가능합니다.").removeClass('valid').addClass('invalid');
-		        }
-		    }
-
 		    
-
-		    // 이용약관 동의 유효성 검사 함수
-		    function validateAgreeTerms() {
-		        if (!$("#agreeTerms").is(":checked")) {
-		            $("#agreeTermsType").text("이용약관에 동의해야 합니다.").removeClass('valid').addClass('invalid');
-		        } else {
-		            $("#agreeTermsType").text("").removeClass('invalid')
-		        }
-		    }
 		});
 		
 	</script>
