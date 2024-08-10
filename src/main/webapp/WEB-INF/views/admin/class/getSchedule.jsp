@@ -98,9 +98,9 @@ th {
                                 </c:otherwise>
                             </c:choose>
                             <td>${period.periodName}</td>
-                            <td><fmt:formatDate value="${period.startTime}" pattern="HH:mm" /></td>
-                            <td><fmt:formatDate value="${period.endTime}" pattern="HH:mm" /></td>
-                        </tr>
+                            <td>${period.startTime}</td>
+                            <td>${period.endTime}</td>
+                        </tr>                             
                     </c:forEach>
                 </tbody>
             </table>

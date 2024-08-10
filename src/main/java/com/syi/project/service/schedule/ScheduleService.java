@@ -1,5 +1,7 @@
 package com.syi.project.service.schedule;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,16 @@ public class ScheduleService {
 			period.setScheduleNo(schedule.getScheduleNo());
 			periodMapper.enrollPeriod(period);
 		}
+	}
+	
+	/* 시간표 조회 */
+	public ScheduleVO getSchedule(int classNo) {
+		return scheduleMapper.getSchedule(classNo);
+	}
+
+	/* 교시 조회 */
+	public List<PeriodVO> getPeriods(int scheduleNo) {
+		return periodMapper.getPeriods(scheduleNo);
 	}
 
 }

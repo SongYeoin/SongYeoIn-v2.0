@@ -18,6 +18,11 @@
     insert into period (SCHEDULE_NO, DAY_OF_WEEK, PERIOD_NAME, START_TIME, END_TIME)
     values (#{scheduleNo}, #{dayOfWeek}, #{periodName}, #{startTime}, #{endTime})
     </insert>
+    
+    <!-- 교시 조회 -->
+    <select id="getPeriods" resultMap="periodResultMap">
+    SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
+    </select>
    
 
 </mapper>

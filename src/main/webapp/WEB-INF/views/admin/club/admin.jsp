@@ -37,6 +37,7 @@ main {
 	overflow-y: auto;
 	top: 120px;
 	left: 250px;
+	background-color: yellow;
 }
 
 .box{
@@ -48,43 +49,20 @@ main {
 <body>
 
 	<!-- 메뉴바 연결 -->
-	<%@ include file="../common/header.jsp"%>
+	<%@ include file="../../common/header.jsp"%>
 
 	<!-- 사이드바 연결 -->	
-	<%@ include file="../member/aside.jsp"%>
+	<%@ include file="../class/aside.jsp"%>
 
    <main>
-        <!-- Main content -->   
+        <!-- Main content -->
         <div class="box">
-        	<h1>게시판 등록</h1>
-
-	<form action="/club/enroll" method="post">
-		<div class="input_wrap">
-			<!-- <label>작성자</label> <input name="title"> 
-		<div class="input_wrap">
-        <label>작성자</label>
-        <input name="applicant" value="자동으로 로그인한 사용자의 이름을 서버에서 입력" readonly>
-    </div>-->
-		</div>
-		<div class="input_wrap">
-			<label>참여자</label> <input type="text" name="join">
-		</div>
-		<div class="input_wrap">
-			<label>활동일</label> <input type="date" name="studyDate">
-		</div>
-		<div class="input_wrap">
-			<label>내용</label>
-			<textarea rows="3" name="content"></textarea>
-		</div>
-
-		<input type="submit" value="등록">
-
-	</form>
+        	글자라도 써봅니다
         </div>
     </main>
 
 	<!-- 푸터 연결 -->
-	<%@ include file="../common/footer.jsp"%>
+	<%@ include file="../../common/footer.jsp"%>
 
 </body>
 </html>

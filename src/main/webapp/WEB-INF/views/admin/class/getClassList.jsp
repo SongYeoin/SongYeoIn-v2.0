@@ -29,18 +29,26 @@ body {
     flex-direction: column;
 }
 
-main {
+/* main {
     flex: 1;
     margin-left: 250px;
     padding-top: 90px;
     overflow-y: auto;
     top: 120px;
     left: 250px;
-}
+} */
 
-.box {
+main {
+    flex: 1;
+    margin-left: 300px;
+    margin-top: 160px;
+    overflow-y: auto;
     height: 100%;
 }
+
+/* .box {
+    height: 100%;
+} */
 
 .form-container {
     padding: 20px;
@@ -99,21 +107,26 @@ main {
     background-color: #c82333;
 }
 
-main {
+/* main {
     flex: 1;
     margin-left: 250px;
     padding: 20px;
     padding-top: 90px;
     overflow-y: auto;
-}
+} */
 
 .container {
     margin: 20px auto;
-    padding: 20px;
+    /* padding: 20px; */
     background-color: #f9fafc;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
     border-radius: 10px;
+    padding-bottom: 20px;
+    
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+   
 }
 
 .header {
@@ -125,7 +138,13 @@ main {
     padding-bottom: 10px;
     border-bottom: 1px solid #ddd;
     background-color: #e2eff9;
-    padding: 20px;
+    /* padding: 20px; */
+    
+    padding-top: 40px;
+    padding-right: 32px;
+    padding-left: 32px;
+    padding-bottom: 20px;
+    border-radius: 10px 10px 0 0;
 }
 
 .header h1 {
@@ -147,6 +166,11 @@ main {
 .header .icons i {
     cursor: pointer;
     margin-left: 10px; /* 아이콘 사이에 간격을 줍니다 */
+}
+
+.div-table{
+	margin-left: 12px;
+    margin-right: 12px;
 }
 
 table {
@@ -177,6 +201,8 @@ th, td {
 .footer {
     display: flex;
     justify-content: space-between;
+    margin-left: 12px;
+    margin-right: 12px;
     margin-top: 20px;
 }
 
@@ -235,6 +261,7 @@ th, td {
                     <i class="fas fa-filter"></i>
                 </div>
             </div>
+            <div class="div-table">
             <table>
                 <thead>
                     <tr>
@@ -251,7 +278,13 @@ th, td {
                     <c:forEach var="classItem" items="${classList}">
                         <tr>
                             <td><input type="checkbox"></td>
-                            <td><c:out value="${classItem.className}"/></td>
+                            <td>
+							    <a href="<c:url value='/admin/class/main'>
+							                <c:param name='classNo' value='${classItem.classNo}'/>
+							            </c:url>">
+							        <c:out value="${classItem.className}"/>
+							    </a>
+							</td>
                             <td><c:out value="${classItem.managerName}"/></td>
                             <td><fmt:formatDate value="${classItem.startDate}" pattern="yyyy-MM-dd"/></td>
                             <td><fmt:formatDate value="${classItem.endDate}" pattern="yyyy-MM-dd"/></td>
@@ -271,6 +304,7 @@ th, td {
                     </c:forEach>
                 </tbody>
             </table>
+            </div>
             <div class="footer">
                 <span>Item per pages: 10</span>
                 <span>1-10 of 30</span>

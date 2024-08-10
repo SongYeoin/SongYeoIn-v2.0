@@ -2,6 +2,9 @@ package com.syi.project.controller.syclass;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +54,19 @@ public class SyclassController {
 		
 		model.addAttribute("classDtail", syclassVO);
 
+	}
+	
+	/* 반 별 홈 페이지 이동 */
+	@GetMapping("/class/main")
+	public void classMainGET(HttpServletRequest request, Integer classNo, Model model) throws Exception{
+		log.info("반 별 홈 페이지 이동");
+		
+		// classNo 으로 syclass 객체 조회
+		SyclassVO syclass = syclassService.getClassDetail(classNo);
+		
+		// 조회한 syclass 객체 세션에 저장
+		HttpSession session = request.getSession();
+		session.setAttribute("syclass", syclass);
 	}
 	
 	/* 반 등록하기 */

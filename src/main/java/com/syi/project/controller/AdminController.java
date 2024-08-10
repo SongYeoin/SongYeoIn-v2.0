@@ -18,10 +18,10 @@ public class AdminController {
 		logger.info("관리자 페이지 이동");
 	}
 	
-	//관리자 메인 페이지 이동
-	@GetMapping("/class/main")
-	public void adminClassMainGET() throws Exception{
-		logger.info("관리자 반 별 홈 페이지 이동");
-	}
+//	//관리자 메인 페이지 이동
+//	@GetMapping("/class/main")
+//	public void adminClassMainGET() throws Exception{
+//		logger.info("관리자 반 별 홈 페이지 이동");
+//	}
 
 }

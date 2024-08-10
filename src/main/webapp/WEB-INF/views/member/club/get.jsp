@@ -89,10 +89,10 @@ textarea {
 <body>
 
 	<!-- 메뉴바 연결 -->
-	<%@ include file="../common/header.jsp"%>
+	<%@ include file="../../common/header.jsp"%>
 
 	<!-- 사이드바 연결 -->
-	<%@ include file="../member/aside.jsp"%>
+	<%@ include file="../aside.jsp"%>
 
 	<main>
 		<!-- Main content -->
@@ -153,7 +153,7 @@ textarea {
 	</main>
 
 	<!-- 푸터 연결 -->
-	<%@ include file="../common/footer.jsp"%>
+	<%@ include file="../../common/footer.jsp"%>
 
 
 	<script>

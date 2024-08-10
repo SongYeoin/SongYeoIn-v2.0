@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -243,7 +243,7 @@ main {
 <script>
 $(document).ready(function() {
     var groupCount = 1;
-    var periodCounts = { 1: [1] };  // Initialize with 1교시 for the first group
+    var periodCounts = { 1: [1] };
 
     function updateRemoveButtons() {
         if ($('.day-group').length > 1) {
@@ -270,9 +270,10 @@ $(document).ready(function() {
         }).get();
     }
 
+    // 요일 그룹 추가
     $('.add-day-group-btn').on('click', function() {
         groupCount++;
-        periodCounts[groupCount] = [1];  // Initialize with 1교시 for the new group
+        periodCounts[groupCount] = [1];
 
         var dayGroupHtml = `
             <div class="day-group" data-group-id="` + groupCount + `">
@@ -294,11 +295,11 @@ $(document).ready(function() {
                         <div class="time-group">
                             <div>
                                 <label for="startTime` + groupCount + `_1">시작 시간</label>
-                                <input type="time" id="startTime` + groupCount + `_1" name="periods[` + (groupCount - 1) + `][startTime]" required>
+                                <input type="time" id="startTime` + groupCount + `_1" name="startTime` + groupCount + `_1" required>
                             </div>
                             <div>
                                 <label for="endTime` + groupCount + `_1">종료 시간</label>
-                                <input type="time" id="endTime` + groupCount + `_1" name="periods[` + (groupCount - 1) + `][endTime]" required>
+                                <input type="time" id="endTime` + groupCount + `_1" name="endTime` + groupCount + `_1" required>
                             </div>
                         </div>
                         <button type="button" class="remove-period-btn">X</button>
@@ -314,10 +315,11 @@ $(document).ready(function() {
                 var groupId = $(this).closest('.day-group').data('group-id');
                 updatePeriodLabels(groupId);
             }
-        });  // Make the new group sortable
+        });
         updateRemoveButtons();
     });
 
+    // 교시 추가 
     $(document).on('click', '.add-period-btn', function() {
         var groupId = $(this).data('group-id');
         var periodIds = periodCounts[groupId];
@@ -330,11 +332,11 @@ $(document).ready(function() {
                 <div class="time-group">
                     <div>
                         <label for="startTime` + groupId + `_` + nextPeriodId + `">시작 시간</label>
-                        <input type="time" id="startTime` + groupId + `_` + nextPeriodId + `" name="periods[` + (groupId - 1) + `][startTime]" required>
+                        <input type="time" id="startTime` + groupId + `_` + nextPeriodId + `" name="startTime` + groupId + `_` + nextPeriodId + `" required>
                     </div>
                     <div>
                         <label for="endTime` + groupId + `_` + nextPeriodId + `">종료 시간</label>
-                        <input type="time" id="endTime` + groupId + `_` + nextPeriodId + `" name="periods[` + (groupId - 1) + `][endTime]" required>
+                        <input type="time" id="endTime` + groupId + `_` + nextPeriodId + `" name="endTime` + groupId + `_` + nextPeriodId + `" required>
                     </div>
                 </div>
                 <button type="button" class="remove-period-btn">X</button>
@@ -344,11 +346,13 @@ $(document).ready(function() {
         updatePeriodLabels(groupId);
     });
 
+    // 요일 그룹 삭제
     $(document).on('click', '.remove-day-group-btn', function() {
         $(this).closest('.day-group').remove();
         updateRemoveButtons();
     });
 
+    // 교시 삭제
     $(document).on('click', '.remove-period-btn', function() {
         var $period = $(this).closest('.form-group.period');
         var groupId = $period.closest('.day-group').data('group-id');
@@ -358,6 +362,7 @@ $(document).ready(function() {
         updatePeriodLabels(groupId);
     });
 
+    // 시간표 등록
     $('#schedule-form').on('submit', function() {
         var periods = [];
         $('.day-group').each(function() {
@@ -415,10 +420,11 @@ $(document).ready(function() {
             var groupId = $(this).closest('.day-group').data('group-id');
             updatePeriodLabels(groupId);
         }
-    });  // Make initial periods sortable
+    });
     updateRemoveButtons();
 });
 </script>
+
 
 </body>
 </html>

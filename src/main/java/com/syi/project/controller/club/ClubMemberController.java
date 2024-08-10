@@ -20,7 +20,7 @@ import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.club.ClubService;
 
 @Controller
-@RequestMapping("/club/*")
+@RequestMapping("/member")
 public class ClubMemberController {
 
 	private static final Logger log = LoggerFactory.getLogger(ClubMemberController.class);
@@ -29,7 +29,7 @@ public class ClubMemberController {
 	private ClubService cservice;
 	
 	//리스트
-	@GetMapping("/list")
+	@GetMapping("/club/list")
 	public String clubListGET(Model model) {
 		log.info("목록 페이지 진입");
 
@@ -38,19 +38,19 @@ public class ClubMemberController {
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
 		
-		return "/club/list";
+		return "member/club/list";
 		
 	}
 	
 	
 	//등록페이지
-	@GetMapping("/enroll")
+	@GetMapping("/club/enroll")
 	public void clubEnrollGET() {
 		log.info("등록 페이지 진입");
 	}
 	
 	//HttpSession session
-	@PostMapping("/enroll")
+	@PostMapping("/club/enroll")
 	public String clubEnrollPOST(ClubVO club, RedirectAttributes rttr) {
 		log.info("ClubVO : "+club);
 		
@@ -60,11 +60,11 @@ public class ClubMemberController {
 		
 		rttr.addFlashAttribute("result", "enroll success");
 		
-		return "redirect:/club/list";
+		return "redirect:/member/club/list";
 	}
 	
 	//조회
-	@GetMapping("/get")
+	@GetMapping("/club/get")
 	public void clubGetPageGET(int clubNo, Model model) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 	}
