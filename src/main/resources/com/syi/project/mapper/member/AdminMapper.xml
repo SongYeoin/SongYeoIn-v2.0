@@ -117,13 +117,9 @@
   	FROM ENROLL e
   		LEFT JOIN CLASS c ON e.CLASS_NO = c.CLASS_NO
   		LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
-  WHERE e.MEMBER_NO = #{memberNo}
-</select>
-  
-  <!-- 수강 이력 삭제 -->
-  <delete id="deleteEnroll" parameterType="_int">
-  	DELETE FROM ENROLL WHERE CLASS_NO = #{ classNo }
-  </delete>
+  	WHERE e.MEMBER_NO = #{memberNo}
+  	ORDER BY e.ENROLL_NO ASC
+  </select>
  
   <!-- 수강 신청 -->
   <insert id="insertEnroll" parameterType="com.syi.project.model.EnrollVO">
@@ -134,5 +130,10 @@
   		#{ memberNo }
   	)
   </insert>
+  
+  <!-- 수강 신청 삭제 -->
+  <delete id="deleteEnroll" parameterType="_int">
+  	DELETE FROM ENROLL WHERE ENROLL_NO = #{ enrollNo }
+  </delete>
   
   </mapper>

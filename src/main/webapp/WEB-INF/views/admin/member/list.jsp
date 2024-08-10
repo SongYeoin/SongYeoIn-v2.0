@@ -11,133 +11,161 @@
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 
-/* CSS Reset */
-
 * {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html, body {
-   height: 1080px;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
-body {
-   display: flex;
-   flex-direction: column;
-   /* min-height: 100vh; */
-}
-
+/* 메인 영역 스타일 */
 main {
-   flex: 1;
-   margin-left: 250px;
-   padding: 20px;
-   padding-top: 90px;
-   overflow-y: auto;
+    flex: 1;
+    margin-left: 300px; /* 사이드바의 너비와 일치 */
+    margin-top: 160px; /* 메뉴바의 높이와 일치 */
+    overflow-y: auto;
+    padding: 20px;
 }
 
 .memberList-wrapper {
-   margin: 20px auto;
-   padding: 20px;
-   /* background-color: #f9fafc; */
-   /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-   max-width: 1200px;
-   border-radius: 10px;
+    margin: 20px auto;
+    background-color: #f9fafc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    border-radius: 10px;
+    padding-bottom: 20px;
+    
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+   
 }
 
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #e2eff9;
+    
+    padding-top: 40px;
+    padding-right: 32px;
+    padding-left: 32px;
+    padding-bottom: 20px;
+    border-radius: 10px 10px 0 0;
+}
+
+.header h1 {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.header input {
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* 테이블 스타일 */
+.div-table{
+	margin-left: 12px;
+    margin-right: 12px;
+}
 
 table {
-   width: 100%;
-   border-collapse: collapse;
-   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-   text-align: center;
-}
-
-table th, table td {
-   padding: 10px;
-   text-align: center;
-   border-bottom: 1px solid #ddd;
-   border-right: 1px solid #ddd;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 table th {
-   background-color: #f2f2f2;
+    background-color: #f5f5f5;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+	border: 1px solid #ddd;
 }
 
 tr {
-    transition: background-color 0.3s ease, cursor 0.3s ease;
+    transition: background-color 0.3s;
 }
 
+/* 테이블 행에 대한 기본 호버 효과 */
 tr:hover {
-    background-color: #f5f5f5; /* 마우스를 올렸을 때 배경색 */
-    cursor: pointer; /* 마우스 커서 */
+	cursor: pointer;
+    background-color: #e0e0e0; 
 }
 
+/* 승인 상태 스타일 */
 .approval-status {
-   cursor: pointer;
-   transition: background-color 0.3s ease;
+    cursor: pointer;
+    pointer-events: auto;
 }
 
+/* 승인 상태 td에 대한 호버 효과 */
 .approval-status:hover {
-   background-color: #e0e0e0;
+    background-color: #c5c5c5;
 }
 
-
-.search_wrap {
-   margin-top: 20px;
-   text-align: center; 
+/* 검색 영역 스타일 */
+.search_input {
+    display: flex;
+    justify-content: center;
 }
 
-.search_input input[type=text], .search_input button {
-   margin: 0 5px;
-   padding: 5px 10px;
-   border: 1px solid #ccc;
-   border-radius: 4px;
-   font-size: 14px;
+.search_input input[type="text"] {
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-.search_input button {
-   background-color: #007bff;
-   color: #fff;
-   border: none;
-   cursor: pointer;
+/* 페이지 이동 인터페이스 스타일 */
+.pageMaker_wrap {
+    margin-top: 20px;
 }
 
-.search_input button:hover {
-   background-color: #0056b3;
-}
-
-.pageMaker_wrap{
-   text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-.pageMaker_wrap a{
-   color : black;
-}
-.pageMaker{
+.pageMaker {
+    display: flex;
+    justify-content: center;
     list-style: none;
-    display: inline-block;
-}   
+    padding: 0;
+}
+
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+    margin: 0 5px;
 }
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+
+.pageMaker_btn a {
+    text-decoration: none;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #007bff;
+    display: block;
 }
-.next a, .prev a {
-    color: #ccc;
+
+.pageMaker_btn a:hover {
+    background-color: #e2eff9;
 }
-.active{                     /* 현재 페이지 버튼 */
-   border : 2px solid black;
-   font-weight:400;
+
+.pageMaker_btn.active a {
+    background-color: #007bff;
+    color: #fff;
 }
+
+
 </style>
 </head>
 <body>
@@ -150,17 +178,33 @@ tr:hover {
 
    <main>
         <!-- Main content -->
-        <div class="box">
-         <div class="memberList-wrapper">
-            <h2 align="center">회원 목록</h2>
-            <br>
+        <div class="memberList-wrapper">
+         <div class="header">
+            <h1>Member</h1>
+            <!-- 검색 영역 -->
+            <div class="search_wrap">
+               <form id="searchForm" action="/admin/member/list" method="get">
+                  <div class="search_input">
+                     <input type="text" name="keyword"
+                        value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     <input type="hidden" name="pageNum"
+                        value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
+                     <input type="hidden" name="amount"
+                        value='${pageMaker.cri.amount}'>
+                     <button class='btn search_btn'><i class="bi bi-search"></i></button>
+                  </div>
+               </form>
+            </div>
+         </div>
+
+         <div class="div-table">
             <table>
                <tr>
                   <th>번호</th>
                   <th>이름</th>
                   <th>전화번호</th>
                   <th>가입일</th>
-                  <th>승인</th>
+                  <th width=15%>승인</th>
                </tr>
                <c:forEach items="${ memberList }" var="member">
                   <tr onclick="showMemberDetail(event, ${member.memberNo})">
@@ -179,21 +223,8 @@ tr:hover {
 
                </c:forEach>
             </table>
-            <!-- 검색 영역 -->
-            <div class="search_wrap">
-               <form id="searchForm" action="/admin/member/list" method="get">
-                  <div class="search_input">
-                     <input type="text" name="keyword"
-                        value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
-                     <input type="hidden" name="pageNum"
-                        value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
-                     <input type="hidden" name="amount"
-                        value='${pageMaker.cri.amount}'>
-                     <button class='btn search_btn'>검 색</button>
-                  </div>
-               </form>
             </div>
-
+            
             <!-- 페이지 이동 인터페이스 영역 -->
             <div class="pageMaker_wrap">
 
@@ -225,9 +256,6 @@ tr:hover {
             </form>
          </div>
 
-
-
-      </div>
    </main>
 
    <!-- 푸터 연결 -->

@@ -71,6 +71,12 @@ public class AdminServiceImpl implements AdminService {
 		return adminMapper.insertEnroll(enroll);
 	}
 
+	// 수강 신청 삭제
+	@Override
+	public int deleteEnroll(int enrollNo) {
+		return adminMapper.deleteEnroll(enrollNo);
+	}
+
 
 	
 }

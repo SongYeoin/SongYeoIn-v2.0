@@ -35,5 +35,8 @@ public interface AdminService {
 	
 	// 수강 신청
 	int insertEnroll(EnrollVO enroll);
+	
+	// 수강 신청 삭제
+	int deleteEnroll(int enrollNo);
 
 }

@@ -136,19 +136,30 @@ public class MemberAdminController {
 	}
 	
 	
-	// 수강 신청
+	// 수강 신청 등록
 	@PostMapping("/member/enroll")
 	@ResponseBody
 	public String memberEnroll(int memberNo, int classNo, RedirectAttributes rttr) {
-		System.out.println("memberNo 는 " + memberNo);
-		System.out.println("classNo 는 " + classNo);
 		
 		EnrollVO enroll = new EnrollVO();
 		enroll.setMemberNo(memberNo);
 		enroll.setClassNo(classNo);
 		
 		int result = adminService.insertEnroll(enroll);
-		System.out.println("result는 " + result);
+		if(result != 0) {
+			return "success";
+		} else {
+			return "fail";
+		}
+	}
+	
+	// 수강 신청 삭제
+	@PostMapping("/member/enroll/delete")
+	@ResponseBody
+	public String memberEnrollDelete(int enrollNo, RedirectAttributes rttr) {
+		System.out.println("enrollNo : " + enrollNo);
+		int result = adminService.deleteEnroll(enrollNo);
+		System.out.println(result);
 		if(result != 0) {
 			return "success";
 		} else {
