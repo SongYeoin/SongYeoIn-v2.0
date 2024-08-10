@@ -318,7 +318,7 @@ p a:hover {
 		        let memberId = $("#memberId").val().trim();
 
 		        if (memberId === "") {
-		            $("#memberIdType").text("아이디는 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberIdType").text("아이디를 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberIdPattern.test(memberId)) {
 		            dupCheckmemberId(memberId);
 		        } else {
@@ -352,7 +352,7 @@ p a:hover {
 		        let memberPwd = $("#memberPwd").val().trim();
 
 		        if (memberPwd === "") {
-		            $("#memberPwdType").text("비밀번호는 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberPwdType").text("비밀번호를 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberPwdPattern.test(memberPwd)) {
 		            $("#memberPwdType").text("사용할 수 있는 비밀번호 형식입니다.").removeClass('invalid').addClass('valid');
 		        } else {
@@ -366,7 +366,7 @@ p a:hover {
 		        let memberPwdCheck = $("#memberPwdCheck").val().trim();
 
 		        if (memberPwdCheck === "") {
-		            $("#memberPwdCheckType").text("비밀번호 확인은 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberPwdCheckType").text("비밀번호 확인을 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberPwd === memberPwdCheck) {
 		            $("#memberPwdCheckType").text("비밀번호가 일치합니다.").removeClass('invalid').addClass('valid');
 		        } else {
@@ -380,7 +380,7 @@ p a:hover {
 		        let memberName = $("#memberName").val().trim();
 
 		        if (memberName === "") {
-		            $("#memberNameType").text("이름은 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberNameType").text("이름을 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberNamePattern.test(memberName)) {
 		            $("#memberNameType").text("").removeClass('invalid').addClass('valid');
 		        } else {
@@ -432,7 +432,7 @@ p a:hover {
 		        let memberEmail = $("#memberEmail").val().trim();
 
 		        if (memberEmail === "") {
-		            $("#memberEmailType").text("이메일은 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberEmailType").text("이메일을 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberEmailPattern.test(memberEmail)) {
 		            dupCheckmemberEmail(memberEmail);
 		        } else {
@@ -477,7 +477,7 @@ p a:hover {
 		        let memberNickname = $("#memberNickname").val().trim();
 
 		        if (memberNickname === "") {
-		            $("#memberNicknameType").text("닉네임은 필수입니다.").removeClass('valid').addClass('invalid');
+		            $("#memberNicknameType").text("닉네임을 입력해주세요.").removeClass('valid').addClass('invalid');
 		        } else if (memberNicknamePattern.test(memberNickname)) {
 		        	$("#memberNicknameType").text("").removeClass('invalid').addClass('valid');
 		        } else {
