@@ -98,12 +98,20 @@
 	 		AND MEMBER_CHECK_STATUS = 'Y'
 	</update>
 	
+	<!-- 비밀번호 체크 -->
+	<select id="selectPwd" resultType="java.lang.String">
+		SELECT MEMBER_PWD
+		FROM MEMBER
+		WHERE MEMBER_STATUS = 'Y'
+			AND MEMBER_ID = #{ memberId }
+	</select>
+	
 	<!-- 회원탈퇴 -->
 	<update id="deleteMember" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE
 			MEMBER
-		SET MEMBER-STATUS = 'N'
-		WHERE MEMBER_NO = { memberNo }
+		SET MEMBER_STATUS = 'N'
+		WHERE MEMBER_NO = #{ memberNo }
 	</update>
   
   </mapper>
