@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.syi.project.mapper.chat.ChatRoomMapper">
+  
+	  <resultMap type="com.syi.project.model.chat.ChatRoomVO" id="chatRoomResultMap">
+			<id property="chatRoomNo" column="CHATROOM_NO"/>
+			<result property="chatRoomName" column="CHATROOM_NAME"/>
+			<result property="sessionIds" column="CHATROOM_SESSION_IDS"/>
+	</resultMap>
+	
+	
+	<resultMap type="com.syi.project.model.member.MemberVO" id="memberResultMap">
+		<id property="memberNo" column="MEMBER_NO"/>
+		<result property="memberId" column="MEMBER_ID"/>
+		<result property="memberPwd" column="MEMBER_PWD"/>
+		<result property="memberName" column="MEMBER_NAME"/>
+		<result property="memberBirthday" column="MEMBER_BIRTHDAY"/>
+		<result property="memberGender" column="MEMBER_GENDER"/>
+		<result property="memberPhone" column="MEMBER_PHONE"/>
+		<result property="memberEmail" column="MEMBER_EMAIL"/>
+		<result property="memberAddress" column="MEMBER_ADDRESS"/>
+		<result property="memberStreetAddress" column="MEMBER_STREET_ADDRESS"/>
+		<result property="memberDetailAddress" column="MEMBER_DETAIL_ADDRESS"/>
+		<result property="memberNickname" column="MEMBER_NICKNAME"/>
+		<result property="memberEnrollDate" column="MEMBER_ENROLL_DATE"/>
+		<result property="memberCheckStatus" column="MEMBER_CHECK_STATUS"/>
+		<result property="memberStatus" column="MEMBER_STATUS"/>
+		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
+		<result property="memberRole" column="MEMBER_ROLE"/>
+	</resultMap>
+	
+	
+	<!-- 채팅방에 참여한 멤버 세션 아이디 추가해주기 -->
+  	<update id="updateChatRoomSessions">
+        UPDATE ChatRoom
+        SET session_ids = #{sessionIds}
+        WHERE chat_room_no = #{chatRoomNo}
+    </update>
+    
+    <!-- 한 개의 채팅방 정보 찾기 -->
+    <select id="SelectChatRoomByNo" resultMap="chatRoomResultMap">
+        SELECT chat_room_no, chat_room_name, session_ids
+        FROM ChatRoom
+        WHERE chat_room_no = #{chatRoomNo}
+    </select>
+    
+    <!--채팅방 개설  -->
+  	<insert id="insertChatRoom">
+  		INSERT INTO CHATROOM(
+  			CHATROOM_NAME
+  		)
+  		VALUES(
+  			#{name}
+  		)
+  	</insert>
+  	
+  	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
+  		SELECT *
+  		FORM CHATROOM
+  		WHERE CHATROOM_MEMBER_NO = #{chatRoomMemberNo}
+  	</select>
+  	
+  
+  
+  
+  
+  	
+  	
+  	
+  
+  
+  </mapper>

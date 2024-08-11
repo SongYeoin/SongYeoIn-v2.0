@@ -2,13 +2,13 @@ package com.syi.project.service.chat;
 
 import java.util.List;
 
-import com.syi.project.model.chat.MessageVO;
+import com.syi.project.model.chat.ChatMessageDTO;
 
 public interface MessageService {
 	
-	public MessageVO createMessage(MessageVO message);
-	public List<MessageVO> getAllMessage();
-	public MessageVO getMessageOne(String id);
+	public ChatMessageDTO createMessage(ChatMessageDTO message);
+	public List<ChatMessageDTO> getAllMessage();
+	public ChatMessageDTO getMessageOne(String id);
 	public void deleteMessageById(String id);
 	
 	

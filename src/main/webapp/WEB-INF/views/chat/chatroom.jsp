@@ -7,37 +7,28 @@
 <title>채팅방</title>
 
 <style>
+body{
+width: 100vw;  
+height: 100vh; 
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html, body {
-  height: 100%;
-  margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto; /* 수직 스크롤 보이기 */
 }
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
 .content{
 	padding:80px 0 0;
-	flex: 1;
 }
 
-.total-content{
-	width: 100%;  /* section의 전체 너비 */
-   	height: 100%; /* section의 전체 높이 */
-    box-sizing: border-box; /* 패딩과 테두리의 크기를 포함하여 총 크기를 계산 */
-    max-width: 100%; /* 부모 요소나 뷰포트의 최대 너비를 설정 */
-	min-height: 100vh;
-}
+
 .grid-rows{
 	display:grid;
-	grid-template-columns: 1fr 1.5fr;
+	grid-template-columns: 1.3fr 3fr;
 	gap: 10px; /* 열 사이의 간격 */
-    width: 100vw;  /* 뷰포트 너비의 100% */
-    height: 100vh; /* 뷰포트 높이의 100% */
-    box-sizing: border-box; /* 패딩과 보더를 포함하여 크기를 계산 */
-    overflow: hidden; /* 넘치는 내용을 숨김 */
-
 }
 
 
@@ -74,11 +65,11 @@ a.custom{
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 	<section class="content">
-		<div class="total-content py-4">
+		<div class="w-100 h-100 p-3 py-4">
 
 			<div class="grid-rows">
 				<div class="d-flex align-items-start">
-				<div class="col--7 p-3 border --bs-light-border-subtle rounded-3">
+				<div class="w-100 h-100  p-3 border --bs-light-border-subtle rounded-3">
 				
 					<select class="form-select" aria-label="Default select example">
 					  <option selected>Open this select menu</option>
@@ -245,8 +236,8 @@ a.custom{
 				</div>
 				</div>
 
-				<div class="d-flex align-items-start">
-				<div class="col-md-6 col-lg-7 col-xl-8 p-3 border --bs-light-border-subtle rounded-3">
+				<div class="d-flex align-items-start ">
+				<div class="w-100 h-100 col-md-6 col-lg-7 col-xl-8 p-3 border --bs-light-border-subtle rounded-3">
 
 					<ul class="list-unstyled">
 						<li class="d-flex justify-content-between mb-6"><img

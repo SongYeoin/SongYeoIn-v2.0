@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.syi.project.mapper.chat.MessageRepository;
-import com.syi.project.model.chat.MessageVO;
+import com.syi.project.model.chat.ChatMessageDTO;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -20,17 +20,17 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public MessageVO createMessage(MessageVO message) {
+	public ChatMessageDTO createMessage(ChatMessageDTO message) {
 		return messageRepository.insert(message);
 	}
 
 	@Override
-	public List<MessageVO> getAllMessage() {
+	public List<ChatMessageDTO> getAllMessage() {
 		return messageRepository.findAll();
 	}
 
 	@Override
-	public MessageVO getMessageOne(String id) {
+	public ChatMessageDTO getMessageOne(String id) {
 		return messageRepository.findById(id).orElse(null);
 	}
 
