@@ -148,6 +148,7 @@ footer {
             </c:if>
         </div>
         <div class="buttons">
+            <a href="${pageContext.request.contextPath}/journal/journalList">목록</a>
             <a href="${pageContext.request.contextPath}/journal/journalModify?journalNo=${journalDetail.journalNo}">수정</a>
             <form action="${pageContext.request.contextPath}/journal/journalDelete" method="post" style="display:inline;">
                 <input type="hidden" name="journalNo" value="${journalDetail.journalNo}" />

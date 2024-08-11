@@ -14,7 +14,7 @@ public interface JournalMapper {
 	public void journalEnroll(JournalVO journal);
     
 	// 일지 목록 List<>
-	public List<JournalVO> journalList();
+	public List<JournalVO> journalList(Criteria cri);
 
 	// 일지 총 갯수
 	public int journalGetTotal(Criteria cri);

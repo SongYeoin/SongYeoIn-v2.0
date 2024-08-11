@@ -32,9 +32,9 @@ public class JournalServiceImpl implements JournalService {
 
 	// 일지 목록 조회
 	@Override
-	public List<JournalVO> journalList() throws Exception {
+	public List<JournalVO> journalList(Criteria cri) throws Exception {
 		logger.info(">>>>>>>>>>>>>>>>>  journalList  >>");
-		return journalMapper.journalList();
+		return journalMapper.journalList(cri);
 	}
 
 	// 일지 갯수

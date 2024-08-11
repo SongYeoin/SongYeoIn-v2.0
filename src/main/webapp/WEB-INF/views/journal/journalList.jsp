@@ -8,6 +8,8 @@
 <meta charset="UTF-8">
 <title>교육일지 목록</title>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <style>
 /* CSS Reset */
 * {
@@ -38,6 +40,7 @@ main {
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	padding: 20px;
+	margin-bottom: 30px; /* 기존의 박스와 캘린더 사이에 여백 추가 */
 }
 
 h1 {
@@ -145,6 +148,12 @@ table tbody tr:hover {
 	color: #fff;
 }
 
+#calendar {
+    max-width: 100%; /* Ensure calendar does not overflow */
+    margin: 0 auto; /* Center calendar */
+    height: 60vh; /* Adjust height as needed */
+    margin-bottom: 30px; /* 캘린더와 하단 콘텐츠 사이에 여백 추가 */
+}
 </style>
 </head>
 <body>
@@ -159,44 +168,33 @@ table tbody tr:hover {
 		<div class="box">
 			<h1>교육일지 목록</h1>
 			
+			<!-- 캘린더 출력 영역 -->
+			<div id='calendar'></div>
+			
 			<div class="search_area">
-				<form id="searchForm" method="get" action="/club/list">
-				
-					<label for="classNo">반 선택:</label>
-					<select id="classNo" name="classNo">
-						<option value="">전체</option>
-						<c:forEach items="${classes}" var="cls">
-							<option value="${cls.classNo}" ${param.classNo == cls.classNo ? 'selected' : ''}>
-								<c:out value="${cls.className}" />
-							</option>
-						</c:forEach>
+			    <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
+			        
+			        <label for="keyword">제목 검색:</label>
+			        <input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
+			        
+			        <label for="year">년도:</label>
+			        <select id="year" name="year">
+					    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
+					    <c:forEach var="i" begin="2020" end="2025">
+					        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
+					    </c:forEach>
 					</select>
 					
-					<label for="year">작성년도:</label>
-					<select id="year" name="year">
-						<option value="">전체</option>
-						<c:forEach var="year" items="${years}">
-							<option value="${year}" ${param.year == year ? 'selected' : ''}>
-								<c:out value="${year}" />
-							</option>
-						</c:forEach>
-					</select>
-
-					<label for="month">작성월:</label>
+					<label for="month">월:</label>
 					<select id="month" name="month">
-						<option value="">전체</option>
-						<c:forEach var="m" begin="1" end="12">
-							<option value="${m}" ${param.month == m ? 'selected' : ''}>
-								<c:out value="${m}" />
-							</option>
-						</c:forEach>
+					    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
+					    <c:forEach var="i" begin="1" end="12">
+					        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
+					    </c:forEach>
 					</select>
 
-					<label for="keyword">제목 검색:</label>
-					<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
-
-					<button type="submit">검색</button>
-				</form>
+			        <button type="submit">검색</button>
+			    </form>
 			</div>
 			
 			<div class="table_wrap">
@@ -226,34 +224,31 @@ table tbody tr:hover {
 				<div class="pageInfo_wrap">
 					<div class="pageInfo_area">
 						<ul id="pageInfo" class="pageInfo">
-
+							
 							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous"><a href="${pageMaker.startPage-1}">Previous</a></li>
+								<li class="pageInfo_btn previous">
+									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Previous</a>
+								</li>
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? "active" : ""}">
-									<a href="${num}">${num}</a>
+							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
+								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
 								</li>
 							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next"><a href="${pageMaker.endPage+1}">Next</a></li>
+								<li class="pageInfo_btn next">
+									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Next</a>
+								</li>
 							</c:if>
 
 						</ul>
 					</div>
 				</div>
-
-				<form id="moveForm" method="get">
-					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
-					<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
-					<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
-					<input type="hidden" name="type" value="${pageMaker.cri.type}">
-				</form>
 			</div>
 		</div>
 	</main>
@@ -261,5 +256,47 @@ table tbody tr:hover {
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var journalEvents = [
+                <c:forEach items="${journalList}" var="journal" varStatus="status">
+                    {
+                        title: '${journal.journalTitle}',
+                        start: '${journal.journalWriteDate}',
+                        url: '${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}',
+                        color: '#007bff' // 교육일지 이벤트 색상
+                    }<c:if test="${not empty journal}">,</c:if>
+                </c:forEach>
+            ];
+
+            var scheduleEvents = [
+                <c:forEach items="${schedules}" var="schedule" varStatus="status">
+                    {
+                        title: '${schedule.scheduleTitle}',
+                        start: '${schedule.scheduleDate}',
+                        url: '${pageContext.request.contextPath}/schedule/scheduleDetail?scheduleNo=${schedule.scheduleNo}',
+                        color: '#ff5722' // 교육일정 이벤트 색상
+                    }<c:if test="${not empty schedule}">,</c:if>
+                </c:forEach>
+            ];
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [...journalEvents, ...scheduleEvents],
+                eventClick: function(info) {
+                    window.location.href = info.event.url;
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
 </body>
 </html>
