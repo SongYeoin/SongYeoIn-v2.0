@@ -33,21 +33,19 @@ public class AttendanceController {
 	
 	/* 출석 등록 페이지로 이동 */
 	@GetMapping("/attendance/enroll")
-	public void attendanceEnrollGET(Integer classNo, Model model) throws Exception{
+	public void attendanceEnrollGET(Integer classNo, String dayOfWeek, Model model) throws Exception{
 		log.info("출석 등록 페이지 이동");
 		
 		// 선택 할 반 정보 보내기
 		List<SyclassVO> classList = syclassService.getClassList();
 		model.addAttribute("classList", classList);
 		
-		System.out.println("프론트에서 서버로 넘어온 classNo : " + classNo);
-		
 		// 해당반의 시간표 정보 보내기
 		try {
 			ScheduleVO schedule = scheduleService.getSchedule(classNo);
-			
+			System.out.println("서버로 도착한 dayOfweek : " + dayOfWeek);
 			// 교시 정보 조회
-			List<PeriodVO> periodList = scheduleService.getPeriods(schedule.getScheduleNo());
+			List<PeriodVO> periodList = scheduleService.getPeriodsWithDayOfWeek(schedule.getScheduleNo(), dayOfWeek);
 			schedule.setPeriods(periodList);
 			
 			// 조회한 결과 프론트로 보내기

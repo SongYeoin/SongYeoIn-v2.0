@@ -54,5 +54,11 @@ public class ScheduleService {
 	public List<PeriodVO> getPeriods(int scheduleNo) {
 		return periodMapper.getPeriods(scheduleNo);
 	}
+	
+	/* 교시 조회 */
+	public List<PeriodVO> getPeriodsWithDayOfWeek(int scheduleNo, String dayOfWeek) {
+		System.out.println("서비스에 도착한 dayOfWeek : " + dayOfWeek);
+		return periodMapper.getPeriodsWithDayOfWeek(scheduleNo, dayOfWeek);
+	}
 
 }

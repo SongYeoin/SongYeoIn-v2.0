@@ -23,6 +23,14 @@
     <select id="getPeriods" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
     </select>
+    
+    <!-- 교시 조회 -->
+    <select id="getPeriodsWithDayOfWeek" resultMap="periodResultMap">
+    SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
+    <if test="dayOfWeek != null and dayOfWeek != ''">
+        AND DAY_OF_WEEK LIKE '%' || #{dayOfWeek} || '%'
+    </if>
+    </select>
    
 
 </mapper>

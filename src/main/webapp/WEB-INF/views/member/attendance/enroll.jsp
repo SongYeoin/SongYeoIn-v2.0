@@ -294,19 +294,28 @@ main {
     
 <script>
 
+//요일 정보를 얻어내는 함수
+function getDayOfWeek() {
+    var days = ['일', '월', '화', '수', '목', '금', '토'];
+    var now = new Date();
+    return days[now.getDay()];
+}
+
 window.onload = function() {
     var selectBox = document.getElementById("classSelect");
     var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
 
     if (!window.location.search.includes("classNo")) {
-        window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo;
+        var dayOfWeek = getDayOfWeek();
+        window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
     }
 };
 
 function sendClassChange() {
     var selectBox = document.getElementById("classSelect");
     var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
-    window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo;
+    var dayOfWeek = getDayOfWeek();
+    window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
 }
    
 </script>
