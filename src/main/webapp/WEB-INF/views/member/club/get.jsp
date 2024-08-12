@@ -58,9 +58,13 @@ input {
 	font-size: 17px;
 }
 
+.large-input{
+	width: 500px;
+}
+
 textarea {
 	width: 800px;
-	height: 200px;
+	height: 95px;
 	font-size: 15px;
 	padding: 10px;
 }
@@ -107,7 +111,7 @@ textarea {
 					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여</label> <input name="join" readonly="readonly"
+				<label>참여</label> <input name="join" readonly="readonly" class="large-input"
 					value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
@@ -117,9 +121,9 @@ textarea {
 			</div>
 			<div class="input_wrap">
 				<label>승인현황</label> <input name="checkStatus" readonly="readonly"
-					value="${pageInfo.checkStatus == 'W' ? '승인대기' :
-                  (pageInfo.checkStatus == 'Y' ? '승인완료' :
-                  (pageInfo.checkStatus == 'N' ? '승인불가' : '알 수 없음'))}">
+					value="${pageInfo.checkStatus == 'W' ? '대기' :
+                  (pageInfo.checkStatus == 'Y' ? '완료' :
+                  (pageInfo.checkStatus == 'N' ? '불가' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
@@ -134,13 +138,29 @@ textarea {
 				<label>작성일</label> <input name="regDate" readonly="readonly"
 					value='<fmt:formatDate pattern="yyyy/MM/dd" value="${pageInfo.regDate }"/>'>
 			</div>
+			
+			<div class="input_wrap">
+				<label>첨부파일</label>
+				<c:choose>
+				<c:when test="${pageInfo.fileName != null && !pageInfo.fileName.isEmpty() }">
+				<input name="file" readonly="readonly" class="large-input" value='<c:out value="${pageInfo.fileName }"/>'>
+				</c:when>
+				<c:otherwise>
+				<input name="file" readonly="readonly" value="첨부파일 없음">
+				</c:otherwise>
+			</c:choose>
+			</div>
+			
 			<div class="btn_wrap">
 				<a class="btn" id="list_btn">목록 페이지</a>
-				<c:if test="${pageInfo.checkStatus == 'W' }">
-				<a class="btn" id="modify_btn">수정 하기</a>
+				<c:if test="${pageInfo.enroll.member.memberNo eq sessionScope.loginMember.memberNo }">
+				<c:if test="${pageInfo.checkStatus != 'N' }">
+				<a class="btn" id="modify_btn">수정</a>
+				<a class="btn" id="delete_btn">삭제</a>
+				</c:if>
 				</c:if>
 			</div>
-			<form id="infoForm" action="/club/modify" method="get">
+			<form id="infoForm" action="/member/club/modify" method="get">
 				<input type="hidden" id="clubNo" name="clubNo"
 					value='<c:out value="${pageInfo.clubNo }"/>'> <input
 					type="hidden" name="keyword" value="${cri.keyword}"> <input
@@ -161,14 +181,21 @@ textarea {
 
 		$("#list_btn").on("click", function(e) {
 			form.find("#clubNo").remove();
-			form.attr("action", "/club/list");
+			form.attr("action", "/member/club/list");
 			form.submit();
 		});
 
 		$("#modify_btn").on("click", function(e) {
-			form.attr("action", "/club/modify");
+			form.attr("action", "/member/club/modify");
 			form.submit();
 		});
+		
+		$("#delete_btn").on("click", function(e){
+			form.attr("action", "/member/club/delete");
+			form.attr("method", "post");
+			form.submit();
+		});
+		
 	</script>
 
 </body>
