@@ -30,6 +30,25 @@ public interface AdminService {
 	// 반 조회
 	List<SyclassVO> selectClassList();
 
+	// 수강이력 조회
+	List<EnrollVO> selectEnrollList(int memberNo);
+
 	// 수강 신청
 	int insertEnroll(EnrollVO enroll);
+
+	// 수강 신청 삭제
+	int deleteEnroll(int enrollNo);
+
+	// 이메일 중복체크
+	public int selectCountByMemberEmail(String memberEmail);
+
+	// 회원정보 수정
+	int updateMember(MemberVO originMember);
+
+	// 비밀번호 체크
+	String selectPwd(MemberVO requestMember);
+
+	// 회원탈퇴
+	int deleteMember(MemberVO loginMember);
+
 }

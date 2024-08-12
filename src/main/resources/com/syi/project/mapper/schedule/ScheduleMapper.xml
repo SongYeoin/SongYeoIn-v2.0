@@ -20,7 +20,7 @@
     
     <!-- 시간표 조회 -->
     <select id="getSchedule" resultMap="scheduleResultMap">
-    SELECT * FROM SCHEDULE WHERE class_no=#{classNo}
+    SELECT * FROM SCHEDULE WHERE CLASS_NO=#{classNo}
     </select>
    
 

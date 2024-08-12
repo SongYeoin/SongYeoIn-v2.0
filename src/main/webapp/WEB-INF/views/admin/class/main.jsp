@@ -93,8 +93,8 @@ main {
 
 	<div class="classroom-header">
 			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-            <div class="title">${className}</div>
-            <div class="details">담당자: ${managerName} | 강사명: ${teacherName}</div>
+            <div class="title">${syclass.className}</div>
+            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
     </div>
 
         
@@ -105,8 +105,8 @@ main {
         <!-- Main content -->
         <div class="content">
             <!-- 강의실 홈의 다른 내용이 여기에 들어갑니다 -->
-            <h1>${className}</h1>
-            <p>환영합니다! 이곳은 ${className} 강의실 홈입니다. 다양한 강의 자료와 정보를 확인하실 수 있습니다.</p>
+            <h1>${syclass.className}</h1>
+            <p>환영합니다! 이곳은 ${syclass.className} 강의실 홈입니다. 다양한 강의 자료와 정보를 확인하실 수 있습니다.</p>
         </div>
     </main>
 
