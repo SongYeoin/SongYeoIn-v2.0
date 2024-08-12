@@ -1,19 +1,31 @@
 package com.syi.project.service.journal;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
+import com.syi.project.model.Criteria;
 import com.syi.project.model.journal.JournalVO;
 
 public interface JournalService {
 
-    /**
-     * 일지와 관련된 파일을 데이터베이스에 등록
-     * 
-     * journal 등록할 일지 정보가 담긴 객체 / files 등록할 파일의 리스트. 각 파일은 JournalFileVO 객체로 표현됨
-     * 
-     * 일지 정보를 데이터베이스에 저장, 관련된 파일 정보를 별도로 저장하는 작업 수행. 
-     * 파일의 저장 정보는 `JournalFileVO` 객체를 통해 데이터베이스에 추가됨.
-     */
+    /* 일지 등록 */
     public void journalEnroll(JournalVO journal, MultipartFile file) throws Exception;
+    
+    /* 일지 목록 */
+    public List<JournalVO> journalList(Criteria cri) throws Exception;
+    
+    /* 일지 총 갯수 */
+    public int journalGetTotal(Criteria cri) throws Exception;
+    
+    /* 일지 상세 조회 */
+	public JournalVO journalDetail(int journalNo);
+
+	/* 일지 수정 */
+	public void journalModify(JournalVO journal) throws Exception;
+	
+	/* 일지 수정 */
+	public int journalDelete(int journalNo) throws Exception;
+	
 
 }

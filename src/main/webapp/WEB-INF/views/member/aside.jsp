@@ -93,7 +93,14 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-chalkboard-teacher"></i>교육일지</a>
+	            <div>
+	                <a><i class="fas fa-chalkboard-teacher"></i>교육일지</a>
+	            </div>
+	            <i class="fas fa-chevron-down arrow"></i>
+            </div>
+            <div class="submenu">
+                <div class="submenu-item"><a href="../journal/journalMain"><i class="fas fa-users"></i>교육 일지 등록하기</a></div>
+                <div class="submenu-item"><a href="../journal/journalList"><i class="fas fa-user-tie"></i>교육 일지 조회하기</a></div>
             </div>
         </div>
         <div class="menu-item">

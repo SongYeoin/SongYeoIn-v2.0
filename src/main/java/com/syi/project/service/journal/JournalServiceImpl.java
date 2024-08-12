@@ -1,20 +1,15 @@
 package com.syi.project.service.journal;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.syi.project.mapper.journal.JournalMapper;
+import com.syi.project.model.Criteria;
 import com.syi.project.model.journal.JournalVO;
 
 /* 일지를 데이터베이스에 추가하고, 관련 파일을 삽입하는 비즈니스 로직을 담당 */
@@ -28,37 +23,48 @@ public class JournalServiceImpl implements JournalService {
 	@Autowired
 	private JournalMapper journalMapper;
 
-	@Value("${file.upload.path}")
-	private String fileUploadPath;
-
+	// 일지 등록
 	@Override
 	public void journalEnroll(JournalVO journal, MultipartFile file) throws Exception {
-		if (!file.isEmpty()) {
-			String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-			Path uploadPath = Paths.get(fileUploadPath);
-
-			logger.info(">>>>>>>>>>>>>>>>>               File upload path: {}", uploadPath);
-
-			if (!Files.exists(uploadPath)) {
-				logger.info(">>>>>>>>>>>>>>>>>              Creating directory: {}", uploadPath);
-				Files.createDirectories(uploadPath);
-			}
-
-			Path filePath = uploadPath.resolve(fileName);
-			logger.info(">>>>>>>>>>>>>>>>>               File path: {}", filePath);
-
-			try {
-				Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-				journal.setFileName(fileName);
-				logger.info(">>>>>>>>>>>>>>>>>               File uploaded successfully: {}", fileName);
-			} catch (IOException e) {
-				logger.error(">>>>>>>>>>>>>>>>>               File upload failed: {}", fileName, e);
-				throw new Exception(">>>>>>>>>>>>>>>>>               파일 업로드 실패: " + fileName, e);
-			}
-		}
-
+		logger.info(">>>>>>>>>>>>>>>>>  journalEnroll  >>");
 		journalMapper.journalEnroll(journal);
-
 	}
+
+	// 일지 목록 조회
+	@Override
+	public List<JournalVO> journalList(Criteria cri) throws Exception {
+		logger.info(">>>>>>>>>>>>>>>>>  journalList  >>");
+		return journalMapper.journalList(cri);
+	}
+
+	// 일지 갯수
+	@Override
+	public int journalGetTotal(Criteria cri) throws Exception {
+		logger.info(">>>>>>>>>>>>>>>>>  journalGetTotal  >>");
+		return journalMapper.journalGetTotal(cri);
+	}
+
+	// 일지 상세 조회
+	@Override
+	public JournalVO journalDetail(int journalNo) {
+		logger.info(">>>>>>>>>>>>>>>>>  journalDetail  >>" + journalNo);
+		return journalMapper.journalDetail(journalNo);
+	}
+
+	// 일지 수정
+	@Override
+	public void journalModify(JournalVO journal) throws Exception {
+	    logger.info(">>>>>>>>>>>>>>>>>  journalModify  >>");
+	    // 일지 정보를 수정하는 메서드 호출
+	    journalMapper.journalModify(journal);
+	}
+
+	// 일지 삭제
+	@Override
+	public int journalDelete(int journalNo) throws Exception {
+		logger.info(">>>>>>>>>>>>>>>>>  journalDelete  >>");
+		return journalMapper.journalDelete(journalNo);
+	}
+
 
 }

@@ -12,6 +12,7 @@
     <result property="regDate" column="CLUB_REG_DATE"/>
     <result property="checkStatus" column="CLUB_CHECK_STATUS"/>
     <result property="checkCmt" column="CLUB_CHECK_CMT"/>
+    <result property="fileName" column="FILE_NAME"/>
     <association property="enroll" resultMap="enrollResultMap"/>
   </resultMap>
   
@@ -51,7 +52,8 @@
       a.club_check_cmt,
       b.member_no,
       b.enroll_no,
-      c.member_name
+      c.member_name,
+      a.file_name
     FROM club a 
     JOIN enroll b ON a.enroll_no = b.enroll_no
     join member c on b.member_no = c.member_no
@@ -76,7 +78,8 @@
       a.club_reg_date,
       a.club_check_status,
       a.club_check_cmt,
-      c.member_name
+      c.member_name,
+      a.file_name
 from club a
 join enroll b on a.enroll_no = b.enroll_no
 join member c on b.member_no = c.member_no
@@ -86,9 +89,15 @@ where club_No = #{clubNo}
   <!-- 수정 -->
   <update id="modify">
   update club 
-  set club_content = #{content}, club_join = #{join}, club_study_date = #{studyDate}, club_reg_date = sysdate
+  set club_content = #{content}, club_join = #{join}, club_study_date = #{studyDate}, club_reg_date = sysdate, file_name = #{fileName, jdbcType=VARCHAR}
   where club_no = #{clubNo}
   </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete">
+  	delete from club where club_no = #{clubNo}
+  </delete>
+  
   
   <!-- 게시물 목록(페이징) -->
   <select id="getListPaging" resultType="com.syi.project.model.club.ClubVO">
