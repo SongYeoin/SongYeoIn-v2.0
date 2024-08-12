@@ -133,7 +133,7 @@ input[type="submit"]:hover {
    <main>
    	<div class="mypage-wrapper">
 		<h2>My Page</h2>
-			<form action="${pageContext.servletContext.contextPath}/member/mypage" method="post" id="mypage-form">
+			<form action="${pageContext.servletContext.contextPath}/admin/mypage" method="post" id="mypage-form">
 				<table>
 					<tr>
 						<td><label for="memberId">아이디</label></td>
@@ -259,14 +259,14 @@ input[type="submit"]:hover {
     	
         // 취소 버튼 클릭 시 이전페이지
         $("#cancelBtn").click(function() {
-            window.location.href = '${pageContext.servletContext.contextPath}/member/main';
+            window.location.href = '${pageContext.servletContext.contextPath}/admin/main';
         });
 
         // 회원탈퇴 버튼 클릭 시 알림창
         $("#deleteBtn").click(function() {
             if (confirm("회원탈퇴 하시겠습니까?")) {
                 let form = document.getElementById("mypage-form");
-                form.action = "${pageContext.servletContext.contextPath}/member/delete";
+                form.action = "${pageContext.servletContext.contextPath}/admin/delete";
                 form.submit();
             }
         });
@@ -311,7 +311,7 @@ input[type="submit"]:hover {
             } else {
                 let memberId = '${sessionScope.loginMember.memberId}';
                 $.ajax({
-                    url: "${pageContext.servletContext.contextPath}/member/check-pwd",
+                    url: "${pageContext.servletContext.contextPath}/admin/check-pwd",
                     type: "post",
                     data: {
                         memberId: memberId,
@@ -421,7 +421,7 @@ input[type="submit"]:hover {
         // 이메일 중복 체크 함수
         function dupCheckmemberEmail(memberEmail) {
             $.ajax({
-                url: "${pageContext.servletContext.contextPath}/member/check-email",
+                url: "${pageContext.servletContext.contextPath}/admin/check-email",
                 type: "post",
                 data: {memberEmail: memberEmail},
                 success: function(data) {

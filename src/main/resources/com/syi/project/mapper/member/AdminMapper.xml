@@ -25,11 +25,10 @@
 		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
 		<result property="memberRole" column="MEMBER_ROLE"/>
 	</resultMap>
-	
+
 	<resultMap type="com.syi.project.model.EnrollVO" id="enrollResultMap">
 		<id property="enrollNo" column="ENROLL_NO"/>
-		<result property="classNo" column="CLASS_NO"/>
-		<result property="memberNo" column="MEMBER_NO"/>
+		
 		<association property="syclass" resultMap="classResultMap"/>
 		<association property="member" resultMap="memberResultMap"/>
 	</resultMap>
@@ -47,6 +46,7 @@
 		<result property="modifiedDate" column="MODIFIED_DATE"/>
 		<result property="classStatus" column="CLASS_STATUS"/>
 	</resultMap>
+
 	
   <!-- 관리자 로그인 -->
   <select id="selectLoginAdmin" resultMap="memberResultMap">
@@ -100,17 +100,27 @@
   </update>
   
   <!-- 회원 상세 페이지 -->
-  <select id="selectMemberDetail" resultType="com.syi.project.model.member.MemberVO">
+  <select id="selectMemberDetail" parameterType="_int" resultMap="memberResultMap">
   	SELECT * 
   	FROM MEMBER
   	WHERE MEMBER_NO = #{ memberNo }
   </select>
   
   <!-- 반 리스트 조회 -->
-  <select id="selectClassList" resultType="com.syi.project.model.syclass.SyclassVO">
+  <select id="selectClassList" resultMap="classResultMap">
   	SELECT * FROM CLASS WHERE END_DATE > SYSDATE
   </select>
   
+  <!-- 수강 이력 조회 -->
+  <select id="selectEnrollList" resultMap="enrollResultMap">
+  	SELECT e.*, c.*, m.*
+  	FROM ENROLL e
+  		LEFT JOIN CLASS c ON e.CLASS_NO = c.CLASS_NO
+  		LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
+  	WHERE e.MEMBER_NO = #{memberNo}
+  	ORDER BY e.ENROLL_NO ASC
+  </select>
+ 
   <!-- 수강 신청 -->
   <insert id="insertEnroll" parameterType="com.syi.project.model.EnrollVO">
   	INSERT INTO ENROLL(
@@ -120,5 +130,50 @@
   		#{ memberNo }
   	)
   </insert>
+  
+  <!-- 수강 신청 삭제 -->
+  <delete id="deleteEnroll" parameterType="_int">
+  	DELETE FROM ENROLL WHERE ENROLL_NO = #{ enrollNo }
+  </delete>
+  
+  <!-- 이메일 중복체크 -->
+  <select id="selectCountByMemberEmail" resultType="_int">
+  	SELECT
+  		COUNT(MEMBER_NO)
+  	FROM MEMBER
+  	WHERE MEMBER_EMAIL = #{ memberEmail }
+  </select>
+  
+  <!-- 회원정보 수정 -->
+  <update id="updateMember" parameterType="com.syi.project.model.member.MemberVO">
+		UPDATE 
+			MEMBER
+		SET MEMBER_PWD = #{ memberPwd },
+			MEMBER_Phone = #{ memberPhone },
+			MEMBER_EMAIL = #{ memberEmail },
+			MEMBER_ADDRESS = #{ memberAddress },
+			MEMBER_STREET_ADDRESS = #{ memberStreetAddress },
+			MEMBER_DETAIL_ADDRESS = #{ memberDetailAddress },
+			MEMBER_NICKNAME = #{ memberNickname }
+		WHERE MEMBER_NO = #{ memberNo }
+	 		AND MEMBER_STATUS = 'Y'
+	 		AND MEMBER_CHECK_STATUS = 'Y'
+	</update>
+	
+	<!-- 비밀번호 체크 -->
+	<select id="selectPwd" resultType="java.lang.String">
+		SELECT MEMBER_PWD
+		FROM MEMBER
+		WHERE MEMBER_STATUS = 'Y'
+			AND MEMBER_ID = #{ memberId }
+	</select>
+	
+	<!-- 회원탈퇴 -->
+	<update id="deleteMember" parameterType="com.syi.project.model.member.MemberVO">
+		UPDATE
+			MEMBER
+		SET MEMBER_STATUS = 'N'
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
   
   </mapper>
