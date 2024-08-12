@@ -1,5 +1,8 @@
 package com.syi.project.model;
 
+import lombok.Data;
+
+@Data
 public class PageDTO {
 
 	/* 페이지 시작 번호 */
