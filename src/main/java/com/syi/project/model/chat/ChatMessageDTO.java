@@ -1,7 +1,5 @@
 package com.syi.project.model.chat;
 
-import java.io.Serializable;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageDTO{
+public class ChatMessageDTO {
+	
 	@Id
 	private String id;	// 메시지 아이디 값
 
@@ -40,5 +39,5 @@ public class ChatMessageDTO{
 
 	@Field(name = "regDateTime")
 	private String regDateTime; // 메시지 발송 시간
-	
+
 }

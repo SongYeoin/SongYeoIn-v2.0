@@ -42,6 +42,47 @@ html, body {
 a.custom{
 	 text-decoration: none !important;
 }
+
+/* styles.css */
+
+/* 모달 창을 숨깁니다. */
+.modal {
+    display: none; /* 숨김 */
+    position: fixed; /* 고정 위치 */
+    z-index: 1; /* 위쪽에 표시 */
+    left: 0;
+    top: 0;
+    width: 50%; /* 전체 너비 */
+    height: 50%; /* 전체 높이 */
+    overflow: auto; /* 스크롤 가능 */
+    background-color: rgb(0,0,0); /* 배경 색 */
+    background-color: rgba(0,0,0,0.4); /* 반투명 배경 색 */
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 가운데 정렬 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* 너비 설정 */
+}
+
+/* 닫기 버튼 스타일 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 </style>
 
 <!-- Font Awesome -->
@@ -63,7 +104,7 @@ a.custom{
 </head>
 <body>
 	<!-- 메뉴바 연결 -->
-	<%@ include file="../common/header.jsp"%>
+	<%@ include file="../../common/header.jsp"%>
 	<section class="content">
 		<div class="w-100 h-100 p-3 py-4">
 
@@ -71,7 +112,7 @@ a.custom{
 				<div class="d-flex align-items-start">
 				<div class="w-100 h-100  p-3 border --bs-light-border-subtle rounded-3">
 				
-					<select class="form-select" aria-label="Default select example">
+					<!-- <select class="form-select" aria-label="Default select example">
 					  <option selected>Open this select menu</option>
 					  <option value="1">One</option>
 					  <option value="2">Two</option>
@@ -81,12 +122,63 @@ a.custom{
 					<form class="d-flex align-items-center" role="search">
 				        <input class="form-control" type="search" placeholder="학생 이름을 검색해주세요." aria-label="Search">
 				        <button class="my-3  ms-2 btn btn-outline-dark text-nowrap" type="submit">검색</button>
-				     </form>
-					
+				     </form> -->
+					 <button id="openModalBtn">채팅방 생성</button>
+					 <!--모달구조  -->
+					 <div id="myModal" class="modal">
+					 	<div class="modal-content">
+					 		<span class="close">닫기</span>
+					 		<h5>담당자를 선택해주세요</h5>
+							 <form action="${pageContext.servletContext.contextPath}/member/chatroom/createroom" method="post" id="createRoomForm">
+							    <table border="1">
+							        <!-- 테이블 헤더 -->
+							        <tr>
+							            <th>담당자명</th>
+							            <th>수강과목명</th>
+							            <th>선택</th> <!-- 라디오 버튼을 위한 열 -->
+							        </tr>
+							
+							        <!-- 이전에 출력된 adminNo 값을 저장할 변수 -->
+							        <c:set var="previousAdminNo" value=""/>
+							
+							        <!-- 리스트 항목을 반복해서 출력 -->
+							        <c:forEach items="${enrollList}" var="enroll">
+							            <tr>
+							                <!-- 담당자명 출력 -->
+							                <td>
+							                    <c:out value="${enroll.syclass.managerName}"/>
+							                </td>
+							                <!-- 수강과목명 출력 -->
+							                <td>
+							                    <c:out value="${enroll.syclass.className}"/>
+							                </td>
+							                <!-- 라디오 버튼 -->
+							                <td>
+							                    <c:choose>
+							                        <c:when test="${previousAdminNo != enroll.syclass.adminNo}">
+							                            <input type="radio" name="adminNO" value="${enroll.syclass.adminNo}"/>
+							                            <c:set var="previousAdminNo" value="${enroll.syclass.adminNo}"/>
+							                        </c:when>
+							                        <c:otherwise>
+							                        </c:otherwise>
+							                    </c:choose>
+							                </td>
+							            </tr>
+							        </c:forEach>
+							    </table>
+							
+							    <!-- 제출 버튼 -->
+							    <input type="submit" value="생성하기">
+							</form>
+					 	</div>
+					 </div>
+					 
+					 <!-- 채팅방 목록 보기 -->
 					<div class="card">
 						<div class="card-body w-auto scrollable-div">
 
 							<ul class="list-unstyled mb-0">
+							<c:forEach items="${roomList}"  var="room">
 								<li class="p-2 border-bottom bg-body-tertiary"><a href="#!"
 									class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
@@ -96,7 +188,7 @@ a.custom{
 												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
 												width="60">
 											<div class="pt-1">
-												<p class="fw-bold mb-0">John Doe</p>
+												<p class="fw-bold mb-0"><c:out value="${room.member.memberName}"/></p>
 												<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;">Hello, Are you there?????????????</p>
 											</div>
 										</div>
@@ -105,7 +197,8 @@ a.custom{
 											<span class="badge bg-danger float-end">1</span>
 										</div>
 								</a></li>
-								<li class="p-2 border-bottom"><a href="#!"
+							</c:forEach>
+<!-- 								<li class="p-2 border-bottom"><a href="#!"
 									class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
 											<img
@@ -227,14 +320,14 @@ a.custom{
 											<span class="text-muted float-end"><i
 												class="fas fa-check" aria-hidden="true"></i></span>
 										</div>
-								</a></li>
+								</a></li>-->
 							</ul>
 
 						</div>
 					</div>
 
 				</div>
-				</div>
+				</div> 
 
 				<div class="d-flex align-items-start ">
 				<div class="w-100 h-100 col-md-6 col-lg-7 col-xl-8 p-3 border --bs-light-border-subtle rounded-3">
@@ -312,13 +405,41 @@ a.custom{
 		</div>
 	</section>
 	<!-- 푸터 연결 -->
-	<%@ include file="../common/footer.jsp"%>
+	<%@ include file="../../common/footer.jsp"%>
 	
 	
 <script
   type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
 ></script>	
+<script>
+//script.js
+
+//모달과 버튼을 변수에 저장합니다.
+var modal = document.getElementById("myModal");
+var btn = document.getElementById("openModalBtn");
+var span = document.getElementsByClassName("close")[0];
+
+//버튼을 클릭하면 모달을 열어줍니다.
+btn.onclick = function() {
+ modal.style.display = "block";
+}
+
+//<span> (닫기 버튼)을 클릭하면 모달을 닫아줍니다.
+span.onclick = function() {
+ modal.style.display = "none";
+}
+
+//모달 밖을 클릭하면 모달을 닫아줍니다.
+window.onclick = function(event) {
+ if (event.target == modal) {
+     modal.style.display = "none";
+ }
+}
+
+
+
+</script>
 
 </body>
 </html>
