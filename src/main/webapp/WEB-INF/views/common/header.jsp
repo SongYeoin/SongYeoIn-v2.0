@@ -68,8 +68,15 @@ header {
         </div>
         <div class="btns">
 		<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}chatroom/main'"></i>
-        	<i class="bi bi-person fs-3"></i> <!-- 마이페이지 아이콘 -->
-        	<i class="bi bi-box-arrow-right fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/logout'"></i> <!-- 로그아웃 아이콘 -->
+		<c:choose>
+			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
+				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i>
+			</c:when>
+			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
+				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/admin/mypage'"></i>
+			</c:when>
+		</c:choose>
+        <i class="bi bi-box-arrow-right fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/logout'"></i> <!-- 로그아웃 아이콘 -->
         </div>
     </header>
 
