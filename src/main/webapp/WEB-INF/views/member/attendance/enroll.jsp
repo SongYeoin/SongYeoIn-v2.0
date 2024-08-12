@@ -33,7 +33,7 @@ main {
     margin-top: 110px;
     overflow-y: auto;
     padding: 20px;
-    height: calc(100% - 130px); /* Adjusted height to account for margins */
+    height: calc(100% - 130px); 
 }
 
 .title-container {
@@ -68,14 +68,14 @@ main {
 }
 
 .date-container h2 {
-    font-size: 1.8em; /* Reduced font size */
+    font-size: 1.8em; 
     font-weight: bold;
     color: #333;
-    margin-bottom: 5px; /* Add spacing between date and day */
+    margin-bottom: 5px; 
 }
 
 .date-container h3 {
-    font-size: 1.2em; /* Font size for the day */
+    font-size: 1.2em; 
     color: #666;
 }
 
@@ -87,7 +87,7 @@ main {
 
 /* Left side (Card container) */
 .card-container {
-    flex: 2; /* Occupy more space for cards */
+    flex: 2; 
     display: flex;
     flex-direction: column;
     align-items: left;
@@ -158,15 +158,15 @@ main {
 
 .info-container .today-btn, .info-container .attendance-btn {
     display: block;
-    margin: 10px 0; /* Remove 'auto' to left align */
+    margin: 10px 0; 
     padding: 5px 10px;
     background-color: #000;
     color: white;
     border-radius: 5px;
     font-size: 0.9em;
     width: fit-content;
-    border: none; /* Remove border */
-    cursor: pointer; /* Add pointer cursor */
+    border: none; 
+    cursor: pointer; 
     text-decoration: none;
 }
 
@@ -224,10 +224,11 @@ main {
         <div class="title-container">
             <h1>출석 체크</h1>
             <div class="select-box">
-                <select id="classSelect" name="classSelect">
-                    <option value="">JAVA&SPRING 백엔드 과정</option>
-                    <!-- Add other options here -->
-                </select>
+                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
+				    <c:forEach var="classItem" items="${classList}">
+				        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+				    </c:forEach>
+				</select>
             </div>
         </div>
 
@@ -241,22 +242,39 @@ main {
         <div class="content-container">
             <!-- Left side (Card container) -->
             <div class="card-container">
-                <div class="card">
-                    <div>
-                        <h3>1교시</h3>
-                        <p>09:00 - 10:00</p>
-                    </div>
-                    <div><button class="attendance-btn">출석하기</button></div>
-                </div>
-                <!-- Add more card elements as needed -->
+                <c:choose>
+                    <c:when test="${result == 'null'}">
+                        <p>등록된 시간표가 없습니다.</p>
+                    </c:when>
+                    <c:when test="${result == 'error'}">
+                        <p>시간표 조회 중 오류가 발생했습니다. 다시 시도해 주세요.</p>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="period" items="${schedule.periods}">
+                            <div class="card">
+                                <div>
+                                    <h3>${period.periodName}</h3>
+                                    <p>${period.startTime} - ${period.endTime}</p>
+                                </div>
+                                <div><button class="attendance-btn">출석하기</button></div>
+                            </div>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <!-- Right side (Additional info) -->
             <div class="info-container">
                 <h2>나의 훈련 과정</h2>
-                <p>JAVA&SPRING 백엔드 과정</p>
+                <p id="selectedClassName">
+				    <c:forEach var="classItem" items="${classList}">
+				        <c:if test="${classItem.classNo == param.classNo}">
+				            ${classItem.className}
+				        </c:if>
+				    </c:forEach>
+				</p>
                 <a href="#" class="today-btn" disabled>today</a>
-                <p>2024년 7월 29일 월요일</p>
+                <p><fmt:formatDate value="${now}" pattern="yyyy년 MM월 dd일 EEEE" /></p>
                 <a href="#" class="attendance-btn" disabled>오늘의 출석</a>
                 <p>3교시 / 총 8교시</p>
                 <div class="progress-bar">
@@ -273,6 +291,25 @@ main {
 
     <!-- 푸터 연결 -->
     <%@ include file="../../common/footer.jsp"%>
+    
+<script>
+
+window.onload = function() {
+    var selectBox = document.getElementById("classSelect");
+    var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
+
+    if (!window.location.search.includes("classNo")) {
+        window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo;
+    }
+};
+
+function sendClassChange() {
+    var selectBox = document.getElementById("classSelect");
+    var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
+    window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo;
+}
+   
+</script>
 
 </body>
 </html>
