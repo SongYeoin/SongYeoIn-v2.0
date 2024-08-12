@@ -26,7 +26,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Component
 @RequiredArgsConstructor
-@ServerEndpoint(value="/chat", configurator = WebSocketConfig.class)
+@ServerEndpoint(value="/ws", configurator = WebSocketConfig.class)
 @Log4j2
 public class ChatHandler {
 	private final ObjectMapper objectMapper;

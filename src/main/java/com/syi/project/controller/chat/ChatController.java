@@ -24,15 +24,25 @@ import lombok.extern.slf4j.Slf4j;
 @RestController // @Controller와 @ResponseBody의 조합, 컨트롤러 클래스가 JSON이나 XML 형태로 응답을 반환하도록 한다,// RESTful 웹 서비스를 쉽게 구현
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/chatroom")
+@RequestMapping("/member/chatroom")
 public class ChatController {
 	private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 	private final ChatRoomService chatService;
 	
+	@GetMapping("/main")
+	public String chatList(HttpServletRequest request,Model model){
+		HttpSession session = request.getSession();
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		int chatRoomMemberNo = loginMember.getMemberNo();
+		List<ChatRoomVO> roomList = chatService.selectChatRoomList(chatRoomMemberNo);
+		model.addAttribute("roomList",roomList);
+		return "chat/chatroom";
+	}
 
     @PostMapping("/createRoom")
     public String createRoom(Model model, String name) {
         chatService.createChatRoom(name);
         return "chat/chatRoom";
     }
+    
 }
