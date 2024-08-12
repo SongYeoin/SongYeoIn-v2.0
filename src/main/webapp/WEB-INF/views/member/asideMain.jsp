@@ -31,33 +31,27 @@ body {
 }
 
 main {
-	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
-	overflow-y: auto;
-	top: 120px;
-	left: 250px;
-	background-color: yellow;
+    flex: 1;
+    margin-left: 300px;
+    margin-top: 110px;
+    overflow-y: auto;
+    height: 100%;
 }
 
-.box{
-	height: 100%;
-
-}
 </style>
 </head>
 <body>
 
-	<!-- 메뉴바 연결 -->
-	<%@ include file="../common/header.jsp"%>
+    <!-- 메뉴바 연결 -->
+    <%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->	
-	<%@ include file="aside.jsp"%>
+    <!-- 사이드바 연결 -->
+    <%@ include file="aside.jsp"%>
 
    <main>
-        <!-- Main content -->   
-        <div class="box">
-        	글자라도 써봅니다
+        <!-- Main content -->
+        <div>
+            글자라도 써봅니다
         </div>
     </main>
 
