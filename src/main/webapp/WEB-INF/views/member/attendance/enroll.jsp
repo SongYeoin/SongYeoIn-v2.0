@@ -207,6 +207,12 @@ main {
     font-size: 0.9em;
     color: #555;
 }
+
+.attendance-btn[disabled] {
+    background-color: #ddd; /* 비활성화 색상 */
+    color: #aaa; /* 텍스트 색상 */
+    cursor: not-allowed;
+}
 </style>
 </head>
 <body>
@@ -256,7 +262,16 @@ main {
                                     <h3>${period.periodName}</h3>
                                     <p>${period.startTime} - ${period.endTime}</p>
                                 </div>
-                                <div><button class="attendance-btn">출석하기</button></div>
+                                <div>
+						            <c:choose>
+						                <c:when test="${attendanceStatus[period.periodNo]}">
+						                    <button class="attendance-btn">출석하기</button>
+						                </c:when>
+						                <c:otherwise>
+						                    <button class="attendance-btn" disabled>출석하기</button>
+						                </c:otherwise>
+						            </c:choose>
+						        </div>
                             </div>
                         </c:forEach>
                     </c:otherwise>

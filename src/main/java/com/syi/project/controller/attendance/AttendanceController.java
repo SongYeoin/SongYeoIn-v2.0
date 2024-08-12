@@ -1,6 +1,10 @@
 package com.syi.project.controller.attendance;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,13 +47,35 @@ public class AttendanceController {
 		// 해당반의 시간표 정보 보내기
 		try {
 			ScheduleVO schedule = scheduleService.getSchedule(classNo);
-			System.out.println("서버로 도착한 dayOfweek : " + dayOfWeek);
+			
 			// 교시 정보 조회
 			List<PeriodVO> periodList = scheduleService.getPeriodsWithDayOfWeek(schedule.getScheduleNo(), dayOfWeek);
 			schedule.setPeriods(periodList);
 			
+			// 현재 시간 가져오기
+			LocalTime now = LocalTime.now();
+			
+			Map<Integer, Boolean> attendanceStatus = new HashMap<>();
+			
+			// 출석 가능 상태인지 확인하기
+			for(PeriodVO period : periodList) {
+				LocalTime periodStartTime = LocalTime.parse(period.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
+				
+				// 교시 시작 5분전 ~ 교시 시작 10분 후 => 출석 가능
+				LocalTime start = periodStartTime.minusMinutes(5);
+				LocalTime end = periodStartTime.plusMinutes(10);
+				
+				System.out.println("출석 가능 시간 : " + start + "~" + end);
+				
+				// 몇교시가 출석 가능한 상태인지 맵에 담기 (교시번호, 출석가능상태)
+				boolean isAttendanceEnabled = now.isAfter(start) && now.isBefore(end);
+				System.out.println(period.getPeriodName() + "의 출석 가능 상태는? " + isAttendanceEnabled);
+				attendanceStatus.put(period.getPeriodNo(), isAttendanceEnabled);
+			}
+			
 			// 조회한 결과 프론트로 보내기
 			model.addAttribute("schedule", schedule);
+			model.addAttribute("attendanceStatus", attendanceStatus);
 			
 		} catch (NullPointerException e) {
 			log.error("등록된 시간표가 없습니다.", e);
