@@ -116,7 +116,7 @@ public class MemberController {
 			return "redirect:/member/join";
 		}
 	}
-
+	
 	// 수강생 로그인
 	@PostMapping("login")
 	public String loginPost(HttpServletRequest request, MemberVO requestMember, RedirectAttributes rttr)
@@ -148,30 +148,43 @@ public class MemberController {
 		session.setAttribute("loginMember", loginMember);
 		return "redirect:/member/main";
 	}
+	
+	// 비밀번호 체크
+	@PostMapping("check-pwd")
+	@ResponseBody
+	public String checkMemberPwd(MemberVO requestMember) {
+		System.out.println("비밀번호 체크 : " + requestMember);
+
+		String storedPwd = memberService.selectPwd(requestMember);
+		
+		if (pwdEncoder.matches(requestMember.getMemberPwd(), storedPwd)) {
+			return "pass";
+		} else {
+			return "fail";
+		}
+	}
 
 	// 회원정보 수정
 	@PostMapping("mypage")
-	public String mypageMember(MemberVO updateMember, RedirectAttributes rttr, HttpSession session) {
+	public String mypageMember(MemberVO updateMember, RedirectAttributes rttr, HttpSession session) throws Exception {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		if(!updateMember.getMemberPwd().isEmpty()) {
+		// 비밀번호 암호화 및 기본값 설정
+		if(updateMember.getMemberPwd() != null && !updateMember.getMemberPwd().isEmpty()) {
 			String rawPwd = updateMember.getMemberPwd();
 			String encodePwd = pwdEncoder.encode(rawPwd);
 			updateMember.setMemberPwd(encodePwd);
 		} else {
-			updateMember.setMemberPwd(loginMember.getMemberPwd());
+			updateMember.setMemberPwd(memberService.selectPwd(loginMember));
 		}
-		updateMember.setMemberPhone(loginMember.getMemberPhone());
-		updateMember.setMemberEmail(loginMember.getMemberEmail());
-		updateMember.setMemberAddress(loginMember.getMemberAddress());
-		updateMember.setMemberStreetAddress(loginMember.getMemberStreetAddress());
-		updateMember.setMemberDetailAddress(loginMember.getMemberDetailAddress());
-		updateMember.setMemberNickname(loginMember.getMemberNickname());
 		
+		// 업데이트 진행
+		updateMember.setMemberNo(loginMember.getMemberNo());
 		int result = memberService.updateMember(updateMember);
 		if(result != 0) {
+			loginMember = memberService.selectLoginMember(updateMember);
 			rttr.addFlashAttribute("update_result", "success");
-			session.setAttribute("loginMemqqqqqqqqqqqqqqqqqqqqqber", loginMember);
+			session.setAttribute("loginMember", loginMember);
 		} else {
 			rttr.addFlashAttribute("update_result", "fail");
 		}

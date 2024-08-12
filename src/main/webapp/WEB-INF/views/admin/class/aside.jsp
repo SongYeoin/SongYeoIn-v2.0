@@ -114,7 +114,7 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-home"></i>공지사항</a>
+                <a a href="${ pageContext.servletContext.contextPath }/admin/class/notice/list"><i class="fas fa-home"></i>공지사항</a>
             </div>
         </div>
         <div class="menu-item">
