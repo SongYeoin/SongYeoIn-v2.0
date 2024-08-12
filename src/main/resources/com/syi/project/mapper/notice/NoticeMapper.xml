@@ -7,7 +7,7 @@
   	<resultMap type="com.syi.project.model.notice.NoticeVO" id="noticeResultMap">
 		<id property="noticeNo" column="NOTICE_NO"/>
 		<result property="noticeTitle" column="NOTICE_TITLE"/>
-		<result property="noticeContents" column="NOTICE_CONTENTS"/>
+		<result property="noticeContent" column="NOTICE_CONTENT"/>
 		<result property="noticeRegDate" column="NOTICE_REG_DATE"/>
 		<result property="noticeModifyDate" column="NOTICE_MODIFY_DATE"/>
 		<result property="noticeCount" column="NOTICE_COUNT"/>
@@ -88,9 +88,8 @@
   		ORDER BY NOTICE_REG_DATE DESC
   	</select>
 	
-	
 	<!-- 공지 총 수 -->
-	<select id="selectNoticeCount" resultType="_int">
+	<select id="selectNoticeTotal" resultType="_int">
   		SELECT COUNT(NOTICE_NO)
   		FROM NOTICE
   		WHERE NOTICE_STATUS = 'Y'
@@ -100,6 +99,46 @@
   		</if>
   		ORDER BY NOTICE_REG_DATE DESC
   	</select>
+  	
+  	<!-- 공지 상세 조회 -->
+  	<select id="selectNoticeDetail" parameterType="_int" resultMap="noticeResultMap">
+  		SELECT n.*, m.*
+    	FROM NOTICE n
+    		LEFT JOIN MEMBER m ON n.NOTICE_MEMBER_NO = m.MEMBER_NO
+    	WHERE n.NOTICE_NO = #{ noticeNo }
+  	</select>
+  	
+  	<!-- 공지사항 조회수 증가 -->
+  	<update id="updateNoticeCount">
+  		UPDATE NOTICE
+  		SET NOTICE_COUNT = NOTICE_COUNT + 1
+  		WHERE NOTICE_NO = #{ noticeNo }
+  	</update>
+  	
+  	<!-- 공지사항 등록 -->
+  	<insert id="insertNotice" parameterType="com.syi.project.model.notice.NoticeVO" useGeneratedKeys="true" keyProperty="noticeNo" keyColumn="NOTICE_NO">
+    	INSERT INTO NOTICE (NOTICE_TITLE, NOTICE_CONTENT, NOTICE_MEMBER_NO
+        	<if test="noticeClassNo != 0">, NOTICE_CLASS_NO</if>)
+   		VALUES (#{ noticeTitle }, #{ noticeContent }, #{ noticeMemberNo }
+        	<if test="noticeClassNo != 0">, #{ noticeClassNo }</if>)
+	</insert>
 	
+	<!-- 공지사항 파일 등록 -->
+	<insert id="insertNoticeFile" parameterType="com.syi.project.model.notice.NoticeFileVO">
+        INSERT INTO NOTICE_FILE (
+            FILE_ORIGINAL_NAME, FILE_SAVED_NAME, FILE_TYPE, 
+            FILE_SIZE, FILE_PATH, FILE_REG_DATE, FILE_NOTICE_NO
+        ) VALUES (
+            #{ fileOriginalName }, #{ fileSavedName }, #{ fileType }, 
+            #{ fileSize }, #{ filePath }, SYSDATE, #{ fileNoticeNo }
+        )
+    </insert>
+	
+	<!-- 공지사항 삭제 -->
+	<update id="deleteNotice" parameterType="com.syi.project.model.notice.NoticeVO">
+		UPDATE NOTICE
+		SET NOTICE_STATUS = 'N'
+		WHERE NOTICE_NO = #{ noticeNo }
+	</update>
   
   </mapper>

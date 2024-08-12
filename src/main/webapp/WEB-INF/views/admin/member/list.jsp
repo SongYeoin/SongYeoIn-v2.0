@@ -212,7 +212,7 @@ tr:hover {
                      <td>${ member.memberName }</td>
                      <td>${ member.memberPhone }</td>
                      <td>${ member.memberEnrollDate }</td>
-                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}); event.stopPropagation();">
+                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}, event);">
                         <c:choose>
                            <c:when test="${member.memberCheckStatus == 'W'}">대기</c:when>
                            <c:when test="${member.memberCheckStatus == 'Y'}">승인</c:when>
@@ -273,7 +273,7 @@ $(".pageMaker_btn a").on("click", function(e){
     moveForm.submit();
 });
 
-function changeApprovalStatus(memberNo) {
+function changeApprovalStatus(memberNo, event) {
    event.stopPropagation();
    
    if (window.confirm("승인 하시겠습니까?")) {

@@ -76,29 +76,71 @@ main {
 	font-size: 20px;
 }
 
-.main-content {
+.notice-wrapper {
+	width: 70%;
+    background-color: #fff;
     padding: 20px;
+    margin: 20px auto;
 }
 
-.notice-details {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 20px;
+/* 공지사항 제목 스타일 */
+.notice-wrapper h2 {
+    margin-bottom: 30px;
+}
+
+/* 테이블 스타일 */
+table {
+    width: 100%;
+    border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-.notice-details h2 {
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* 테이블 헤더 스타일 */
+table th {
+    background-color: #f4f4f4;
     color: #333;
-    font-size: 1.5em;
+    font-weight: bold;
 }
 
-.notice-details .date {
-    color: #888;
-    font-size: 0.9em;
+/* 테이블 행 스타일 */
+table tr {
+    transition: background-color 0.3s ease;
 }
 
-.notice-details .content {
-    margin-top: 10px;
+button {
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+} 
+
+button {
+    background-color: #007bff; /* 버튼 배경색 */
+    transition: background-color 0.3s ease;
 }
+
+button:hover {
+    background-color: #0056b3; /* 버튼 호버시 배경색 */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap:20px;
+}
+
+
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -120,27 +162,38 @@ main {
 
     <main>
         <!-- Main content -->
-        <div class="content">
-        	<div class="notice-wrapper">
-                <h2>${notice.noticeTitle}</h2>
-                <p><i class="bi bi-calendar"></i> ${notice.noticeRegDate}</p>
-                <p><i class="bi bi-eye"></i> ${notice.noticeCount}</p>
-                <p>${notice.member.memberName}</p>
-                <p>${notice.noticeContent}</p>
-                <c:if test="${not empty notice.noticeFileName}">
-                	<p><a href="${notice.fileList.fileOriginalName}" target="_blank">첨부파일 다운로드</a></p>
-                </c:if>
-                
-                <div class="button-container">
-                    <button type="button" id="listBtn" class="listBtn">목록</button>
-                    <c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq notice.member.memberNo }">
-					<button id="updateBtn">수정</button>
-					<button id="deleteBtn" onclick="deleteNotice(${notice.noticeNo})">삭제</button>
-					</c:if>
-                </div>
-            </div>
-            
-        </div>
+            <div class="notice-wrapper">
+				<h2 align="center">공지사항 글쓰기</h2>
+				<form id="noticeForm" action="/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
+					<table>
+						<tr>
+							<th>제목</th>
+							<td><input type="text" id="noticeTitle" name="noticeTitle" required/></td>
+						</tr>
+						<tr>
+							<th>작성자</th>
+							<td>${sessionScope.loginMember.memberName}</td>
+						</tr>
+						<tr>
+							<th>내용</th>
+							<td colspan="3"><textarea id="noticeContent" name="noticeContent" cols="50" rows="5" required></textarea></td>
+						</tr>
+						<tr>
+							<th>첨부파일</th>
+							<td colspan="3"><input type="file" id="files" name="files" multiple></td>
+						</tr>
+						<tr>
+							<th>전체</th>
+							<td><input type="checkbox" id="allNotice" name="allNotice" value="true"/> 전체 공지</td>
+						</tr>
+					</table>
+					<div class="button-container">
+						<button type="button" id="listBtn">목록</button>
+						<button type="submit">등록</button>
+					</div>
+				</form>
+				
+			</div>
     </main>
 
     <!-- 푸터 연결 -->
@@ -150,27 +203,6 @@ main {
     $("#listBtn").click(function() {
         window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/list';
     });
-    
-    function deleteNotice(noticeNo) {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-            $.ajax({
-                url: "/admin/class/notice/delete",
-                type: "POST",
-                data: { noticeNo: noticeNo },
-                success: function(response) {
-                    if (response === 'success') {
-                        alert("공지사항이 삭제되었습니다.");
-                        window.location.href = "/admin/class/notice/list"; 
-                    } else {
-                        alert("공지사항 삭제에 실패했습니다.");
-                    }
-                },
-                error: function() {
-                    alert("서버 오류가 발생했습니다.");
-                }
-            });
-        }
-    }
 
 	</script>
 

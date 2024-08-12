@@ -70,7 +70,7 @@ form input[type="submit"] {
 }
 
 form input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #b3b3b3;
 }
 
 .error {

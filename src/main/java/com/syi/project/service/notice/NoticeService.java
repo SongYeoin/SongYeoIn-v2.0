@@ -3,6 +3,7 @@ package com.syi.project.service.notice;
 import java.util.List;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.notice.NoticeFileVO;
 import com.syi.project.model.notice.NoticeVO;
 
 public interface NoticeService {
@@ -14,6 +15,21 @@ public interface NoticeService {
 	List<NoticeVO> selectNoticeClassList(Criteria cri, int syclassNo);
 	
 	// 공지 총 수
-	int selectNoticeCount(Criteria cri, int syclassNo);
+	int selectNoticeTotal(Criteria cri, int syclassNo);
+	
+	// 공지사항 삭제
+	int deleteNotice(int noticeNo);
+	
+	// 공지사항 상세 조회
+	NoticeVO selectNoticeDetail(int noticeNo);
+	
+	// 공지사항 등록
+	int insertNotice(NoticeVO noticeVO);
+	
+	// 공지사항 파일 등록
+	int insertNoticeFile(NoticeFileVO noticeFileVO);
+	
+	// 공지사항 조회수 증가
+	void updateNoticeCount(int noticeNo);
 
 }

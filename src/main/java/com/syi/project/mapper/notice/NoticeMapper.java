@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.member.MemberVO;
+import com.syi.project.model.notice.NoticeFileVO;
 import com.syi.project.model.notice.NoticeVO;
 
 public interface NoticeMapper {
@@ -16,6 +18,20 @@ public interface NoticeMapper {
     List<NoticeVO> selectNoticeClassList(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);
     
     // 공지 총 수
-    int selectNoticeCount(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);
-
+    int selectNoticeTotal(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);
+    
+    // 공지 상세 조회
+    NoticeVO selectNoticeDetail(int noticeNo);
+    
+    // 공지사항 조회수 증가
+    void updateNoticeCount(int noticeNo);
+    
+    // 공지사항 등록
+    int insertNotice(NoticeVO noticeVO);
+    
+    // 공지사항 파일 등록
+    int insertNoticeFile(NoticeFileVO noticeFileVO);
+     
+    // 공지사항 삭제
+    int deleteNotice(int noticeNo);
 }
