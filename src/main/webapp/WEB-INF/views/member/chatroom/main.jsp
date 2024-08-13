@@ -179,7 +179,10 @@ a.custom{
 
 							<ul class="list-unstyled mb-0">
 							<c:forEach items="${roomList}"  var="room">
-								<li class="p-2 border-bottom bg-body-tertiary"><a href="#!"
+								<li class="p-2 border-bottom bg-body-tertiary" 
+								data-chat-room-no="${room.chatRoomNo}"
+								onclick="selectChatRoom('${room.chatRoomNo}')"
+								 ><a href="#!"
 									class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
 											<img
@@ -198,129 +201,6 @@ a.custom{
 										</div>
 								</a></li>
 							</c:forEach>
-<!-- 								<li class="p-2 border-bottom"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Danny Smith</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">5 mins ago</p>
-										</div>
-								</a></li>
-								<li class="p-2 border-bottom"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-2.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Alex Steward</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">Yesterday</p>
-										</div>
-								</a></li>
-								<li class="p-2 border-bottom"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-3.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Ashley Olsen</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">Yesterday</p>
-										</div>
-								</a></li>
-								<li class="p-2 border-bottom"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-4.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Kate Moss</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">Yesterday</p>
-										</div>
-								</a></li>
-								<li class="p-2 border-bottom"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Lara Croft</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">Yesterday</p>
-										</div>
-								</a></li>
-								<li class="p-2"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Brad Pitt</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">5 mins ago</p>
-											<span class="text-muted float-end"><i
-												class="fas fa-check" aria-hidden="true"></i></span>
-										</div>
-								</a></li>
-								<li class="p-2"><a href="#!"
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0">Brad Pitt</p>
-												<p class="small text-muted">Lorem ipsum dolor sit.</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">5 mins ago</p>
-											<span class="text-muted float-end"><i
-												class="fas fa-check" aria-hidden="true"></i></span>
-										</div>
-								</a></li>-->
 							</ul>
 
 						</div>
@@ -328,11 +208,12 @@ a.custom{
 
 				</div>
 				</div> 
-
+				
+				<!--메시지 보내고 보이는 공간  -->
 				<div class="d-flex align-items-start ">
 				<div class="w-100 h-100 col-md-6 col-lg-7 col-xl-8 p-3 border --bs-light-border-subtle rounded-3">
 
-					<ul class="list-unstyled">
+					<ul class="list-unstyled" id="chat">
 						<li class="d-flex justify-content-between mb-6"><img
 							src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
 							alt="avatar"
@@ -351,51 +232,16 @@ a.custom{
 										dolore magna aliqua.</p>
 								</div>
 							</div></li>
-						<li class="d-flex justify-content-between mb-6">
-							<div class="card w-100">
-								<div class="card-header d-flex justify-content-between p-3">
-									<p class="fw-bold mb-0">Lara Croft</p>
-									<p class="text-muted small mb-0">
-										<i class="far fa-clock"></i> 13 mins ago
-									</p>
-								</div>
-								<div class="card-body">
-									<p class="mb-0">Sed ut perspiciatis unde omnis iste natus
-										error sit voluptatem accusantium doloremque laudantium.</p>
-								</div>
-							</div> <img
-							src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp"
-							alt="avatar"
-							class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong"
-							width="60">
-						</li>
-						<li class="d-flex justify-content-between mb-6"><img
-							src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-							alt="avatar"
-							class="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-							width="60">
-							<div class="card">
-								<div class="card-header d-flex justify-content-between p-3">
-									<p class="fw-bold mb-0">Brad Pitt</p>
-									<p class="text-muted small mb-0">
-										<i class="far fa-clock"></i> 10 mins ago
-									</p>
-								</div>
-								<div class="card-body">
-									<p class="mb-0">Lorem ipsum dolor sit amet, consectetur
-										adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-										dolore magna aliqua.</p>
-								</div>
-							</div></li>
+						
 						<li class="bg-white mb-3">
 							<div data-mdb-input-init class="form-outline">
 								<textarea class="form-control bg-body-tertiary mb-4"
-									id="textAreaExample2" rows="4"></textarea>
-								<label class="form-label" for="textAreaExample2">메시지</label>
+									id="messageInput" rows="4"></textarea>
+								<label class="form-label" for="messageInput">메시지</label>
 							</div>
 						</li>
 						<button type="button" data-mdb-button-init data-mdb-ripple-init
-							class="btn btn-info btn-rounded float-end">보내기</button>
+							class="btn btn-info btn-rounded float-end" id="sendButton">보내기</button>
 					</ul>
 
 				</div>
@@ -436,10 +282,158 @@ window.onclick = function(event) {
      modal.style.display = "none";
  }
 }
-
-
-
 </script>
+
+<script>
+// 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
+const loginMemberNo = "${loginMember.memberNo}";
+const loginMemberName = "${loginMember.memberName}";
+
+
+let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
+
+//채팅방 클릭 시 호출되는 함수
+function selectChatRoom(chatRoomNo) {
+    currentChatRoomNo = chatRoomNo;
+    console.log('Selected Chat Room No:', currentChatRoomNo);
+}
+
+const chat = document.getElementById('chat');
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+
+// WebSocket 연결 설정
+const ws = new WebSocket('ws://localhost:8080/ws');
+
+ws.onopen = () => {
+    console.log('서버에 연결되었습니다.');
+};
+
+ws.onmessage = (event) => {
+    // 서버로부터 받은 메시지를 화면에 표시
+    // 상대방이 나한테 보낸 메시지
+    const messageData = JSON.parse(event.data);
+
+    const message = document.createElement('li');
+    message.classList.add('d-flex', 'justify-content-between', 'mb-6');
+
+    const avatar = document.createElement('img');
+    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+    avatar.alt = "avatar";
+    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+    avatar.width = 60;
+
+    const messageCard = document.createElement('div');
+    messageCard.classList.add('card');
+
+    const cardHeader = document.createElement('div');
+    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+
+    const senderName = document.createElement('p');
+    senderName.classList.add('fw-bold', 'mb-0');
+    senderName.textContent = messageData.memberName;
+
+    const timestamp = document.createElement('p');
+    timestamp.classList.add('text-muted', 'small', 'mb-0');
+    timestamp.innerHTML = `<i class="far fa-clock"></i> ${new Date().toLocaleTimeString()}`;
+
+    cardHeader.appendChild(senderName);
+    cardHeader.appendChild(timestamp);
+
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+
+    const messageText = document.createElement('p');
+    messageText.classList.add('mb-0');
+    messageText.textContent = messageData.message;
+
+    cardBody.appendChild(messageText);
+    messageCard.appendChild(cardHeader);
+    messageCard.appendChild(cardBody);
+
+    message.appendChild(avatar);
+    message.appendChild(messageCard);
+    chat.appendChild(message);
+    chat.scrollTop = chat.scrollHeight;
+};
+
+ws.onclose = () => {
+    console.log('서버 연결이 끊어졌습니다.');
+};
+
+sendButton.addEventListener('click', () => {
+    const messageContent = messageInput.value;
+    if (messageContent) {
+        // 서버로 보낼 메시지 데이터 구성
+        var currentDateTime = SimpleDateTimeFormat(new Date(), "yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
+        
+        const messageData = {
+            type: 'TALK',
+            chatRoomNo: currentChatRoomNo,  
+            memberNo:  loginMemberNo,  
+            memberName: loginMemberName,  
+            message: messageContent,
+            regDateTime: currentDateTime
+        };
+
+        // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송
+        ws.send(JSON.stringify(messageData));
+
+        // 내가 보낸 메시지를 화면에 표시
+        const myMessage = document.createElement('li');
+        myMessage.classList.add('d-flex', 'justify-content-between', 'mb-6');
+
+        const avatar = document.createElement('img');
+        avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+        avatar.alt = "avatar";
+        avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+        avatar.width = 60;
+
+        const messageCard = document.createElement('div');
+        messageCard.classList.add('card');
+
+        const cardHeader = document.createElement('div');
+        cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+
+        const senderName = document.createElement('p');
+        senderName.classList.add('fw-bold', 'mb-0');
+        senderName.textContent = "나";
+
+        const timestamp = document.createElement('p');
+        timestamp.classList.add('text-muted', 'small', 'mb-0');
+        timestamp.innerHTML = `<i class="far fa-clock"></i> ${new Date().toLocaleTimeString()}`;
+
+        cardHeader.appendChild(senderName);
+        cardHeader.appendChild(timestamp);
+
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body');
+
+        const messageText = document.createElement('p');
+        messageText.classList.add('mb-0');
+        messageText.textContent = messageContent;
+
+        cardBody.appendChild(messageText);
+        messageCard.appendChild(cardHeader);
+        messageCard.appendChild(cardBody);
+
+        myMessage.appendChild(avatar);
+        myMessage.appendChild(messageCard);
+        chat.appendChild(myMessage);
+        chat.scrollTop = chat.scrollHeight;
+
+        // 입력 필드 초기화
+        messageInput.value = '';
+    }
+});
+
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendButton.click();
+    }
+});
+</script>
+
 
 </body>
 </html>
