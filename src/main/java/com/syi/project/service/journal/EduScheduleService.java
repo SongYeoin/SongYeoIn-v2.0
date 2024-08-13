@@ -26,5 +26,5 @@ public interface EduScheduleService {
     int scheduleDelete(int scheduleNo);
     
     // 전체 교육 일정 조회 ajax?
-    List<EduScheduleVO> getAllSchedules();
+	List<EduScheduleVO> scheduleAllList();
 }

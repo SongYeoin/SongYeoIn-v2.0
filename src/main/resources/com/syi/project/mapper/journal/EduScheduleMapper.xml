@@ -107,7 +107,7 @@
 
 	
 	<!-- 전체 일정 조회 쿼리 -->
-    <select id="getAllSchedules" resultType="com.syi.project.model.journal.EduScheduleVO">
+    <select id="scheduleAllList" resultMap="EduScheduleResultMap">
         SELECT * FROM edu_schedule
     </select>
 

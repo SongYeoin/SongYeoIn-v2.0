@@ -53,7 +53,7 @@ public class EduScheduleController {
     public void scheduleList(Criteria cri, Model model) {
     	logger.info("일정 목록 조회 요청: {}", cri);
     	
-        List<EduScheduleVO> schedules = eduScheduleService.scheduleList(cri); // 일정 리스트 조회
+        List<EduScheduleVO> schedules = eduScheduleService.scheduleList(cri); // 페이징된 일정 리스트 조회
         
         if (!schedules.isEmpty()) {
 			model.addAttribute("schedules", schedules);
@@ -62,6 +62,11 @@ public class EduScheduleController {
 		}
         
         model.addAttribute("pageMaker", new PageDTO(cri, eduScheduleService.scheduleGetTotal(cri)));
+        
+        List<EduScheduleVO> scheduleAllList = eduScheduleService.scheduleAllList(); // 모둔 일정 리스트 조회
+        logger.info("---------> scheduleAllList : " + scheduleAllList);
+        model.addAttribute("scheduleAllList", scheduleAllList);
+        
     }
 
     // 일정 상세 조회

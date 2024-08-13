@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <style>
 /* 모든 요소에 기본 스타일을 초기화하고 박스 모델을 설정 */
 * {
@@ -353,10 +356,11 @@ td.checkStatus.N {
 
 						<select id="category" name="category">
 							<option value="all"<c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
-							<option value="title"<c:if test="${param.category == 'title'}">selected</c:if>>제목</option>
+							<option value="title"<c:if test="${param.category == 'title'}">selected</c:if>>단원명</option>
 							<option value="instructor"<c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
-						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색">
 						</select> 
+						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색">
+						
 						<label for="year">년도:</label>
 				        <select id="year" name="year">
 						    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
@@ -389,20 +393,26 @@ td.checkStatus.N {
 							<th>회차</th>
 							<th class="hidden scheduleNo">회차</th>
 				            <th class="date_width">일자</th>
-				            <th class="title_width">제목</th>
+				            <th class="title_width">단원명</th>
+				            <th class="title_width">학습주제</th>
 							<th class="instructor_width">강사</th>
 						</tr>
 					</thead>
 					
 					<tbody>
-					<c:forEach items="${schedules}" var="schedule">
+					<c:forEach items="${schedules}" var="schedule" varStatus="i">
 						<tr>
-							<td>${pageMaker.total - ((pageMaker.pageNo - 1) * pageMaker.limit) -  loop.index}</td>
+							<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
 							<td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
 							<td><c:out value="${schedule.scheduleDate}" /></td>
 							<td>
 								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
 									<c:out value="${schedule.scheduleTitle}" />
+								</a>
+							</td>
+							<td>
+								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+									<c:out value="${schedule.scheduleDescription}" />
 								</a>
 							</td>
 							<td><c:out value="${schedule.scheduleInstructor}" /></td>
@@ -418,21 +428,21 @@ td.checkStatus.N {
 							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
 								<li class="pageInfo_btn previous">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">이전</a>
 								</li>
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
 							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
 								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">${num}</a>
 								</li>
 							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
 								<li class="pageInfo_btn next">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">다음</a>
 								</li>
 							</c:if>
 
@@ -447,29 +457,29 @@ td.checkStatus.N {
 	<%@ include file="../common/footer.jsp"%>
 	
 	<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: [
-                    <c:forEach var="schedule" items="${schedules}">
-                        {
-                            title: '${schedule.scheduleTitle}',
-                            start: '${schedule.scheduleDate}',
-                            url: '${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}'
-                        }<c:if test="${not empty schedule}">
-                            ,
-                        </c:if>
-                    </c:forEach>
-                ],
-                eventClick: function(info) {
-                    if (info.event.url) {
-                        window.location.href = info.event.url;
-                    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [
+                <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
+                {
+                    title: "${schedule.scheduleTitle}",
+                    start: "${schedule.scheduleDate}",
+                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+                }<c:if test="${!status.last}">,</c:if>
+                </c:forEach>
+            ],
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.location.href = info.event.url;
                 }
-            });
-            calendar.render();
+            }
         });
-    </script>
+        calendar.render();
+        
+        console.log("Calendar events: ", calendar.getEvents());
+    });
+	</script>
 </body>
 </html>

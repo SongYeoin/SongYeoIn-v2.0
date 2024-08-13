@@ -86,14 +86,10 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 
 	// 전체 일정 조회 ajax
 	@Override
-	public List<EduScheduleVO> getAllSchedules() {
-		logger.info("전체 일정 조회 요청");
-		List<EduScheduleVO> schedules = eduScheduleMapper.getAllSchedules();
-		if (schedules.isEmpty()) {
-			logger.info("전체 일정이 없습니다.");
-		} else {
-			logger.info("조회된 전체 일정 개수: {}", schedules.size());
-		}
-		return schedules;
+	public List<EduScheduleVO> scheduleAllList() {
+		List<EduScheduleVO> scheduleAllList = eduScheduleMapper.scheduleAllList();
+        logger.info("---------> 서비스 : scheduleAllList : " + scheduleAllList);
+
+		return scheduleAllList;
 	}
 }

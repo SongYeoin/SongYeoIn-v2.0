@@ -213,6 +213,10 @@ td.checkStatus.N {
 	background-color: #f8d7da; /* 상태가 'N'일 때 배경색을 연한 빨간색으로 설정 */
 }
 
+.hidden {
+    display: none;
+}
+
 /* 페이지 정보 영역의 스타일 설정 */
 .pageInfo_wrap {
 	text-align: center; /* 가운데 정렬 */
@@ -377,7 +381,8 @@ td.checkStatus.N {
 				<table>
 					<thead>
 						<tr>
-							<th class="journalNo_width">번호</th>
+							<th>번호</th>
+							<th class="hidden journalNo_width">번호</th>
 				            <th class="title_width">제목</th>
 				            <th class="regdate_width">작성일자</th>
 							<th class="file_width">첨부</th>
@@ -385,9 +390,10 @@ td.checkStatus.N {
 					</thead>
 					
 				    <tbody>
-					    <c:forEach items="${journalList}" var="journal">
+					    <c:forEach items="${journalList}" var="journal" varStatus="i">
 					        <tr>
-					            <td><c:out value="${journal.journalNo}" /></td>
+					        	<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
+					            <td class="hidden journalNo_width"><c:out value="${journal.journalNo}" /></td>
 					            <td>
 					                <a href="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}">
 					                    <c:out value="${journal.journalTitle}" />
