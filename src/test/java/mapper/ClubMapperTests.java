@@ -1,8 +1,9 @@
 package mapper;
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -78,21 +79,26 @@ public class ClubMapperTests {
 	public void testModify() {
 		
 		 // 날짜 문자열
-        String dateString = "2024-08-09";
+        String dateString = "2024-08-05";
 
-        // 문자열을 Date 객체로 변환
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date studyDate = null;
+        Date sqlDate = null;
         try {
-            studyDate = dateFormat.parse(dateString);
+        	
+        	//문자열 java.util.Date로 변환
+        	java.util.Date utilDate = dateFormat.parse(dateString);
+        	
+        	//java.util.Date를 java.sql.Date로 변환
+        	sqlDate = new java.sql.Date(utilDate.getTime());
+        	
         } catch (ParseException e) {
             e.printStackTrace();
         }
         
 		ClubVO club = new ClubVO();
-		club.setClubNo(24);
+		club.setClubNo(1);
 		club.setJoin("김영희, 홍길동");
-		//club.setStudyDate(studyDate);
+		club.setStudyDate(sqlDate);
 		club.setContent("test");
 		
 		int result = mapper.modify(club);
