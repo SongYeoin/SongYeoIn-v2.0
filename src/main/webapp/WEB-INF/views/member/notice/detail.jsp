@@ -35,33 +35,6 @@ main {
     height: 100%;
 }
 
-.classroom-header {
-    background-color: #f1f1f1;
-    padding: 10px 20px;
-    border-bottom: 2px solid #ccc;
-    text-align: left;
-    padding-top: 91px;
-    position: fixed;
-    width: 100%;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-}
-
-.classroom-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    /* margin-bottom: 10px; */
-    
-    margin-left: 10px;
-}
-
-.classroom-header .details {
-    font-size: 12px;
-    
-    margin-left: 10px;
-}
-
 .content {
     padding: 20px;
     background-color: #fff;
@@ -190,14 +163,8 @@ button:hover {
     <!-- 메뉴바 연결 -->
     <%@ include file="../../common/header.jsp"%>
 
-    <div class="classroom-header">
-        <i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-        <div class="title">${syclass.className}</div>
-        <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
-    </div>
-
     <!-- 사이드바 연결 -->    
-    <%@ include file="../class/aside.jsp"%>
+    <%@ include file="../aside.jsp"%>
 
     <main>
         <!-- Main content -->
@@ -233,7 +200,7 @@ button:hover {
                                 <ul class="file-list">
                                     <c:forEach var="file" items="${fileList}">
                                         <li>
-                                            <a href="${pageContext.servletContext.contextPath}/admin/class/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
+                                            <a href="${pageContext.servletContext.contextPath}/member/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
                                                 ${file.fileOriginalName}
                                             </a>
                                         </li>
@@ -247,10 +214,6 @@ button:hover {
 
             <div class="button-container">
                 <button type="button" id="listBtn">목록</button>
-                <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq notice.member.memberNo }">
-                    <button id="updateBtn">수정</button>
-                    <button id="deleteBtn" onclick="deleteNotice(${notice.noticeNo})">삭제</button>
-                </c:if>
             </div>
         </div>
     </main>
@@ -265,34 +228,9 @@ button:hover {
     }
     
     $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/list';
+        window.location.href = '${pageContext.servletContext.contextPath}/member/notice/list';
     });
-    
-    $("#updateBtn").click(function() {
-        var noticeNo = ${notice.noticeNo}; // Retrieve noticeNo from JSP variable
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/modify?noticeNo=' + noticeNo;
-    });
-    
-    function deleteNotice(noticeNo) {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-            $.ajax({
-                url: "/admin/class/notice/delete",
-                type: "POST",
-                data: { noticeNo: noticeNo },
-                success: function(response) {
-                    if (response === 'success') {
-                        alert("공지사항이 삭제되었습니다.");
-                        window.location.href = "/admin/class/notice/list"; 
-                    } else {
-                        alert("공지사항 삭제에 실패했습니다.");
-                    }
-                },
-                error: function() {
-                    alert("서버 오류가 발생했습니다.");
-                }
-            });
-        }
-    }
+
     </script>
 
 </body>

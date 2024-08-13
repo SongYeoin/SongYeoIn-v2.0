@@ -37,7 +37,16 @@ public interface NoticeMapper {
     
     // 공지사항 파일 등록
     int insertNoticeFile(NoticeFileVO noticeFileVO);
+    
+    // 공지사항 수정
+    int updateNotice(NoticeVO notice);
      
     // 공지사항 삭제
     int deleteNotice(int noticeNo);
+    
+    // 공지사항 파일 삭제
+    int deleteNoticeFiles(int noticeNo);
+    
+    // 파일 삭제
+    int deleteNoticeFile(int fileNo);
 }

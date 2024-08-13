@@ -166,7 +166,7 @@ body {
 		</div>
 		<div class="section section5">
 			<div class="menu-title">Notices <br>공지사항</div>
-			<div class="submenu">
+			<div class="submenu" onclick="location.href='${pageContext.servletContext.contextPath}/member/notice/list'">
 			<p>공지사항</p>
               </div>
         </div>
