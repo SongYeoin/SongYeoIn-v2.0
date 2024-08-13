@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
@@ -26,6 +26,7 @@ html, body {
 body {
 	display: flex;
 	flex-direction: column;
+	background-color: #f4f4f4; /* 전체 배경 색상 */
 }
 
 main {
@@ -36,7 +37,7 @@ main {
 }
 
 .box {
-	background-color: #f9f9f9;
+	background-color: #ffffff; /* 박스 배경 색상 */
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	padding: 20px;
@@ -45,7 +46,7 @@ main {
 
 h1 {
 	margin-bottom: 20px;
-	color: #333;
+	color: #333; /* 제목 색상 */
 }
 
 .search_area {
@@ -58,6 +59,7 @@ h1 {
 .search_area label {
 	margin-right: 10px;
 	font-weight: bold;
+	color: #333; /* 라벨 색상 */
 }
 
 .search_area select, 
@@ -76,15 +78,15 @@ h1 {
 }
 
 .search_area button {
-	background-color: #007bff;
-	color: #fff;
+	background-color: #6c757d; /* 버튼 배경 색상 */
+	color: #ffffff;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
 .search_area button:hover {
-	background-color: #0056b3;
+	background-color: #5a6268; /* 버튼 호버 색상 */
 }
 
 .table_wrap {
@@ -100,18 +102,18 @@ table {
 }
 
 table th, table td {
-	border: 2px solid #ddd; /* 연한 회색 테두리 */
+	border: 2px solid #ccc; /* 테두리 색상 */
 	padding: 10px; /* 셀 내 여백 */
 }
 
 table th {
-	background-color: #007bff;
-	color: #fff;
+	background-color: #6c757d; /* 헤더 배경 색상 */
+	color: #ffffff; /* 헤더 텍스트 색상 */
 	font-size: 16px;
 }
 
 table tbody tr:hover {
-	background-color: #f1f1f1; /* 마우스 오버 시 배경색 변경 */
+	background-color: #e9ecef; /* 마우스 오버 시 배경색 변경 */
 }
 
 .pageInfo_wrap {
@@ -132,27 +134,71 @@ table tbody tr:hover {
 
 .pageInfo a {
 	text-decoration: none;
-	color: #007bff;
+	color: #6c757d; /* 페이지 링크 색상 */
 	font-size: 16px;
 	padding: 6px 12px;
 	border-radius: 4px;
 }
 
 .pageInfo a:hover {
-	background-color: #007bff;
-	color: #fff;
+	background-color: #e9ecef; /* 페이지 링크 호버 색상 */
+	color: #333; /* 페이지 링크 호버 텍스트 색상 */
 }
 
 .active a {
-	background-color: #007bff;
-	color: #fff;
+	background-color: #6c757d; /* 활성 페이지 색상 */
+	color: #ffffff; /* 활성 페이지 텍스트 색상 */
 }
 
+/* Custom FullCalendar Styles */
 #calendar {
-    max-width: 100%; /* Ensure calendar does not overflow */
-    margin: 0 auto; /* Center calendar */
-    height: 60vh; /* Adjust height as needed */
-    margin-bottom: 30px; /* 캘린더와 하단 콘텐츠 사이에 여백 추가 */
+    max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
+    margin: 0 auto; /* 캘린더를 중앙에 배치 */
+    height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
+    min-height: 500px; /* 캘린더의 최소 높이 설정 */
+    overflow: hidden; /* 스크롤 제거 */
+}
+
+/* Custom FullCalendar Styles */
+.fc {
+    font-family: Arial, sans-serif;
+}
+
+.fc-daygrid-day-number {
+    color: #333; /* 날짜 숫자 색상 */
+}
+
+.fc-daygrid-day-top {
+    background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
+    border-bottom: 1px solid #ddd;
+}
+
+.fc-daygrid-day {
+    border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
+    background-color: #ffffff; /* 날짜 셀 배경 색상 */
+    border-radius: 8px; /* 둥글게 처리 */
+}
+
+.fc-daygrid-day.fc-day-today {
+    background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
+}
+
+.fc-daygrid-day.fc-day-past {
+    background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
+}
+
+.fc-daygrid-day.fc-day-future {
+    background-color: #ffffff; /* 미래 날짜 배경 색상 */
+}
+
+.fc-button {
+    background-color: #6c757d; /* 버튼 배경 색상 */
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+.fc-button:hover {
+    background-color: #5a6268; /* 버튼 호버 색상 */
 }
 </style>
 </head>
@@ -266,7 +312,7 @@ table tbody tr:hover {
                         title: '${journal.journalTitle}',
                         start: '${journal.journalWriteDate}',
                         url: '${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}',
-                        color: '#007bff' // 교육일지 이벤트 색상
+                        color: '#6c757d' // 교육일지 이벤트 색상
                     }<c:if test="${not empty journal}">,</c:if>
                 </c:forEach>
             ];
@@ -277,7 +323,7 @@ table tbody tr:hover {
                         title: '${schedule.scheduleTitle}',
                         start: '${schedule.scheduleDate}',
                         url: '${pageContext.request.contextPath}/schedule/scheduleDetail?scheduleNo=${schedule.scheduleNo}',
-                        color: '#ff5722' // 교육일정 이벤트 색상
+                        color: '#868e96' // 교육일정 이벤트 색상
                     }<c:if test="${not empty schedule}">,</c:if>
                 </c:forEach>
             ];

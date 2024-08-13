@@ -230,18 +230,4 @@ public class JournalController {
 
 		return "redirect:/journal/journalList";
 	}
-
-	/* 교육일정 관리 페이지 GET 요청 처리 */
-	@GetMapping("eduScheduleManage")
-	public String eduScheduleManageGET() {
-		logger.info("교육일정 관리 페이지 GET 요청");
-		return "redirect:/journal/eduScheduleManage"; // POST 요청을 처리하는 페이지로 리디렉션
-	}
-
-	/* 교육일정 관리 페이지 POST 요청 처리 */
-	@PostMapping("eduScheduleManage")
-	public String eduScheduleManagePOST() {
-		logger.info("교육일정 관리 페이지 접속");
-		return "journal/eduScheduleManage"; // JSP 뷰 이름 반환
-	}
 }

@@ -33,7 +33,10 @@ public class Criteria {
 
     /* 월 */
     private String month;
-
+    
+    /* 카테고리 */
+    private String category;
+    
 	/* Criteria 생성자 */
 	public Criteria(int pageNum, int amount) {
 		this.pageNum = pageNum;

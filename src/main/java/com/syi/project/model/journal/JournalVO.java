@@ -19,4 +19,5 @@ public class JournalVO {
 	
 	private String fileName; // 파일 이름
 	
+	private String memberNo; // 멤버 번호	
 }

@@ -27,4 +27,7 @@ public interface EduScheduleMapper {
 
     // 일정 삭제
     int scheduleDelete(int scheduleNo);
+
+    // 전체 일정 조회 ajax
+	List<EduScheduleVO> getAllSchedules();
 }

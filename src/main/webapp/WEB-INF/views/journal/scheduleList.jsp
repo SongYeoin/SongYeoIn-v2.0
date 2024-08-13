@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Schedule List</title>
+    <title>교육 일정</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
@@ -20,49 +20,39 @@
             border-bottom: 1px solid #ddd;
             position: fixed;
             top: 0;
-            left: 250px; /* Position to the right of the sidebar */
-            width: calc(100% - 250px); /* Full width minus sidebar width */
-            z-index: 1000; /* Ensure it stays above other elements */
+            left: 250px;
+            width: calc(100% - 250px);
+            z-index: 1000;
         }
 
         .sidebar {
             width: 250px;
             background-color: #F2F2F2;
             color: #333333;
-            height: calc(100vh - 70px); /* Full height minus header height */
+            height: calc(100vh - 70px);
             position: fixed;
-            top: 70px; /* Below the header */
+            top: 70px;
             left: 0;
             overflow-y: auto;
             border-right: 1px solid #ddd;
             padding-top: 20px;
             padding-left: 10px;
-            z-index: 500; /* Ensure it is below the header but above content */
+            z-index: 500;
         }
 
         .main-content {
-            margin-left: 250px; /* Leave space for the sidebar */
+            margin-left: 250px;
             padding: 20px;
-            padding-top: 80px; /* Space for header */
+            padding-top: 80px;
             position: relative;
-            z-index: 1; /* Ensure content is above sidebar */
+            z-index: 1;
         }
 
-        /* footer {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-top: 1px solid #ddd;
-            position: fixed;
-            bottom: 0;
-            left: 250px; /* Position to the right of the sidebar */
-            width: calc(100% - 250px); /* Full width minus sidebar width */
-            z-index: 1000; /* Ensure it stays above other elements */
-        } */
-
         #calendar {
-            max-width: 100%; /* Ensure calendar does not overflow */
-            margin: 0 auto; /* Center calendar */
-            height: 60vh; /* Adjust height as needed */
+            max-width: 100%;
+            margin: 0 auto;
+            height: 80vh; /* Adjust height to ensure all dates are visible */
+            background-color: #ffffff;
         }
 
         .search_area {
@@ -81,8 +71,8 @@
             align-items: center;
         }
 
-        .search_area input[type="text"],
-        .search_area select {
+        .search_area select,
+        .search_area button {
             margin-right: 10px;
             padding: 5px;
             font-size: 14px;
@@ -95,7 +85,6 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
         }
 
         .search_area button:hover {
@@ -128,39 +117,78 @@
         }
         
         .pageInfo_wrap {
-			margin: 20px 0;
-			text-align: center;
-		}
-		
-		.pageInfo {
-			list-style: none;
-			padding: 0;
-			display: inline-block;
-		}
-		
-		.pageInfo li {
-			display: inline;
-			margin: 0 5px;
-		}
-		
-		.pageInfo a {
-			text-decoration: none;
-			color: #007bff;
-			font-size: 16px;
-			padding: 6px 12px;
-			border-radius: 4px;
-		}
-		
-		.pageInfo a:hover {
-			background-color: #007bff;
-			color: #fff;
-		}
-		
-		.active a {
-			background-color: #007bff;
-			color: #fff;
-		}
+            margin: 20px 0;
+            text-align: center;
+        }
         
+        .pageInfo {
+            list-style: none;
+            padding: 0;
+            display: inline-block;
+        }
+        
+        .pageInfo li {
+            display: inline;
+            margin: 0 5px;
+        }
+        
+        .pageInfo a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        
+        .pageInfo a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        .active a {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        /* Custom FullCalendar Styles */
+        .fc {
+            font-family: Arial, sans-serif;
+        }
+
+        .fc-daygrid-day-number {
+            color: #333;
+        }
+
+        .fc-daygrid-day-top {
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .fc-daygrid-day {
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        .fc-daygrid-day.fc-day-today {
+            background-color: #e9ecef;
+        }
+
+        .fc-daygrid-day.fc-day-past {
+            background-color: #f0f0f0;
+        }
+
+        .fc-daygrid-day.fc-day-future {
+            background-color: #ffffff;
+        }
+
+        .fc-button {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .fc-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -169,19 +197,24 @@
     </header>
 
     <div class="sidebar">
-        <!-- 사이드바 연결 -->
         <%@ include file="../member/aside.jsp"%>
     </div>
     
     <div class="main-content">
-        <h1>Schedule List</h1>
-        <!-- FullCalendar 출력 영역 -->
+        <h1>교육 일정</h1>
         <div id='calendar'></div>
         
         <div class="search_area">
             <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
-                <label for="keyword">제목 검색:</label>
-                <input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
+                <label for="category">카테고리 선택:</label>
+                <select id="category" name="category">
+                    <option value="all" <c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
+                    <option value="title" <c:if test="${param.category == 'title'}">selected</c:if>>제목</option>
+                    <option value="instructor" <c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
+                </select>
+                
+                <label for="keyword">검색어:</label>
+                <input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색어 입력">
                 
                 <label for="year">년도:</label>
                 <select id="year" name="year">
@@ -203,24 +236,22 @@
             </form>
         </div>
         
-        <!-- 새로운 일정 생성 페이지로 이동 -->
-        <a href="${pageContext.request.contextPath}/journal/scheduleCreate">새 교육일정 등록</a>
+        <a href="${pageContext.request.contextPath}/journal/admin/scheduleCreate">새 교육일정 등록</a>
         
-        <!-- 일정 리스트 출력 -->
         <table class="schedule-table">
             <thead>
                 <tr>
-                    <th>글번호</th> <!-- 글번호 열 추가 -->
+                    <th>글번호</th>
                     <th>일정 날짜</th>
                     <th>제목</th>
-                    <th>강사</th> <!-- 강사 열 추가 -->
+                    <th>강사</th>
                 </tr>
             </thead>
             <tbody>
                 <c:forEach var="schedule" items="${schedules}">
                     <tr>
                         <td>
-                            <c:out value="${schedule.scheduleNo}" /> <!-- 글번호 출력 -->
+                            <c:out value="${schedule.scheduleNo}" />
                         </td>
                         <td>
                             <c:out value="${schedule.scheduleDate}" />
@@ -231,7 +262,7 @@
                             </a>
                         </td>
                         <td>
-                            <c:out value="${schedule.scheduleInstructor}" /> <!-- 강사 정보 출력 -->
+                            <c:out value="${schedule.scheduleInstructor}" />
                         </td>
                     </tr>
                 </c:forEach>
@@ -239,33 +270,28 @@
         </table>
         
         <div class="pageInfo_wrap">
-					<div class="pageInfo_area">
-						<ul id="pageInfo" class="pageInfo">
-							
-							<!-- 이전페이지 버튼 -->
-							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Previous</a>
-								</li>
-							</c:if>
+            <div class="pageInfo_area">
+                <ul id="pageInfo" class="pageInfo">
+                    <c:if test="${pageMaker.prev}">
+                        <li class="pageInfo_btn previous">
+                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">Previous</a>
+                        </li>
+                    </c:if>
 
-							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
-								</li>
-							</c:forEach>
+                    <c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
+                        <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">${num}</a>
+                        </li>
+                    </c:forEach>
 
-							<!-- 다음페이지 버튼 -->
-							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Next</a>
-								</li>
-							</c:if>
-
-						</ul>
-					</div>
-				</div>
+                    <c:if test="${pageMaker.next}">
+                        <li class="pageInfo_btn next">
+                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">Next</a>
+                        </li>
+                    </c:if>
+                </ul>
+            </div>
+        </div>
     </div>
     
     <footer>
@@ -289,7 +315,6 @@
                     </c:forEach>
                 ],
                 eventClick: function(info) {
-                    // 클릭된 이벤트의 URL로 리디렉션
                     if (info.event.url) {
                         window.location.href = info.event.url;
                     }
