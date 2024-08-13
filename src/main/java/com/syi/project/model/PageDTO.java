@@ -5,6 +5,12 @@ import lombok.Data;
 @Data
 public class PageDTO {
 
+	/* 요청한 페이지 번호 */
+	private int pageNo;
+	
+	/* 한 페이지에 보여줄 게시물 수 */
+	private int limit;
+	
 	/* 페이지 시작 번호 */
 	private int pageStart;
 

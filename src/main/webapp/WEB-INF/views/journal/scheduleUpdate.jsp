@@ -82,34 +82,34 @@
     <%@ include file="../common/header.jsp"%>
 
     <!-- 사이드바 연결 -->
-    <%@ include file="../member/aside.jsp"%>
+    <%@ include file="../admin/aside.jsp"%>
 
     <div class="container">
         <div class="form-container">
-            <h1>Update Schedule</h1>
+            <h1>교육 일정 수정하기</h1>
             <!-- 일정 업데이트 폼 -->
             <form action="${pageContext.request.contextPath}/journal/scheduleUpdate" method="post">
                 <input type="hidden" name="scheduleNo" value="${schedule.scheduleNo}" />
                 <div class="form-group">
-                    <label for="scheduleTitle">Title:</label>
+                    <label for="scheduleTitle">단원명:</label>
                     <input type="text" name="scheduleTitle" id="scheduleTitle" value="${schedule.scheduleTitle}" required />
                 </div>
                 <div class="form-group">
-                    <label for="scheduleDate">Date:</label>
+                    <label for="scheduleDate">일자:</label>
                     <input type="date" name="scheduleDate" id="scheduleDate" value="${schedule.scheduleDate}" required />
                 </div>
                 <div class="form-group">
-                    <label for="scheduleDescription">Description:</label>
+                    <label for="scheduleDescription">학습주제:</label>
                     <input type="text" name="scheduleDescription" id="scheduleDescription" value="${schedule.scheduleDescription}" />
                 </div>
                 <div class="form-group">
-                    <label for="scheduleInstructor">Instructor:</label>
+                    <label for="scheduleInstructor">강사:</label>
                     <input type="text" name="scheduleInstructor" id="scheduleInstructor" value="${schedule.scheduleInstructor}" />
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Update Schedule" />
+                    <input type="submit" value="교육 일정 수정하기" />
                 </div>
-                <a href="${pageContext.request.contextPath}/journal/scheduleList">Back to List</a>
+                <a href="${pageContext.request.contextPath}/journal/scheduleList">목록</a>
             </form>
         </div>
     </div>

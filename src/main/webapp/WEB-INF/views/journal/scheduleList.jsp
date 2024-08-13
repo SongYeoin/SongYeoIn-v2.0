@@ -1,304 +1,452 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>교육 일정</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<title>교육일정 목록</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<style>
+/* 모든 요소에 기본 스타일을 초기화하고 박스 모델을 설정 */
+* {
+	margin: 0; /* 모든 요소의 외부 여백을 0으로 설정 */
+	padding: 0; /* 모든 요소의 내부 여백을 0으로 설정 */
+	box-sizing: border-box; /* 요소의 크기를 padding과 border를 포함하여 설정 */
+}
 
-        header {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            position: fixed;
-            top: 0;
-            left: 250px;
-            width: calc(100% - 250px);
-            z-index: 1000;
-        }
+/* html과 body 요소의 높이를 설정하여 페이지의 기본 높이를 1080px로 설정 */
+html, body {
+	height: 1080px; /* html과 body의 높이를 1080px로 설정 */
+}
 
-        .sidebar {
-            width: 250px;
-            background-color: #F2F2F2;
-            color: #333333;
-            height: calc(100vh - 70px);
-            position: fixed;
-            top: 70px;
-            left: 0;
-            overflow-y: auto;
-            border-right: 1px solid #ddd;
-            padding-top: 20px;
-            padding-left: 10px;
-            z-index: 500;
-        }
+/* body의 기본 폰트와 레이아웃 설정 */
+body {
+	font-family: Arial, sans-serif;
+	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
+	display: flex; /* flexbox 레이아웃 사용 */
+	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
+}
 
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            padding-top: 80px;
-            position: relative;
-            z-index: 1;
-        }
+/* main 요소의 위치와 스크롤 설정 */
+main {
+	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
+	margin-left: 300px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
+	margin-top: 110px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
+	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
+	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+}
 
-        #calendar {
-            max-width: 100%;
-            margin: 0 auto;
-            height: 80vh; /* Adjust height to ensure all dates are visible */
-            background-color: #ffffff;
-        }
+/* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
+.title-container {
+	display: flex; /* flexbox 레이아웃 사용 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+}
 
-        .search_area {
-            margin-bottom: 20px;
-        }
+/* 제목과 선택 박스 사이의 간격을 설정 */
+.title-container h1 {
+	margin-right: 20px; /* 제목 오른쪽에 20px 간격 설정 */
+	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
+}
 
-        .search_area form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+/* 콘텐츠를 감싸는 컨테이너의 스타일 설정 */
+.container {
+	margin: 20px auto; /* 위아래 여백을 20px로 설정하고 좌우 중앙 정렬 */
+	background-color: #f9fafc; /* 배경색을 연한 회색으로 설정 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자를 설정하여 입체감을 줌 */
+	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
+	border-radius: 10px; /* 모서리를 둥글게 설정 */
+	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
+	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+}
 
-        .search_area label {
-            margin-right: 5px;
-            display: flex;
-            align-items: center;
-        }
+/* 헤더의 스타일 설정 */
+.header {
+	display: flex; /* flexbox 레이아웃 사용 */
+	flex-wrap: wrap; /* 자식 요소가 여러 줄로 배치될 수 있도록 설정 */
+	justify-content: space-between; /* 자식 요소들 사이의 공간을 균등하게 배분 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+	margin-bottom: 20px; /* 하단 여백을 20px로 설정 */
+	padding-bottom: 10px; /* 하단 패딩을 10px로 설정 */
+	border-bottom: 1px solid #ddd; /* 하단 경계를 연한 회색으로 설정 */
+	background-color: #e2eff9; /* 배경색을 연한 파란색으로 설정 */
+	padding-top: 40px; /* 상단 패딩을 40px로 설정 */
+	padding-right: 32px; /* 오른쪽 패딩을 32px로 설정 */
+	padding-left: 32px; /* 왼쪽 패딩을 32px로 설정 */
+	padding-bottom: 20px; /* 하단 패딩을 20px로 설정 */
+	border-radius: 10px 10px 0 0; /* 상단 모서리를 둥글게 설정 */
+}
 
-        .search_area select,
-        .search_area button {
-            margin-right: 10px;
-            padding: 5px;
-            font-size: 14px;
-        }
+/* 헤더의 제목 스타일 설정 */
+.header h2 {
+	margin: 0; /* 제목의 여백을 0으로 설정 */
+	flex-grow: 1; /* 제목이 가능한 모든 공간을 차지하도록 설정 */
+}
 
-        .search_area button {
-            padding: 5px 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+/* 검색 영역의 입력 필드 스타일 설정 */
+.header input {
+	padding: 10px; /* 입력 필드의 패딩을 10px로 설정 */
+	width: 200px; /* 입력 필드의 너비를 200px로 설정 */
+	border: 1px solid #ddd; /* 테두리를 연한 회색으로 설정 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
 
-        .search_area button:hover {
-            background-color: #0056b3;
-        }
+/* 헤더의 아이콘 스타일 설정 */
+.header .icons {
+	display: flex; /* flexbox 레이아웃 사용 */
+}
 
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+/* 아이콘 간의 간격 설정 및 포인터 커서 설정 */
+.header .icons i {
+	cursor: pointer; /* 아이콘 클릭 시 포인터 커서 표시 */
+	margin-left: 10px; /* 아이콘 사이의 간격을 10px로 설정 */
+}
 
-        .schedule-table th,
-        .schedule-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+/* 검색 영역의 레이아웃과 스타일 설정 */
+.search_area {
+	display: flex; /* flexbox 레이아웃 사용 */
+	flex-wrap: wrap; /* 자식 요소가 여러 줄로 배치될 수 있도록 설정 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+}
 
-        .schedule-table th {
-            background-color: #f4f4f4;
-        }
+/* 검색 영역의 레이블, 셀렉트 박스, 버튼에 마진을 설정 */
+.search_area label, .search_area select, .search_area button {
+	margin-left: 10px; /* 왼쪽 여백을 10px로 설정 */
+}
 
-        .schedule-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+/* 셀렉트 박스와 입력 필드의 스타일 설정 */
+.search_area select, .search_area input {
+	height: 30px; /* 높이를 30px로 설정 */
+	padding: 5px; /* 패딩을 5px로 설정 */
+	border: 1px solid #ddd; /* 테두리를 연한 회색으로 설정 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
 
-        .schedule-table tr:hover {
-            background-color: #f1f1f1;
-        }
-        
-        .pageInfo_wrap {
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .pageInfo {
-            list-style: none;
-            padding: 0;
-            display: inline-block;
-        }
-        
-        .pageInfo li {
-            display: inline;
-            margin: 0 5px;
-        }
-        
-        .pageInfo a {
-            text-decoration: none;
-            color: #007bff;
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 4px;
-        }
-        
-        .pageInfo a:hover {
-            background-color: #007bff;
-            color: #fff;
-        }
-        
-        .active a {
-            background-color: #007bff;
-            color: #fff;
-        }
-        
-        /* Custom FullCalendar Styles */
-        .fc {
-            font-family: Arial, sans-serif;
-        }
+/* 검색 버튼의 스타일 설정 */
+.search_area button {
+	height: 36px; /* 버튼의 높이를 36px로 설정 */
+	background-color: #007bff; /* 배경색을 파란색으로 설정 */
+	color: white; /* 텍스트 색상을 흰색으로 설정 */
+	border: none; /* 테두리 없음 */
+	border-radius: 4px; /* 모서리를 둥글게 설정 */
+	cursor: pointer; /* 클릭 시 포인터 커서 표시 */
+	padding: 0 20px; /* 좌우 패딩을 20px로 설정 */
+}
 
-        .fc-daygrid-day-number {
-            color: #333;
-        }
+/* 검색 버튼 호버 시 색상 변경 */
+.search_area button:hover {
+	background-color: #0056b3; /* 호버 시 배경색을 더 어두운 파란색으로 설정 */
+}
 
-        .fc-daygrid-day-top {
-            background-color: #f4f4f4;
-            border-bottom: 1px solid #ddd;
-        }
+/* 테이블을 감싸는 div의 마진 설정 */
+.table_wrap {
+	margin: 50px 50px 0 50px; /* 상단, 좌측, 우측, 하단 여백을 각각 50px로 설정 */
+}
 
-        .fc-daygrid-day {
-            border: 1px solid #ddd;
-            background-color: #fff;
-        }
+/* 상단 버튼의 스타일 설정 */
+.top_btn {
+	font-size: 20px; /* 폰트 크기를 20px로 설정 */
+	padding: 6px 12px; /* 상하 패딩 6px, 좌우 패딩 12px로 설정 */
+	background-color: #28a745; /* 배경색을 녹색으로 설정 */
+	color: white; /* 텍스트 색상을 흰색으로 설정 */
+	border: none; /* 테두리 없음 */
+	border-radius: 4px; /* 모서리를 둥글게 설정 */
+	font-weight: 600; /* 텍스트 굵기를 600으로 설정 */
+	cursor: pointer; /* 클릭 시 포인터 커서 표시 */
+}
 
-        .fc-daygrid-day.fc-day-today {
-            background-color: #e9ecef;
-        }
+/* 상단 버튼 호버 시 색상 변경 */
+.top_btn:hover {
+	background-color: #218838; /* 호버 시 배경색을 더 어두운 녹색으로 설정 */
+}
 
-        .fc-daygrid-day.fc-day-past {
-            background-color: #f0f0f0;
-        }
+/* 테이블 헤더의 기본 커서 설정 */
+table thead tr {
+	cursor: default; /* 기본 커서 */
+}
 
-        .fc-daygrid-day.fc-day-future {
-            background-color: #ffffff;
-        }
+/* 테이블 본문의 행에 포인터 커서 설정 */
+table tbody tr {
+	cursor: pointer; /* 포인터 커서 */
+}
 
-        .fc-button {
-            background-color: #007bff;
-            color: #fff;
-        }
+/* 테이블의 기본 스타일 설정 */
+table {
+	width: 100%; /* 테이블의 너비를 100%로 설정 */
+	border-collapse: collapse; /* 테두리가 겹치지 않도록 설정 */
+	text-align: center; /* 가운데 정렬 */
+}
 
-        .fc-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+/* 테이블 헤더의 배경색 설정 */
+thead {
+	background-color: #f5f5f5; /* 배경색을 연한 회색으로 설정 */
+	text-align: center; /* 가운데 정렬 */
+}
+
+/* 테이블 셀의 패딩, 정렬, 경계 설정 */
+th, td {
+	padding: 10px; /* 패딩을 10px로 설정 */
+	/* text-align: left; */ /* 텍스트를 왼쪽 정렬 */
+	text-align: center; /* 가운데 정렬 */
+	border: 1px solid #ddd; /* 경계를 연한 회색으로 설정 */
+}
+
+/* 상태에 따라 셀의 배경색을 다르게 설정 */
+td.checkStatus {
+	text-align: center; /* 텍스트를 가운데 정렬 */
+}
+
+td.checkStatus:before {
+	content: "Status: "; /* 셀에 'Status: ' 텍스트 추가 */
+}
+
+td.checkStatus.Y {
+	background-color: #d4edda; /* 상태가 'Y'일 때 배경색을 연한 녹색으로 설정 */
+}
+
+td.checkStatus.N {
+	background-color: #f8d7da; /* 상태가 'N'일 때 배경색을 연한 빨간색으로 설정 */
+}
+
+.hidden {
+    display: none;
+}
+
+/* 페이지 정보 영역의 스타일 설정 */
+.pageInfo_wrap {
+	text-align: center; /* 가운데 정렬 */
+	margin: 20px; /* 여백을 20px로 설정 */
+}
+
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn {
+	display: inline-block; /* 인라인 블록으로 설정 */
+	margin: 0 5px; /* 좌우 여백을 5px로 설정 */
+}
+
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn a {
+	display: block; /* 블록 요소로 설정 */
+	padding: 10px 15px; /* 상하 패딩 10px, 좌우 패딩 15px으로 설정 */
+	background-color: #f8f9fa; /* 배경색을 연한 회색으로 설정 */
+	color: #007bff; /* 텍스트 색상을 파란색으로 설정 */
+	text-decoration: none; /* 밑줄 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
+
+/* 페이지 정보 버튼 호버 시 스타일 설정 */
+.pageInfo_btn a:hover {
+	background-color: #e9ecef; /* 호버 시 배경색을 더 연한 회색으로 설정 */
+}
+
+/* 페이지 정보 버튼 활성 상태의 스타일 설정 */
+.pageInfo_btn.active a {
+	background-color: #007bff; /* 활성화된 버튼의 배경색을 파란색으로 설정 */
+	color: white; /* 활성화된 버튼의 텍스트 색상을 흰색으로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 스타일 설정 */
+.pageInfo_btn.previous a, .pageInfo_btn.next a {
+	font-weight: bold; /* 텍스트 굵기를 bold로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 커서 스타일 설정 */
+.pageInfo_btn.previous a:hover, .pageInfo_btn.next a:hover {
+	background-color: #0056b3; /* 호버 시 배경색을 더 어두운 파란색으로 설정 */
+	color: white; /* 호버 시 텍스트 색상을 흰색으로 설정 */
+}
+
+/* Custom FullCalendar Styles */
+#calendar {
+	max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
+	margin: 0 auto; /* 캘린더를 중앙에 배치 */
+	height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
+	min-height: 500px; /* 캘린더의 최소 높이 설정 */
+	overflow: hidden; /* 스크롤 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
+
+/* Custom FullCalendar Styles */
+.fc {
+	font-family: Arial, sans-serif;
+}
+
+.fc-daygrid-day-number {
+	color: #333; /* 날짜 숫자 색상 */
+}
+
+.fc-daygrid-day-top {
+	background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
+	border-bottom: 1px solid #ddd;
+}
+
+.fc-daygrid-day {
+	border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
+	background-color: #ffffff; /* 날짜 셀 배경 색상 */
+	border-radius: 8px; /* 둥글게 처리 */
+}
+
+.fc-daygrid-day.fc-day-today {
+	background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
+}
+
+.fc-daygrid-day.fc-day-past {
+	background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
+}
+
+.fc-daygrid-day.fc-day-future {
+	background-color: #ffffff; /* 미래 날짜 배경 색상 */
+}
+
+.fc-button {
+	background-color: #6c757d; /* 버튼 배경 색상 */
+	color: #ffffff;
+	border-radius: 4px;
+}
+
+.fc-button:hover {
+	background-color: #5a6268; /* 버튼 호버 색상 */
+}
+</style>
+
+<!-- Bootstrap CSS를 불러오기 위한 링크 -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+	crossorigin="anonymous">
 </head>
+
 <body>
-    <header>
-        <%@ include file="../common/header.jsp"%>
-    </header>
 
-    <div class="sidebar">
-        <%@ include file="../member/aside.jsp"%>
-    </div>
-    
-    <div class="main-content">
-        <h1>교육 일정</h1>
-        <div id='calendar'></div>
-        
-        <div class="search_area">
-            <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
-                <label for="category">카테고리 선택:</label>
-                <select id="category" name="category">
-                    <option value="all" <c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
-                    <option value="title" <c:if test="${param.category == 'title'}">selected</c:if>>제목</option>
-                    <option value="instructor" <c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
-                </select>
-                
-                <label for="keyword">검색어:</label>
-                <input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색어 입력">
-                
-                <label for="year">년도:</label>
-                <select id="year" name="year">
-                    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
-                    <c:forEach var="i" begin="2020" end="2025">
-                        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
-                    </c:forEach>
-                </select>
-                
-                <label for="month">월:</label>
-                <select id="month" name="month">
-                    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
-                    <c:forEach var="i" begin="1" end="12">
-                        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
-                    </c:forEach>
-                </select>
+	<!-- 메뉴바 연결 -->
+	<%@ include file="../common/header.jsp"%>
 
-                <button type="submit">검색</button>
-            </form>
-        </div>
-        
-        <a href="${pageContext.request.contextPath}/journal/admin/scheduleCreate">새 교육일정 등록</a>
-        
-        <table class="schedule-table">
-            <thead>
-                <tr>
-                    <th>글번호</th>
-                    <th>일정 날짜</th>
-                    <th>제목</th>
-                    <th>강사</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="schedule" items="${schedules}">
-                    <tr>
-                        <td>
-                            <c:out value="${schedule.scheduleNo}" />
-                        </td>
-                        <td>
-                            <c:out value="${schedule.scheduleDate}" />
-                        </td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-                                <c:out value="${schedule.scheduleTitle}" />
-                            </a>
-                        </td>
-                        <td>
-                            <c:out value="${schedule.scheduleInstructor}" />
-                        </td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-        
-        <div class="pageInfo_wrap">
-            <div class="pageInfo_area">
-                <ul id="pageInfo" class="pageInfo">
-                    <c:if test="${pageMaker.prev}">
-                        <li class="pageInfo_btn previous">
-                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">Previous</a>
-                        </li>
-                    </c:if>
+	<!-- 사이드바 연결 -->
+	<%@ include file="../member/aside.jsp"%>
+	
+	<main>
 
-                    <c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-                        <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">${num}</a>
-                        </li>
-                    </c:forEach>
+	<!-- 제목과 클래스 선택 박스 -->
+		<div class="title-container">
+		<h1>교육 일정</h1>
+			<div class="select-box">
+				<select id="classSelect" name="classSelect" onchange="sendClassChange()">
+					<c:forEach var="classItem" items="${classList}">
+	                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+	                    </c:forEach>
+				</select>
+			</div>
+		</div>
+		
+	<!-- 캘린더 출력 영역 -->
+		<div id='calendar'></div>
+		
+	<!-- 메인 콘텐츠 -->
+		<div class="container">
+			<div class="header">
+				<h2>교육일정 목록</h2>
+				<div class="search_area">
+					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
 
-                    <c:if test="${pageMaker.next}">
-                        <li class="pageInfo_btn next">
-                            <a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${param.category}&year=${param.year}&month=${param.month}">Next</a>
-                        </li>
-                    </c:if>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <%@ include file="../common/footer.jsp"%>
-    </footer>
+						<select id="category" name="category">
+							<option value="all"<c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
+							<option value="title"<c:if test="${param.category == 'title'}">selected</c:if>>제목</option>
+							<option value="instructor"<c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
+						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색">
+						</select> 
+						<label for="year">년도:</label>
+				        <select id="year" name="year">
+						    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
+						    <c:forEach var="i" begin="2020" end="2025">
+						        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
+						    </c:forEach>
+						</select>
+						
+						<label for="month">월:</label>
+						<select id="month" name="month">
+						    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
+						    <c:forEach var="i" begin="1" end="12">
+						        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
+						    </c:forEach>
+						</select>
+	
+						<button type="submit">조회</button>
+					</form>
+				</div>
+				<div class="icons">
+					<a href="/journal/admin/scheduleCreate"><i class="fas fa-square-plus"></i></a>
+				</div>
+			</div>
+			
+			<div class="table_wrap">
+			
+				<table>
+					<thead>
+						<tr>
+							<th>회차</th>
+							<th class="hidden scheduleNo">회차</th>
+				            <th class="date_width">일자</th>
+				            <th class="title_width">제목</th>
+							<th class="instructor_width">강사</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+					<c:forEach items="${schedules}" var="schedule">
+						<tr>
+							<td>${pageMaker.total - ((pageMaker.pageNo - 1) * pageMaker.limit) -  loop.index}</td>
+							<td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
+							<td><c:out value="${schedule.scheduleDate}" /></td>
+							<td>
+								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+									<c:out value="${schedule.scheduleTitle}" />
+								</a>
+							</td>
+							<td><c:out value="${schedule.scheduleInstructor}" /></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+	
+			<div class="pageInfo_wrap">
+					<div class="pageInfo_area">
+						<ul id="pageInfo" class="pageInfo">
+							
+							<!-- 이전페이지 버튼 -->
+							<c:if test="${pageMaker.prev}">
+								<li class="pageInfo_btn previous">
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
+								</li>
+							</c:if>
 
-    <script>
+							<!-- 각 번호 페이지 버튼 -->
+							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
+								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
+								</li>
+							</c:forEach>
+
+							<!-- 다음페이지 버튼 -->
+							<c:if test="${pageMaker.next}">
+								<li class="pageInfo_btn next">
+									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
+								</li>
+							</c:if>
+
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	
+	<!-- 푸터 연결 -->
+	<%@ include file="../common/footer.jsp"%>
+	
+	<script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {

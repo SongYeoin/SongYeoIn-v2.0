@@ -122,7 +122,7 @@ a:visited {
                 <i class="fas fa-chevron-down arrow"></i>
             </div>
             <div class="submenu">
-                <div class="submenu-item"><a href="../journal/journalEnroll"><i class="fas fa-users"></i>교육 일지 등록하기</a></div>
+                <div class="submenu-item"><a href="../journal/journalEnroll"><i class="fas fa-users"></i>교육 일지 작성하기</a></div>
                 <div class="submenu-item"><a href="../journal/journalList"><i class="fas fa-user-tie"></i>교육 일지 조회하기</a></div>
                 <div class="submenu-item"><a href="../journal/journalMain"><i class="fas fa-user-tie"></i>교육 일정</a></div>
             </div>

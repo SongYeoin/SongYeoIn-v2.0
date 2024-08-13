@@ -129,7 +129,7 @@
 
     <!-- 사이드바 영역 -->
     <div class="sidebar">
-        <%@ include file="../member/aside.jsp"%>
+        <%@ include file="../admin/aside.jsp"%>
     </div>
 
     <!-- 메인 콘텐츠 영역 -->
@@ -145,25 +145,25 @@
             <div class="btn-container">
             
             
-				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq journal.memberNo}">
+				<%-- <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq journal.memberNo}">
                     <button id="updateBtn">수정</button>
                     <button id="deleteBtn" onclick="deleteNotice(${notice.noticeNo})">삭제</button>
-                </c:if>
+                </c:if> --%>
                     
                 <!-- 관리자 역할일 때만 수정 및 삭제 버튼 표시 -->
-                <c:if test="${sessionScope.memberRole == 'role_admin'}">
-                    <!-- 일정 수정 버튼 -->
-                    <a href="${pageContext.request.contextPath}/journal/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}" class="btn btn-primary">Edit</a>
+<%--                 <c:if test="${sessionScope.memberRole == 'role_admin'}">
+ --%>                    <!-- 일정 수정 버튼 -->
+                    <a href="${pageContext.request.contextPath}/journal/admin/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}" class="btn btn-primary">수정</a>
                     
                     <!-- 일정 삭제 버튼 -->
-                    <form action="${pageContext.request.contextPath}/journal/scheduleDelete" method="post" style="display: inline;">
+                    <form action="${pageContext.request.contextPath}/journal/admin/scheduleDelete" method="post" style="display: inline;">
                         <input type="hidden" name="scheduleNo" value="${scheduleDetail.scheduleNo}" />
-                        <button type="submit" onclick="return confirm('Are you sure you want to delete this schedule?');">Delete</button>
+                        <button type="submit" onclick="return confirm('해당 교육일정을 삭제하시겠습니까?');">삭제</button>
                     </form>
-                </c:if>
-                
+<%--                 </c:if>
+ --%>                
                 <!-- 목록으로 돌아가기 버튼 -->
-                <a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-link">Back to List</a>
+                <a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-link">목록</a>
             </div>
         </div>
     </div>

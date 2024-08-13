@@ -59,7 +59,7 @@ public class JournalController {
 	}
 
 	/* 일지 등록 */
-	@PostMapping("/journalEnroll.do")
+	@PostMapping("/journalEnroll")
 	public String addJournal(JournalVO journal, @RequestParam("file") MultipartFile file) throws Exception {
 
 		// 파일 업로드 처리
