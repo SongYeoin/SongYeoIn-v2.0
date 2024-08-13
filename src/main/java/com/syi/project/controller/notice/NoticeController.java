@@ -57,9 +57,11 @@ public class NoticeController {
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		int syclassNo = syclass.getClassNo();
 
+		/*
 		// 전체 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri);
 		model.addAttribute("noticeList", noticeList);
+		*/
 
 		// 반 공지 조회
 		List<NoticeVO> noticeClassList = noticeService.selectNoticeClassList(cri, syclassNo);

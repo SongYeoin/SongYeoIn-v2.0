@@ -64,6 +64,24 @@
 		<result property="fileNoticeNo" column="FILE_NOTICE_NO"/>
 	</resultMap>
 	
+	 
+	<select id="selectNoticeClassList" resultMap="noticeResultMap">
+    SELECT * 
+    FROM NOTICE
+    WHERE NOTICE_STATUS = 'Y'
+    AND (NOTICE_CLASS_NO = #{syclassNo} OR NOTICE_CLASS_NO IS NULL)
+    <if test="cri.keyword != null and cri.keyword.trim() != ''">
+        AND (NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
+    </if>
+    ORDER BY
+        CASE
+            WHEN NOTICE_CLASS_NO = #{syclassNo} THEN 1
+            WHEN NOTICE_CLASS_NO IS NULL THEN 0
+        END,
+        NOTICE_REG_DATE DESC
+	</select>
+
+	
 	<!-- 전체 공지 조회 -->
 	<select id="selectNoticeList" resultMap="noticeResultMap">
   		SELECT * 
@@ -77,6 +95,7 @@
   	</select>
 	
 	<!-- 반 공지 조회 -->
+	<!--
 	<select id="selectNoticeClassList" resultMap="noticeResultMap">
   		SELECT * 
   		FROM NOTICE
@@ -86,7 +105,7 @@
   			AND (NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
     	</if>
   		ORDER BY NOTICE_REG_DATE DESC
-  	</select>
+  	</select> -->
 	
 	<!-- 공지 총 수 -->
 	<select id="selectNoticeTotal" resultType="_int">

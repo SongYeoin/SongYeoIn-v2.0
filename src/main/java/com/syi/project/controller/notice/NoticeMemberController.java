@@ -1,12 +1,9 @@
 package com.syi.project.controller.notice;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,24 +18,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.notice.NoticeFileVO;
 import com.syi.project.model.notice.NoticeVO;
-import com.syi.project.model.syclass.SyclassVO;
+import com.syi.project.service.enroll.EnrollService;
 import com.syi.project.service.notice.NoticeService;
-import com.syi.project.service.syclass.SyclassService;
 
 
 @Controller
@@ -51,28 +43,32 @@ public class NoticeMemberController {
 	private NoticeService noticeService;
 	
 	@Autowired
-	private SyclassService syclassService;
+	private EnrollService enrollService;
 
 	// 공지사항 조회
 	@GetMapping("list")
-	public String noticeList(Criteria cri, Model model, HttpSession session) throws Exception {
+	public String noticeList(Criteria cri, Model model, HttpSession session,
+            					@RequestParam(value = "classNo", required = false) Integer classNo) throws Exception {
 		logger.info("공지사항 조회 페이지");
 
-		int syclassNo = 1;
-		/*
-		 * SyclassVO syclass = (SyclassVO) session.getAttribute("syclass"); int
-		 * syclassNo = syclass.getClassNo();
-		 */
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		int memberNo = loginMember.getMemberNo();
+
 
 		// 전체 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri);
 		model.addAttribute("noticeList", noticeList);
 
+		// classNo가 null 이거나 유효하지 않을 떄
+		int syclassNo = (classNo != null && classNo > 0) ? classNo : enrollService.selectClassNo(memberNo);
+		
 		// 반 공지 조회
 		List<NoticeVO> noticeClassList = noticeService.selectNoticeClassList(cri, syclassNo);
 		model.addAttribute("noticeClassList", noticeClassList);
 		
-		List<SyclassVO> classList = syclassService.getClassList();
+		// 수강 중인 반 조회
+		List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
+		System.out.println(">>>classList " + classList);
 		model.addAttribute("classList", classList);
 
 		int total = noticeService.selectNoticeTotal(cri, syclassNo);

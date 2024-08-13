@@ -44,6 +44,16 @@ main {
     margin-bottom: 20px;
 }
 
+.title-container{
+	display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
+}
+
+.title-container h1{
+	margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+	font-weight: bold;
+}
+
 .bi-house-fill {
 	cursor: pointer;
 	font-size: 20px;
@@ -195,7 +205,7 @@ table td:first-child {
 	            <div class="select-box">
 	                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
 	                    <c:forEach var="classItem" items="${classList}">
-	                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+	                        <option value="${classItem.classNo}" <c:if test="${classItem.syclass.classNo == param.classNo}">selected</c:if>>${classItem.syclass.className}</option>
 	                    </c:forEach>
 	                </select>
 	            </div>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.syi.project.mapper.enroll.EnrollMapper">
+  
+
+  <resultMap type="com.syi.project.model.member.MemberVO" id="memberResultMap">
+		<id property="memberNo" column="MEMBER_NO"/>
+		<result property="memberId" column="MEMBER_ID"/>
+		<result property="memberPwd" column="MEMBER_PWD"/>
+		<result property="memberName" column="MEMBER_NAME"/>
+		<result property="memberBirthday" column="MEMBER_BIRTHDAY"/>
+		<result property="memberGender" column="MEMBER_GENDER"/>
+		<result property="memberPhone" column="MEMBER_PHONE"/>
+		<result property="memberEmail" column="MEMBER_EMAIL"/>
+		<result property="memberAddress" column="MEMBER_ADDRESS"/>
+		<result property="memberStreetAddress" column="MEMBER_STREET_ADDRESS"/>
+		<result property="memberDetailAddress" column="MEMBER_DETAIL_ADDRESS"/>
+		<result property="memberNickname" column="MEMBER_NICKNAME"/>
+		<result property="memberEnrollDate" column="MEMBER_ENROLL_DATE"/>
+		<result property="memberCheckStatus" column="MEMBER_CHECK_STATUS"/>
+		<result property="memberStatus" column="MEMBER_STATUS"/>
+		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
+		<result property="memberRole" column="MEMBER_ROLE"/>
+	</resultMap>
+
+	<resultMap type="com.syi.project.model.EnrollVO" id="enrollResultMap">
+		<id property="enrollNo" column="ENROLL_NO"/>
+		<result property="memberNo" column="MEMBER_NO"/>
+		<result property="classNo" column="CLASS_NO"/>
+		<association property="syclass" resultMap="classResultMap"/>
+		<association property="member" resultMap="memberResultMap"/>
+	</resultMap>
+	
+	<resultMap type="com.syi.project.model.syclass.SyclassVO" id="classResultMap">
+		<id property="classNo" column="CLASS_NO"/>
+		<result property="className" column="CLASS_NAME"/>
+		<result property="description" column="DESCRIPTION"/>
+		<result property="managerName" column="MANAGER_NAME"/>
+		<result property="teacherName" column="TEACHER_NAME"/>
+		<result property="startDate" column="START_DATE"/>
+		<result property="endDate" column="END_DATE"/>
+		<result property="classroomName" column="CLASSROOM_NAME"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="modifiedDate" column="MODIFIED_DATE"/>
+		<result property="classStatus" column="CLASS_STATUS"/>
+	</resultMap>
+
+	
+  <!-- 수강 중인 반 조회 -->
+  <select id="selectEnrollList" resultMap="enrollResultMap">
+  	SELECT s.*, e.*, m.*
+  	FROM ENROLL e
+		LEFT JOIN CLASS s ON e.CLASS_NO = s.CLASS_NO
+		LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
+	WHERE e.MEMBER_NO = #{ memberNo }
+  </select>
+  	
+  <!-- 수강 중인 반에서 classNo 작은 값 조회 -->
+  <select id="selectClassNo" resultType="_int">
+  	SELECT MIN(CLASS_NO)
+  	FROM ENROLL
+  	WHERE MEMBER_NO = #{ memberNo }
+  </select>
+  
+  </mapper>
