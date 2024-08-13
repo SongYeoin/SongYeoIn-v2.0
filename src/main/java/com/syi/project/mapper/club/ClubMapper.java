@@ -21,6 +21,9 @@ public interface ClubMapper {
 	//동아리 수정
 	public int modify(ClubVO club);
 	
+	//동아리 삭제
+	public int delete(int clubNo);
+	
 	//리스트 페이징 적용
 	public List<ClubVO> getListPaging(Criteria cri);
 	
