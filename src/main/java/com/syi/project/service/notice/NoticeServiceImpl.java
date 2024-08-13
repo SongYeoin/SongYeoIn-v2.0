@@ -41,6 +41,18 @@ public class NoticeServiceImpl implements NoticeService {
 		updateNoticeCount(noticeNo);
 		return noticeMapper.selectNoticeDetail(noticeNo);
 	}
+	
+	// 공지사항 첨부파일 조회
+	@Override
+	public List<NoticeFileVO> selectNoticeFiles(int noticeNo) {
+		return noticeMapper.selectNoticeFiles(noticeNo);
+	}
+	
+	// 파일 정보 조회
+	@Override
+	public NoticeFileVO selectNoticeFile(int fileNo) {
+		return noticeMapper.selectNoticeFile(fileNo);
+	}
 
 	// 공지사항 조회수 증가
 	@Transactional
@@ -73,5 +85,8 @@ public class NoticeServiceImpl implements NoticeService {
 	public int deleteNotice(int noticeNo) {
 		return noticeMapper.deleteNotice(noticeNo);
 	}
+
+	
+
 
 }

@@ -23,6 +23,12 @@ public interface NoticeService {
 	// 공지사항 상세 조회
 	NoticeVO selectNoticeDetail(int noticeNo);
 	
+	// 공지사항 첨부파일 조회
+	List<NoticeFileVO> selectNoticeFiles(int noticeNo);
+	
+	// 파일 정보 조회
+	NoticeFileVO selectNoticeFile(int fileNo);
+	
 	// 공지사항 등록
 	int insertNotice(NoticeVO noticeVO);
 	

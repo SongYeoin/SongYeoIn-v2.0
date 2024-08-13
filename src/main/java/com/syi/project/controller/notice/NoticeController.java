@@ -2,10 +2,11 @@ package com.syi.project.controller.notice;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,15 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
-import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.notice.NoticeFileVO;
 import com.syi.project.model.notice.NoticeVO;
 import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.notice.NoticeService;
-
-import lombok.Data;
 
 @Controller
 @RequestMapping("admin/class/notice")
@@ -70,8 +69,83 @@ public class NoticeController {
 		logger.info("상세 조회");
 		NoticeVO notice = noticeService.selectNoticeDetail(noticeNo);
 		model.addAttribute("notice", notice);
+		List<NoticeFileVO> fileList = noticeService.selectNoticeFiles(noticeNo);
+		model.addAttribute("fileList", fileList);
 		return "admin/notice/detail";
 	}
+
+	// 첨부파일 다운로드
+    @GetMapping("/download")
+    public void downloadFile(@RequestParam("fileNo") int fileNo, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+        File downloadFile = new File(file.getFilePath(), file.getFileSavedName());
+        response.setContentType(file.getFileType());
+        response.setContentLength((int) file.getFileSize());
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getFileOriginalName() + "\"");
+        org.apache.commons.io.FileUtils.copyFile(downloadFile, response.getOutputStream());
+    }
+    /*
+    @GetMapping("/download")
+    public void downloadFile(@RequestParam("fileNo") int fileNo, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+        File downloadFile = new File(file.getFilePath(), file.getFileSavedName());
+
+        // 파일이 존재하지 않는 경우
+        if (!downloadFile.exists()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
+            return;
+        }
+
+        response.setContentType(file.getFileType());
+        response.setContentLength((int) file.getFileSize());
+
+        // 파일 이름 인코딩 처리
+        String encodedFileName;
+        try {
+            encodedFileName = URLEncoder.encode(file.getFileOriginalName(), StandardCharsets.UTF_8.toString())
+                .replaceAll("\\+", "%20"); // 공백을 %20으로 변환
+        } catch (UnsupportedEncodingException e) {
+            throw new IOException("Encoding not supported", e);
+        }
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+
+        // 파일 전송
+        org.apache.commons.io.FileUtils.copyFile(downloadFile, response.getOutputStream());
+    }
+    */
+
+    /*
+    @GetMapping("/download")
+    public void downloadFile(@RequestParam("fileNo") int fileNo, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 1. 파일 정보를 데이터베이스에서 조회
+        NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+        if (file == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
+            return;
+        }
+
+        // 2. 파일 객체 생성
+        File downloadFile = new File(file.getFilePath(), file.getFileSavedName());
+        if (!downloadFile.exists()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
+            return;
+        }
+
+        // 3. 응답 헤더 설정
+        response.setContentType(file.getFileType());
+        response.setContentLength((int) file.getFileSize());
+
+        // 파일 이름 인코딩 처리
+        String encodedFileName = URLEncoder.encode(file.getFileOriginalName(), StandardCharsets.UTF_8.toString())
+            .replaceAll("\\+", "%20");
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+
+        // 4. 파일을 응답 스트림에 복사하여 다운로드
+        FileUtils.copyFile(downloadFile, response.getOutputStream());
+    }
+    */
 
 	// 공지사항 등록 페이지
 	@GetMapping("enroll")
@@ -117,7 +191,7 @@ public class NoticeController {
 				String fileSavedName = uniqueId + "_" + fileOriginalName;
 
 				// 파일을 저장할 경로를 설정합니다.
-				String filePath = "/uploads/" + fileSavedName;
+				String filePath = "/" + fileSavedName;
 
 				// 파일을 저장할 위치를 지정하는 File 객체를 생성합니다.
 				File destinationFile = new File(filePath);

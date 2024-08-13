@@ -127,8 +127,15 @@ main {
                 <p><i class="bi bi-eye"></i> ${notice.noticeCount}</p>
                 <p>${notice.member.memberName}</p>
                 <p>${notice.noticeContent}</p>
-                <c:if test="${not empty notice.noticeFileName}">
-                	<p><a href="${notice.fileList.fileOriginalName}" target="_blank">첨부파일 다운로드</a></p>
+                
+                <c:if test="${not empty fileList}">
+                   <p>첨부파일</p>
+                   <c:forEach var="file" items="${fileList}">
+                   	<a href="${pageContext.servletContext.contextPath}/admin/class/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
+                   		${file.fileOriginalName}
+                   	</a>
+                   	<br>
+                   </c:forEach>
                 </c:if>
                 
                 <div class="button-container">

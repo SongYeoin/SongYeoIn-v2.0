@@ -184,7 +184,10 @@ button:hover {
 						</tr>
 						<tr>
 							<th>전체</th>
-							<td><input type="checkbox" id="allNotice" name="allNotice" value="true"/> 전체 공지</td>
+							<td>
+								<input type="checkbox" id="allNotice" name="allNotice" value="true"/>
+  								<label for="allNotice">전체 공지</label>
+  							</td>
 						</tr>
 					</table>
 					<div class="button-container">

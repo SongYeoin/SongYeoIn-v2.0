@@ -100,6 +100,13 @@
   		ORDER BY NOTICE_REG_DATE DESC
   	</select>
   	
+  	<!-- 공지사항 조회수 증가 -->
+  	<update id="updateNoticeCount">
+  		UPDATE NOTICE
+  		SET NOTICE_COUNT = NOTICE_COUNT + 1
+  		WHERE NOTICE_NO = #{ noticeNo }
+  	</update>
+  	
   	<!-- 공지 상세 조회 -->
   	<select id="selectNoticeDetail" parameterType="_int" resultMap="noticeResultMap">
   		SELECT n.*, m.*
@@ -108,12 +115,18 @@
     	WHERE n.NOTICE_NO = #{ noticeNo }
   	</select>
   	
-  	<!-- 공지사항 조회수 증가 -->
-  	<update id="updateNoticeCount">
-  		UPDATE NOTICE
-  		SET NOTICE_COUNT = NOTICE_COUNT + 1
-  		WHERE NOTICE_NO = #{ noticeNo }
-  	</update>
+  	<!-- 공지사항 첨부파일 조회 -->
+  	<select id="selectNoticeFiles" parameterType="_int" resultMap="FileResultMap">
+  		SELECT * FROM NOTICE_FILE
+  		WHERE FILE_NOTICE_NO = #{ noticeNo }
+  	</select>
+  	
+  	<!-- 파일 정보 조회 -->
+  	<select id="selectNoticeFile" parameterType="int" resultMap="FileResultMap">
+  		SELECT *
+  		FROM NOTICE_FILE
+  		WHERE FILE_NO = #{ fileNo }
+  	</select>
   	
   	<!-- 공지사항 등록 -->
   	<insert id="insertNotice" parameterType="com.syi.project.model.notice.NoticeVO" useGeneratedKeys="true" keyProperty="noticeNo" keyColumn="NOTICE_NO">
