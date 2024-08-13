@@ -19,12 +19,12 @@
     values (#{scheduleNo}, #{dayOfWeek}, #{periodName}, #{startTime}, #{endTime})
     </insert>
     
-    <!-- 교시 조회 -->
+    <!-- 교시 리스트 조회 -->
     <select id="getPeriods" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
     </select>
     
-    <!-- 교시 조회 -->
+    <!-- 교시 리스트 조회 -->
     <select id="getPeriodsWithDayOfWeek" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
     <if test="dayOfWeek != null and dayOfWeek != ''">
@@ -32,5 +32,9 @@
     </if>
     </select>
    
+   	<!-- 교시 번호로 교시 조회 -->
+    <select id="getPeriod" resultMap="periodResultMap">
+    SELECT * FROM PERIOD WHERE PERIOD_NO=#{periodNo}
+    </select>
 
 </mapper>

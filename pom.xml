@@ -290,6 +290,13 @@
 		    <version>2.12.1</version>
 		</dependency>
 		
+		<!-- 출석 ip 확인을 위한 의존성 -->
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.9.0</version>
+		</dependency>
 		
 		     
 	</dependencies>

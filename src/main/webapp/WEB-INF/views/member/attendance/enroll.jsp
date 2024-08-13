@@ -238,7 +238,7 @@ main {
             </div>
         </div>
 
-        <!-- Date Display -->
+        <!-- Date -->
         <div class="date-container">
             <h2><fmt:formatDate value="${now}" pattern="yyyy년 MM월 dd일" /></h2>
             <h3><fmt:formatDate value="${now}" pattern="EEEE" /></h3>
@@ -246,7 +246,7 @@ main {
 
         <!-- Main content area -->
         <div class="content-container">
-            <!-- Left side (Card container) -->
+            <!-- Left side -->
             <div class="card-container">
                 <c:choose>
                     <c:when test="${result == 'null'}">
@@ -257,23 +257,30 @@ main {
                     </c:when>
                     <c:otherwise>
                         <c:forEach var="period" items="${schedule.periods}">
-                            <div class="card">
-                                <div>
-                                    <h3>${period.periodName}</h3>
-                                    <p>${period.startTime} - ${period.endTime}</p>
-                                </div>
-                                <div>
+						    <div class="card">
+						        <div>
+						            <h3>${period.periodName}</h3>
+						            <p>${period.startTime} - ${period.endTime}</p>
+						        </div>
+						        <div>
 						            <c:choose>
-						                <c:when test="${attendanceStatus[period.periodNo]}">
-						                    <button class="attendance-btn">출석하기</button>
+						                <c:when test="${periodAttendanceStatus[period.periodNo] != '미출석'}">
+		                                            <!-- 출석 상태를 업데이트된 상태로 표시 -->
+		                                            <button class="attendance-btn" disabled>${periodAttendanceStatus[period.periodNo]}</button>
+		                                        </c:when>
+		                                        <c:when test="${attendanceStatus[period.periodNo]}">
+		                                            <form action="/member/attendance/enroll" method="post" onsubmit="return setDayOfWeek(this);">
+		                                            	<input type="hidden" name="classNo" value="${param.classNo}">
+		                                                <input type="hidden" name="periodNo" value="${period.periodNo}">
+		                                                <input type="hidden" name="dayOfWeek" value="">
+		                                                <button type="submit" class="attendance-btn">출석하기</button>
+		                                            </form>
 						                </c:when>
-						                <c:otherwise>
-						                    <button class="attendance-btn" disabled>출석하기</button>
-						                </c:otherwise>
+
 						            </c:choose>
 						        </div>
-                            </div>
-                        </c:forEach>
+						    </div>
+						</c:forEach>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -316,6 +323,7 @@ function getDayOfWeek() {
     return days[now.getDay()];
 }
 
+// 페이지 초기 세팅 설정
 window.onload = function() {
     var selectBox = document.getElementById("classSelect");
     var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
@@ -324,14 +332,35 @@ window.onload = function() {
         var dayOfWeek = getDayOfWeek();
         window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
     }
+    
+ 	// resultMessage가 있으면 alert로 표시
+    <c:if test="${not empty resultMessage}">
+        alert("${resultMessage}");
+    </c:if>
 };
 
+// 다른 반 셀렉 시 리다이렉트
 function sendClassChange() {
     var selectBox = document.getElementById("classSelect");
     var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
     var dayOfWeek = getDayOfWeek();
     window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
 }
+
+//폼 제출 시 dayOfWeek 설정
+function setDayOfWeek(form) {
+    var dayOfWeek = getDayOfWeek();
+    var dayOfWeekField = form.elements['dayOfWeek']; // dayOfWeek 필드를 찾음
+
+    if (dayOfWeekField) {
+        dayOfWeekField.value = dayOfWeek; // dayOfWeek 필드에 값을 설정
+        return true; // 폼을 정상적으로 제출하도록 true 반환
+    } else {
+        console.error("dayOfWeek 필드를 찾을 수 없습니다.");
+        return false; // 필드를 찾지 못했을 경우 폼 제출 중단
+    }
+}
+
    
 </script>
 

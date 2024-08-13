@@ -50,15 +50,20 @@ public class ScheduleService {
 		return scheduleMapper.getSchedule(classNo);
 	}
 
-	/* 교시 조회 */
+	/* 교시 리스트 조회 */
 	public List<PeriodVO> getPeriods(int scheduleNo) {
 		return periodMapper.getPeriods(scheduleNo);
 	}
 	
-	/* 교시 조회 */
+	/* 교시 리스트 조회 */
 	public List<PeriodVO> getPeriodsWithDayOfWeek(int scheduleNo, String dayOfWeek) {
 		System.out.println("서비스에 도착한 dayOfWeek : " + dayOfWeek);
 		return periodMapper.getPeriodsWithDayOfWeek(scheduleNo, dayOfWeek);
+	}
+
+	/* 교시 조회 */
+	public PeriodVO getPeriod(Integer periodNo) {
+		return periodMapper.getPeriod(periodNo);
 	}
 
 }

@@ -67,10 +67,11 @@ header {
         </div>
         </div>
         <div class="btns">
-		<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}chatroom/main'"></i>
+        <p>${sessionScope.loginMember.memberName} 님</p>
+		<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}chatroom/main'"></i> <!-- 채팅방 아이콘 -->
 		<c:choose>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
-				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i>
+				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i> <!-- 마이페이지 아이콘 -->
 			</c:when>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
 				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/admin/mypage'"></i>
