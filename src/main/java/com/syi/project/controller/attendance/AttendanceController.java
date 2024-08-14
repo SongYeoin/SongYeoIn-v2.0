@@ -232,7 +232,7 @@ public class AttendanceController {
 	    // 192.168.1.0/24 네트워크 범위를 사용하는 경우
 	    String[] allowedNetworks = {
 	        "127.0.0.1/32", // 로컬, 추가 네트워크 범위가 있을 경우 추가 가능
-	    		"192.168.0.0/24" // 학원 와이파
+	    		"192.168.0.0/24" // 학원 와이파이
 	    };
 	    
 	    for (String network : allowedNetworks) {
