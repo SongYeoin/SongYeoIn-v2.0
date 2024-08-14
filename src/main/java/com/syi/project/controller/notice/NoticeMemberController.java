@@ -69,6 +69,8 @@ public class NoticeMemberController {
 		model.addAttribute("pageMaker", pageMaker);
 		return "member/notice/list";
 	}
+	
+	
 
 	// 공지사항 상세 조회
 	@GetMapping("detail")

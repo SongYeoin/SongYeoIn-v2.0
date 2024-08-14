@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.syi.project.mapper.board.BoardMapper;
 import com.syi.project.model.board.BoardVO;
+import com.syi.project.model.board.CommentsVO;
+import com.syi.project.model.board.HeartVO;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -20,10 +22,18 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardVO> selectBoards() {
 		return boardMapper.selectBoards();
 	}
+	
+	// 게시글 조회수 증가
+	@Transactional
+	@Override
+	public void updateBoardCount(int boardNo) {
+		boardMapper.updateBoardCount(boardNo);
+	}
 
 	// 게시글 조회
 	@Override
 	public BoardVO selectBoardByBoardNo(int boardNo) {
+		updateBoardCount(boardNo);
 		return boardMapper.selectBoardByBoardNo(boardNo);
 	}
 

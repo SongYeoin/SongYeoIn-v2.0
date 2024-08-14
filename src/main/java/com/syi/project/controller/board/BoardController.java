@@ -2,6 +2,8 @@ package com.syi.project.controller.board;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.syi.project.model.board.BoardVO;
+import com.syi.project.model.board.CommentsVO;
+import com.syi.project.model.board.HeartVO;
 import com.syi.project.service.board.BoardService;
 
 @Controller
 @RequestMapping("/member/board")
 public class BoardController {
+	
+	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 	
 	@Autowired
 	private BoardService boardService;
@@ -28,7 +34,7 @@ public class BoardController {
 		return "board/list";
 	}
 	
-	@GetMapping("/{boardNo}")
+	@GetMapping("/detail/{boardNo}")
 	public String detailBoard(@PathVariable("boardNo") int boardNo, Model model) {
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
 		model.addAttribute("board", board);
@@ -64,9 +70,6 @@ public class BoardController {
 		boardService.deleteBoard(boardNo);
 		return "redirect:/board/list";
 	}
-	
-	
-
 	
 
 }
