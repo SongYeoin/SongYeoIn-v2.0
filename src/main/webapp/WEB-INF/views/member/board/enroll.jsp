@@ -35,33 +35,6 @@ main {
     height: 100%;
 }
 
-.classroom-header {
-    background-color: #f1f1f1;
-    padding: 10px 20px;
-    border-bottom: 2px solid #ccc;
-    text-align: left;
-    padding-top: 91px;
-    position: fixed;
-    width: 100%;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-}
-
-.classroom-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    /* margin-bottom: 10px; */
-    
-    margin-left: 10px;
-}
-
-.classroom-header .details {
-    font-size: 12px;
-    
-    margin-left: 10px;
-}
-
 .content {
     padding: 20px;
     background-color: #fff;
@@ -76,7 +49,7 @@ main {
 	font-size: 20px;
 }
 
-.notice-wrapper {
+.board-wrapper {
 	width: 70%;
     background-color: #fff;
     padding: 20px;
@@ -84,7 +57,7 @@ main {
 }
 
 /* 공지사항 제목 스타일 */
-.notice-wrapper h2 {
+.board-wrapper h2 {
     margin-bottom: 30px;
 }
 
@@ -149,26 +122,19 @@ button:hover {
 
     <!-- 메뉴바 연결 -->
     <%@ include file="../../common/header.jsp"%>
-
-	<div class="classroom-header">
-			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-            <div class="title">${syclass.className}</div>
-            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
-    </div>
-
         
     <!-- 사이드바 연결 -->    
-    <%@ include file="../class/aside.jsp"%>
+    <%@ include file="../aside.jsp"%>
 
     <main>
         <!-- Main content -->
-            <div class="notice-wrapper">
-				<h2 align="center">공지사항 글쓰기</h2>
-				<form id="noticeForm" action="${pageContext.servletContext.contextPath}/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
+            <div class="board-wrapper">
+				<h2 align="center"></h2>
+				<form id="boardForm" action="${pageContext.servletContext.contextPath}/member/board/enroll" method="post" enctype="multipart/form-data">
 					<table>
 						<tr>
 							<th>제목</th>
-							<td><input type="text" id="noticeTitle" name="noticeTitle" required/></td>
+							<td><input type="text" id="boardTitle" name="boardTitle" required/></td>
 						</tr>
 						<tr>
 							<th>작성자</th>
@@ -176,18 +142,7 @@ button:hover {
 						</tr>
 						<tr>
 							<th>내용</th>
-							<td colspan="3"><textarea id="noticeContent" name="noticeContent" cols="50" rows="5" required></textarea></td>
-						</tr>
-						<tr>
-							<th>첨부파일</th>
-							<td colspan="3"><input type="file" id="files" name="files" multiple></td>
-						</tr>
-						<tr>
-							<th>전체</th>
-							<td>
-								<input type="checkbox" id="allNotice" name="allNotice" value="true"/>
-  								<label for="allNotice">전체 공지</label>
-  							</td>
+							<td colspan="3"><textarea id="boardContent" name="boardContent" cols="50" rows="5" required></textarea></td>
 						</tr>
 					</table>
 					<div class="button-container">
@@ -203,8 +158,13 @@ button:hover {
     <%@ include file="../../common/footer.jsp"%>
     
     <script>
+    let message = '${message}';
+    if(message) {
+        alert(message);
+    }
+    
     $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/list';
+        window.location.href = '${pageContext.servletContext.contextPath}/member/board/list';
     });
 
 	</script>

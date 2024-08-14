@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Data
 public class CommentsVO {
-	int commentsNo;
-	String comment;
-	Date commentRegDate;
-	Date commentModifyDate;
-	String commentStatus;
-	int commentMemberNo;
-	int commentBoardNo;
+	private int commentsNo;
+	private String comment;
+	private Date commentRegDate;
+	private Date commentModifyDate;
+	private String commentStatus;
+	private int commentMemberNo;
+	private int commentBoardNo;
 
 }

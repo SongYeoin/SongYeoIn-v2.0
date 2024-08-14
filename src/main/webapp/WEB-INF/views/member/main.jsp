@@ -160,7 +160,7 @@ body {
 		</div>
 		<div class="section section4">
 			<div class="menu-title">Anonymous Board <br>익명게시판</div>
-			<div class="submenu">
+			<div class="submenu" onclick="location.href='${pageContext.servletContext.contextPath}/member/board/list'">
 				<p>익명게시판</p>
 			</div>
 		</div>
