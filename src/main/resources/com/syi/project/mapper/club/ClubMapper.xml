@@ -42,7 +42,7 @@
     <result property="memberRole" column="MEMBER_ROLE"/>
   </resultMap>
   
-  <!-- <resultMap type="com.syi.project.model.syclass.SyclassVO" id="classResultMap">
+  <resultMap type="com.syi.project.model.syclass.SyclassVO" id="classResultMap">
   		<id property="classNo" column="CLASS_NO"/>
 		<result property="className" column="CLASS_NAME"/>
 		<result property="description" column="description"/>
@@ -55,7 +55,7 @@
 		<result property="modifiedDate" column="modified_date"/>
 		<result property="classStatus" column="class_status"/>
 		<result property="isDeleted" column="is_deleted"/>
-  </resultMap> -->
+  </resultMap>
   
 
 	<!-- Default classNo 가져오는 쿼리 -->
@@ -65,6 +65,13 @@
     WHERE member_no = #{memberNo}
 </select>
 
+<!-- 수강 반 목록 -->
+<select id="getClassNoListByMember" resultMap="classResultMap">
+	SELECT c.*
+	FROM enroll e
+	JOIN class c ON e.class_no = c.class_no
+	WHERE e.member_no = #{memberNo}
+</select>
 
   <!-- 리스트 -->
   <select id="getList" resultMap="clubResultMap">
@@ -88,8 +95,9 @@
   <!-- 등록 -->
  <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 23)
-  </insert>
+    VALUES (#{join}, #{studyDate}, #{content}, 
+    		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
+ </insert>
   
   
   <!-- 조회 -->

@@ -1,5 +1,6 @@
 package com.syi.project.service.club;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.syi.project.mapper.club.ClubMapper;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
+import com.syi.project.model.syclass.SyclassVO;
 
 @Service
 public class ClubServiceImpl implements ClubService{
@@ -26,8 +28,8 @@ public class ClubServiceImpl implements ClubService{
 
 	//등록
 	@Override
-	public void enroll(ClubVO club) {
-		mapper.enroll(club);
+	public void enroll(int classNo, String join, Date studyDate, String content, int memberNo) {
+		mapper.enroll(classNo, join, studyDate, content, memberNo);
 		
 	}
 
@@ -53,6 +55,12 @@ public class ClubServiceImpl implements ClubService{
 	@Override
 	public Integer getDefaultClassNoByMember(Integer memberNo) {
 		return mapper.getDefaultClassNoByMember(memberNo);
+	}
+
+	//수강 반 목록
+	@Override
+	public List<SyclassVO> getClassNoListByMember(Integer memberNo) {
+		return mapper.getClassNoListByMember(memberNo);
 	}
 	
 	

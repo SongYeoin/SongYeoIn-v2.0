@@ -293,6 +293,62 @@ a:hover {
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+<script>
+function sendClassChange() {
+    var classNo = $('#classSelect').val();
+    console.log("비동기 요청 시작");
+
+    $.ajax({
+        url: '/member/club/list/getByClass', // AJAX 요청 URL
+        type: 'GET',
+        dataType: 'json', // 데이터 타입을 JSON으로 설정
+        data: { classNo: classNo },
+        success: function(response) {
+        	console.log('서버 응답:', response); // 응답 데이터 로그
+        	
+        	var tableBody = $('#tableContainer table tbody');
+            tableBody.empty(); // 기존 데이터 제거
+            
+                // 배열일 때 테이블의 tbody 부분을 업데이트
+                response.forEach(function(item) {
+                    var studyDate = new Date(item.studyDate);
+                    var regDate = new Date(item.regDate);
+
+                    var formattedStudyDate = formatDate(studyDate);
+                    var formattedRegDate = formatDate(regDate);
+                    
+                    if(item.checkCmt == null){
+                    	item.checkCmt = "";
+                    }
+
+                    var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
+                                '<td>' + item.clubNo + '</td>' +
+                                '<td>' + item.enroll.member.memberName + '</td>' +
+                                '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '완료' : '불가') + '</td>' +
+                                '<td>' + item.checkCmt + '</td>' +
+                                '<td>' + formattedStudyDate + '</td>' +
+                                '<td>' + formattedRegDate + '</td>' +
+                                '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" onclick="' + event.stopPropagation() + '"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+                              '</tr>';
+                    tableBody.append(row);   
+                });
+        },
+        error: function() {
+        	
+            alert('데이터를 가져오는 데 실패했습니다.');
+        }
+    });
+
+    function formatDate(date) {
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월을 2자리로 포맷
+        var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
+        return year + '/' + month + '/' + day;
+    }
+}
+</script>
+
 </head>
 <body>
 
@@ -332,7 +388,7 @@ a:hover {
 					</form>
 				</div>
 				<div class="icons">
-					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
+					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a>
 				</div>
 			</div>
 
@@ -444,57 +500,6 @@ a:hover {
 		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
         sendClassChange();
 		
-        function sendClassChange() {
-            var classNo = $('#classSelect').val();
-            console.log("비동기 요청 시작");
-
-            $.ajax({
-                url: '/member/club/list/getByClass', // AJAX 요청 URL
-                type: 'GET',
-                dataType: 'json', // 데이터 타입을 JSON으로 설정
-                data: { classNo: classNo },
-                success: function(response) {
-                	console.log('서버 응답:', response); // 응답 데이터 로그
-                	
-                	var tableBody = $('#tableContainer table tbody');
-                    tableBody.empty(); // 기존 데이터 제거
-                    
-                        // 배열일 때 테이블의 tbody 부분을 업데이트
-                        response.forEach(function(item) {
-                            var studyDate = new Date(item.studyDate);
-                            var regDate = new Date(item.regDate);
-
-                            var formattedStudyDate = formatDate(studyDate);
-                            var formattedRegDate = formatDate(regDate);
-
-                            var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
-                                        '<td>' + item.clubNo + '</td>' +
-                                        '<td>' + item.memberName + '</td>' +
-                                        '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '완료' : '불가') + '</td>' +
-                                        '<td>' + item.checkCmt + '</td>' +
-                                        '<td>' + formattedStudyDate + '</td>' +
-                                        '<td>' + formattedRegDate + '</td>' +
-                                        '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
-                                      '</tr>';
-                            tableBody.append(row);
-                        });
-
-                },
-                error: function() {
-                    alert('데이터를 가져오는 데 실패했습니다.');
-                }
-            });
-
-            function formatDate(date) {
-                var year = date.getFullYear();
-                var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월을 2자리로 포맷
-                var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
-                return year + '/' + month + '/' + day;
-            }
-        }
-        
-     
-     
      	// 반 선택 시 동작
         $('#classSelect').change(sendClassChange);
         

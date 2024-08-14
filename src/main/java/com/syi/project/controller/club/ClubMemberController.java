@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.EnrollVO;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
@@ -67,7 +71,7 @@ public class ClubMemberController {
 	@GetMapping("/club/list")
 	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
-		try {
+		
 		// 로그인한 멤버 정보 가져오기
 		MemberVO member = (MemberVO)session.getAttribute("loginMember");
 	    if (member == null) {
@@ -87,16 +91,13 @@ public class ClubMemberController {
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
 		
-		// 선택 할 반 정보 프론트로 보내기
-		List<SyclassVO> classList = syclassService.getClassList();
+		//수강 반 목록
+		Integer memberNo = member.getMemberNo();
+		List<SyclassVO> classList = cservice.getClassNoListByMember(memberNo);
 		model.addAttribute("classList", classList);
 		
 	    return "member/club/list";
-		}catch(Exception e) {
-			// 예외 발생 시 콘솔에 출력
-	        e.printStackTrace();
-	        throw e; // 예외를 다시 던져서 상위 계층에 전달
-		}
+		
 	}
 	
 	@GetMapping("/club/list/getByClass")
@@ -115,12 +116,16 @@ public class ClubMemberController {
 	}
 	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(ClubVO club, RedirectAttributes rttr) {
-		log.info("ClubVO : "+club);
+	public String clubEnrollPOST(@RequestParam("classNo") Integer classNo, 
+            @RequestParam("join") String join, 
+            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date studyDate, 
+            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException {
+		log.info("classNo : "+classNo);
 		
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
-		
-		cservice.enroll(club);
+		MemberVO member = (MemberVO)session.getAttribute("loginMember");
+		int memberNo = member.getMemberNo();
+
+		cservice.enroll(classNo, join, studyDate, content, memberNo);
 		
 		rttr.addFlashAttribute("result", "enroll success");
 		
