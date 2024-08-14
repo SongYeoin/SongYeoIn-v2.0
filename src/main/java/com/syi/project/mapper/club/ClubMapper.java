@@ -10,7 +10,7 @@ public interface ClubMapper {
 
 	
 	//동아리 리스트
-	public List<ClubVO> getList();
+	public List<ClubVO> getList(int classNo);
 	
 	//동아리 등록
 	public void enroll(ClubVO club);
@@ -23,6 +23,10 @@ public interface ClubMapper {
 	
 	//동아리 삭제
 	public int delete(int clubNo);
+	
+	//동아리 로드시 반 번호
+	public Integer getDefaultClassNoByMember(Integer classNo);
+	
 	
 	//리스트 페이징 적용
 	public List<ClubVO> getListPaging(Criteria cri);

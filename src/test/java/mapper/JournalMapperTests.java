@@ -26,11 +26,11 @@ public class JournalMapperTests {
 		
 		Criteria cri = new Criteria(3, 10);
 		
-		List<JournalVO> list = journalmapper.journalList();
+		//List<JournalVO> list = journalmapper.journalList();
 		
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println("list" + i + "................." + list.get(i));
-		}
+//		for (int i = 0; i < list.size(); i++) {
+//			System.out.println("list" + i + "................." + list.get(i));
+//		}
 	}
 
 }

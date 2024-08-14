@@ -11,7 +11,7 @@ import com.syi.project.model.member.MemberVO;
 public interface ClubService {
 
 	//동아리 리스트
-	public List<ClubVO> getList();
+	public List<ClubVO> getList(int classNo);
 	
 	//동아리 등록
 	public void enroll(ClubVO club);
@@ -24,4 +24,7 @@ public interface ClubService {
 	
 	//동아리 삭제
 	public int delete(int clubNo);
+
+	//동아리 로드시 반 번호
+	public Integer getDefaultClassNoByMember(Integer memberNo);
 }

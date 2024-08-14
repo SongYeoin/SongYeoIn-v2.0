@@ -19,9 +19,9 @@ public class ClubServiceImpl implements ClubService{
 	
 	//리스트
 	@Override
-	public List<ClubVO> getList() {
-		System.out.println("service: " + mapper.getList());
-		return mapper.getList();
+	public List<ClubVO> getList(int classNo) {
+		System.out.println("service: " + mapper.getList(classNo));
+		return mapper.getList(classNo);
 	}
 
 	//등록
@@ -47,6 +47,12 @@ public class ClubServiceImpl implements ClubService{
 	@Override
 	public int delete(int clubNo) {
 		return mapper.delete(clubNo);
+	}
+
+	//로드시 반 번호
+	@Override
+	public Integer getDefaultClassNoByMember(Integer memberNo) {
+		return mapper.getDefaultClassNoByMember(memberNo);
 	}
 	
 	
