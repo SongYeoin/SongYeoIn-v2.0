@@ -23,51 +23,56 @@
         VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor})
     </insert>
 
-    <!-- 교육 일정 전체 조회 -->
-    <select id="scheduleList" resultMap="EduScheduleResultMap">
-       <![CDATA[
+    <!-- 교육 일정 전체 조회 (페이징, 검색) -->
+	<select id="scheduleList" resultMap="EduScheduleResultMap">
+	    <![CDATA[
 	    SELECT * 
 	    FROM (
 	        SELECT rn, schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor
 	        FROM (
 	            SELECT schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor,
-	                   ROW_NUMBER() OVER (ORDER BY schedule_no DESC) AS rn
+	                   ROW_NUMBER() OVER (ORDER BY schedule_date DESC) AS rn
 	            FROM edu_schedule
 	            WHERE 1=1
 	    ]]>
-	    
-	    <!-- 교육일정 제목 검색 조건 -->
-	    <if test="keyword != null and keyword != ''">
-	        AND schedule_title LIKE '%' || #{keyword} || '%'
-	    </if>
-	    
-	    <!-- 교육일정 년도, 월별 필터링 조건 -->
-	    <if test="year != null and year != ''">
-	        AND EXTRACT(YEAR FROM schedule_date) = #{year}
-	    </if>
-	    <if test="month != null and month != ''">
-	        AND EXTRACT(MONTH FROM schedule_date) = #{month}
-	    </if>
-	    
+	            <if test="category == 'title'">
+	                AND UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	            </if>
+	            <if test="category == 'instructor'">
+	                AND UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
+	            </if>
+	            <if test="category == 'all'">
+	                AND (UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	                OR UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
+	            </if>
+	            <if test="year != null and year != ''">
+	                AND EXTRACT(YEAR FROM schedule_date) = #{year}
+	            </if>
+	            <if test="month != null and month != ''">
+	                AND EXTRACT(MONTH FROM schedule_date) = #{month}
+	            </if>
 	    <![CDATA[
 	        )
 	        WHERE rn > (#{pageNum} - 1) * #{amount} AND rn <= #{pageNum} * #{amount}
 	    )
 	    ]]>
-    </select>
-    
+	</select>
+
     <!-- 교육 일정 총 갯수 조회 -->
-    <select id="scheduleGetTotal" resultType="int">
+	<select id="scheduleGetTotal" resultType="int">
 	    SELECT count(*) 
 	    FROM edu_schedule
 	    WHERE 1=1
-	    
-	    <!-- 교육일정 제목 검색 조건 -->
-	    <if test="keyword != null and keyword != ''">
-	        AND schedule_title LIKE '%' || #{keyword} || '%'
+	    <if test="category == 'title'">
+	        AND UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
 	    </if>
-	    
-	    <!-- 교육일정 년도, 월별 필터링 조건 -->
+	    <if test="category == 'instructor'">
+	        AND UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
+	    </if>
+	    <if test="category == 'all'">
+	        AND (UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	        OR UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
+	    </if>
 	    <if test="year != null and year != ''">
 	        AND EXTRACT(YEAR FROM schedule_date) = #{year}
 	    </if>
@@ -87,8 +92,7 @@
         SET SCHEDULE_DATE = #{scheduleDate},
             SCHEDULE_TITLE = #{scheduleTitle},
             SCHEDULE_DESCRIPTION = #{scheduleDescription},
-            SCHEDULE_INSTRUCTOR = #{scheduleInstructor},
-            SCHEDULE_MODIFYDATE = SYSDATE
+            SCHEDULE_INSTRUCTOR = #{scheduleInstructor}
         WHERE SCHEDULE_NO = #{scheduleNo}
     </update>
 
@@ -97,5 +101,10 @@
         DELETE FROM EDU_SCHEDULE WHERE SCHEDULE_NO = #{scheduleNo}
     </delete>
 
+	
+	<!-- 캘린더 전체 일정 조회 쿼리 -->
+    <select id="scheduleAllList" resultMap="EduScheduleResultMap">
+        SELECT * FROM edu_schedule
+    </select>
 
 </mapper>

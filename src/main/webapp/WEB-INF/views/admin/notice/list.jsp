@@ -78,7 +78,7 @@ main {
 
 /* noticeList-wrapper 스타일 */
 .noticeList-wrapper {
-	width: 85%;
+	width: 70%;
     background-color: #fff;
     padding: 20px;
     margin: 20px auto;
@@ -86,9 +86,7 @@ main {
 
 /* 공지사항 제목 스타일 */
 .noticeList-wrapper h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 /* 테이블 스타일 */
@@ -133,7 +131,7 @@ table td:first-child {
 	text-align: center; 
 }
 
-.search_input input[type=text], .search_input button {
+.search_input input[type=text] {
 	margin: 0 5px;
 	padding: 5px 10px;
 	border: 1px solid #ccc;
@@ -141,15 +139,20 @@ table td:first-child {
 	font-size: 14px;
 }
 
-.search_input button {
+.search_input button, #enrollBtn {
 	background-color: #007bff;
 	color: #fff;
 	border: none;
 	cursor: pointer;
 }
 
-.search_input button:hover {
+.search_input button :hover, #enrollBtn :hover {
 	background-color: #0056b3;
+}
+
+.btn-container {
+    text-align: right;
+    margin-bottom: 20px; /* 버튼과 테이블 사이의 간격을 조정 */
 }
 
 .pageMaker_wrap{
@@ -213,20 +216,11 @@ table td:first-child {
 						<th>조회수</th>
 						<th>등록일</th>
 					</tr>
-					<!-- 전체공지 -->
+					<!-- 공지 -->
+					
 					<c:forEach items="${ noticeList }" var="notice">
 					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>전체</td>
-						<td>${ notice.noticeTitle }</td>
-						<td>${ notice.noticeCount }</td>
-						<td>${ notice.noticeRegDate }</td>
-					</tr>
-					</c:forEach>
-					
-					<!-- 반별 공지 -->
-					<c:forEach items="${ noticeClassList }" var="notice">
-					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>${ notice.noticeNo }</td>
+						<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
 						<td>${ notice.noticeTitle }</td>
 						<td>${ notice.noticeCount }</td>
 						<td>${ notice.noticeRegDate }</td>
@@ -234,6 +228,13 @@ table td:first-child {
 					</c:forEach>
 				</table>
 				
+				<!-- 등록버튼 -->
+				<c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' }">
+					<div class="btn-container">
+						<button id="enrollBtn" class="btn search_btn">등록</button>
+					</div>
+				</c:if>
+					
 				<!-- 검색 영역 -->
 				<div class="search_wrap">
 					<form id="searchForm" action="/admin/class/notice/list" method="get">
@@ -285,6 +286,16 @@ table td:first-child {
     <%@ include file="../../common/footer.jsp"%>
     
     <script>
+    let message = '${message}';
+	if(message) {
+		alert(message);
+	}
+	
+	
+    $("#enrollBtn").click(function() {
+        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/enroll';
+    });
+    
 	let moveForm = $('#moveForm');
 	//페이지 이동 버튼
 	$(".pageMaker_btn a").on("click", function(e){
@@ -293,7 +304,10 @@ table td:first-child {
 	    moveForm.find("input[name='pageNum']").val(pageNum);
 	    moveForm.submit();
 	});
-
+	
+	function showNoticeDetail(event, noticeNo) {
+		window.location.href = '${pageContext.servletContext.contextPath}/admin/notice/detail?noticeNo=' + noticeNo;
+	}
 	</script>
 
 </body>

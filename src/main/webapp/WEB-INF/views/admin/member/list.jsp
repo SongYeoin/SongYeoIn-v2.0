@@ -18,10 +18,14 @@
 }
 
 html, body {
-    height: 100%;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
+	height: 1080px;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	/* min-height: 100vh; */
 }
 
 /* 메인 영역 스타일 */
@@ -212,7 +216,7 @@ tr:hover {
                      <td>${ member.memberName }</td>
                      <td>${ member.memberPhone }</td>
                      <td>${ member.memberEnrollDate }</td>
-                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}); event.stopPropagation();">
+                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}, event);">
                         <c:choose>
                            <c:when test="${member.memberCheckStatus == 'W'}">대기</c:when>
                            <c:when test="${member.memberCheckStatus == 'Y'}">승인</c:when>
@@ -273,7 +277,7 @@ $(".pageMaker_btn a").on("click", function(e){
     moveForm.submit();
 });
 
-function changeApprovalStatus(memberNo) {
+function changeApprovalStatus(memberNo, event) {
    event.stopPropagation();
    
    if (window.confirm("승인 하시겠습니까?")) {
