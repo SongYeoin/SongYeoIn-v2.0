@@ -49,7 +49,6 @@ public class AttendanceController {
 	/* 출석 등록 페이지로 이동 */
 	@GetMapping("/attendance/enroll")
 	public void attendanceEnrollGET(HttpServletRequest request, Integer classNo, String dayOfWeek, Model model) throws Exception{
-		log.info("출석 등록 페이지 이동");
 		
 		// 수강생 정보 조회
 		HttpSession session = request.getSession();
@@ -105,7 +104,7 @@ public class AttendanceController {
 	/* 출석 등록 */
 	@PostMapping("/attendance/enroll")
 	public String enrollAttendancePOST(HttpServletRequest request, Integer periodNo, Integer classNo, String dayOfWeek, Model model) {
-		
+		System.out.println("컨트롤러 도착 : " +dayOfWeek);
 		// 수강생 정보 조회
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
@@ -141,7 +140,8 @@ public class AttendanceController {
 		try {
 			attendanceService.enrollAttendance(attendance);
 			
-			return "redirect:/member/attendance/enroll?classNo=" + classNo + "&dayOfWeek=" + dayOfWeek + "&resultMessage=" + URLEncoder.encode(period.getPeriodName() + " 교시가 " + status + " 처리되었습니다.", "UTF-8");
+			String encodedDayOfWeek = URLEncoder.encode(dayOfWeek, "UTF-8");
+			return "redirect:/member/attendance/enroll?classNo=" + classNo + "&dayOfWeek=" + encodedDayOfWeek + "&resultMessage=" + URLEncoder.encode(period.getPeriodName() + " 교시가 " + status + " 처리되었습니다.", "UTF-8");
 			
 		} catch (DataIntegrityViolationException e) {
 			log.error("출석 상태 저장 중 제약 조건 위반", e);

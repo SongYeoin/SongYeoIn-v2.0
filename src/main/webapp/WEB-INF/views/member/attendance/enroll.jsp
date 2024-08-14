@@ -351,10 +351,11 @@ function sendClassChange() {
 function setDayOfWeek(form) {
     var dayOfWeek = getDayOfWeek();
     var dayOfWeekField = form.elements['dayOfWeek']; // dayOfWeek 필드를 찾음
-
+  
     if (dayOfWeekField) {
         dayOfWeekField.value = dayOfWeek; // dayOfWeek 필드에 값을 설정
         return true; // 폼을 정상적으로 제출하도록 true 반환
+        
     } else {
         console.error("dayOfWeek 필드를 찾을 수 없습니다.");
         return false; // 필드를 찾지 못했을 경우 폼 제출 중단
