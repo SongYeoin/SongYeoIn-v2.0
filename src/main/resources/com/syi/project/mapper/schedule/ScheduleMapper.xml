@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syi.project.mapper.schedule.ScheduleMapper">
+
+	<resultMap id="scheduleResultMap" type="com.syi.project.model.schedule.ScheduleVO">
+		<id property="scheduleNo" column="SCHEDULE_NO"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="modifiedDate" column="MODIFIED_DATE"/>
+		<result property="isDeleted" column="IS_DELETED"/>
+		<result property="classNo" column="CLASS_NO"/>
+	</resultMap>
+
+    <!-- 시간표 등록 -->
+    <insert id="enrollSchedule" parameterType="com.syi.project.model.schedule.ScheduleVO" useGeneratedKeys="true" keyProperty="scheduleNo" keyColumn="SCHEDULE_NO">
+    insert into SCHEDULE (CLASS_NO)
+    values (#{classNo})
+    </insert>
+    
+    <!-- 시간표 조회 -->
+    <select id="getSchedule" resultMap="scheduleResultMap">
+    SELECT * FROM SCHEDULE WHERE CLASS_NO=#{classNo}
+    </select>
+   
+
+</mapper>

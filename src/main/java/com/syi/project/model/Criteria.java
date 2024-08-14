@@ -2,6 +2,9 @@ package com.syi.project.model;
 
 import java.util.Arrays;
 
+import lombok.Data;
+
+@Data
 public class Criteria {
 
 	/* 현재 페이지 번호 */
@@ -24,7 +27,19 @@ public class Criteria {
 
 	/* 상품 번호(댓글 기능에서 사용) */
 	private int bookId;
+	
+	/* 년도 */
+    private String year;
 
+    /* 월 */
+    private String month;
+    
+    /* 카테고리 */
+    private String category;
+    
+    /* 수강생 이름 */
+    private String memberName;
+    
 	/* Criteria 생성자 */
 	public Criteria(int pageNum, int amount) {
 		this.pageNum = pageNum;

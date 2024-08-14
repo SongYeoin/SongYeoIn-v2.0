@@ -20,7 +20,7 @@ public class DataSourceTest {
 	private DataSource dataSource;
 	
 	@Autowired
-	SqlSessionFactory sqlSessionFactory;
+	private SqlSessionFactory sqlSessionFactory;
 	
 	@Test
 	public void testConnection() {

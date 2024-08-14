@@ -1,7 +1,16 @@
 package com.syi.project.model;
 
+import lombok.Data;
+
+@Data
 public class PageDTO {
 
+	/* 요청한 페이지 번호 */
+	private int pageNo;
+	
+	/* 한 페이지에 보여줄 게시물 수 */
+	private int limit;
+	
 	/* 페이지 시작 번호 */
 	private int pageStart;
 
@@ -44,60 +53,6 @@ public class PageDTO {
 		/* 다음 버튼 값 초기화 */
 		this.next = this.pageEnd < realEnd;
 
-	}
-
-	public int getPageStart() {
-		return pageStart;
-	}
-
-	public void setPageStart(int pageStart) {
-		this.pageStart = pageStart;
-	}
-
-	public int getPageEnd() {
-		return pageEnd;
-	}
-
-	public void setPageEnd(int pageEnd) {
-		this.pageEnd = pageEnd;
-	}
-
-	public boolean isNext() {
-		return next;
-	}
-
-	public void setNext(boolean next) {
-		this.next = next;
-	}
-
-	public boolean isPrev() {
-		return prev;
-	}
-
-	public void setPrev(boolean prev) {
-		this.prev = prev;
-	}
-
-	public int getTotal() {
-		return total;
-	}
-
-	public void setTotal(int total) {
-		this.total = total;
-	}
-
-	public Criteria getCri() {
-		return cri;
-	}
-
-	public void setCri(Criteria cri) {
-		this.cri = cri;
-	}
-
-	@Override
-	public String toString() {
-		return "PageDTO [pageStart=" + pageStart + ", pageEnd=" + pageEnd + ", next=" + next + ", prev=" + prev
-				+ ", total=" + total + ", cri=" + cri + "]";
 	}
 
 }

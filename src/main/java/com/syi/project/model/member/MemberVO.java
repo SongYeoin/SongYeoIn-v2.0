@@ -45,7 +45,7 @@ public class MemberVO {
 	private String memberNickname;
 	
 	// 멤버 등록일
-	private Date enrollDate;
+	private Date memberEnrollDate;
 	
 	// 멤버 승인 여부
 	private String memberCheckStatus;

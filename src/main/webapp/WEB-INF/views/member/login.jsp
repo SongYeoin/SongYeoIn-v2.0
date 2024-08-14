@@ -3,13 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력센터 로그인</title>
 </head>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 body, h2, p, form {
     margin: 0;
@@ -45,6 +44,7 @@ h2 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #333;
+     text-align: center;
 }
 
 form input[type="text"], 
@@ -69,7 +69,7 @@ form input[type="submit"] {
 }
 
 form input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #b3b3b3;
 }
 
 .error {
@@ -97,7 +97,7 @@ p a {
 	<div id="login-wrap">
 
 		<div class="login-wrapper">
-			<!-- <h2>Login</h2> -->
+			<h2>Login</h2>
 			<form action="${ pageContext.servletContext.contextPath }/member/login" method="post" id="login-form">
 				<p>ID</p>
 				<input type="text" name="memberId" id="memberId" placeholder="아이디를 입력하세요"><br>
@@ -107,22 +107,26 @@ p a {
 				<input type="password" name="memberPwd" id="memberPwd" placeholder="비밀번호를 입력하세요"><br>
 				<span id="memberPwdError" class="error"></span>
 				
-				<input type="submit" id="loginBtn" value="Login"><br>
+				<input type="submit" id="loginBtn" value="로그인"><br>
 				<span id="loginError" class="error"></span>
 			</form>
-			<p id="join"> <a href="${ pageContext.servletContext.contextPath }/member/join">SignUp</a>
+			<p id="join"> <a href="${ pageContext.servletContext.contextPath }/member/join">회원가입</a>
 		</div>
 
 	</div>
 
 	<script>
 		$(document).ready(function() {
-			var result = '${result}';
+			let result = '${result}';
+			let enrollResult = '${enroll_result}';
             if (result === '0') {			// 미승인 회원이 로그인 시
                 alert("승인이 완료되지 않았습니다.\n관리자에게 문의하세요.");
             } else if (result === '1') {	// 로그인 실패 시
                 $('#loginError').text("아이디와 비밀번호를 확인하고 다시 시도해주세요.");
             }
+			if(enrollResult === 'success') {
+				alert("회원가입에 성공하였습니다.");
+			}
 
 			$('#login-form').submit(function(event) {
 

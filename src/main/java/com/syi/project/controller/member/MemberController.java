@@ -32,16 +32,16 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
 
-	// 로그인 페이지 이동
+	// 수강생 로그인 페이지 이동
 	@GetMapping("login")
 	public void loginGet() {
-		logger.info("로그인 페이지 이동");
+		logger.info("수강생 로그인 페이지 이동");
 	}
 
-	// 회원가입 페이지 이동
+	// 수강생 회원가입 페이지 이동
 	@GetMapping("join")
 	public void joinGet() {
-		logger.info("회원가입 페이지 이동");
+		logger.info("수강생 회원가입 페이지 이동");
 	}
 
 	// 마이페이지 이동
@@ -51,12 +51,10 @@ public class MemberController {
 	}
 
 	// 아이디 중복 체크
-	@PostMapping("/member/check-id")
+	@PostMapping("check-id")
 	@ResponseBody
 	public String checkMemberIdPost(String memberId) {
-		System.out.println("memberId는 " + memberId);
 		int result = memberService.selectCountByMemberId(memberId);
-		System.out.println("result는 " + result);
 		if (result != 0) {
 			return "fail";
 		} else {
@@ -65,7 +63,7 @@ public class MemberController {
 	}
 
 	// 이메일 중복 체크
-	@PostMapping("/member/check-email")
+	@PostMapping("check-email")
 	@ResponseBody
 	public String checkMemberEmailCheckPost(String memberEmail) {
 		int result = memberService.selectCountByMemberEmail(memberEmail);
@@ -101,24 +99,31 @@ public class MemberController {
 		return num;
 	}
 
-	// 회원가입
+	// 수강생 회원가입
 	@PostMapping("join")
-	public String joinPost(MemberVO requestMember) {
+	public String joinPost(MemberVO requestMember, RedirectAttributes rttr) {
+		System.out.println("회원가입 진행 중");
 		String rawPwd = requestMember.getMemberPwd();
 		String encodePwd = pwdEncoder.encode(rawPwd);
 		requestMember.setMemberPwd(encodePwd);
 
-		memberService.insertMember(requestMember);
-		return "redirect:/";
+		int result = memberService.insertMember(requestMember);
+		if(result != 0) {
+	        rttr.addFlashAttribute("enroll_result", "success");
+			return "redirect:/member/login";
+		} else {
+	        rttr.addFlashAttribute("enroll_result", "fail");
+			return "redirect:/member/join";
+		}
 	}
-
-	// 로그인
+	
+	// 수강생 로그인
 	@PostMapping("login")
 	public String loginPost(HttpServletRequest request, MemberVO requestMember, RedirectAttributes rttr)
 			throws Exception {
-
+		
 		MemberVO loginMember = memberService.selectLoginMember(requestMember);
-
+		
 		// 사용자 존재하지 않음
 		if (loginMember == null) {
 			rttr.addFlashAttribute("result", 1);
@@ -132,7 +137,7 @@ public class MemberController {
 		}
 
 		// 미승인 회원
-		if ("N".equals(loginMember.getMemberCheckStatus())) {
+		if (!"Y".equals(loginMember.getMemberCheckStatus())) {
 			rttr.addFlashAttribute("result", 0);
 			return "redirect:/member/login";
 		}
@@ -143,23 +148,70 @@ public class MemberController {
 		session.setAttribute("loginMember", loginMember);
 		return "redirect:/member/main";
 	}
+	
+	// 비밀번호 체크
+	@PostMapping("check-pwd")
+	@ResponseBody
+	public String checkMemberPwd(MemberVO requestMember) {
+		System.out.println("비밀번호 체크 : " + requestMember);
 
-	// 마이페이지
+		String storedPwd = memberService.selectPwd(requestMember);
+		
+		if (pwdEncoder.matches(requestMember.getMemberPwd(), storedPwd)) {
+			return "pass";
+		} else {
+			return "fail";
+		}
+	}
+
+	// 회원정보 수정
 	@PostMapping("mypage")
-	public String mypageMember() {
+	public String mypageMember(MemberVO updateMember, RedirectAttributes rttr, HttpSession session) throws Exception {
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		// 비밀번호 암호화 및 기본값 설정
+		if(updateMember.getMemberPwd() != null && !updateMember.getMemberPwd().isEmpty()) {
+			String rawPwd = updateMember.getMemberPwd();
+			String encodePwd = pwdEncoder.encode(rawPwd);
+			updateMember.setMemberPwd(encodePwd);
+		} else {
+			updateMember.setMemberPwd(memberService.selectPwd(loginMember));
+		}
+		
+		// 업데이트 진행
+		updateMember.setMemberNo(loginMember.getMemberNo());
+		int result = memberService.updateMember(updateMember);
+		if(result != 0) {
+			loginMember = memberService.selectLoginMember(updateMember);
+			rttr.addFlashAttribute("update_result", "success");
+			session.setAttribute("loginMember", loginMember);
+		} else {
+			rttr.addFlashAttribute("update_result", "fail");
+		}
 		return "redirect:/member/mypage";
 	}
 
 	// 로그아웃
-	@PostMapping("logout")
-	public String logoutMember(HttpSession session) {
+	@GetMapping("logout")
+	public String logoutMember(HttpSession session, RedirectAttributes rttr) {
+		System.out.println("로그아웃 중");
 		session.invalidate();
+		rttr.addFlashAttribute("logout_result", "success");
 		return "redirect:/";
 	}
 
 	// 회원탈퇴
 	@PostMapping("delete")
-	public void deleteMember() {
+	public String deleteMember(HttpSession session, RedirectAttributes rttr) {
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		int result = memberService.deleteMember(loginMember);
+		if(result != 0) {
+			session.invalidate();
+			rttr.addFlashAttribute("delete_result", "success");
+			return "redirect:/";
+		} else {
+			rttr.addFlashAttribute("delete_result", "fail");
+			return "redirect:/member/mypage";
+		}
 	}
-
 }

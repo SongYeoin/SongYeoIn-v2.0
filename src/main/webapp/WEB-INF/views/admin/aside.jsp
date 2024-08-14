@@ -75,6 +75,21 @@
 .arrow {
 	margin-left: auto;
 }
+
+/* 링크의 기본 색상과 방문 후 색상 */
+.menu-item a, .submenu-item a {
+	color: white;
+	text-decoration: none;
+}
+
+.menu-item a:visited, .submenu-item a:visited {
+	color: white;
+}
+
+/* 현재 방문 중인 메뉴의 배경색 */
+.menu-item.current {
+	background-color: #444;
+}
 </style>
 </head>
 <body>
@@ -88,13 +103,13 @@
                 <i class="fas fa-chevron-down arrow"></i>
             </div>
             <div class="submenu">
-                <div class="submenu-item"><a><i class="fas fa-users"></i>수강생 관리</a></div>
+                <div class="submenu-item"><a href="${ pageContext.servletContext.contextPath }/admin/member/list"><i class="fas fa-users"></i>수강생 관리</a></div>
                 <div class="submenu-item"><a><i class="fas fa-user-tie"></i>직원 관리</a></div>
             </div>
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-chalkboard-teacher"></i>반 관리</a>
+                <a href="/admin/class/getClassList"><i class="fas fa-chalkboard-teacher"></i>반 관리</a>
             </div>
         </div>
         <div class="menu-item">
@@ -104,12 +119,12 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-home"></i>반별 홈</a>
+                <a><i class="fas fa-cog"></i>Settings</a>
             </div>
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-cog"></i>Settings</a>
+                <a href="/journal/journalList"><i class="fas fa-chalkboard-teacher"></i>journal</a>
             </div>
         </div>
     </div>
@@ -120,6 +135,14 @@
                 const menuItem = item.parentElement;
                 menuItem.classList.toggle('active');
             });
+        });
+        
+     	// 현재 URL과 일치하는 메뉴 항목에 'current' 클래스를 추가
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.menu-title a').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.closest('.menu-item').classList.add('current');
+            }
         });
     </script>
 

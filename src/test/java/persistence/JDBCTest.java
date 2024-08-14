@@ -21,7 +21,7 @@ public class JDBCTest {
 	public void testConnection() {
 		try(Connection con = DriverManager.getConnection(
 				"jdbc:oracle:thin:@localhost:1521:XE",
-				"spring",
+				"songyeoin",
 				"1234")){
 			System.out.println(con);
 		}catch (Exception e) {

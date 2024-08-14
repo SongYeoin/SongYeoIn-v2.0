@@ -5,13 +5,13 @@ import com.syi.project.model.member.MemberVO;
 public interface MemberService {
 
 	// 로그인
-	MemberVO selectLoginMember(MemberVO member) throws Exception;
+	public MemberVO selectLoginMember(MemberVO member) throws Exception;
 
 	// 아이디 중복체크
-	int selectCountByMemberId(String memberId);
+	public int selectCountByMemberId(String memberId);
 
 	// 이메일 중복체크
-	int selectCountByMemberEmail(String memberEmail);
+	public int selectCountByMemberEmail(String memberEmail);
 
 	// 회원가입
 	int insertMember(MemberVO member);

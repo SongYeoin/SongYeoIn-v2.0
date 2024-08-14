@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- MyBatis 매퍼 XML 파일의 시작 -->
+<mapper namespace="com.syi.project.mapper.journal.EduScheduleMapper">
+
+    <!-- 결과 맵 정의 -->
+    <resultMap id="EduScheduleResultMap" type="com.syi.project.model.journal.EduScheduleVO">
+        <id property="scheduleNo" column="SCHEDULE_NO"/>
+        <result property="scheduleDate" column="SCHEDULE_DATE"/>
+        <result property="scheduleRegDate" column="SCHEDULE_REGDATE"/>
+        <result property="scheduleModifyDate" column="SCHEDULE_MODIFYDATE"/>
+        <result property="scheduleTitle" column="SCHEDULE_TITLE"/>
+        <result property="scheduleDescription" column="SCHEDULE_DESCRIPTION"/>
+        <result property="scheduleInstructor" column="SCHEDULE_INSTRUCTOR"/>
+    </resultMap>
+
+    <!-- 교육 일정 등록 -->
+    <insert id="scheduleCreate" parameterType="com.syi.project.model.journal.EduScheduleVO">
+        INSERT INTO EDU_SCHEDULE (SCHEDULE_DATE, SCHEDULE_TITLE, SCHEDULE_DESCRIPTION, SCHEDULE_INSTRUCTOR)
+        VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor})
+    </insert>
+
+    <!-- 교육 일정 전체 조회 (페이징, 검색) -->
+	<select id="scheduleList" resultMap="EduScheduleResultMap">
+	    <![CDATA[
+	    SELECT * 
+	    FROM (
+	        SELECT rn, schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor
+	        FROM (
+	            SELECT schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor,
+	                   ROW_NUMBER() OVER (ORDER BY schedule_date DESC) AS rn
+	            FROM edu_schedule
+	            WHERE 1=1
+	    ]]>
+	            <if test="category == 'title'">
+	                AND UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	            </if>
+	            <if test="category == 'instructor'">
+	                AND UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
+	            </if>
+	            <if test="category == 'all'">
+	                AND (UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	                OR UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
+	            </if>
+	            <if test="year != null and year != ''">
+	                AND EXTRACT(YEAR FROM schedule_date) = #{year}
+	            </if>
+	            <if test="month != null and month != ''">
+	                AND EXTRACT(MONTH FROM schedule_date) = #{month}
+	            </if>
+	    <![CDATA[
+	        )
+	        WHERE rn > (#{pageNum} - 1) * #{amount} AND rn <= #{pageNum} * #{amount}
+	    )
+	    ]]>
+	</select>
+
+    <!-- 교육 일정 총 갯수 조회 -->
+	<select id="scheduleGetTotal" resultType="int">
+	    SELECT count(*) 
+	    FROM edu_schedule
+	    WHERE 1=1
+	    <if test="category == 'title'">
+	        AND UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	    </if>
+	    <if test="category == 'instructor'">
+	        AND UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
+	    </if>
+	    <if test="category == 'all'">
+	        AND (UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
+	        OR UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
+	    </if>
+	    <if test="year != null and year != ''">
+	        AND EXTRACT(YEAR FROM schedule_date) = #{year}
+	    </if>
+	    <if test="month != null and month != ''">
+	        AND EXTRACT(MONTH FROM schedule_date) = #{month}
+	    </if>
+	</select>
+
+    <!-- 교육 일정 상세 조회 -->
+    <select id="scheduleDetail" resultMap="EduScheduleResultMap">
+        SELECT * FROM EDU_SCHEDULE WHERE SCHEDULE_NO = #{scheduleNo}
+    </select>
+
+    <!-- 교육 일정 수정 -->
+    <update id="scheduleUpdate" parameterType="com.syi.project.model.journal.EduScheduleVO">
+        UPDATE EDU_SCHEDULE
+        SET SCHEDULE_DATE = #{scheduleDate},
+            SCHEDULE_TITLE = #{scheduleTitle},
+            SCHEDULE_DESCRIPTION = #{scheduleDescription},
+            SCHEDULE_INSTRUCTOR = #{scheduleInstructor}
+        WHERE SCHEDULE_NO = #{scheduleNo}
+    </update>
+
+    <!-- 교육 일정 삭제 -->
+    <delete id="scheduleDelete">
+        DELETE FROM EDU_SCHEDULE WHERE SCHEDULE_NO = #{scheduleNo}
+    </delete>
+
+	
+	<!-- 캘린더 전체 일정 조회 쿼리 -->
+    <select id="scheduleAllList" resultMap="EduScheduleResultMap">
+        SELECT * FROM edu_schedule
+    </select>
+
+</mapper>

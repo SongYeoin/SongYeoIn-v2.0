@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력센터</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 /* 초기화 */
 * {
@@ -25,14 +29,14 @@ main {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: calc(100vh - 100px); /* 헤더와 푸터를 제외한 화면 높이 */
+	height: 100vh; 
 	background-color: #f0f0f0;
 }
 
 .button-container {
 	display: flex;
 	justify-content: center;
-	gap: 60px; /* 버튼 사이의 간격 조정 */
+	gap: 100px; /* 버튼 사이의 간격 조정 */
 }
 
 .mode-button {
@@ -51,8 +55,8 @@ main {
 	transition: background-color 0.3s;
 	text-decoration: none; /* 링크 기본 스타일 제거 */
 	text-align: center; /* 텍스트 중앙 정렬 */
-	width: 350px;
-	height: 400px;
+	width: 400px;
+	height: 450px;
 }
 
 .mode-button:hover {
@@ -87,7 +91,7 @@ main {
 <body>
 
 	<!-- 메뉴바 연결 -->
-	<%@ include file="common/header.jsp"%>
+	<%-- <%@ include file="common/header.jsp"%> --%>
 
 	<main>
     <div class="button-container">
@@ -103,7 +107,21 @@ main {
 	</main>
 
 	<!-- 푸터 연결 -->
-	<%@ include file="common/footer.jsp"%>
+	<%-- <%@ include file="common/footer.jsp"%> --%>
 
 </body>
+<script>
+$(document).ready(function() {
+	var delete_result = '${delete_result}';
+	var logout_result = '${logout_result}';
+
+	
+	if(delete_result === 'success') {
+		alert("회원 탈퇴에 성공하였습니다.");
+	}
+	if(logout_result === 'success') {
+		alert("로그아웃되었습니다.");
+	}
+});
+</script>
 </html>
