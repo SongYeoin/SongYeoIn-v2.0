@@ -9,20 +9,7 @@ import com.syi.project.model.syclass.SyclassVO;
 
 
 public interface ChatRoomMapper {
-
-
-	/*
-	 * List<ChatRoomVO> selectChatRoomList(int chatRoomMemberNo);
-	 * 
-	 * List<EnrollVO> selectEnrollListByMemberNo(int chatRoomMemberNo);
-	 * 
-	 * SyclassVO selectClassByClassNo(int classNo);
-	 * 
-	 * int selectCountByMemberNoAndAdminNo(ChatRoomVO chatRoom);
-	 */
-
 	
-	//--------------추가한 것
 	// 채팅방 정보를 업데이트하는 메소드 (sessionIds 포함)
 	void updateChatRoomSessions(int i, String sessionIds);
 	

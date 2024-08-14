@@ -31,17 +31,16 @@ public class ChatRoomVO {
 	 private String sessionIds;
 
 
-	public void addSession(Session session) {
-		chatRoomUserSessions.add(session);
-		sessionIds = chatRoomUserSessions.stream().map(Session::getId).collect(Collectors.joining(","));
-	}
-
-	private Set<String> parseSessionIdsToSet() {
-		if (sessionIds == null || sessionIds.isEmpty()) {
-			return new HashSet<>();
-		}
-		return new HashSet<>(Set.of(sessionIds.split(",")));
-	}
+		/*
+		 * public void addSession(Session session) { chatRoomUserSessions.add(session);
+		 * sessionIds =
+		 * chatRoomUserSessions.stream().map(Session::getId).collect(Collectors.joining(
+		 * ",")); }
+		 * 
+		 * private Set<String> parseSessionIdsToSet() { if (sessionIds == null ||
+		 * sessionIds.isEmpty()) { return new HashSet<>(); } return new
+		 * HashSet<>(Set.of(sessionIds.split(","))); }
+		 */
 
 	/*
 	 * public ChatRoomVO(String chatRoomNo, String chatRoomName) { this.chatRoomNo =

@@ -10,7 +10,7 @@ public interface MessageService {
 	public List<ChatMessageDTO> getAllMessage();
 	public ChatMessageDTO getMessageOne(String id);
 	public void deleteMessageById(String id);
-	
+	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo);
 	
 
 }

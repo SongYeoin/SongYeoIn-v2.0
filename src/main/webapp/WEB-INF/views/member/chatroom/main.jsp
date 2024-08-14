@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%-- <%@page import="java.util.Date"%> --%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,6 +86,18 @@ a.custom{
     cursor: pointer;
 }
 
+
+
+
+#chat {
+    max-height: 100vh;
+    max-width: 100vw;
+    overflow-y: auto;  /* 수직 스크롤 추가 */
+    padding: 0;
+    list-style: none;
+    margin: 0;
+}
+
 </style>
 
 <!-- Font Awesome -->
@@ -100,7 +115,10 @@ a.custom{
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
   rel="stylesheet"
 />
-	<!-- MDB -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
 </head>
 <body>
 	<!-- 메뉴바 연결 -->
@@ -179,11 +197,10 @@ a.custom{
 
 							<ul class="list-unstyled mb-0">
 							<c:forEach items="${roomList}"  var="room">
-								<li class="p-2 border-bottom bg-body-tertiary" 
+								<li class="p-2 border-bottom bg-body-tertiary"
 								data-chat-room-no="${room.chatRoomNo}"
 								onclick="selectChatRoom('${room.chatRoomNo}')"
-								 ><a href="#!"
-									class="custom d-flex justify-content-between">
+								 ><a class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
 											<img
 												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
@@ -202,38 +219,23 @@ a.custom{
 								</a></li>
 							</c:forEach>
 							</ul>
-
 						</div>
 					</div>
-
 				</div>
-				</div> 
+			</div> 
 				
 				<!--메시지 보내고 보이는 공간  -->
-				<div class="d-flex align-items-start ">
+                <div class="chat-placeholder" id="chatPlaceholder">
+                    <h4>채팅방을 선택해주세요</h4>
+                </div>
+				<div class="col-md-8 chat-box w-100" id="chatBox">
+				<div class="d-flex align-items-start">
 				<div class="w-100 h-100 col-md-6 col-lg-7 col-xl-8 p-3 border --bs-light-border-subtle rounded-3">
-
+					<!--메시지가 추가되는 공간  -->
 					<ul class="list-unstyled" id="chat">
-						<li class="d-flex justify-content-between mb-6"><img
-							src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-							alt="avatar"
-							class="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-							width="60">
-							<div class="card">
-								<div class="card-header d-flex justify-content-between p-3">
-									<p class="fw-bold mb-0">Brad Pitt</p>
-									<p class="text-muted small mb-0">
-										<i class="far fa-clock"></i> 12 mins ago
-									</p>
-								</div>
-								<div class="card-body">
-									<p class="mb-0">Lorem ipsum dolor sit amet, consectetur
-										adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-										dolore magna aliqua.</p>
-								</div>
-							</div></li>
-						
-						<li class="bg-white mb-3">
+					</ul>
+						<div id="sendDiv" class="active">
+						<li class="list-unstyled bg-white mb-3">
 							<div data-mdb-input-init class="form-outline">
 								<textarea class="form-control bg-body-tertiary mb-4"
 									id="messageInput" rows="4"></textarea>
@@ -242,13 +244,12 @@ a.custom{
 						</li>
 						<button type="button" data-mdb-button-init data-mdb-ripple-init
 							class="btn btn-info btn-rounded float-end" id="sendButton">보내기</button>
-					</ul>
-
-				</div>
+						</div>
+					</div>
 				</div>
 			</div>
-
 		</div>
+	</div>
 	</section>
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
@@ -285,6 +286,14 @@ window.onclick = function(event) {
 </script>
 
 <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+	var chatBox = document.getElementById("chatBox");
+	chatBox.style.visibility = "hidden";
+});
+</script>
+
+<script type="text/javascript">
 // 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
 const loginMemberNo = "${loginMember.memberNo}";
 const loginMemberName = "${loginMember.memberName}";
@@ -296,7 +305,90 @@ let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
 function selectChatRoom(chatRoomNo) {
     currentChatRoomNo = chatRoomNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
+    
+    $.ajax({
+        url: '/member/chatroom/chats/' + currentChatRoomNo,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+        	displayMessages(data);
+        },
+        error: function(error) {
+            console.error('AJAX 오류:', error);
+        }
+    });
+    
+ // JSON 데이터를 HTML로 변환하여 표시하는 함수
+    function displayMessages(messages) {
+        var chatContainer = $('#chat');
+        chatContainer.empty(); // 기존 내용을 제거
+        
+        console.log(messages);
+        
+        var chatBox = document.getElementById("chatBox");
+        chatBox.style.visibility = "visible";
+        var chatPlaceholder = document.getElementById("chatPlaceholder");
+        chatPlaceholder.style.display = "none";
+        
+        
+        $.each(messages, function(index, message) {
+        	
+        	if(message.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+        		
+        		var messageItem = $('<li>', { class: 'd-flex justify-content-end mb-6'})
+        	    .append($('<div>', { class: 'card w-100' })
+        	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
+        	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
+        	            .append($('<p>', { class: 'text-muted small mb-0' })
+        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
+        	            )
+        	        )
+        	        .append($('<div>', { class: 'card-body' })
+        	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
+        	        )
+        	    )
+        	    .append($('<img>', {
+        	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
+        	        alt: 'avatar',
+        	        class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
+        	        width: '60'
+        	    }));
+
+        		
+        	}else {/* 남-왼쪽에 와야 하는 사람  */
+        		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6'})
+        	    .append($('<img>', {
+        	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
+        	        alt: 'avatar',
+        	        class: 'rounded-circle d-flex align-self-start me-3 shadow-1-strong', // 왼쪽 여백
+        	        width: '60'
+        	    }))
+        	    .append($('<div>', { class: 'card w-100'})
+        	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
+        	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
+        	            .append($('<p>', { class: 'text-muted small mb-0' })
+        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
+        	            )
+        	        )
+        	        .append($('<div>', { class: 'card-body' })
+        	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
+        	        )
+        	    );
+
+
+        	}
+        	
+        	// 메시지 아이템을 채팅 공간에 추가
+            chatContainer.append(messageItem);
+        });
+    }
 }
+
+
+
+
+
+
 
 const chat = document.getElementById('chat');
 const messageInput = document.getElementById('messageInput');
@@ -311,9 +403,12 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
     // 서버로부터 받은 메시지를 화면에 표시
-    // 상대방이 나한테 보낸 메시지
+    // 상대방이 나한테 보낸 메시지(서버에서 나와 상대방 세션을 모두 가지고 있어서 내가 보낸 메시지도 여기로 옴)
     const messageData = JSON.parse(event.data);
 
+    console.log(messageData);
+    
+    
     const message = document.createElement('li');
     message.classList.add('d-flex', 'justify-content-between', 'mb-6');
 
@@ -335,7 +430,8 @@ ws.onmessage = (event) => {
 
     const timestamp = document.createElement('p');
     timestamp.classList.add('text-muted', 'small', 'mb-0');
-    timestamp.innerHTML = `<i class="far fa-clock"></i> ${new Date().toLocaleTimeString()}`;
+    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
+    timestamp.textContent = messageData.regDateTime;
 
     cardHeader.appendChild(senderName);
     cardHeader.appendChild(timestamp);
@@ -357,71 +453,23 @@ ws.onmessage = (event) => {
     chat.scrollTop = chat.scrollHeight;
 };
 
-ws.onclose = () => {
-    console.log('서버 연결이 끊어졌습니다.');
-};
+
 
 sendButton.addEventListener('click', () => {
     const messageContent = messageInput.value;
     if (messageContent) {
-        // 서버로 보낼 메시지 데이터 구성
-        var currentDateTime = SimpleDateTimeFormat(new Date(), "yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
         
-        const messageData = {
-            type: 'TALK',
+		const messageData = {
             chatRoomNo: currentChatRoomNo,  
             memberNo:  loginMemberNo,  
             memberName: loginMemberName,  
-            message: messageContent,
-            regDateTime: currentDateTime
+            message: messageContent
         };
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송
         ws.send(JSON.stringify(messageData));
 
-        // 내가 보낸 메시지를 화면에 표시
-        const myMessage = document.createElement('li');
-        myMessage.classList.add('d-flex', 'justify-content-between', 'mb-6');
-
-        const avatar = document.createElement('img');
-        avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
-        avatar.alt = "avatar";
-        avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
-        avatar.width = 60;
-
-        const messageCard = document.createElement('div');
-        messageCard.classList.add('card');
-
-        const cardHeader = document.createElement('div');
-        cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
-
-        const senderName = document.createElement('p');
-        senderName.classList.add('fw-bold', 'mb-0');
-        senderName.textContent = "나";
-
-        const timestamp = document.createElement('p');
-        timestamp.classList.add('text-muted', 'small', 'mb-0');
-        timestamp.innerHTML = `<i class="far fa-clock"></i> ${new Date().toLocaleTimeString()}`;
-
-        cardHeader.appendChild(senderName);
-        cardHeader.appendChild(timestamp);
-
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
-
-        const messageText = document.createElement('p');
-        messageText.classList.add('mb-0');
-        messageText.textContent = messageContent;
-
-        cardBody.appendChild(messageText);
-        messageCard.appendChild(cardHeader);
-        messageCard.appendChild(cardBody);
-
-        myMessage.appendChild(avatar);
-        myMessage.appendChild(messageCard);
-        chat.appendChild(myMessage);
         chat.scrollTop = chat.scrollHeight;
-
         // 입력 필드 초기화
         messageInput.value = '';
     }
@@ -432,7 +480,16 @@ messageInput.addEventListener('keypress', (e) => {
         sendButton.click();
     }
 });
+
+ws.onclose = () => {
+    console.log('서버 연결이 끊어졌습니다.');
+};
+
+ws.onerror = (error) => {
+    console.error('WebSocket error:', error);
+};
 </script>
+
 
 
 </body>

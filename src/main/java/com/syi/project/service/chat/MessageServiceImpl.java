@@ -39,4 +39,10 @@ public class MessageServiceImpl implements MessageService {
 		messageRepository.deleteById(id);
 	}
 
+	@Override
+	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo) {
+		return messageRepository.findByChatRoomNo(chatRoomNo);
+	}
+	
+
 }

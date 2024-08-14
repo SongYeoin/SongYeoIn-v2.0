@@ -41,7 +41,7 @@
 	
 	
 	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
-  		SELECT A.CHATROOM_NO,A.ADMIN_NO,A.MEMBER_NO,A.CHATROOM_SESSION_IDS,B.MEMBER_NAME
+  		SELECT A.CHATROOM_NO,A.ADMIN_NO,A.MEMBER_NO,B.MEMBER_NAME
   		<if test="memberRole == 'ROLE_ADMIN'">
 	  		FROM CHATROOM A JOIN MEMBER B ON(A.MEMBER_NO = B.MEMBER_NO)
 	  		WHERE ADMIN_NO = #{memberNo}

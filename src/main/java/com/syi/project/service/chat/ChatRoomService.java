@@ -3,7 +3,6 @@ package com.syi.project.service.chat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.socket.WebSocketSession;
 
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.chat.ChatRoomVO;
