@@ -324,9 +324,16 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->
-	<%@ include file="../member/aside.jsp"%>
-	
+
+	<!-- 사용자 역할일 때 사이드바 -->
+		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		    <%@ include file="../member/aside.jsp"%>
+		</c:if>
+	<!-- 관리자 역할일 때 사이드바 -->
+		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+		    <%@ include file="../admin/aside.jsp"%>
+		</c:if>
+
 	<main>
 	
 	<!-- 제목과 클래스 선택 박스 -->
@@ -342,7 +349,10 @@ td.checkStatus.N {
 		</div>
 		
 	<!-- 캘린더 출력 영역 -->
-		<div id='calendar'></div>
+	<!-- 사용자 역할일 때만 캘린더 표시 -->
+		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		    <div id='calendar'></div>
+		</c:if>
 	
 	<!-- 메인 콘텐츠 -->
 		<div class="container">
@@ -351,29 +361,43 @@ td.checkStatus.N {
 				<div class="search_area">
 					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
 						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
-
-						<label for="year">년도:</label>
+				        
+				        <!-- 추가된 수강생 선택 박스 -->
+				        <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+		                    <select id="memberName" name="memberName">
+					            <option value="">전체</option>
+					            <!-- 수강생 이름 목록을 담는 JSP 스크립틀릿 -->
+					            <c:forEach var="member" items="${journalList}">
+					                <option value="${member.MEMBER_NAME}" ${member.MEMBER_NAME eq param.memberName ? 'selected' : ''}>
+					                    ${member.MEMBER_NAME}
+					                </option>
+					            </c:forEach>
+					        </select>
+	                    </c:if>
+				        
 				        <select id="year" name="year">
-						    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
+						    <option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
 						    <c:forEach var="i" begin="2020" end="2025">
 						        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
 						    </c:forEach>
 						</select>
 						
-						<label for="month">월:</label>
 						<select id="month" name="month">
-						    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
-						    <c:forEach var="i" begin="1" end="12">
-						        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
-						    </c:forEach>
+						    <option value="" <c:if test="${empty param.month}">selected</c:if>>월</option>
+							    <c:forEach var="i" begin="1" end="12">
+							        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
+							    </c:forEach>
 						</select>
 	
 						<button type="submit">조회</button>
 					</form>
 				</div>
-				<div class="icons">
-					<a href="/journal/journalEnroll"><i class="fas fa-square-plus"></i></a>
-				</div>
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+					<div class="icons">
+						<a href="/journal/journalEnroll"><i class="fas fa-square-plus"></i></a>
+					</div>
+				</c:if>
+				
 			</div>
 			
 			<div class="table_wrap">
@@ -453,48 +477,30 @@ td.checkStatus.N {
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 	
-	
 	<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-
-            var journalEvents = [
-                <c:forEach items="${journalList}" var="journal" varStatus="status">
-                    {
-                        title: '${journal.journalTitle}',
-                        start: '${journal.journalWriteDate}',
-                        url: '${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}',
-                        color: '#6c757d' // 교육일지 이벤트 색상
-                    }<c:if test="${not empty journal}">,</c:if>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [
+                <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+                {
+                    title: "${journal.journalTitle}",
+                    start: "${journal.journalWriteDate}",
+                    url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
+                }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
-            ];
-
-            var scheduleEvents = [
-                <c:forEach items="${schedules}" var="schedule" varStatus="status">
-                    {
-                        title: '${schedule.scheduleTitle}',
-                        start: '${schedule.scheduleDate}',
-                        url: '${pageContext.request.contextPath}/schedule/scheduleDetail?scheduleNo=${schedule.scheduleNo}',
-                        color: '#868e96' // 교육일정 이벤트 색상
-                    }<c:if test="${not empty schedule}">,</c:if>
-                </c:forEach>
-            ];
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: [...journalEvents, ...scheduleEvents],
-                eventClick: function(info) {
+            ],
+            eventClick: function(info) {
+                if (info.event.url) {
                     window.location.href = info.event.url;
                 }
-            });
-
-            calendar.render();
+            }
         });
-    </script>
+        calendar.render();
+        
+        console.log("Calendar events: ", calendar.getEvents());
+    });
+	</script>
 </body>
 </html>

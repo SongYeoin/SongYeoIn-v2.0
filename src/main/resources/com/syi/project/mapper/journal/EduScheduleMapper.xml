@@ -23,7 +23,7 @@
         VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor})
     </insert>
 
-    <!-- 교육 일정 전체 조회 -->
+    <!-- 교육 일정 전체 조회 (페이징, 검색) -->
 	<select id="scheduleList" resultMap="EduScheduleResultMap">
 	    <![CDATA[
 	    SELECT * 
@@ -58,8 +58,6 @@
 	    ]]>
 	</select>
 
-
-    
     <!-- 교육 일정 총 갯수 조회 -->
 	<select id="scheduleGetTotal" resultType="int">
 	    SELECT count(*) 
@@ -83,8 +81,6 @@
 	    </if>
 	</select>
 
-
-
     <!-- 교육 일정 상세 조회 -->
     <select id="scheduleDetail" resultMap="EduScheduleResultMap">
         SELECT * FROM EDU_SCHEDULE WHERE SCHEDULE_NO = #{scheduleNo}
@@ -106,7 +102,7 @@
     </delete>
 
 	
-	<!-- 전체 일정 조회 쿼리 -->
+	<!-- 캘린더 전체 일정 조회 쿼리 -->
     <select id="scheduleAllList" resultMap="EduScheduleResultMap">
         SELECT * FROM edu_schedule
     </select>

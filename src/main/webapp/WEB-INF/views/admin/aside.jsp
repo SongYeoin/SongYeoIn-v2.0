@@ -122,6 +122,11 @@
                 <a><i class="fas fa-cog"></i>Settings</a>
             </div>
         </div>
+        <div class="menu-item">
+            <div class="menu-title">
+                <a href="/journal/journalList"><i class="fas fa-chalkboard-teacher"></i>journal</a>
+            </div>
+        </div>
     </div>
     
     <script>

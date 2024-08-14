@@ -13,7 +13,7 @@ public interface EduScheduleMapper {
 	// 일정 등록
 	void scheduleCreate(EduScheduleVO schedule);
 
-	// 모든 일정 조회
+	// 모든 일정 조회 (페이징)
     List<EduScheduleVO> scheduleList(Criteria cri);
     
     // 일정 총 갯수
@@ -28,6 +28,6 @@ public interface EduScheduleMapper {
     // 일정 삭제
     int scheduleDelete(int scheduleNo);
 
-    // 전체 일정 조회 ajax
+    // 캘린더 전체 일정 조회
 	List<EduScheduleVO> scheduleAllList();
 }

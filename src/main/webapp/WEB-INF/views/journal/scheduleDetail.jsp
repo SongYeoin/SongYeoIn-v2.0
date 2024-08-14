@@ -135,11 +135,11 @@
     <!-- 메인 콘텐츠 영역 -->
     <div class="main-content">
         <div class="container">
-            <h1>${scheduleDetail.scheduleTitle}</h1>
+            <h1>단원명: ${scheduleDetail.scheduleTitle}</h1>
             <!-- 일정 상세 정보 -->
-            <p>Date: ${scheduleDetail.scheduleDate}</p> <!-- 일정 날짜 -->
-            <p>Description: ${scheduleDetail.scheduleDescription}</p> <!-- 일정 설명 -->
-            <p>Instructor: ${scheduleDetail.scheduleInstructor}</p> <!-- 강사 이름 -->
+            <p>일자: ${scheduleDetail.scheduleDate}</p> <!-- 일정 날짜 -->
+            <p>학습주제: ${scheduleDetail.scheduleDescription}</p> <!-- 일정 설명 -->
+            <p>강사: ${scheduleDetail.scheduleInstructor}</p> <!-- 강사 이름 -->
             
             <!-- 버튼 컨테이너 (정렬을 위해) -->
             <div class="btn-container">
@@ -151,8 +151,8 @@
                 </c:if> --%>
                     
                 <!-- 관리자 역할일 때만 수정 및 삭제 버튼 표시 -->
-<%--                 <c:if test="${sessionScope.memberRole == 'role_admin'}">
- --%>                    <!-- 일정 수정 버튼 -->
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq journal.memberNo}">
+                    <!-- 일정 수정 버튼 -->
                     <a href="${pageContext.request.contextPath}/journal/admin/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}" class="btn btn-primary">수정</a>
                     
                     <!-- 일정 삭제 버튼 -->
@@ -160,8 +160,8 @@
                         <input type="hidden" name="scheduleNo" value="${scheduleDetail.scheduleNo}" />
                         <button type="submit" onclick="return confirm('해당 교육일정을 삭제하시겠습니까?');">삭제</button>
                     </form>
-<%--                 </c:if>
- --%>                
+                </c:if>
+            
                 <!-- 목록으로 돌아가기 버튼 -->
                 <a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-link">목록</a>
             </div>

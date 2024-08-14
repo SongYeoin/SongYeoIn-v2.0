@@ -28,7 +28,7 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 		logger.info("일정 등록 완료: {}", schedule);
 	}
 
-	// 모든 일정 조회
+	// 모든 일정 조회 (페이징)
 	@Override
 	public List<EduScheduleVO> scheduleList(Criteria cri) {
 		logger.info("일정 목록 조회 요청: {}", cri);
@@ -84,7 +84,7 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 		return result;
 	}
 
-	// 전체 일정 조회 ajax
+	// 캘린더 전체 일정 조회
 	@Override
 	public List<EduScheduleVO> scheduleAllList() {
 		List<EduScheduleVO> scheduleAllList = eduScheduleMapper.scheduleAllList();

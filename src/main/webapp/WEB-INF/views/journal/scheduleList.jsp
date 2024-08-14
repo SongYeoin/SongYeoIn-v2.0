@@ -26,8 +26,7 @@ html, body {
 
 /* body의 기본 폰트와 레이아웃 설정 */
 body {
-	font-family: Arial, sans-serif;
-	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
+	font-family: Arial, sans-serif; /* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
 	display: flex; /* flexbox 레이아웃 사용 */
 	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
 }
@@ -361,17 +360,15 @@ td.checkStatus.N {
 						</select> 
 						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색">
 						
-						<label for="year">년도:</label>
 				        <select id="year" name="year">
-						    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
+						    <option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
 						    <c:forEach var="i" begin="2020" end="2025">
 						        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
 						    </c:forEach>
 						</select>
 						
-						<label for="month">월:</label>
 						<select id="month" name="month">
-						    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
+						    <option value="" <c:if test="${empty param.month}">selected</c:if>>월</option>
 						    <c:forEach var="i" begin="1" end="12">
 						        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
 						    </c:forEach>
@@ -380,9 +377,11 @@ td.checkStatus.N {
 						<button type="submit">조회</button>
 					</form>
 				</div>
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
 				<div class="icons">
 					<a href="/journal/admin/scheduleCreate"><i class="fas fa-square-plus"></i></a>
 				</div>
+				</c:if>
 			</div>
 			
 			<div class="table_wrap">
@@ -406,12 +405,12 @@ td.checkStatus.N {
 							<td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
 							<td><c:out value="${schedule.scheduleDate}" /></td>
 							<td>
-								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
 									<c:out value="${schedule.scheduleTitle}" />
 								</a>
 							</td>
 							<td>
-								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
 									<c:out value="${schedule.scheduleDescription}" />
 								</a>
 							</td>
@@ -466,7 +465,7 @@ td.checkStatus.N {
                 {
                     title: "${schedule.scheduleTitle}",
                     start: "${schedule.scheduleDate}",
-                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+                    url: "${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
                 }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
             ],
