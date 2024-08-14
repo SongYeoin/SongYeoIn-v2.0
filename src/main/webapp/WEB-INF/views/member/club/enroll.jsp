@@ -43,6 +43,26 @@ main {
 	height: 100%;
 
 }
+
+.btn {
+	display: inline-block;
+	font-size: 22px;
+	padding: 6px 12px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	font-weight: 600;
+	width: 140px;
+	height: 41px;
+	line-height: 39px;
+	text-align: center;
+	margin-left: 30px;
+	cursor: pointer;
+}
+
+.btn_wrap {
+	padding-left: 80px;
+	margin-top: 50px;
+}
 </style>
 </head>
 <body>
@@ -56,29 +76,27 @@ main {
    <main>
         <!-- Main content -->   
         <div class="box">
-        	<h1>게시판 등록</h1>
+        	<h1>강의실 신청 등록</h1>
 
-	<form action="/club/enroll" method="post">
 		<div class="input_wrap">
-			<!-- <label>작성자</label> <input name="title"> 
+			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
+		</div>
+	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
+		<input type="hidden" name="classNo" value="${param.classNo }">
 		<div class="input_wrap">
-        <label>작성자</label>
-        <input name="applicant" value="자동으로 로그인한 사용자의 이름을 서버에서 입력" readonly>
-    </div>-->
+			<label>참여자</label> <input type="text" name="join" id="joinInput">
 		</div>
 		<div class="input_wrap">
-			<label>참여자</label> <input type="text" name="join">
-		</div>
-		<div class="input_wrap">
-			<label>활동일</label> <input type="date" name="studyDate">
+			<label>활동일</label> <input type="date" name="studyDate" id="studyDateInput">
 		</div>
 		<div class="input_wrap">
 			<label>내용</label>
 			<textarea rows="3" name="content"></textarea>
 		</div>
-
-		<input type="submit" value="등록">
-
+		<div class="btn_wrap">
+		<input type="submit" value="등록" class="btn">
+		<button type="button" class="btn" onclick="cancelForm()">취소</button>
+		</div>
 	</form>
         </div>
     </main>
@@ -86,5 +104,22 @@ main {
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
+	
+	<script>
+		function validateForm() {
+		    var joinInput = document.getElementById('joinInput').value;
+		    var studyDateInput = document.getElementById('studyDateInput').value;
+
+		    if (!joinInput || !studyDateInput) {
+		        alert('참여 또는 활동일을 입력해 주세요.');
+		        return false; // 폼 제출을 막습니다.
+		    }
+		    return true; // 폼 제출을 허용합니다.
+		}
+		
+		function cancelForm() {
+			window.location.href = '/member/club/list'; // 목록 페이지로 이동
+		}
+	</script>
 </body>
 </html>

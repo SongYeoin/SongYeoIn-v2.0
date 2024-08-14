@@ -6,6 +6,8 @@ import com.syi.project.model.EnrollVO;
 
 import lombok.Data;
 
+
+
 @Data
 public class ClubVO {
 	
@@ -17,5 +19,6 @@ public class ClubVO {
 	private String checkStatus;	//'Y', 'N', 'W' 승인
 	private String checkCmt;	//승인메시지
 	private EnrollVO enroll;	//수강코드번호
+	private String fileName; //첨부파일
 	
 }

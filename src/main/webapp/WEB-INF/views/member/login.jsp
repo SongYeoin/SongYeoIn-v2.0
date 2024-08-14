@@ -117,12 +117,16 @@ p a {
 
 	<script>
 		$(document).ready(function() {
-			var result = '${result}';
+			let result = '${result}';
+			let enrollResult = '${enroll_result}';
             if (result === '0') {			// 미승인 회원이 로그인 시
                 alert("승인이 완료되지 않았습니다.\n관리자에게 문의하세요.");
             } else if (result === '1') {	// 로그인 실패 시
                 $('#loginError').text("아이디와 비밀번호를 확인하고 다시 시도해주세요.");
             }
+			if(enrollResult === 'success') {
+				alert("회원가입에 성공하였습니다.");
+			}
 
 			$('#login-form').submit(function(event) {
 

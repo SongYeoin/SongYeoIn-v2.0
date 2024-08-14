@@ -9,6 +9,7 @@
 <title>송파여성인력개발센터</title>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 
 /* CSS Reset */
@@ -36,121 +37,6 @@ main {
 	height: 100%;
 }
 
-/* .box {
-	height: 100%;
-} */
-
-/* 내용 */
-/* a {
-	text-decoration: none;
-}
-
-table {
-	border-collapse: collapse;
-	width: 1000px;
-	margin-top: 20px;
-	text-align: center;
-}
-
-table thead tr {
-    cursor: default; /* 기본 커서 */
-/* }
-
-table tbody tr {
-    cursor: pointer; */ /* 포인터 커서 */
-/* }
-
-td, th {
-	border: 1px solid black;
-	height: 50px;
-}
-
-th {
-	font-size: 17px;
-}
-
-thead {
-	font-weight: 700;
-}
-
-.table_wrap {
-	margin: 50px 50px 0 50px;
-}
-
-.bno_width {
-	width: 12%;
-}
-
-.writer_width {
-	width: 20%;
-}
-
-.regdate_width {
-	width: 15%;
-}
-
-.updatedate_width {
-	width: 15%;
-}
-
-.top_btn {
-	font-size: 20px;
-	padding: 6px 12px;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	font-weight: 600;
-}
-
-.pageInfo {
-	list-style: none;
-	display: inline-block;
-	margin: 50px 0 0 100px;
-}
-
-.pageInfo li {
-	float: left;
-	font-size: 20px;
-	margin-left: 18px;
-	padding: 7px;
-	font-weight: 500;
-}
-
-a:link {
-	color: black;
-	text-decoration: none;
-}
-
-a:visited {
-	color: black;
-	text-decoration: none;
-}
-
-a:hover {
-	color: black;
-	text-decoration: none; */
-	/* text-decoration: underline; */
-/* }
-
-.active {
-	background-color: #cdd5ec;
-}
-
-.search_area {
-	display: inline-block;
-	margin-top: 30px;
-	margin-left: 260px;
-}
-
-.search_area input {
-	height: 30px;
-	width: 250px;
-}
-
-.search_area button {
-	width: 100px;
-	height: 36px;
-} */
-
 .title-container{
 	display: flex;
     align-items: center; /* 수직 가운데 정렬 */
@@ -166,7 +52,8 @@ a:hover {
 	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	max-width: 1200px;
+	width: 1320px;
+	height: 710px;
 	border-radius: 10px;
 	padding-bottom: 20px;
     
@@ -261,6 +148,14 @@ a:hover {
 
 .top_btn:hover {
 	background-color: #218838;
+}
+
+table thead tr {
+    cursor: default; /* 기본 커서 */
+}
+
+table tbody tr {
+    cursor: pointer;  /* 포인터 커서 */
 }
 
 table {
@@ -365,29 +260,16 @@ a:hover {
 .select-box {
     position: relative;
     display: inline-block;
-    width: 100%;
-    max-width: 250px; /* Adjusted width for more text space */
-	flex: 1; /* 선택 박스가 가능한 만큼 너비를 차지하게 함 */
 }
 
 .select-box select {
-    width: 100%;
-    padding: 10px; /* Adjusted padding */
-    font-size: 1em; /* Adjusted font size */
-    border: none;
-    outline: none;
-    appearance: none;
-    background: #ddd;
-}
-
-.select-box::after {
-    content: '▼';
-    font-size: 1em; /* Adjusted arrow size */
-    position: absolute;
-    right: 10px; /* Adjusted position */
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f8f8;
+    width: auto;
+    min-width: 300px;
 }
 
 .header .search_area {
@@ -399,7 +281,74 @@ a:hover {
 	margin-left: 10px;
 }
 
+.bi-paperclip{
+	cursor: pointer;
+	/* font-size: 20px; */
+}
+
+/* 중복된 아이콘을 숨깁니다 */
+.bi-paperclip.duplicate {
+    display: none; /* 중복된 아이콘 숨기기 */
+} 
+
 </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+<script>
+function sendClassChange() {
+    var classNo = $('#classSelect').val();
+    console.log("비동기 요청 시작");
+
+    $.ajax({
+        url: '/member/club/list/getByClass', // AJAX 요청 URL
+        type: 'GET',
+        dataType: 'json', // 데이터 타입을 JSON으로 설정
+        data: { classNo: classNo },
+        success: function(response) {
+        	console.log('서버 응답:', response); // 응답 데이터 로그
+        	
+        	var tableBody = $('#tableContainer table tbody');
+            tableBody.empty(); // 기존 데이터 제거
+            
+                // 배열일 때 테이블의 tbody 부분을 업데이트
+                response.forEach(function(item) {
+                    var studyDate = new Date(item.studyDate);
+                    var regDate = new Date(item.regDate);
+
+                    var formattedStudyDate = formatDate(studyDate);
+                    var formattedRegDate = formatDate(regDate);
+                    
+                    if(item.checkCmt == null){
+                    	item.checkCmt = "";
+                    }
+
+                    var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
+                                '<td>' + item.clubNo + '</td>' +
+                                '<td>' + item.enroll.member.memberName + '</td>' +
+                                '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '완료' : '불가') + '</td>' +
+                                '<td>' + item.checkCmt + '</td>' +
+                                '<td>' + formattedStudyDate + '</td>' +
+                                '<td>' + formattedRegDate + '</td>' +
+                                '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" onclick="' + event.stopPropagation() + '"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+                              '</tr>';
+                    tableBody.append(row);   
+                });
+        },
+        error: function() {
+        	
+            alert('데이터를 가져오는 데 실패했습니다.');
+        }
+    });
+
+    function formatDate(date) {
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월을 2자리로 포맷
+        var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
+        return year + '/' + month + '/' + day;
+    }
+}
+</script>
+
 </head>
 <body>
 
@@ -408,187 +357,76 @@ a:hover {
 
 	<!-- 사이드바 연결 -->
 	<%@ include file="../aside.jsp"%>
-
+	<%-- selectedClassNo --%>
 	<main>
-		<!-- Main content -->
-		<!-- <div class="box"> -->
-			<%-- <h1>목록페이지입니다</h1>
-			
-			<div class="search_area">
-				<form id="searchForm" method="get" action="/club/list">
-				
-				<label for="classNo">반 선택:</label>
-					<select id="classNo" name="classNo">
-						<option value="">전체</option>
-						<c:forEach items="${classes}" var="cls">
-							<option value="${cls.classNo}" ${param.classNo == cls.classNo ? 'selected' : ''}>
-								<c:out value="${cls.className}" />
-							</option>
-						</c:forEach>
-					</select>
-				
-					<label for="startDate">활동일:</label>
-					<input type="date" id="studyDate" name="studyDate" value="${param.studyDate}">
-
-					<label for="status">상태:</label>
-					<select id="status" name="status">
-						<option value="">전체</option>
-						<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>Y</option>
-						<option value="N" ${param.status == 'N' ? 'selected' : ''}>N</option>
-					</select>
-
-					<button type="submit">검색</button>
-				</form>
-			</div>
-			
-			<div class="table_wrap">
-				<a href="/club/enroll" class="top_btn">게시판 등록</a>
-				<table>
-					<thead>
-						<tr>
-							<th class="bno_width">번호</th>
-							<!-- <th class="title_width">제목</th> -->
-							<th class="writer_width">작성자</th>
-							<th class="writer_width">승인현황</th>
-							<th class="writer_width">승인메시지</th>
-							<th class="regdate_width">활동일</th>
-							<th class="regdate_width">작성일</th>
-							<!-- <th class="updatedate_width">수정일</th> -->
-						</tr>
-					</thead>
-					<tbody>
-					<c:forEach items="${list }" var="list">
-						<tr onclick="location.href='/club/get?clubNo=${list.clubNo}'">
-							<td><c:out value="${list.clubNo }" /></td>
-							<td><a class="move" href='<c:out value="${list.clubNo }" />'><c:out value="${list.title }" /></a></td>
-							<td><c:out value="${list.enroll.member.memberName }" /></td>
-							<td><c:out value="${list.checkStatus }" /></td>
-							
-							<td>
-            <c:choose>
-                <c:when test="${list.checkStatus == 'W'}">승인대기</c:when>
-                <c:when test="${list.checkStatus == 'Y'}">승인완료</c:when>
-                <c:when test="${list.checkStatus == 'N'}">승인불가</c:when>
-                <c:otherwise>알 수 없음</c:otherwise>
-            </c:choose>
-        </td>
-        
-							<td><c:out value="${list.checkCmt }" /></td>
-							<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.studyDate }" /></td>
-							<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.regDate }" /></td>
-						</tr>
-					</c:forEach>
-					</tbody>
-				</table> --%>
-
-				<%-- <h1>"${pageMaker.startPage }" </h1>
-<h1>"${pageMaker.endPage}" </h1> --%>
-
-				<%-- <div class="search_wrap">
-					<div class="search_area">
-					<select name="type">
-						<option value="" <c:out value="${pageMake.cri.type == null? 'selected':'' }"/>>전체</option>
-						<option value="W" <c:out value="${pageMake.cri.type eq 'W'? 'selected':'' }"/>>작성자</option>
-						<option value="H" <c:out value="${pageMake.cri.type eq 'H'? 'selected':'' }"/>>승인현황</option>
-						<option value="C" <c:out value="${pageMake.cri.type eq 'C'? 'selected':'' }"/>>내용</option>
-						</select>
-
-						<input type="text" name="keyword" value="${pageMaker.cri.keyword }">
-						<button>검색</button>
-					
-					
-					</div>
-				</div>
-
-				<div class="pageInfo_wrap">
-					<div class="pageInfo_area">
-						<ul id="pageInfo" class="pageInfo">
-
-							<!-- 이전페이지 버튼 -->
-							<c:if test="${pageMaker.prev }">
-								<li class="pageInfo_btn previous"><a
-									href="${pageMaker.startPage-1 }">Previous</a></li>
-							</c:if>
-
-							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.startPage }"
-								end="${pageMaker.endPage }">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a
-									href="${num }">${num }</a></li>
-							</c:forEach>
-
-							<!-- 다음페이지 버튼 -->
-							<c:if test="${pageMaker.next }">
-								<li class="pageInfo_btn next"><a
-									href="${pageMaker.endPage+1 }">Next</a></li>
-							</c:if>
-
-						</ul>
-					</div>
-				</div>
-
-				<form id="moveForm" method="get">
-					<input type="hidden" name="pageNum"
-						value="${pageMaker.cri.pageNum }"> <input type="hidden"
-						name="amount" value="${pageMaker.cri.amount }"> <input
-						type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
-					<input type="hidden" name="type" value="${pageMaker.cri.type }">
-				</form>
-			</div> --%>
-		<!-- </div> -->
 		<div class="title-container">
-		<h1>동아리 신청</h1>
+		<h1>동아리</h1>
 		<div class="select-box">
-			<select id="classSelect" name="classSelect">
-				<option value="">JAVA&SPRING 백엔드 과정</option>
-				<!-- Add other options here -->
+			<select id="classSelect" name="classSelect" onchange="sendClassChange()">
+			    <c:forEach var="classItem" items="${classList}">
+			        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo || (classItem.classNo == classList[0].classNo && param.classNo == null)}">selected</c:if>>${classItem.className}</option>
+			    </c:forEach>
 			</select>
 		</div>
 </div>
 		<!-- Main content -->
 		<div class="container">
 			<div class="header">
-				<h2>동아리 신청 목록</h2>
+				<h2>강의실 신청 목록</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
 						<input type="text" placeholder="Search..." id="search">
-						<button type="submit">검색</button>
-						<label for="classNo">반 선택:</label>
-						<select id="classNo" name="classNo">
-							<option value="">전체</option>
-							<c:forEach items="${classes}" var="cls">
-								<option value="${cls.classNo}" ${param.classNo == cls.classNo ? 'selected' : ''}>
-									<c:out value="${cls.className}" />
-								</option>
-							</c:forEach>
-						</select>
 
 						<label for="status">상태:</label>
 						<select id="status" name="status">
 							<option value="">전체</option>
-							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>Y</option>
-							<option value="N" ${param.status == 'N' ? 'selected' : ''}>N</option>
+							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>완료</option>
+							<option value="N" ${param.status == 'N' ? 'selected' : ''}>불가</option>
 						</select>
 
-						<button type="submit">조회하기</button>
+						<button type="submit">조회</button>
 					</form>
 				</div>
 				<div class="icons">
-					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
+					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a>
 				</div>
 			</div>
 
-			<div class="table_wrap">
+			<div id="tableContainer" class="table_wrap">
+				
+			<table>
+					<thead>
+						<tr>
+							<th class="clubNo_width">번호</th>
+							<th class="writer_width">작성자</th>
+							<th class="checkStatus_width">승인현황</th>
+							<th class="checkCmt_width">승인메시지</th>
+							<th class="studyDate_width">활동일</th>
+							<th class="regDate_width">작성일</th>
+							<th class="file_width">첨부</th>
+						</tr>
+					</thead>
+					<tbody>
+                <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
+            		</tbody>
+			
+			</table>
+
+
+
+
+			<%-- <div class="table_wrap">
 			
 				<table>
 					<thead>
 						<tr>
-							<th class="bno_width">번호</th>
+							<th class="clubNo_width">번호</th>
 							<th class="writer_width">작성자</th>
-							<th class="writer_width">승인현황</th>
-							<th class="writer_width">승인메시지</th>
-							<th class="regdate_width">활동일</th>
-							<th class="regdate_width">작성일</th>
+							<th class="checkStatus_width">승인현황</th>
+							<th class="checkCmt_width">승인메시지</th>
+							<th class="studyDate_width">활동일</th>
+							<th class="regDate_width">작성일</th>
+							<th class="file_width">첨부</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -598,75 +436,81 @@ a:hover {
 								<td><c:out value="${list.enroll.member.memberName }" /></td>
 								<td>
 									<c:choose>
-										<c:when test="${list.checkStatus == 'W'}">승인대기</c:when>
-										<c:when test="${list.checkStatus == 'Y'}">승인완료</c:when>
-										<c:when test="${list.checkStatus == 'N'}">승인불가</c:when>
+										<c:when test="${list.checkStatus == 'W'}">대기</c:when>
+										<c:when test="${list.checkStatus == 'Y'}">완료</c:when>
+										<c:when test="${list.checkStatus == 'N'}">불가</c:when>
 										<c:otherwise>알 수 없음</c:otherwise>
 									</c:choose>
 								</td>
 								<td><c:out value="${list.checkCmt }" /></td>
 								<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.studyDate }" /></td>
 								<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.regDate }" /></td>
+								<td>
+									<c:choose>
+										<c:when test="${list.fileName != null }">
+										<a href="/member/club/downloadFile?fileName=${list.fileName}" download="${list.fileName}" title="${list.fileName}" onclick="event.stopPropagation();">
+											<i class="bi bi-paperclip"></i>
+                            			</a>
+										</c:when>
+										<c:otherwise>
+											<c:out value="" />
+										</c:otherwise>
+									</c:choose>
+								</td>
+								
 							</tr>
 						</c:forEach>
 						</tbody>
 				</table>
+			
 				
-				<div class="pageInfo_wrap">
-					<div class="pageInfo_area">
-						<ul id="pageInfo" class="pageInfo">
-							<c:if test="${pageMaker.prev }">
-								<li class="pageInfo_btn previous"><a href="${pageMaker.startPage-1 }">Previous</a></li>
-							</c:if>
-							<c:forEach var="num" begin="${pageMaker.startPage }" end="${pageMaker.endPage }">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a href="${num }">${num }</a></li>
-							</c:forEach>
-							<c:if test="${pageMaker.next }">
-								<li class="pageInfo_btn next"><a href="${pageMaker.endPage+1 }">Next</a></li>
-							</c:if>
-						</ul>
-					</div>
-					<form id="moveForm" method="get">
-						<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }"> 
-						<input type="hidden" name="amount" value="${pageMaker.cri.amount }"> 
-						<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
-						<input type="hidden" name="type" value="${pageMaker.cri.type }">
-					</form>
-				</div>
+			</div> --%>
 			</div>
 		</div>
 	</main>
 
+
+
+	
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
 
 	<script>
-		$(document).ready(function() {
-			let result = '<c:out value="${result}"/>';
-			checkAlert(result);
-			function checkAlert(result) {
-
-				if (result === '') {
-					return;
-				}
-				if (result === "enroll success") {
-					alert("등록이 완료되었습니다");
-				}
-				if (result === "modify success") {
-					alert("수정이 완료되었습니다");
-				}
-				if (result === "delete success") {
-					alert("삭제가 완료되었습니다");
-				}
+	$(document).ready(function(){
+		//결과 메시지 처리
+		let result = '<c:out value="${result}"/>';
+		checkAlert(result);
+		function checkAlert(result){
+			
+			if(result === ''){
+				return;
 			}
-		});
-
+			if(result === "enroll success"){
+				alert("등록이 완료되었습니다");
+			}
+			if(result === "modify success"){
+				alert("수정이 완료되었습니다");
+			}
+			if(result === "delete success"){
+				alert("삭제가 완료되었습니다");
+			}
+		}
+	
+		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
+        sendClassChange();
+		
+     	// 반 선택 시 동작
+        $('#classSelect').change(sendClassChange);
+        
+	}); 
+        
+	
+	
+		//페이지 이동 폼 처리
 		let moveForm = $("#moveForm");
 
-		$(".move").on(
-				"click",
-				function(e) {
+		$(".move").on("click", function(e) {
 					e.preventDefault();
 
 					moveForm.append("<input type='hidden' name='bno' value='"
@@ -675,6 +519,7 @@ a:hover {
 					moveForm.submit();
 				});
 
+		//페이지 정보 변경 처리
 		$(".pageInfo a").on("click", function(e) {
 			e.preventDefault();
 			moveForm.find("input[name='pageNum']").val($(this).attr("href"));
@@ -682,6 +527,7 @@ a:hover {
 			moveForm.submit();
 		});
 
+		//검색처리
 		$(".search_area button").on("click", function(e) {
 			e.preventDefault();
 
@@ -704,6 +550,8 @@ a:hover {
 			moveForm.find("input[name='pageNum']").val(1);
 			moveForm.submit();
 		});
+	
+        
 	</script>
 
 </body>

@@ -123,28 +123,28 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <%@ include file="../member/aside.jsp"%>
+        <%@ include file="../admin/aside.jsp"%>
     </div>
 
     <!-- Main Content -->
     <div class="container">
-        <h1>Create New Schedule</h1>
+        <h1>새 교육일정 등록</h1>
         <form action="${pageContext.request.contextPath}/journal/scheduleCreate" method="post">
-            <label for="scheduleTitle">Title:</label>
+            <label for="scheduleTitle">단원명:</label>
             <input type="text" name="scheduleTitle" id="scheduleTitle" required />
 
-            <label for="scheduleDate">Date:</label>
+            <label for="scheduleDate">일자:</label>
             <input type="date" name="scheduleDate" id="scheduleDate" required />
 
-            <label for="scheduleDescription">Description:</label>
+            <label for="scheduleDescription">학습주제:</label>
             <input type="text" name="scheduleDescription" id="scheduleDescription" />
 
-            <label for="scheduleInstructor">Instructor:</label>
+            <label for="scheduleInstructor">강사:</label>
             <input type="text" name="scheduleInstructor" id="scheduleInstructor" />
 
-            <input type="submit" value="Create Schedule" />
+            <input type="submit" value="등록하기" />
         </form>
-        <a href="${pageContext.request.contextPath}/journal/scheduleList" class="back-link">Back to List</a>
+        <a href="${pageContext.request.contextPath}/journal/scheduleList" class="back-link">목록</a>
     </div>
 
     <!-- Footer -->

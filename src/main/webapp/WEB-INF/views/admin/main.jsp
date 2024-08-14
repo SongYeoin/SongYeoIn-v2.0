@@ -32,18 +32,12 @@ body {
 
 main {
 	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
+	margin-left: 300px;
+	padding-top: 120px;
 	overflow-y: auto;
-	top: 120px;
-	left: 250px;
-	background-color: yellow;
-}
-
-.box{
 	height: 100%;
-
 }
+
 </style>
 </head>
 <body>
@@ -56,7 +50,7 @@ main {
 
    <main>
         <!-- Main content -->
-        <div class="box">
+        <div>
         	글자라도 써봅니다
         </div>
     </main>

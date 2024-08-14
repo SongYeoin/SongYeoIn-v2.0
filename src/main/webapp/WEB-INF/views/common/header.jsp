@@ -41,6 +41,13 @@ header {
 	font-weight: bold;
 }
 
+
+.header-right {
+	display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
 .btns {
 	display: flex;
 	gap: 10px;
@@ -66,18 +73,23 @@ header {
             <span class="highlight">S</span>ongpa <span class="highlight">W</span>oman
         </div>
         </div>
+        <div class="header-right">
+        <div class="member">
+        <c:if test="${ !empty sessionScope.loginMember }"><c:out value="${ sessionScope.loginMember.memberName }"/> 님</c:if>
+        </div>
         <div class="btns">
-        <p>${sessionScope.loginMember.memberName} 님</p>
-		<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}chatroom/main'"></i> <!-- 채팅방 아이콘 -->
 		<c:choose>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
-				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i> <!-- 마이페이지 아이콘 -->
+				<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/member/chatroom/main'"></i>
+				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i>
 			</c:when>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
+				<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/admin/chatroom/main'"></i>
 				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/admin/mypage'"></i>
 			</c:when>
 		</c:choose>
         <i class="bi bi-box-arrow-right fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/logout'"></i> <!-- 로그아웃 아이콘 -->
+        </div>
         </div>
     </header>
 

@@ -31,11 +31,19 @@ body {
 }
 
 main {
+<<<<<<< HEAD
     flex: 1;
     margin-left: 300px;
     margin-top: 110px;
     overflow-y: auto;
     height: 100%;
+=======
+	flex: 1;
+	margin-left: 300px;
+	margin-top: 110px;
+	overflow-y: auto;
+	height: 100%;
+>>>>>>> refs/heads/develop
 }
 
 </style>
@@ -49,9 +57,9 @@ main {
     <%@ include file="aside.jsp"%>
 
    <main>
-        <!-- Main content -->
+        <!-- Main content -->   
         <div>
-            글자라도 써봅니다
+        	글자라도 써봅니다
         </div>
     </main>
 

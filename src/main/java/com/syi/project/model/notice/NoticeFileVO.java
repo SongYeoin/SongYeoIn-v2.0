@@ -10,7 +10,7 @@ public class NoticeFileVO {
 	private String fileOriginalName;
 	private String fileSavedName;
 	private String fileType;
-	private int fileSize;
+	private long fileSize;
 	private String filePath;
 	private Date fileRegDate;
 	private int fileNoticeNo;
