@@ -9,10 +9,7 @@ import com.syi.project.model.notice.NoticeVO;
 public interface NoticeService {
 
 	// 전체 공지 리스트 조회
-	List<NoticeVO> selectNoticeList(Criteria cri) throws Exception;
-
-	// 반 공지 리스트 조회
-	List<NoticeVO> selectNoticeClassList(Criteria cri, int syclassNo);
+	List<NoticeVO> selectNoticeList(Criteria cri, int syclassNo) throws Exception;
 
 	// 공지 총 수
 	int selectNoticeTotal(Criteria cri, int syclassNo);

@@ -216,20 +216,11 @@ table td:first-child {
 						<th>조회수</th>
 						<th>등록일</th>
 					</tr>
-					<!-- 전체공지 -->
+					<!-- 공지 -->
+					
 					<c:forEach items="${ noticeList }" var="notice">
 					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>전체</td>
-						<td>${ notice.noticeTitle }</td>
-						<td>${ notice.noticeCount }</td>
-						<td>${ notice.noticeRegDate }</td>
-					</tr>
-					</c:forEach>
-					
-					<!-- 반별 공지 -->
-					<c:forEach items="${ noticeClassList }" var="notice">
-					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>${ notice.noticeNo }</td>
+						<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
 						<td>${ notice.noticeTitle }</td>
 						<td>${ notice.noticeCount }</td>
 						<td>${ notice.noticeRegDate }</td>

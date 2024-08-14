@@ -54,21 +54,14 @@ public class NoticeMemberController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		int memberNo = loginMember.getMemberNo();
 
-
-		// 전체 공지 조회
-		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri);
-		model.addAttribute("noticeList", noticeList);
-
 		// classNo가 null 이거나 유효하지 않을 떄
 		int syclassNo = (classNo != null && classNo > 0) ? classNo : enrollService.selectClassNo(memberNo);
-		
-		// 반 공지 조회
-		List<NoticeVO> noticeClassList = noticeService.selectNoticeClassList(cri, syclassNo);
-		model.addAttribute("noticeClassList", noticeClassList);
+		// 전체 공지 조회
+		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
+		model.addAttribute("noticeList", noticeList);
 		
 		// 수강 중인 반 조회
 		List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
-		System.out.println(">>>classList " + classList);
 		model.addAttribute("classList", classList);
 
 		int total = noticeService.selectNoticeTotal(cri, syclassNo);

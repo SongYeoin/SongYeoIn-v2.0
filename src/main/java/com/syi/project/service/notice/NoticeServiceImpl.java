@@ -19,14 +19,8 @@ public class NoticeServiceImpl implements NoticeService {
 
 	// 전체 공지사항 리스트 조회
 	@Override
-	public List<NoticeVO> selectNoticeList(Criteria cri) throws Exception {
-		return noticeMapper.selectNoticeList(cri);
-	}
-
-	// 반 공지사항 리스트 조회
-	@Override
-	public List<NoticeVO> selectNoticeClassList(Criteria cri, int syclassNo) {
-		return noticeMapper.selectNoticeClassList(cri, syclassNo);
+	public List<NoticeVO> selectNoticeList(Criteria cri, int syclassNo) throws Exception {
+		return noticeMapper.selectNoticeList(cri, syclassNo);
 	}
 
 	// 공지사항 총 수

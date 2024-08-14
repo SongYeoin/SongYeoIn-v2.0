@@ -64,60 +64,44 @@
 		<result property="fileNoticeNo" column="FILE_NOTICE_NO"/>
 	</resultMap>
 	
-	 
-	<select id="selectNoticeClassList" resultMap="noticeResultMap">
-    SELECT * 
-    FROM NOTICE
-    WHERE NOTICE_STATUS = 'Y'
-    AND (NOTICE_CLASS_NO = #{syclassNo} OR NOTICE_CLASS_NO IS NULL)
-    <if test="cri.keyword != null and cri.keyword.trim() != ''">
-        AND (NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
-    </if>
-    ORDER BY
-        CASE
-            WHEN NOTICE_CLASS_NO = #{syclassNo} THEN 1
-            WHEN NOTICE_CLASS_NO IS NULL THEN 0
-        END,
-        NOTICE_REG_DATE DESC
-	</select>
-
-	
-	<!-- 전체 공지 조회 -->
+	<!-- 공지 조회 -->
 	<select id="selectNoticeList" resultMap="noticeResultMap">
-  		SELECT * 
-  		FROM NOTICE
-  		WHERE NOTICE_STATUS = 'Y'
-  		AND NOTICE_CLASS_NO IS NULL
-  		<if test="keyword != null and keyword.trim() != ''">
-  			AND (NOTICE_TITLE LIKE '%' || #{keyword} || '%')
-    	</if>
-  		ORDER BY NOTICE_REG_DATE DESC
+  		<![CDATA[
+		    SELECT *
+		    FROM (
+		        SELECT n.*, 
+		               ROW_NUMBER() OVER (
+		                   ORDER BY
+		                       CASE
+		                           WHEN n.NOTICE_CLASS_NO = #{syclassNo} THEN 1
+		                           WHEN n.NOTICE_CLASS_NO IS NULL THEN 0
+		                       END,
+		                       n.NOTICE_REG_DATE DESC
+		               ) AS RN
+		        FROM NOTICE n
+		        WHERE n.NOTICE_STATUS = 'Y'
+		        AND (n.NOTICE_CLASS_NO = #{syclassNo} OR n.NOTICE_CLASS_NO IS NULL)
+		  ]]>
+		        <if test="cri.keyword != null and cri.keyword.trim() != ''">
+		            AND (n.NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
+		        </if>
+		 <![CDATA[
+		    )
+		    WHERE RN > (#{cri.pageNum} - 1) * #{cri.amount}
+		    AND RN <= #{cri.pageNum} * #{cri.amount}
+		 ]]>
   	</select>
-	
-	<!-- 반 공지 조회 -->
-	<!--
-	<select id="selectNoticeClassList" resultMap="noticeResultMap">
-  		SELECT * 
-  		FROM NOTICE
-  		WHERE NOTICE_STATUS = 'Y'
-  		AND NOTICE_CLASS_NO = #{ syclassNo }
-  		<if test="cri.keyword != null and cri.keyword.trim() != ''">
-  			AND (NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
-    	</if>
-  		ORDER BY NOTICE_REG_DATE DESC
-  	</select> -->
 	
 	<!-- 공지 총 수 -->
-	<select id="selectNoticeTotal" resultType="_int">
-  		SELECT COUNT(NOTICE_NO)
-  		FROM NOTICE
-  		WHERE NOTICE_STATUS = 'Y'
-  		AND (NOTICE_CLASS_NO IS NULL OR NOTICE_CLASS_NO = #{ syclassNo })
-  		<if test="cri.keyword != null and cri.keyword.trim() != ''">
-  			AND (NOTICE_TITLE LIKE '%' || #{cri.keyword} || '%')
-  		</if>
-  		ORDER BY NOTICE_REG_DATE DESC
-  	</select>
+	<select id="selectNoticeTotal" resultType="int">
+	    SELECT COUNT(*)
+	    FROM NOTICE
+	    WHERE NOTICE_STATUS = 'Y'
+	    AND (NOTICE_CLASS_NO = #{ syclassNo } OR NOTICE_CLASS_NO IS NULL)
+	    <if test="cri.keyword != null and cri.keyword.trim() != ''">
+	        AND (NOTICE_TITLE LIKE '%' || #{ cri.keyword } || '%')
+	    </if>
+	</select>
   	
   	<!-- 공지사항 조회수 증가 -->
   	<update id="updateNoticeCount">

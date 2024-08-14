@@ -12,10 +12,7 @@ import com.syi.project.model.notice.NoticeVO;
 public interface NoticeMapper {
 	
 	// 전체 공지 리스트 조회
-	List<NoticeVO> selectNoticeList(Criteria cri);
-	
-	// 반 공지 리스트 조회
-    List<NoticeVO> selectNoticeClassList(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);
+	List<NoticeVO> selectNoticeList(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);
     
     // 공지 총 수
     int selectNoticeTotal(@Param("cri") Criteria cri, @Param("syclassNo") int syclassNo);

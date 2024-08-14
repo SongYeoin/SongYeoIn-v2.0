@@ -57,16 +57,11 @@ public class NoticeController {
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		int syclassNo = syclass.getClassNo();
 
-		/*
+		
 		// 전체 공지 조회
-		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri);
+		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
 		model.addAttribute("noticeList", noticeList);
-		*/
-
-		// 반 공지 조회
-		List<NoticeVO> noticeClassList = noticeService.selectNoticeClassList(cri, syclassNo);
-		model.addAttribute("noticeClassList", noticeClassList);
-
+		
 		int total = noticeService.selectNoticeTotal(cri, syclassNo);
 		PageDTO pageMaker = new PageDTO(cri, total);
 		model.addAttribute("pageMaker", pageMaker);

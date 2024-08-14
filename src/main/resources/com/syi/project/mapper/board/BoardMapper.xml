@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.syi.project.mapper.board.BoardMapper">
+  	<resultMap id="BoardResultMap" type="com.example.domain.Board">
+        <id column="BOARD_NO" property="boardNo"/>
+        <result column="BOARD_TITLE" property="boardTitle"/>
+        <result column="BOARD_CONTENTS" property="boardContents"/>
+        <result column="BOARD_REG_DATE" property="boardRegDate"/>
+        <result column="BOARD_MODIFY_DATE" property="boardModifyDate"/>
+        <result column="BOARD_COUNT" property="boardCount"/>
+        <result column="BOARD_HEART_COUNT" property="boardHeartCount"/>
+        <result column="BOARD_COMMENTS_COUNT" property="boardCommentsCount"/>
+        <result column="BOARD_STATUS" property="boardStatus"/>
+        <result column="BOARD_MEMBER_NO" property="boardMemberNo"/>
+    </resultMap>
+
+    <resultMap id="CommentResultMap" type="com.example.domain.Comment">
+        <id column="COMMENTS_NO" property="commentsNo"/>
+        <result column="COMMENT" property="comment"/>
+        <result column="COMMENT_REG_DATE" property="commentRegDate"/>
+        <result column="COMMENT_MODIFY_DATE" property="commentModifyDate"/>
+        <result column="COMMENT_STATUS" property="commentStatus"/>
+        <result column="COMMENT_MEMBER_NO" property="commentMemberNo"/>
+        <result column="COMMENT_BOARD_NO" property="commentBoardNo"/>
+    </resultMap>
+
+    <resultMap id="HeartResultMap" type="com.example.domain.Heart">
+        <id column="HEART_ID" property="heartId"/>
+        <result column="HEART_REG_DATE" property="heartRegDate"/>
+        <result column="HEART_MEMBER_NO" property="heartMemberNo"/>
+        <result column="HEART_BOARD_NO" property="heartBoardNo"/>
+    </resultMap>
+
+    <resultMap id="BoardFileResultMap" type="com.example.domain.BoardFile">
+        <id column="FILE_NO" property="fileNo"/>
+        <result column="FILE_ORIGINAL_NAME" property="fileOriginalName"/>
+        <result column="FILE_SAVED_NAME" property="fileSavedName"/>
+        <result column="FILE_TYPE" property="fileType"/>
+        <result column="FILE_SIZE" property="fileSize"/>
+        <result column="FILE_PATH" property="filePath"/>
+        <result column="FILE_REG_DATE" property="fileRegDate"/>
+        <result column="FILE_BOARD_NO" property="fileBoardNo"/>
+    </resultMap>
+    
+    
+  
+  
+  
+  </mapper>

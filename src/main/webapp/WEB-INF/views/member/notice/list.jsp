@@ -203,7 +203,7 @@ table td:first-child {
 	        <div class="title-container">
 	            <h1>공지사항</h1>
 	            <div class="select-box">
-	                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
+	                <select id="classSelect" name="classSelect" onchange="sendClassChange(this.value)">
 	                    <c:forEach var="classItem" items="${classList}">
 	                        <option value="${classItem.classNo}" <c:if test="${classItem.syclass.classNo == param.classNo}">selected</c:if>>${classItem.syclass.className}</option>
 	                    </c:forEach>
@@ -211,28 +211,23 @@ table td:first-child {
 	            </div>
 	        </div> 
             <div class="noticeList-wrapper">
-				<!-- <h2 align="center">공지사항</h2> -->
 				<table>
-					<tr >
+					<tr>
 						<th>번호</th>
 						<th width=70%>제목</th>
 						<th>조회수</th>
 						<th>등록일</th>
 					</tr>
-					<!-- 전체공지 -->
-					<c:forEach items="${ noticeList }" var="notice">
-					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>전체</td>
-						<td>${ notice.noticeTitle }</td>
-						<td>${ notice.noticeCount }</td>
-						<td>${ notice.noticeRegDate }</td>
-					</tr>
-					</c:forEach>
-					
-					<!-- 반별 공지 -->
-					<c:forEach items="${ noticeClassList }" var="notice">
-					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>${ notice.noticeNo }</td>
+					<!-- 공지 -->
+					<c:set var="seq" value="0" />
+            		<c:forEach items="${noticeList}" var="notice">
+                		<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
+                    		<td>
+                        		<c:choose>
+                        			<c:when test="${notice.noticeClassNo == 0}">전체</c:when>
+                            		<c:otherwise><c:out value="${seq + 1}"/><c:set var="seq" value="${seq + 1}" /> </c:otherwise>
+                        		</c:choose>
+                    		</td>
 						<td>${ notice.noticeTitle }</td>
 						<td>${ notice.noticeCount }</td>
 						<td>${ notice.noticeRegDate }</td>
@@ -296,6 +291,13 @@ table td:first-child {
 		alert(message);
 	}
 	
+	function sendClassChange(classNo) {
+		// 현재 페이지의 쿼리 파라미터를 유지하면서 classNo를 업데이트
+	    let url = new URL(window.location.href);
+	    url.searchParams.set('classNo', classNo);
+	    window.location.href = url.toString();
+	}
+	
 	let moveForm = $('#moveForm');
 	//페이지 이동 버튼
 	$(".pageMaker_btn a").on("click", function(e){
@@ -308,6 +310,8 @@ table td:first-child {
 	function showNoticeDetail(event, noticeNo) {
 		window.location.href = '${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=' + noticeNo;
 	}
+	
+	
 	</script>
 
 </body>

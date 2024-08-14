@@ -18,10 +18,14 @@
 }
 
 html, body {
-    height: 100%;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
+	height: 1080px;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	/* min-height: 100vh; */
 }
 
 /* 메인 영역 스타일 */
