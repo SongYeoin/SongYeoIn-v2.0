@@ -153,7 +153,7 @@ textarea {
 			
 			<div class="btn_wrap">
 				<a class="btn" id="list_btn">목록 페이지</a>
-				<c:if test="${pageInfo.enroll.member.memberNo eq sessionScope.loginMember.memberNo }">
+				<c:if test="${pageInfo.enroll.member.memberNo == sessionScope.loginMember.memberNo }">
 				<c:if test="${pageInfo.checkStatus != 'N' }">
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="delete_btn">삭제</a>
