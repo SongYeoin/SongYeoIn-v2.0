@@ -139,7 +139,7 @@ body {
       <div class="part1">
 		<div class="section section1">
 			<div class="menu-title">Attendance <br>출석</div>
-			<div class="submenu pd-top">
+			<div class="submenu pd-top" onclick="location.href='${pageContext.servletContext.contextPath}/member/attendance/enroll'">
 				<p>출석부 조회</p>
 				<p>출석하기</p>
 			</div>

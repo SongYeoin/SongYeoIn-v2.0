@@ -276,6 +276,7 @@ th, td {
                 </thead>
                 <tbody id="class-table-body">
                     <c:forEach var="classItem" items="${classList}">
+                    	<c:if test="${classItem.isDeleted == 'N'}">
                         <tr>
                             <td><input type="checkbox"></td>
                             <td>
@@ -296,11 +297,13 @@ th, td {
                                     <button class="dropbtn" onclick="toggleDropdown(event)">...</button>
                                     <div class="dropdown-content">
                                         <a href="/admin/class/update?classNo=${classItem.classNo}">수정하기</a>
-                                        <a href="#">삭제하기</a>
+                                        <a href="#" onclick="submitDeleteForm(${classItem.classNo})">삭제하기</a>
+
                                     </div>
                                 </div>
                             </td>
                         </tr>
+                        </c:if>
                     </c:forEach>
                 </tbody>
             </table>
@@ -332,6 +335,35 @@ window.onclick = function(event) {
     if (currentDropdown && !event.target.matches('.dropbtn')) {
         currentDropdown.style.display = 'none';
         currentDropdown = null;
+    }
+}
+
+// 삭제 post 요청 비동기 처리 
+function submitDeleteForm(classNo) {
+    if (confirm("정말로 삭제하시겠습니까?")) { // 삭제 확인
+        // AJAX 요청 생성
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/admin/class/delete", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        // 서버로부터 응답이 왔을 때의 처리
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    if (xhr.responseText === "success") {
+                        alert("정상적으로 삭제되었습니다.");
+                        window.location.href = "/admin/class/getClassList"; // 원하는 페이지로 리다이렉트
+                    } else {
+                        alert("삭제에 실패했습니다. 다시 시도해 주세요.");
+                    }
+                } else {
+                    alert("서버와의 통신에 실패했습니다.");
+                }
+            }
+        };
+
+        // 폼 데이터 전송
+        xhr.send("classNo=" + classNo);
     }
 }
 </script>

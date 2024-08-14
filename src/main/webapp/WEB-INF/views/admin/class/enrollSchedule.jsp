@@ -176,12 +176,48 @@ main {
 .remove-period-btn:hover {
     background-color: #c82333;
 }
+
+/* 반 별 홈 세미헤더 */
+.classroom-header {
+    background-color: #f1f1f1;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ccc;
+    text-align: left;
+    padding-top: 91px;
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    
+    display: flex;
+    align-items: center;
+}
+
+.classroom-header .title {
+    font-size: 20px;
+    font-weight: bold;
+    /* margin-bottom: 10px; */
+    
+    margin-left: 10px;
+}
+
+.classroom-header .details {
+    font-size: 12px;
+    
+    margin-left: 10px;
+}
 </style>
 </head>
 <body>
 
     <!-- 메뉴바 연결 -->
     <%@ include file="../../common/header.jsp"%>
+    
+    <!-- 반별 홈 세미헤더 -->
+    <div class="classroom-header">
+			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+            <div class="title">${syclass.className}</div>
+            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
+    </div>
 
     <!-- 사이드바 연결 -->
     <%@ include file="aside.jsp"%>
@@ -192,21 +228,18 @@ main {
             <h2>시간표 등록</h2>
             <form id="schedule-form" action="/admin/class/enrollSchedule" method="post">
                 <div class="form-group">
-                    <label for="classNo">반 번호:</label>
-                    <input type="text" id="classNo" name="classNo" required>
+                    <label for="className">반 : ${syclass.className}</label>
                 </div>
                 <div id="day-groups">
                     <div class="day-group" data-group-id="1">
                         <div class="form-group">
                             <label>요일:</label>
                             <div class="day-checkboxes">
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="월"> 월요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="화"> 화요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="수"> 수요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="목"> 목요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="금"> 금요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="토"> 토요일</label>
-                                <label class="day-checkbox"><input type="checkbox" name="daysOfWeek1" value="일"> 일요일</label>
+                                <c:forEach var="day" items="${availableDays}">
+						            <label class="day-checkbox">
+						                <input type="checkbox" name="daysOfWeek1" value="${day}"> ${day}요일
+						            </label>
+						        </c:forEach>
                             </div>
                         </div>
                         <div id="periods1" class="sortable-periods">
@@ -244,6 +277,12 @@ main {
 $(document).ready(function() {
     var groupCount = 1;
     var periodCounts = { 1: [1] };
+    
+ 	// 서버에서 전달된 availableDays를 콤마로 분리하여 배열로 변환
+    var availableDays = '${availableDays}';  // [토,일] 과 같은 형태로 전달됨
+    availableDays = availableDays.replace(/\[|\]/g, "").split(',').map(function(day) {
+        return day.trim();  // 각 요일의 공백 제거
+    });
 
     function updateRemoveButtons() {
         if ($('.day-group').length > 1) {
@@ -269,24 +308,73 @@ $(document).ready(function() {
             return $(this).data('period-id');
         }).get();
     }
+    
+ 	// 이미 선택된 요일을 계산하는 함수
+    function getSelectedDays() {
+        var selectedDays = [];
+        $('.day-checkboxes input:checked').each(function() {
+            selectedDays.push($(this).val());
+        });
+        return selectedDays;
+    }
+ 	
+ 	// 남은 요일을 계산하고 버튼 상태를 업데이트하는 함수
+    function updateDayGroupButton() {
+        var selectedDays = getSelectedDays();
+        
+        // 선택된 요일을 availableDays에서 제거
+        var remainingDays = availableDays.filter(function(day) {
+            return selectedDays.indexOf(day) === -1;
+        });
+
+     	// 남은 요일이 없으면 그룹 추가하지 않고 버튼 숨김
+        if (remainingDays.length === 0) {
+            $('.add-day-group-btn').hide();
+        } else {
+            $('.add-day-group-btn').show();
+        }
+    }
+ 	
+ 	// 요일 체크박스 상태 변경 시 버튼 상태 업데이트
+    $(document).on('change', '.day-checkboxes input', function() {
+        updateDayGroupButton();
+    });
 
     // 요일 그룹 추가
     $('.add-day-group-btn').on('click', function() {
         groupCount++;
         periodCounts[groupCount] = [1];
+        
+        var selectedDays = getSelectedDays();
+        
+     	// 선택된 요일을 availableDays에서 제거
+        var remainingDays = availableDays.filter(function(day) {
+            return selectedDays.indexOf(day) === -1;
+        });
+     	
+     	// 남은 요일이 없으면 그룹 추가하지 않고 버튼 숨김
+        if (remainingDays.length === 0) {
+            $('.add-day-group-btn').hide();
+            return;
+        }
+     	
+        groupCount++;
+        periodCounts[groupCount] = [1];
+
+        var dayCheckboxesHtml = '';
+        remainingDays.forEach(function(day) {
+            dayCheckboxesHtml += `
+                <label class="day-checkbox">
+                    <input type="checkbox" name="daysOfWeek` + groupCount + `" value="` + day + `"> ` + day + `요일
+                </label>`;
+        });
 
         var dayGroupHtml = `
             <div class="day-group" data-group-id="` + groupCount + `">
                 <div class="form-group">
                     <label>요일:</label>
                     <div class="day-checkboxes">
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="월"> 월요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="화"> 화요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="수"> 수요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="목"> 목요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="금"> 금요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="토"> 토요일</label>
-                        <label class="day-checkbox"><input type="checkbox" name="daysOfWeek` + groupCount + `" value="일"> 일요일</label>
+                    	` + dayCheckboxesHtml + `
                     </div>
                 </div>
                 <div id="periods` + groupCount + `" class="sortable-periods">
@@ -317,6 +405,7 @@ $(document).ready(function() {
             }
         });
         updateRemoveButtons();
+        updateDayGroupButton(); // 그룹 추가 후 버튼 상태 업데이트
     });
 
     // 교시 추가 
@@ -350,6 +439,7 @@ $(document).ready(function() {
     $(document).on('click', '.remove-day-group-btn', function() {
         $(this).closest('.day-group').remove();
         updateRemoveButtons();
+        updateDayGroupButton();  // 그룹 삭제 후 버튼 상태 업데이트
     });
 
     // 교시 삭제
@@ -421,7 +511,7 @@ $(document).ready(function() {
             updatePeriodLabels(groupId);
         }
     });
-    updateRemoveButtons();
+    updateDayGroupButton();  // 초기 버튼 상태 업데이트
 });
 </script>
 
