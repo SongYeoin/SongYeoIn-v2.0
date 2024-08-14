@@ -232,6 +232,9 @@ th {
                                                 <button class="save-schedule-btn" style="display:none;" onclick="saveSchedule(this, '${period.dayOfWeek}')">저장</button>
                                                 <button class="cancel-edit-btn" style="display:none;" onclick="cancelEdit(this)">취소</button>
                                             </td>
+                                            <!-- Hidden inputs for periodNo and scheduleNo -->
+								            <input type="hidden" class="periodNo" value="${period.periodNo}" />
+								            <input type="hidden" class="scheduleNo" value="${period.scheduleNo}" />
                                             <c:set var="lastDayOfWeek" value="${period.dayOfWeek}" />
                                         </c:when>
                                         <c:otherwise>
@@ -246,6 +249,9 @@ th {
                                                 <input type="time" class="edit-input" value="${period.endTime}" style="display:none;">
                                             </td>
                                             <td></td>
+                                            <!-- Hidden inputs for periodNo and scheduleNo -->
+								            <input type="hidden" class="periodNo" value="${period.periodNo}" />
+								            <input type="hidden" class="scheduleNo" value="${period.scheduleNo}" />
                                         </c:otherwise>
                                     </c:choose>
                                 </tr>                             
@@ -275,7 +281,7 @@ function editSchedule(button) {
 
     allRows.forEach(function(r) {
         var firstTd = r.querySelector('td');
-        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        var currentDayOfWeek = (firstTd && firstTd.textContent.trim()) || getPreviousDayOfWeek(r); // firstTd가 null이 아닌지 확인
         if (currentDayOfWeek === dayOfWeek) {
             r.querySelectorAll('.edit-input').forEach(function(input) {
                 input.style.display = 'inline-block';
@@ -286,28 +292,67 @@ function editSchedule(button) {
             });
 
             // 버튼 상태 변경
-            r.querySelector('.edit-schedule-btn').style.display = 'none'; // 수정 버튼 숨기기
-            r.querySelector('.save-schedule-btn').style.display = 'inline-block'; // 저장 버튼 보이기
-            r.querySelector('.cancel-edit-btn').style.display = 'inline-block'; // 취소 버튼 보이기
+            var editBtn = r.querySelector('.edit-schedule-btn');
+            if (editBtn) editBtn.style.display = 'none'; // 수정 버튼 숨기기
+            var saveBtn = r.querySelector('.save-schedule-btn');
+            if (saveBtn) saveBtn.style.display = 'inline-block'; // 저장 버튼 보이기
+            var cancelBtn = r.querySelector('.cancel-edit-btn');
+            if (cancelBtn) cancelBtn.style.display = 'inline-block'; // 취소 버튼 보이기
         }
     });
 }
 
-// 저장 버튼 클릭 시 데이터 저장 (예: AJAX 요청)
+// 저장 시
 function saveSchedule(button, dayOfWeek) {
     var allRows = document.querySelectorAll('tbody tr');
+    var schedule = {
+        scheduleNo: document.querySelector('.scheduleNo').value,  // scheduleNo를 저장할 변수
+        periods: []
+    };
     
     allRows.forEach(function(r) {
         var firstTd = r.querySelector('td');
-        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        var currentDayOfWeek = firstTd ? (firstTd.textContent.trim() || getPreviousDayOfWeek(r)) : getPreviousDayOfWeek(r);
         if (currentDayOfWeek === dayOfWeek) {
-            var newDayOfWeek = r.querySelector('.edit-input').value;
-            var periodName = r.querySelector('.periodName').textContent;
-            var startTime = r.querySelector('input[type="time"]').value;
-            var endTime = r.querySelectorAll('input[type="time"]')[1].value;
+            var startTimeInput = r.querySelector('input[type="time"]');
+            var endTimeInput = r.querySelectorAll('input[type="time"]')[1];
 
-            // 여기에 AJAX 요청을 사용해 서버에 데이터를 저장하는 코드를 추가할 수 있습니다.
-            alert('저장된 데이터: ' + newDayOfWeek + ', ' + periodName + ', ' + startTime + ' - ' + endTime);
+            if (startTimeInput && endTimeInput) {
+                var periodName = r.querySelector('.periodName') ? r.querySelector('.periodName').textContent : '';
+                var startTime = startTimeInput.value;
+                var endTime = endTimeInput.value;
+                
+             	// periodNo 가져오기
+                var periodNo = r.querySelector('.periodNo').value;
+
+                var period = {
+                    periodNo: periodNo,  
+                    dayOfWeek: currentDayOfWeek,
+                    periodName: periodName,
+                    startTime: startTime,
+                    endTime: endTime
+                };
+                schedule.periods.push(period);
+                
+                // scheduleNo 설정
+                if (!schedule.scheduleNo) {
+                    schedule.scheduleNo = period.scheduleNo;
+                }
+            }
+        }
+    });
+
+    // 서버로 schedule 객체 전송 (예: AJAX 요청)
+    $.ajax({
+        type: 'POST',
+        url: '/admin/class/updateSchedule',  // 실제 서버 URL로 교체
+        contentType: 'application/json',
+        data: JSON.stringify(schedule),
+        success: function(response) {
+            alert('시간표가 성공적으로 저장되었습니다.');
+        },
+        error: function(error) {
+            alert('저장 중 오류가 발생했습니다.');
         }
     });
 
@@ -323,7 +368,7 @@ function cancelEdit(button) {
 
     allRows.forEach(function(r) {
         var firstTd = r.querySelector('td');
-        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        var currentDayOfWeek = (firstTd && firstTd.textContent.trim()) || getPreviousDayOfWeek(r); // firstTd가 null이 아닌지 확인
         if (currentDayOfWeek === dayOfWeek) {
             r.querySelectorAll('.edit-input').forEach(function(input) {
                 input.style.display = 'none';
@@ -334,25 +379,29 @@ function cancelEdit(button) {
             });
 
             // 버튼 상태 복원
-            r.querySelector('.edit-schedule-btn').style.display = 'inline-block';
-            r.querySelector('.save-schedule-btn').style.display = 'none';
-            r.querySelector('.cancel-edit-btn').style.display = 'none';
+            var editBtn = r.querySelector('.edit-schedule-btn');
+            if (editBtn) editBtn.style.display = 'inline-block';
+            var saveBtn = r.querySelector('.save-schedule-btn');
+            if (saveBtn) saveBtn.style.display = 'none';
+            var cancelBtn = r.querySelector('.cancel-edit-btn');
+            if (cancelBtn) cancelBtn.style.display = 'none';
         }
     });
 }
 
-// 이전 행의 요일 정보를 가져오는 함수
+//이전 행의 요일 정보를 가져오는 함수
 function getPreviousDayOfWeek(row) {
     var previousRow = row.previousElementSibling;
     while (previousRow) {
-        var dayOfWeek = previousRow.querySelector('td').textContent.trim();
-        if (dayOfWeek) {
-            return dayOfWeek;
+        var dayOfWeekCell = previousRow.querySelector('td');
+        if (dayOfWeekCell && dayOfWeekCell.textContent.trim()) {
+            return dayOfWeekCell.textContent.trim();
         }
         previousRow = previousRow.previousElementSibling;
     }
     return '';
 }
+
 
 </script>
 

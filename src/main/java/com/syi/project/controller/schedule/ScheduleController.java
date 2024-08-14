@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -110,7 +109,6 @@ public class ScheduleController {
 	/* 시간표 등록 */
 	@PostMapping("/class/enrollSchedule")
 	public void enrollSchedulePOST(HttpServletRequest request, ScheduleVO schedule) throws Exception{
-		log.info("시간표 등록 기능 시작");
 		
 		HttpSession session = request.getSession();
 		int classNo = ((SyclassVO) session.getAttribute("syclass")).getClassNo();
@@ -119,4 +117,15 @@ public class ScheduleController {
 		scheduleService.enrollSchedule(request, schedule);
 		
 	}
+	
+	/* 시간표 수정 */
+	@PostMapping("/class/updateSchedule")
+	public void updateSchedulePOST(ScheduleVO schedule) throws Exception {
+		System.out.println("시간표 수정 컨트롤러 도착 : " + schedule);
+		
+		scheduleService.updateSchedule(schedule);
+		
+	}
+	
+	
 }

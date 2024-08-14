@@ -20,4 +20,7 @@ public interface PeriodMapper {
 	/* 교시 단일 조회 */
 	PeriodVO getPeriod(Integer periodNo);
 
+	/* 교시 수정 */
+	void updatePeriod(int periodNo);
+
 }

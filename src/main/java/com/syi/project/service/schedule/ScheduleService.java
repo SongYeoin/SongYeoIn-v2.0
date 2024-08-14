@@ -66,4 +66,17 @@ public class ScheduleService {
 		return periodMapper.getPeriod(periodNo);
 	}
 
+	/* 시간표 수정 */
+	public void updateSchedule(ScheduleVO schedule) {
+		
+		// 시간표 업데이트
+		scheduleMapper.updateSchedule(schedule.getScheduleNo());
+		
+		// 교시 업데이트
+		for(PeriodVO period : schedule.getPeriods()) {
+			periodMapper.updatePeriod(period.getPeriodNo());
+		}
+		
+	}
+
 }

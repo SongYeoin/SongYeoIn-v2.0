@@ -36,5 +36,11 @@
     <select id="getPeriod" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE PERIOD_NO=#{periodNo}
     </select>
+    
+    <!-- 교시 수정 -->
+    <update id="updatePeriod" parameterType="com.syi.project.model.period.PeriodVO">
+    UPDATE PERIOD SET DAY_OF_WEEK=#{dayOfWeek}, START_TIME=#{startTime}, END_TIME=#{endTime}
+    WHERE PERIOD_NO=#{periodNo}
+    </update>
 
 </mapper>
