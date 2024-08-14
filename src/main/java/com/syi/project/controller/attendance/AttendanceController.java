@@ -109,10 +109,6 @@ public class AttendanceController {
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		// 사용자의 IP 주소 확인
-	    String userIp = getClientIp(request);
-	    System.out.println("User IP: " + userIp);
-		
 		// periodNo 으로 periodVO 조회
 		PeriodVO period = scheduleService.getPeriod(periodNo);
 		
@@ -129,12 +125,15 @@ public class AttendanceController {
 		
 		System.out.println("출석 등록 전 모든 값 체크 : "+ attendance);
 		
-//		// 네트워크 범위에 있는지 확인
-//		if(!isWithinNetwork(userIp)) {
-//			System.out.println("User IP is not within the allowed network range: " + userIp);
-//			model.addAttribute("resultMessage", "학원 네트워크에서만 출석이 가능합니다.");
-//			return "redirect:/member/attendance/enroll?classNo=" + classNo;
-//		}
+		// 사용자의 IP 주소 확인
+		String userIp = getClientIp(request);
+		System.out.println("User IP: " + userIp);
+
+		if (!isWithinNetwork(userIp)) {
+		    System.out.println("User IP is not within the allowed network range: " + userIp);
+		    model.addAttribute("resultMessage", "학원 네트워크에서만 출석이 가능합니다.");
+		    return "redirect:/member/attendance/enroll?classNo=" + classNo;
+		}
 		
 		// db에 출석 정보 저장
 		try {
@@ -189,36 +188,63 @@ public class AttendanceController {
 	public String getClientIp(HttpServletRequest request) {
 		
 		String ip = request.getHeader("X-Forwarded-For");
-		
-	    if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-	        ip = request.getHeader("Proxy-Client-IP");
+	    if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip.split(",")[0].trim();
 	    }
-	    if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-	        ip = request.getHeader("WL-Proxy-Client-IP");
+
+	    ip = request.getHeader("Proxy-Client-IP");
+	    if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
 	    }
-	    if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-	        ip = request.getHeader("HTTP_CLIENT_IP");
+
+	    ip = request.getHeader("WL-Proxy-Client-IP");
+	    if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
 	    }
-	    if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-	        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+
+	    ip = request.getHeader("HTTP_CLIENT_IP");
+	    if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
 	    }
-	    if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-	        ip = request.getRemoteAddr();
+
+	    ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+	    if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
 	    }
+
+	    ip = request.getRemoteAddr();
 	    
-	    // IPv6 루프백 주소 처리
+	    // 로그로 IP 주소 확인
+	    System.out.println("Detected IP Address: " + ip);
+
+	    // IPv6 로컬 주소(::1)를 IPv4로 변환
 	    if ("0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip)) {
 	        ip = "127.0.0.1";
 	    }
-	    
+
 	    return ip;
 	}
 	
 	/* 센터 네트워크를 사용하는 pc 인지 확인 */
 	public static boolean isWithinNetwork(String targetIp) {
-		SubnetUtils utils = new SubnetUtils("192.168.0.0/24");
-	    utils.setInclusiveHostCount(true);
-	    return utils.getInfo().isInRange(targetIp);
+		
+		// 학원 와이파이 네트워크 범위를 설정
+	    // 192.168.1.0/24 네트워크 범위를 사용하는 경우
+	    String[] allowedNetworks = {
+	        "127.0.0.1/32", // 로컬, 추가 네트워크 범위가 있을 경우 추가 가능
+	    		"192.168.0.0/24" // 학원 와이파
+	    };
+	    
+	    for (String network : allowedNetworks) {
+	        SubnetUtils utils = new SubnetUtils(network);
+	        utils.setInclusiveHostCount(true);
+	        
+	        if (utils.getInfo().isInRange(targetIp)) {
+	            return true; // IP가 지정된 네트워크 범위 내에 있으면 true 반환
+	        }
+	    }
+	    // 만약 클라이언트 IP가 어느 네트워크 범위에도 포함되지 않으면 false 반환
+	    return false;
 
 	}
 	
