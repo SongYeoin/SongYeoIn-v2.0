@@ -7,8 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력개발센터</title>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <style>
 /* CSS Reset */
@@ -58,8 +57,10 @@ body {
 	background-color: gray; /* Default background color */
 	overflow: hidden; /* 내용이 섹션을 넘치지 않도록 설정 */
 	width: 100%;
+	cursor: pointer; /* 클릭 가능한 커서 표시 */
 }
 
+/* 섹션별 배경색 */
 .section1 {
 	background-color: #E3E3D1;
 	padding-top: 70px;
@@ -120,6 +121,7 @@ body {
 	font-size: 1.25em; /* 폰트 크기 증가 */
 	font-weight: bold;
 	color: white;
+	cursor: pointer; /* 클릭 가능한 커서 표시 */
 }
 
 /* 마우스 오버 시 소메뉴 표시 */
@@ -175,6 +177,14 @@ body {
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
+
+<script>
+    $(document).ready(function() {
+        $('.section2').click(function() {
+            window.location.href = '${pageContext.servletContext.contextPath}/journal/scheduleList';
+        });
+    });
+</script>
 
 </body>
 </html>

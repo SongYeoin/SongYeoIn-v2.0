@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>교육일지 등록</title>
+<title>교육일지 작성</title>
 
 <!-- jQuery 라이브러리 -->
 <script src="https://code.jquery.com/jquery-3.4.1.js"
@@ -13,132 +13,32 @@
     crossorigin="anonymous"></script>
 
 <style>
-/* 기본 스타일 및 CSS Reset */
+/* CSS Reset - 모든 요소의 기본 여백과 패딩을 제거하고 박스 사이징을 border-box로 설정 */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
+/* html과 body 요소의 높이를 1080px로 설정 */
 html, body {
-    height: 100%;
-    font-family: Arial, sans-serif;
+	height: 1080px;
 }
 
+/* body에 폰트 패밀리를 설정하고 flexbox로 레이아웃을 설정 */
 body {
-    display: flex;
-    flex-direction: column;
-    background-color: #f4f4f4; /* 배경색 설정 */
-    padding-top: 60px; /* 헤더 높이만큼 상단 여백 추가 */
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
 }
 
-/* 헤더 스타일 */
-header {
-   position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* 헤더가 콘텐츠 위에 보이도록 설정 */
-}
-
-/* 메인 콘텐츠 영역 */
+/* main 요소는 좌측에 사이드바를 두고 상단에는 헤더를 두며 세로 스크롤이 가능하게 설정 */
 main {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-}
-
-/* 폼 박스 스타일 */
-.box {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto; /* 페이지 중앙 정렬 */
-}
-
-h1 {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 24px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-}
-
-.form_section {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.form_section_title {
-    margin-bottom: 10px;
-}
-
-.form_section_content {
-    margin-bottom: 10px;
-}
-
-.form_section label {
-    font-weight: bold;
-}
-
-input[type="text"], input[type="date"], input[type="file"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* 버튼 영역 스타일 */
-.btn_section {
-    text-align: right;
-}
-
-.btn {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
-    font-size: 16px;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-}
-
-/* 경고 메시지 스타일 */
-span {
-    display: block;
-    color: red;
-    font-size: 14px;
-}
-
-/* 푸터 스타일 */
-footer {
-    background-color: #007bff;
-    color: #fff;
-    text-align: center;
-    padding: 15px 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+	flex: 1;
+	margin-left: 300px;
+	margin-top: 110px;
+	overflow-y: auto;
+	height: 100%;
 }
 
 
@@ -154,8 +54,8 @@ footer {
 
 <main>
     <div class="box">
-        <h1>교육일지 등록</h1>
-        <form action="/journal/journalEnroll.do" method="post" id="enrollForm" enctype="multipart/form-data">
+        <h1>교육일지 작성</h1>
+        <form action="/journal/journalEnroll" method="post" id="enrollForm" enctype="multipart/form-data">
             <div class="form_section">
                 <div class="form_section_title">
                     <label>교육일지 제목</label>

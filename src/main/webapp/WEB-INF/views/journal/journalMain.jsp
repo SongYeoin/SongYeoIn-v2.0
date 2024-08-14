@@ -6,154 +6,182 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>교육일지 목록</title>
-<script src="https://code.jquery.com/jquery-latest.min.js"></script>
-<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' />
+<title>교육일정 목록</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <style>
-/* CSS Reset */
+/* 모든 요소에 기본 스타일을 초기화하고 박스 모델을 설정 */
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+	margin: 0; /* 모든 요소의 외부 여백을 0으로 설정 */
+	padding: 0; /* 모든 요소의 내부 여백을 0으로 설정 */
+	box-sizing: border-box; /* 요소의 크기를 padding과 border를 포함하여 설정 */
 }
 
+/* html과 body 요소의 높이를 설정하여 페이지의 기본 높이를 1080px로 설정 */
 html, body {
-	height: 100%; /* 전체 높이 설정 */
+	height: 1080px; /* html과 body의 높이를 1080px로 설정 */
+}
+
+/* body의 기본 폰트와 레이아웃 설정 */
+body {
+	font-family: Arial, sans-serif;
+	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
+	display: flex; /* flexbox 레이아웃 사용 */
+	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
+}
+
+/* main 요소의 위치와 스크롤 설정 */
+main {
+	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
+	margin-left: 300px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
+	margin-top: 110px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
+	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
+	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+}
+
+/* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
+.title-container {
+	display: flex; /* flexbox 레이아웃 사용 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+}
+
+/* 제목과 선택 박스 사이의 간격을 설정 */
+.title-container h1 {
+	margin-right: 20px; /* 제목 오른쪽에 20px 간격 설정 */
+	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
+}
+
+/* 콘텐츠를 감싸는 컨테이너의 스타일 설정 */
+.container {
+	margin: 20px auto; /* 위아래 여백을 20px로 설정하고 좌우 중앙 정렬 */
+	background-color: #f9fafc; /* 배경색을 연한 회색으로 설정 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자를 설정하여 입체감을 줌 */
+	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
+	border-radius: 10px; /* 모서리를 둥글게 설정 */
+	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
+	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+}
+
+/* 헤더의 스타일 설정 */
+.header {
+	display: flex; /* flexbox 레이아웃 사용 */
+	flex-wrap: wrap; /* 자식 요소가 여러 줄로 배치될 수 있도록 설정 */
+	justify-content: space-between; /* 자식 요소들 사이의 공간을 균등하게 배분 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+	margin-bottom: 20px; /* 하단 여백을 20px로 설정 */
+	padding-bottom: 10px; /* 하단 패딩을 10px로 설정 */
+	border-bottom: 1px solid #ddd; /* 하단 경계를 연한 회색으로 설정 */
+	background-color: #e2eff9; /* 배경색을 연한 파란색으로 설정 */
+	padding-top: 40px; /* 상단 패딩을 40px로 설정 */
+	padding-right: 32px; /* 오른쪽 패딩을 32px로 설정 */
+	padding-left: 32px; /* 왼쪽 패딩을 32px로 설정 */
+	padding-bottom: 20px; /* 하단 패딩을 20px로 설정 */
+	border-radius: 10px 10px 0 0; /* 상단 모서리를 둥글게 설정 */
+}
+
+/* 헤더의 제목 스타일 설정 */
+.header h2 {
+	margin: 0; /* 제목의 여백을 0으로 설정 */
+	flex-grow: 1; /* 제목이 가능한 모든 공간을 차지하도록 설정 */
+}
+
+/* 검색 영역의 입력 필드 스타일 설정 */
+.header input {
+	padding: 10px; /* 입력 필드의 패딩을 10px로 설정 */
+	width: 200px; /* 입력 필드의 너비를 200px로 설정 */
+	border: 1px solid #ddd; /* 테두리를 연한 회색으로 설정 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
+
+/* 헤더의 아이콘 스타일 설정 */
+.header .icons {
+	display: flex; /* flexbox 레이아웃 사용 */
+}
+
+/* 아이콘 간의 간격 설정 및 포인터 커서 설정 */
+.header .icons i {
+	cursor: pointer; /* 아이콘 클릭 시 포인터 커서 표시 */
+	margin-left: 10px; /* 아이콘 사이의 간격을 10px로 설정 */
+}
+
+/* 상단 버튼의 스타일 설정 */
+.top_btn {
+	font-size: 20px; /* 폰트 크기를 20px로 설정 */
+	padding: 6px 12px; /* 상하 패딩 6px, 좌우 패딩 12px로 설정 */
+	background-color: #28a745; /* 배경색을 녹색으로 설정 */
+	color: white; /* 텍스트 색상을 흰색으로 설정 */
+	border: none; /* 테두리 없음 */
+	border-radius: 4px; /* 모서리를 둥글게 설정 */
+	font-weight: 600; /* 텍스트 굵기를 600으로 설정 */
+	cursor: pointer; /* 클릭 시 포인터 커서 표시 */
+}
+
+/* 상단 버튼 호버 시 색상 변경 */
+.top_btn:hover {
+	background-color: #218838; /* 호버 시 배경색을 더 어두운 녹색으로 설정 */
+}
+
+
+/* Custom FullCalendar Styles */
+#calendar {
+	max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
+	margin: 0 auto; /* 캘린더를 중앙에 배치 */
+	height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
+	min-height: 500px; /* 캘린더의 최소 높이 설정 */
+	overflow: hidden; /* 스크롤 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+}
+
+/* Custom FullCalendar Styles */
+.fc {
 	font-family: Arial, sans-serif;
 }
 
-body {
-	display: flex;
-	flex-direction: column;
+.fc-daygrid-day-number {
+	color: #333; /* 날짜 숫자 색상 */
 }
 
-main {
-	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
-	overflow-y: auto;
+.fc-daygrid-day-top {
+	background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
+	border-bottom: 1px solid #ddd;
 }
 
-.box {
-	background-color: #f9f9f9;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	padding: 20px;
+.fc-daygrid-day {
+	border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
+	background-color: #ffffff; /* 날짜 셀 배경 색상 */
+	border-radius: 8px; /* 둥글게 처리 */
 }
 
-h1 {
-	margin-bottom: 20px;
-	color: #333;
+.fc-daygrid-day.fc-day-today {
+	background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
 }
 
-.search_area {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px; /* 요소 간 간격 */
-	margin-bottom: 20px;
+.fc-daygrid-day.fc-day-past {
+	background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
 }
 
-.search_area label {
-	margin-right: 10px;
-	font-weight: bold;
+.fc-daygrid-day.fc-day-future {
+	background-color: #ffffff; /* 미래 날짜 배경 색상 */
 }
 
-.search_area select, 
-.search_area input, 
-.search_area button {
-	height: 30px;
-}
-
-.search_area select {
-	padding: 0 10px;
-}
-
-.search_area input {
-	width: 250px;
-	padding: 0 10px;
-}
-
-.search_area button {
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-.search_area button:hover {
-	background-color: #0056b3;
-}
-
-.table_wrap {
-	margin: 0 auto; /* 가운데 정렬 */
-	padding: 0 20px; /* 좌우 여백 조정 */
-}
-
-table {
-	border-collapse: collapse;
-	width: 100%; /* 테이블 너비를 100%로 설정 */
-	margin-top: 20px;
-	text-align: center;
-}
-
-table th, table td {
-	border: 2px solid #ddd; /* 연한 회색 테두리 */
-	padding: 10px; /* 셀 내 여백 */
-}
-
-table th {
-	background-color: #007bff;
-	color: #fff;
-	font-size: 16px;
-}
-
-table tbody tr:hover {
-	background-color: #f1f1f1; /* 마우스 오버 시 배경색 변경 */
-}
-
-.pageInfo_wrap {
-	margin: 20px 0;
-	text-align: center;
-}
-
-.pageInfo {
-	list-style: none;
-	padding: 0;
-	display: inline-block;
-}
-
-.pageInfo li {
-	display: inline;
-	margin: 0 5px;
-}
-
-.pageInfo a {
-	text-decoration: none;
-	color: #007bff;
-	font-size: 16px;
-	padding: 6px 12px;
+.fc-button {
+	background-color: #6c757d; /* 버튼 배경 색상 */
+	color: #ffffff;
 	border-radius: 4px;
 }
 
-.pageInfo a:hover {
-	background-color: #007bff;
-	color: #fff;
-}
-
-.active a {
-	background-color: #007bff;
-	color: #fff;
-}
-
-#calendar {
-    max-width: 100%; /* Ensure calendar does not overflow */
-    margin: 0 auto; /* Center calendar */
-    height: 60vh; /* Adjust height as needed */
+.fc-button:hover {
+	background-color: #5a6268; /* 버튼 호버 색상 */
 }
 </style>
+
+<!-- Bootstrap CSS를 불러오기 위한 링크 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
+
 <body>
 
 	<!-- 메뉴바 연결 -->
@@ -163,121 +191,73 @@ table tbody tr:hover {
 	<%@ include file="../member/aside.jsp"%>
 	
 	<main>
-		<div class="box">
-			<h1>교육일지 목록</h1>
-			
-			<!-- 캘린더 출력 영역 -->
-			<div id='calendar'></div>
-			
-			<div class="search_area">
-			    <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
-			        
-			        <label for="keyword">제목 검색:</label>
-			        <input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
-			        
-			        <label for="year">년도:</label>
-			        <select id="year" name="year">
-					    <option value="" <c:if test="${empty param.year}">selected</c:if>>전체</option>
-					    <c:forEach var="i" begin="2020" end="2025">
-					        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
-					    </c:forEach>
-					</select>
-					
-					<label for="month">월:</label>
-					<select id="month" name="month">
-					    <option value="" <c:if test="${empty param.month}">selected</c:if>>전체</option>
-					    <c:forEach var="i" begin="1" end="12">
-					        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
-					    </c:forEach>
-					</select>
 
-			        <button type="submit">검색</button>
-			    </form>
-			</div>
-			
-			<div class="table_wrap">
-				<table>
-				    <thead>
-				        <tr>
-				            <th class="bno_width">번호</th>
-				            <th class="title_width">제목</th>
-				            <th class="regdate_width">작성일자</th>
-				        </tr>
-				    </thead>
-				    <tbody>
-				    <c:forEach items="${journalList}" var="journal">
-				        <tr>
-				            <td><c:out value="${journal.journalNo}" /></td>
-				            <td>
-				                <a href="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}">
-				                    <c:out value="${journal.journalTitle}" />
-				                </a>
-				            </td>
-				            <td><fmt:formatDate pattern="yyyy/MM/dd" value="${journal.journalWriteDate}" /></td>
-				        </tr>
-				    </c:forEach>
-				    </tbody>
-				</table>
-
-				<div class="pageInfo_wrap">
-					<div class="pageInfo_area">
-						<ul id="pageInfo" class="pageInfo">
-							
-							<!-- 이전페이지 버튼 -->
-							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Previous</a>
-								</li>
-							</c:if>
-
-							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
-								</li>
-							</c:forEach>
-
-							<!-- 다음페이지 버튼 -->
-							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">Next</a>
-								</li>
-							</c:if>
-
-						</ul>
-					</div>
-				</div>
+	<!-- 제목과 클래스 선택 박스 -->
+		<div class="title-container">
+		<h1>메인</h1>
+			<div class="select-box">
+				<select id="classSelect" name="classSelect" onchange="sendClassChange()">
+					<c:forEach var="classItem" items="${classList}">
+	                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+	                    </c:forEach>
+				</select>
 			</div>
 		</div>
+		
+	<!-- 캘린더 출력 영역 -->
+		<div id='calendar'></div>
+		
 	</main>
 	
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
-
-    <script>
+	
+	<script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
+
+            var journalEvents = [
+                <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+                    {
+                        title: "${journal.journalTitle}",
+                        start: "${journal.journalWriteDate}",
+                        url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}",
+                        color: '#6c757d' // 교육일지 이벤트 색상
+                    }<c:if test="${not empty journal}">,</c:if>
+                </c:forEach>
+            ];
+            
+            console.log("--------->>> Events data: ", events);  // Debugging line to check events data
+
+
+            var scheduleEvents = [
+                <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
+                    {
+                        title: "${schedule.scheduleTitle}",
+                        start: "${schedule.scheduleDate}",
+                        url: "${pageContext.request.contextPath}/schedule/scheduleDetail?scheduleNo=${schedule.scheduleNo}",
+                        color: '#868e96' // 교육일정 이벤트 색상
+                    }<c:if test="${not empty schedule}">,</c:if>
+                </c:forEach>
+            ];
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: [
-                    <c:forEach var="journal" items="${journalList}">
-                        {
-                            title: '${journal.journalTitle}',
-                            start: '${journal.journalWriteDate}',
-                            url: '${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}'
-                        }<c:if test="${not empty journal}">
-                            ,
-                        </c:if>
-                    </c:forEach>
-                ],
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [...journalEvents, ...scheduleEvents],
                 eventClick: function(info) {
-                    // 클릭된 이벤트의 URL로 리디렉션
-                    if (info.event.url) {
-                        window.location.href = info.event.url;
-                    }
+                    window.location.href = info.event.url;
                 }
             });
+
             calendar.render();
+            
+            console.log("--------->> Calendar events: ", calendar.getEvents());
+
         });
     </script>
 </body>

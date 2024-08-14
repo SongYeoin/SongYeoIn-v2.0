@@ -13,7 +13,7 @@ public interface JournalMapper {
 	// 일지 등록
 	public void journalEnroll(JournalVO journal);
     
-	// 일지 목록 List<>
+	// 일지 목록 (페이징)
 	public List<JournalVO> journalList(Criteria cri);
 
 	// 일지 총 갯수
@@ -27,6 +27,9 @@ public interface JournalMapper {
 
 	// 일지 삭제
 	public int journalDelete(int journalNo);
+	
+	// 캘린더 전체 일지 조회
+	List<JournalVO> journalAllList();
 	
 	
 }

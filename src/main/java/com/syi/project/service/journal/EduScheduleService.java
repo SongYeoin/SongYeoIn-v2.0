@@ -24,4 +24,7 @@ public interface EduScheduleService {
     
     // 교육 일정 삭제
     int scheduleDelete(int scheduleNo);
+    
+    // 캘린더 전체 교육 일정 조회 
+	List<EduScheduleVO> scheduleAllList();
 }
