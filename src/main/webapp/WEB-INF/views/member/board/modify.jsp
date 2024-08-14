@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>송파여성인력개발센터</title>
+<title>송파여성인력센터</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 /* CSS Reset */
@@ -35,33 +35,6 @@ main {
     height: 100%;
 }
 
-.classroom-header {
-    background-color: #f1f1f1;
-    padding: 10px 20px;
-    border-bottom: 2px solid #ccc;
-    text-align: left;
-    padding-top: 91px;
-    position: fixed;
-    width: 100%;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-}
-
-.classroom-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    /* margin-bottom: 10px; */
-    
-    margin-left: 10px;
-}
-
-.classroom-header .details {
-    font-size: 12px;
-    
-    margin-left: 10px;
-}
-
 .content {
     padding: 20px;
     background-color: #fff;
@@ -76,7 +49,7 @@ main {
 	font-size: 20px;
 }
 
-.notice-wrapper {
+.board-wrapper {
 	width: 70%;
     background-color: #fff;
     padding: 20px;
@@ -84,7 +57,7 @@ main {
 }
 
 /* 공지사항 제목 스타일 */
-.notice-wrapper h2 {
+.board-wrapper h2 {
     margin-bottom: 30px;
 }
 
@@ -137,10 +110,35 @@ button:hover {
     display: flex;
     justify-content: center;
     margin-top: 20px;
-    gap:20px;
+    gap: 20px;
 }
 
+.checkbox-container {
+    margin-top: 20px;
+}
 
+.checkbox-container input {
+    margin-right: 10px;
+}
+
+.file-list {
+    margin-top: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+.file-list li {
+    margin-bottom: 10px;
+}
+
+.file-list a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.file-list a:hover {
+    text-decoration: underline;
+}
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -150,64 +148,50 @@ button:hover {
     <!-- 메뉴바 연결 -->
     <%@ include file="../../common/header.jsp"%>
 
-	<div class="classroom-header">
-			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-            <div class="title">${syclass.className}</div>
-            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
-    </div>
-
-        
-    <!-- 사이드바 연결 -->    
-    <%@ include file="../class/aside.jsp"%>
+    <!-- 사이드바 연결 -->
+    <%@ include file="../aside.jsp"%>
 
     <main>
         <!-- Main content -->
-            <div class="notice-wrapper">
-				<h2 align="center">공지사항 글쓰기</h2>
-				<form id="noticeForm" action="${pageContext.servletContext.contextPath}/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
-					<table>
-						<tr>
-							<th>제목</th>
-							<td><input type="text" id="noticeTitle" name="noticeTitle" required/></td>
-						</tr>
-						<tr>
-							<th>작성자</th>
-							<td>${sessionScope.loginMember.memberName}</td>
-						</tr>
-						<tr>
-							<th>내용</th>
-							<td colspan="3"><textarea id="noticeContent" name="noticeContent" cols="50" rows="5" required></textarea></td>
-						</tr>
-						<tr>
-							<th>첨부파일</th>
-							<td colspan="3"><input type="file" id="files" name="files" multiple></td>
-						</tr>
-						<tr>
-							<th>전체</th>
-							<td>
-								<input type="checkbox" id="allNotice" name="allNotice" value="true"/>
-  								<label for="allNotice">전체 공지</label>
-  							</td>
-						</tr>
-					</table>
-					<div class="button-container">
-						<button type="button" id="listBtn">목록</button>
-						<button type="submit">등록</button>
-					</div>
-				</form>
-				
-			</div>
+        <div class="board-wrapper">
+            <h2 align="center">공지사항</h2>
+            <form id="boardForm" action="${pageContext.servletContext.contextPath}/member/board/modify" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+                <table>
+                    <tr>
+                        <th>제목</th>
+                        <td><input type="text" id="boardTitle" name="boardTitle" value="${board.boardTitle}" required/></td>
+                    </tr>
+                    <tr>
+                        <th>작성자</th>
+                        <td>${sessionScope.loginMember.memberNickname}</td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+                        <td colspan="3"><textarea id="boardContent" name="boardContent" cols="50" rows="5" required>${board.boardContent}</textarea></td>
+                    </tr>
+                </table>
+                <div class="button-container">
+                    <button type="button" id="listBtn">목록</button>
+                    <button type="submit">수정</button>
+                </div>
+            </form>
+        </div>
     </main>
 
     <!-- 푸터 연결 -->
     <%@ include file="../../common/footer.jsp"%>
-    
-    <script>
-    $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/list';
-    });
 
-	</script>
+    <script>
+    let message = '${message}';
+	if(message) {
+		alert(message);
+	}
+	
+    $("#listBtn").click(function() {
+        window.location.href = '${pageContext.servletContext.contextPath}/member/board/list';
+    });
+    </script>
 
 </body>
 </html>

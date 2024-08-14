@@ -213,7 +213,7 @@ button:hover {
                    						<a href="${pageContext.servletContext.contextPath}/admin/class/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
 					                   		${file.fileOriginalName}
 					                   	</a>
-                                        <input type="checkbox" name="deleteFileNos" value="${file.fileNo}"/> 삭제
+                                        <input type="checkbox" id="file_${file.fileNo}" name="deleteFileNos" value="${file.fileNo}"/>
                                         <label for="file_${file.fileNo}">삭제</label>
                                     </li>
                                 </c:forEach>
