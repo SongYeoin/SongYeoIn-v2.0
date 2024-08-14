@@ -11,7 +11,7 @@ import com.syi.project.model.syclass.SyclassVO;
 public interface ChatRoomMapper {
 	
 	// 채팅방 정보를 업데이트하는 메소드 (sessionIds 포함)
-	void updateChatRoomSessions(int i, String sessionIds);
+	//void updateChatRoomSessions(int i, String sessionIds);
 	
 	// 채팅방 정보를 가져오는 메소드
     ChatRoomVO SelectChatRoomByNo(String chatRoomNo);
@@ -26,11 +26,15 @@ public interface ChatRoomMapper {
 
 	int selectAdminNoByClassNo(int classNo);
 	
-	
+	int updateChatRoomStatus(int chatRoomNo);
 	
 
 	List<ChatRoomVO> selectChatRoomList(MemberVO loginMember);
 
 	List<EnrollVO> selectClassMemberList(int adminNo);
+
+	int selectCountOneRoomList(ChatRoomVO chatroom);
+	
+	List<SyclassVO> selectAdminClassList(int adminNo);
 	
 }

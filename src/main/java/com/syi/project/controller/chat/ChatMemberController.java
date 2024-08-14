@@ -1,6 +1,8 @@
 package com.syi.project.controller.chat;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,12 +48,23 @@ public class ChatMemberController {
     	List<ChatRoomVO> roomList = chatService.selectChatRoomList(loginMember);
     	model.addAttribute("roomList",roomList);
     	
-    	// 수강 목록 조회/담당 과목 조회
+    	
+    	Set<Integer> countOneSet = new HashSet<Integer>();
+    	
+    	// 수강 목록 조회
     	if("ROLE_MEMBER".equals(loginMember.getMemberRole())) {
     		List<EnrollVO> enrollList = chatService.selectEnrollList(loginMember.getMemberNo());
     		for (EnrollVO enroll : enrollList) {
     			log.info(enroll.toString());
+    			ChatRoomVO chatroom = new ChatRoomVO();
+    			chatroom.setAdminNo(enroll.getSyclass().getAdminNo());
+    			chatroom.setMemberNo(loginMember.getMemberNo());
+    			int count = chatService.selectCountOneRoomList(chatroom);
+    			if(count>0) {//채팅방이 있다면
+    				countOneSet.add(enroll.getSyclass().getAdminNo());
+    			}
     		}
+    		model.addAttribute("countOneSet", countOneSet);
     		model.addAttribute("enrollList", enrollList);
     	}
     }
@@ -79,6 +91,12 @@ public class ChatMemberController {
     	
         chatService.createChatRoom(chatroom);
         return "redirect:/member/chatroom/main";
+    }
+    
+    @GetMapping("/delete/{chatRoomNo}")
+    public String memberDeleteRoomGET(@PathVariable int chatRoomNo) {
+    	chatService.updateChatRoomStatus(chatRoomNo);
+    	return "redirect:/member/chatroom/main";
     }
     
 }

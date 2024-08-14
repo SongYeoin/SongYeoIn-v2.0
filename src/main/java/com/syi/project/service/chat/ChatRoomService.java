@@ -24,7 +24,9 @@ public interface ChatRoomService {
 	List<ChatRoomVO> selectChatRoomList(MemberVO loginMember);
 	List<EnrollVO> selectClassMemberList(int adminNo);//관리자 조회
 	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
-	
+	int updateChatRoomStatus(int chatRoomNo);
+	int selectCountOneRoomList(ChatRoomVO chatroom);
+	List<SyclassVO> selectAdminClassList(int adminNo);
 	
 	/*
 	 * int insertChatRoom(ChatRoomVO chatRoom);

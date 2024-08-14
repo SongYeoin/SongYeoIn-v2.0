@@ -85,6 +85,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		return chatRoomMapper.selectClassMemberList(adminNo);
 	}
 
+	@Override
+	public int updateChatRoomStatus(int chatRoomNo) {
+		return chatRoomMapper.updateChatRoomStatus(chatRoomNo);
+	}
+
+	@Override
+	public int selectCountOneRoomList(ChatRoomVO chatroom) {
+		return chatRoomMapper.selectCountOneRoomList(chatroom);
+	}
+
+	@Override
+	public List<SyclassVO> selectAdminClassList(int adminNo) {
+		return chatRoomMapper.selectAdminClassList(adminNo);
+	}
+
 	/*
 	 * // 채팅방에 유저 리스트에 유저 추가
 	 * 
