@@ -58,8 +58,13 @@ public class ChatAdminController {
     				countOneSet.add(classVO.getMemberNo());
     			}
     		}
+    		
+    		List<SyclassVO> adminClassList = chatService.selectAdminClassList(loginMember.getMemberNo());
+    		
+    		
     		model.addAttribute("countOneSet", countOneSet);
     		model.addAttribute("classList", classList);
+    		model.addAttribute("adminClassList", adminClassList);
     	}
     }
     

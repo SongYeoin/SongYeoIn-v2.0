@@ -97,7 +97,15 @@
 		    C.ADMIN_NO = #{adminNo}
   	</select>
 	
-	
+	<select id="selectAdminClassList" resultMap="classResultMap">
+		SELECT
+		    CLASS_NAME,
+		    CLASS_NO
+		FROM
+		    CLASS
+		WHERE
+		    ADMIN_NO = #{adminNo}
+	</select>
 	
 	
 	

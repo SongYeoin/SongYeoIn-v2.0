@@ -95,6 +95,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		return chatRoomMapper.selectCountOneRoomList(chatroom);
 	}
 
+	@Override
+	public List<SyclassVO> selectAdminClassList(int adminNo) {
+		return chatRoomMapper.selectAdminClassList(adminNo);
+	}
+
 	/*
 	 * // 채팅방에 유저 리스트에 유저 추가
 	 * 

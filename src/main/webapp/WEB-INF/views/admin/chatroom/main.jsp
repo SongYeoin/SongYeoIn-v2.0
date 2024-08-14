@@ -126,10 +126,10 @@ a.custom{
 				<div class="w-100 h-100  p-3 border --bs-light-border-subtle rounded-3">
 				
 					<select class="form-select" aria-label="Default select example">
-					  <option selected>Open this select menu</option>
-					  <option value="1">One</option>
-					  <option value="2">Two</option>
-					  <option value="3">Three</option>
+					  <option selected>반을 선택해주세요</option>
+					  <c:forEach items="${adminClassList}" var="class">
+					  	<option value="${class.classNo }"><c:out value="${class.className}"></c:out></option>
+					  </c:forEach>
 					</select>
 					
 					<form class="d-flex align-items-center" role="search">

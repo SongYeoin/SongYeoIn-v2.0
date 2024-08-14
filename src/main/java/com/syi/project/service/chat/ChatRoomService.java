@@ -26,6 +26,7 @@ public interface ChatRoomService {
 	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
 	int updateChatRoomStatus(int chatRoomNo);
 	int selectCountOneRoomList(ChatRoomVO chatroom);
+	List<SyclassVO> selectAdminClassList(int adminNo);
 	
 	/*
 	 * int insertChatRoom(ChatRoomVO chatRoom);

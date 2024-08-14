@@ -35,4 +35,6 @@ public interface ChatRoomMapper {
 
 	int selectCountOneRoomList(ChatRoomVO chatroom);
 	
+	List<SyclassVO> selectAdminClassList(int adminNo);
+	
 }
