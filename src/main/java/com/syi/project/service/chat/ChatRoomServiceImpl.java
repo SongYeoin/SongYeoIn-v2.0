@@ -90,6 +90,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		return chatRoomMapper.updateChatRoomStatus(chatRoomNo);
 	}
 
+	@Override
+	public int selectCountOneRoomList(ChatRoomVO chatroom) {
+		return chatRoomMapper.selectCountOneRoomList(chatroom);
+	}
+
 	/*
 	 * // 채팅방에 유저 리스트에 유저 추가
 	 * 

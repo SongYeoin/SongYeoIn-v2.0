@@ -1,6 +1,8 @@
 package com.syi.project.controller.chat;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,12 +43,22 @@ public class ChatAdminController {
     	List<ChatRoomVO> roomList = chatService.selectChatRoomList(loginMember);
     	model.addAttribute("roomList",roomList);
     	
+    	Set<Integer> countOneSet = new HashSet<Integer>();
+    	
     	// 담당 과목 조회
     	if("ROLE_ADMIN".equals(loginMember.getMemberRole())){//관리자일 때
     		List<EnrollVO> classList = chatService.selectClassMemberList(loginMember.getMemberNo());
     		for (EnrollVO classVO : classList) {
     			log.info(classVO.toString());
+    			ChatRoomVO chatroom = new ChatRoomVO();
+    			chatroom.setAdminNo(loginMember.getMemberNo());
+    			chatroom.setMemberNo(classVO.getMemberNo());
+    			int count = chatService.selectCountOneRoomList(chatroom);
+    			if(count>0) {//채팅방이 있다면
+    				countOneSet.add(classVO.getMemberNo());
+    			}
     		}
+    		model.addAttribute("countOneSet", countOneSet);
     		model.addAttribute("classList", classList);
     	}
     }

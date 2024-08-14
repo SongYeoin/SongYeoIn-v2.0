@@ -32,5 +32,7 @@ public interface ChatRoomMapper {
 	List<ChatRoomVO> selectChatRoomList(MemberVO loginMember);
 
 	List<EnrollVO> selectClassMemberList(int adminNo);
+
+	int selectCountOneRoomList(ChatRoomVO chatroom);
 	
 }

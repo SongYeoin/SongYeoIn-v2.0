@@ -7,7 +7,6 @@
   
 	  <resultMap type="com.syi.project.model.chat.ChatRoomVO" id="chatRoomResultMap">
 			<id property="chatRoomNo" column="CHATROOM_NO"/>
-			<result property="sessionIds" column="CHATROOM_SESSION_IDS"/>
 			<result property="adminNo" column="CHATROOM_ADMIN_NO"/>
 			<result property="memberNo" column="CHATROOM_MEMBER_NO"/>
 			<collection property="member" resultMap="memberResultMap" />
@@ -97,6 +96,28 @@
 		WHERE
 		    C.ADMIN_NO = #{adminNo}
   	</select>
+	
+	
+	
+	
+	
+	<!--채팅방이 존재하는지 카운트로 확인   -->
+	<select id="selectCountOneRoomList" resultType="_int">
+		SELECT COUNT(*)
+		FROM CHATROOM
+		WHERE CHATROOM_MEMBER_NO = #{memberNo}  AND CHATROOM_ADMIN_NO = #{adminNo}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 

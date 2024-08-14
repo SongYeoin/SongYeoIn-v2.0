@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -167,7 +169,7 @@ a.custom{
 							                <!-- 라디오 버튼 -->
 							                <td>
 							                    <c:choose>
-							                        <c:when test="${previousMemberNo != enroll.member.memberNo}">
+							                        <c:when test="${previousMemberNo != enroll.member.memberNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
 							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}"/>
 							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}"/>
 							                        </c:when>
@@ -282,6 +284,24 @@ if (event.target == modal) {
    modal.style.display = "none";
 }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 모든 tr 요소를 선택합니다.
+    var rows = document.querySelectorAll('tr');
+
+    // 각 tr 요소를 순회합니다.
+    rows.forEach(function(row) {
+        // 현재 tr의 3번째 td 요소를 찾습니다.
+        var thirdCell = row.querySelector('td:nth-child(3)');
+
+        // 3번째 열에 라디오 버튼이 있는지 확인합니다.
+        if (thirdCell && !thirdCell.querySelector('input[type="radio"]')) {
+            // 라디오 버튼이 없다면 배경색을 옅은 회색으로 변경합니다.
+            row.style.backgroundColor = '#f0f0f0'; // 옅은 회색
+        }
+    });
+});
+
 </script>
 
 <script>
