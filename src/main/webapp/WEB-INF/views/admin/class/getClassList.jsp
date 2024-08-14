@@ -338,7 +338,7 @@ window.onclick = function(event) {
     }
 }
 
-// 삭제 post 요청 
+// 삭제 post 요청 비동기 처리 
 function submitDeleteForm(classNo) {
     if (confirm("정말로 삭제하시겠습니까?")) { // 삭제 확인
         // AJAX 요청 생성

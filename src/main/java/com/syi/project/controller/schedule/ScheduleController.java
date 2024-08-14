@@ -72,7 +72,7 @@ public class ScheduleController {
 			// 남은 요일 프론트에 보내기
 		    model.addAttribute("availableDays", availableDays);
 		}
-		return "/admin/class/enrollSchedule";
+		return "admin/class/enrollSchedule";
 	}
 	
 	/* 시간표 조회 페이지 이동 */

@@ -106,6 +106,61 @@ th {
 .add-schedule-btn:hover {
     background-color: #218838;
 }
+
+/* 수정 버튼 스타일 */
+.edit-schedule-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #ffc107;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.edit-schedule-btn:hover {
+    background-color: #e0a800;
+}
+
+/* 저장 버튼 스타일 */
+.save-schedule-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.save-schedule-btn:hover {
+    background-color: #218838;
+}
+
+/* 취소 버튼 스타일 */
+.cancel-edit-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.cancel-edit-btn:hover {
+    background-color: #c82333;
+}
+
+/* 구분선 스타일 */
+.separator {
+    border: 0;
+    border-top: 2px solid #ccc;
+    margin: 20px 0;
+}
 </style>
 </head>
 <body>
@@ -145,24 +200,54 @@ th {
                                 <th>교시</th>
                                 <th>시작 시간</th>
                                 <th>종료 시간</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:set var="lastDayOfWeek" value="" />
-                            <c:forEach var="period" items="${schedule.periods}">
+                            <c:forEach var="period" items="${schedule.periods}" varStatus="status">
+                            	<!-- 요일이 바뀔 때마다 구분선 추가 -->
+                                <c:if test="${period.dayOfWeek != lastDayOfWeek && status.index != 0}">
+                                    <tr>
+                                        <td colspan="5">
+                                            <hr class="separator" />
+                                        </td>
+                                    </tr>
+                                </c:if>
                                 <tr>
                                     <c:choose>
                                         <c:when test="${period.dayOfWeek != lastDayOfWeek}">
                                             <td>${period.dayOfWeek}</td>
+                                            <td>${period.periodName}</td>
+                                            <td>
+                                                <span class="startTime">${period.startTime}</span>
+                                                <input type="time" class="edit-input" value="${period.startTime}" style="display:none;">
+                                            </td>
+                                            <td>
+                                                <span class="endTime">${period.endTime}</span>
+                                                <input type="time" class="edit-input" value="${period.endTime}" style="display:none;">
+                                            </td>
+                                            <td rowspan="${schedule.periods.stream().filter(p -> p.dayOfWeek.equals(period.dayOfWeek)).count()}">
+                                                <button class="edit-schedule-btn" onclick="editSchedule(this)">수정하기</button>
+                                                <button class="save-schedule-btn" style="display:none;" onclick="saveSchedule(this, '${period.dayOfWeek}')">저장</button>
+                                                <button class="cancel-edit-btn" style="display:none;" onclick="cancelEdit(this)">취소</button>
+                                            </td>
                                             <c:set var="lastDayOfWeek" value="${period.dayOfWeek}" />
                                         </c:when>
                                         <c:otherwise>
                                             <td></td>
+                                            <td>${period.periodName}</td>
+                                            <td>
+                                                <span class="startTime">${period.startTime}</span>
+                                                <input type="time" class="edit-input" value="${period.startTime}" style="display:none;">
+                                            </td>
+                                            <td>
+                                                <span class="endTime">${period.endTime}</span>
+                                                <input type="time" class="edit-input" value="${period.endTime}" style="display:none;">
+                                            </td>
+                                            <td></td>
                                         </c:otherwise>
                                     </c:choose>
-                                    <td>${period.periodName}</td>
-                                    <td>${period.startTime}</td>
-                                    <td>${period.endTime}</td>
                                 </tr>                             
                             </c:forEach>
                         </tbody>
@@ -180,6 +265,96 @@ th {
             alert('${message}');
         </script>
     </c:if>
+    
+<script>
+//수정 버튼 클릭 시 입력 칸 활성화
+function editSchedule(button) {
+    var row = button.closest('tr');
+    var dayOfWeek = row.querySelector('td').textContent.trim() || getPreviousDayOfWeek(row);
+    var allRows = document.querySelectorAll('tbody tr');
+
+    allRows.forEach(function(r) {
+        var firstTd = r.querySelector('td');
+        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        if (currentDayOfWeek === dayOfWeek) {
+            r.querySelectorAll('.edit-input').forEach(function(input) {
+                input.style.display = 'inline-block';
+                input.disabled = false; // 수정 가능하도록 비활성화 해제
+            });
+            r.querySelectorAll('span').forEach(function(span) {
+                span.style.display = 'none';
+            });
+
+            // 버튼 상태 변경
+            r.querySelector('.edit-schedule-btn').style.display = 'none'; // 수정 버튼 숨기기
+            r.querySelector('.save-schedule-btn').style.display = 'inline-block'; // 저장 버튼 보이기
+            r.querySelector('.cancel-edit-btn').style.display = 'inline-block'; // 취소 버튼 보이기
+        }
+    });
+}
+
+// 저장 버튼 클릭 시 데이터 저장 (예: AJAX 요청)
+function saveSchedule(button, dayOfWeek) {
+    var allRows = document.querySelectorAll('tbody tr');
+    
+    allRows.forEach(function(r) {
+        var firstTd = r.querySelector('td');
+        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        if (currentDayOfWeek === dayOfWeek) {
+            var newDayOfWeek = r.querySelector('.edit-input').value;
+            var periodName = r.querySelector('.periodName').textContent;
+            var startTime = r.querySelector('input[type="time"]').value;
+            var endTime = r.querySelectorAll('input[type="time"]')[1].value;
+
+            // 여기에 AJAX 요청을 사용해 서버에 데이터를 저장하는 코드를 추가할 수 있습니다.
+            alert('저장된 데이터: ' + newDayOfWeek + ', ' + periodName + ', ' + startTime + ' - ' + endTime);
+        }
+    });
+
+    // 저장 후 수정 모드 종료
+    cancelEdit(button);
+}
+
+// 취소 버튼 클릭 시 수정 모드 종료
+function cancelEdit(button) {
+    var row = button.closest('tr');
+    var dayOfWeek = row.querySelector('td').textContent.trim() || getPreviousDayOfWeek(row);
+    var allRows = document.querySelectorAll('tbody tr');
+
+    allRows.forEach(function(r) {
+        var firstTd = r.querySelector('td');
+        var currentDayOfWeek = firstTd.textContent.trim() || getPreviousDayOfWeek(r);
+        if (currentDayOfWeek === dayOfWeek) {
+            r.querySelectorAll('.edit-input').forEach(function(input) {
+                input.style.display = 'none';
+                input.disabled = true; // 수정 불가능하도록 비활성화 설정
+            });
+            r.querySelectorAll('span').forEach(function(span) {
+                span.style.display = 'inline-block';
+            });
+
+            // 버튼 상태 복원
+            r.querySelector('.edit-schedule-btn').style.display = 'inline-block';
+            r.querySelector('.save-schedule-btn').style.display = 'none';
+            r.querySelector('.cancel-edit-btn').style.display = 'none';
+        }
+    });
+}
+
+// 이전 행의 요일 정보를 가져오는 함수
+function getPreviousDayOfWeek(row) {
+    var previousRow = row.previousElementSibling;
+    while (previousRow) {
+        var dayOfWeek = previousRow.querySelector('td').textContent.trim();
+        if (dayOfWeek) {
+            return dayOfWeek;
+        }
+        previousRow = previousRow.previousElementSibling;
+    }
+    return '';
+}
+
+</script>
 
 </body>
 </html>
