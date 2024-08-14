@@ -81,4 +81,10 @@ public class ChatMemberController {
         return "redirect:/member/chatroom/main";
     }
     
+    @GetMapping("/delete/{chatRoomNo}")
+    public String memberDeleteRoomGET(@PathVariable int chatRoomNo) {
+    	chatService.updateChatRoomStatus(chatRoomNo);
+    	return "redirect:/member/chatroom/main";
+    }
+    
 }
