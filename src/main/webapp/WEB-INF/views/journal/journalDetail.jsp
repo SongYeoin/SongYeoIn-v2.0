@@ -136,6 +136,7 @@ footer {
     <div class="box">
         <h1>교육일지 상세보기</h1>
         <div class="journal_detail">
+            <p><strong>수강생:</strong> <c:out value="${journalDetail.memberName}" /></p>
             <p><strong>제목:</strong> <c:out value="${journalDetail.journalTitle}" /></p>
             <p><strong>작성일자:</strong> <fmt:formatDate pattern="yyyy/MM/dd" value="${journalDetail.journalWriteDate}" /></p>
             <c:if test="${not empty journalDetail.fileName}">

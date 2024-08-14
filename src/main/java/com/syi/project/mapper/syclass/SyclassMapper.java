@@ -18,4 +18,7 @@ public interface SyclassMapper {
 	/* 반 수정하기 */
 	int updateClass(SyclassVO syclass);
 
+	/* 반 삭제하기 */
+	int deleteClass(SyclassVO syclass);
+
 }

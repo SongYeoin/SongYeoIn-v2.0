@@ -30,7 +30,7 @@ public class JournalServiceImpl implements JournalService {
 		journalMapper.journalEnroll(journal);
 	}
 
-	// 일지 목록 조회
+	// 일지 목록 조회 (페이징)
 	@Override
 	public List<JournalVO> journalList(Criteria cri) throws Exception {
 		logger.info(">>>>>>>>>>>>>>>>>  journalList  >>");
@@ -64,6 +64,14 @@ public class JournalServiceImpl implements JournalService {
 	public int journalDelete(int journalNo) throws Exception {
 		logger.info(">>>>>>>>>>>>>>>>>  journalDelete  >>");
 		return journalMapper.journalDelete(journalNo);
+	}
+
+	// 캘린더 전체 일지 조회
+	@Override
+	public List<JournalVO> journalAllList() {
+		List<JournalVO> journalAllList = journalMapper.journalAllList();
+		logger.info("---------> 서비스 : journalAllList : " + journalAllList);
+		return journalAllList;
 	}
 
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syi.project.mapper.attendance.AttendanceMapper">
+
+	<resultMap id="attendanceResultMap" type="com.syi.project.model.attendance.AttendanceVO">
+		<id property="attendanceNo" column="ATTENDANCE_NO"/>
+		<result property="attendanceStatus" column="ATTENDANCE_STATUS"/>
+		<result property="attendanceDate" column="ATTENDANCE_DATE"/>
+		<result property="enrollDate" column="ENROLL_DATE"/>
+		<result property="modifiedDate" column="MODIFIED_DATE"/>
+		<result property="periodNo" column="PERIOD_NO"/>
+		<result property="classNo" column="CLASS_NO"/>
+		<result property="memberNo" column="MEMBER_NO"/>
+		<result property="memo" column="MEMO"/>
+	</resultMap>
+
+    <!-- 출석 등록 -->
+    <insert id="enrollAttendance" parameterType="com.syi.project.model.attendance.AttendanceVO">
+	    insert into ATTENDANCE (ATTENDANCE_STATUS, ATTENDANCE_DATE, PERIOD_NO, CLASS_NO, MEMBER_NO
+	    <if test="memo != null">
+	        , MEMO
+	    </if>)
+	    values (#{attendanceStatus}, #{attendanceDate}, #{periodNo}, #{classNo}, #{memberNo}
+	    <if test="memo != null">
+	        , #{memo, jdbcType=VARCHAR}
+	    </if>)
+	</insert>
+	
+	<!-- 교시번호와 수강생번호로 단일 출석 조회하기 --> 
+	<select id="getAttendanceByPeriodAndMember" resultMap="attendanceResultMap">
+		select * from ATTENDANCE where PERIOD_NO = #{periodNo} and MEMBER_NO = #{memberNo}
+	</select>
+   
+
+</mapper>

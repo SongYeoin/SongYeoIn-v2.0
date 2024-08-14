@@ -76,17 +76,13 @@ main {
    <main>
         <!-- Main content -->   
         <div class="box">
-        	<h1>게시판 등록</h1>
+        	<h1>강의실 신청 등록</h1>
 
 		<div class="input_wrap">
-			<!-- <label>작성자</label> <input name="title"> 
-		<div class="input_wrap">
-        <label>작성자</label>
-        <input name="applicant" value="자동으로 로그인한 사용자의 이름을 서버에서 입력" readonly>
-    </div>-->
+			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
-		
+		<input type="hidden" name="classNo" value="${param.classNo }">
 		<div class="input_wrap">
 			<label>참여자</label> <input type="text" name="join" id="joinInput">
 		</div>

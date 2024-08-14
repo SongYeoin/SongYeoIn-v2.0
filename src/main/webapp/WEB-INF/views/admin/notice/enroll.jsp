@@ -164,7 +164,7 @@ button:hover {
         <!-- Main content -->
             <div class="notice-wrapper">
 				<h2 align="center">공지사항 글쓰기</h2>
-				<form id="noticeForm" action="/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
+				<form id="noticeForm" action="${pageContext.servletContext.contextPath}/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
 					<table>
 						<tr>
 							<th>제목</th>

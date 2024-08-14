@@ -6,6 +6,8 @@ import com.syi.project.model.EnrollVO;
 
 import lombok.Data;
 
+
+
 @Data
 public class ClubVO {
 	

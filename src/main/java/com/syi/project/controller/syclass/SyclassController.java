@@ -86,7 +86,7 @@ public class SyclassController {
 	/* 반 정보 수정하기 */
 	@PostMapping("/class/update")
 	@ResponseBody
-	public String classUpdatePOST(SyclassVO syclass, RedirectAttributes rttr) throws Exception{
+	public String classUpdatePOST(SyclassVO syclass) throws Exception{
 		log.info("반 수정하기 시작");
 		
 		try {
@@ -96,6 +96,20 @@ public class SyclassController {
         } catch (Exception e) {
             return "fail";
         }
+	}
+	
+	/* 반 정보 삭제하기 */
+	@PostMapping("/class/delete")
+	@ResponseBody
+	public String classDeletePOST(SyclassVO syclass) throws Exception{
+		
+		try {
+			int deleteResult = syclassService.deleteClass(syclass);
+			return deleteResult > 0 ? "success" : "fail";
+			
+		} catch (Exception e) {
+			return "fail";
+		}
 	}
 	
 

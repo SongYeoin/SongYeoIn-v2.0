@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class HeartVO {
-	int heartNo;
-	Date heartRegDate;
-	int heartMemberNo;
-	int heartBoardNo;
+	private int heartNo;
+	private Date heartRegDate;
+	private int heartMemberNo;
+	private int heartBoardNo;
 
 }

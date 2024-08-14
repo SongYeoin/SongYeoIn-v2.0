@@ -59,7 +59,7 @@ public class JournalController {
 	}
 
 	/* 일지 등록 */
-	@PostMapping("/journalEnroll.do")
+	@PostMapping("/journalEnroll")
 	public String addJournal(JournalVO journal, @RequestParam("file") MultipartFile file) throws Exception {
 
 		// 파일 업로드 처리
@@ -124,6 +124,7 @@ public class JournalController {
 			InputStreamResource resource = new InputStreamResource(inputStream);
 			return ResponseEntity.ok().headers(headers).body(resource);
 		} catch (IOException e) {
+			logger.error("파일 다운로드 실패", e);
 			// 서버 에러 시 500 에러 반환
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
@@ -131,9 +132,14 @@ public class JournalController {
 
 	/* 교육일지 목록 조회 페이지 */
 	@GetMapping("journalList")
-	public void journalListGET(Criteria cri, Model model) throws Exception {
+	public void journalListGET(Criteria cri, @RequestParam(required = false) String memberName, Model model) throws Exception {
 		logger.info(">>>>>>>>>>       교육일지 목록 페이지 접속             >>>>>>>>>>");
 
+		// memberName이 null이 아니면 Criteria 객체에 추가
+	    if (memberName != null && !memberName.isEmpty()) {
+	        cri.setMemberName(memberName);
+	    }
+		
 		// 필터 값이 포함된 Criteria 객체를 사용하여 일지 리스트 조회
 		List<JournalVO> journalList = journalService.journalList(cri);
 
@@ -145,6 +151,14 @@ public class JournalController {
 
 		/* 페이지 인터페이스 데이터 */
 		model.addAttribute("pageMaker", new PageDTO(cri, journalService.journalGetTotal(cri)));
+		
+		// 전체 일지 조회 캘린더용
+		List<JournalVO> journalAllList = journalService.journalAllList();
+        logger.info("---------> journalAllList : " + journalAllList);
+		model.addAttribute("journalAllList", journalAllList);
+		
+		// 수강생 이름 필터 값을 모델에 추가
+	    model.addAttribute("memberName", memberName);
 	}
 
 	/* 교육일지 상세 정보 페이지 */
@@ -170,8 +184,7 @@ public class JournalController {
 
 	/* 교육일지 수정 처리 */
 	@PostMapping("journalModify.do")
-	public String journalModifyPOST(JournalVO journal,
-			@RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
+	public String journalModifyPOST(JournalVO journal, @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
 		logger.info("교육일지 수정 요청 / 일지 글번호 ---> " + journal.getJournalNo());
 
 		// 파일이 업로드된 경우
@@ -229,19 +242,5 @@ public class JournalController {
 		journalService.journalDelete(journalNo);
 
 		return "redirect:/journal/journalList";
-	}
-
-	/* 교육일정 관리 페이지 GET 요청 처리 */
-	@GetMapping("eduScheduleManage")
-	public String eduScheduleManageGET() {
-		logger.info("교육일정 관리 페이지 GET 요청");
-		return "redirect:/journal/eduScheduleManage"; // POST 요청을 처리하는 페이지로 리디렉션
-	}
-
-	/* 교육일정 관리 페이지 POST 요청 처리 */
-	@PostMapping("eduScheduleManage")
-	public String eduScheduleManagePOST() {
-		logger.info("교육일정 관리 페이지 접속");
-		return "journal/eduScheduleManage"; // JSP 뷰 이름 반환
 	}
 }
