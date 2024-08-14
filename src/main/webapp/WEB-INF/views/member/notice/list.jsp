@@ -35,33 +35,6 @@ main {
     height: 100%;
 }
 
-.classroom-header {
-    background-color: #f1f1f1;
-    padding: 10px 20px;
-    border-bottom: 2px solid #ccc;
-    text-align: left;
-    padding-top: 91px;
-    position: fixed;
-    width: 100%;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-}
-
-.classroom-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    /* margin-bottom: 10px; */
-    
-    margin-left: 10px;
-}
-
-.classroom-header .details {
-    font-size: 12px;
-    
-    margin-left: 10px;
-}
-
 .content {
     padding: 20px;
     background-color: #fff;
@@ -71,9 +44,35 @@ main {
     margin-bottom: 20px;
 }
 
+.title-container{
+	display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
+}
+
+.title-container h1{
+	margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+	font-weight: bold;
+}
+
 .bi-house-fill {
 	cursor: pointer;
 	font-size: 20px;
+}
+
+.select-box {
+    position: relative;
+    display: inline-block;
+}
+
+.select-box select {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f8f8;
+
+    width: auto;
+    min-width: 300px;
 }
 
 /* noticeList-wrapper 스타일 */
@@ -194,33 +193,41 @@ table td:first-child {
     <!-- 메뉴바 연결 -->
     <%@ include file="../../common/header.jsp"%>
 
-	<div class="classroom-header">
-			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-            <div class="title">${syclass.className}</div>
-            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
-    </div>
-
-        
     <!-- 사이드바 연결 -->    
-    <%@ include file="../class/aside.jsp"%>
+    <%@ include file="../aside.jsp"%>
 
     <main>
         <!-- Main content -->
         <div class="content">
+	        <!-- Title and Select Box -->
+	        <div class="title-container">
+	            <h1>공지사항</h1>
+	            <div class="select-box">
+	                <select id="classSelect" name="classSelect" onchange="sendClassChange(this.value)">
+	                    <c:forEach var="classItem" items="${classList}">
+	                        <option value="${classItem.classNo}" <c:if test="${classItem.syclass.classNo == param.classNo}">selected</c:if>>${classItem.syclass.className}</option>
+	                    </c:forEach>
+	                </select>
+	            </div>
+	        </div> 
             <div class="noticeList-wrapper">
-				<h2 align="center">공지사항</h2>
 				<table>
-					<tr >
+					<tr>
 						<th>번호</th>
 						<th width=70%>제목</th>
 						<th>조회수</th>
 						<th>등록일</th>
 					</tr>
 					<!-- 공지 -->
-					
-					<c:forEach items="${ noticeList }" var="notice">
-					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
-						<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
+					<c:set var="seq" value="0" />
+            		<c:forEach items="${noticeList}" var="notice">
+                		<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
+                    		<td>
+                        		<c:choose>
+                        			<c:when test="${notice.noticeClassNo == 0}">전체</c:when>
+                            		<c:otherwise><c:out value="${seq + 1}"/><c:set var="seq" value="${seq + 1}" /> </c:otherwise>
+                        		</c:choose>
+                    		</td>
 						<td>${ notice.noticeTitle }</td>
 						<td>${ notice.noticeCount }</td>
 						<td>${ notice.noticeRegDate }</td>
@@ -228,16 +235,9 @@ table td:first-child {
 					</c:forEach>
 				</table>
 				
-				<!-- 등록버튼 -->
-				<c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' }">
-					<div class="btn-container">
-						<button id="enrollBtn" class="btn search_btn">등록</button>
-					</div>
-				</c:if>
-					
 				<!-- 검색 영역 -->
 				<div class="search_wrap">
-					<form id="searchForm" action="/admin/class/notice/list" method="get">
+					<form id="searchForm" action="/member/notice/list" method="get">
 						<div class="search_input">
 							<input type="text" name="keyword"
 								value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
@@ -273,7 +273,7 @@ table td:first-child {
 					</ul>
 
 				</div>
-				<form id="moveForm" action="/admin/class/notice/list" method="get">
+				<form id="moveForm" action="/member/notice/list" method="get">
 					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 					<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 					<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
@@ -291,11 +291,13 @@ table td:first-child {
 		alert(message);
 	}
 	
+	function sendClassChange(classNo) {
+		// 현재 페이지의 쿼리 파라미터를 유지하면서 classNo를 업데이트
+	    let url = new URL(window.location.href);
+	    url.searchParams.set('classNo', classNo);
+	    window.location.href = url.toString();
+	}
 	
-    $("#enrollBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/enroll';
-    });
-    
 	let moveForm = $('#moveForm');
 	//페이지 이동 버튼
 	$(".pageMaker_btn a").on("click", function(e){
@@ -306,8 +308,10 @@ table td:first-child {
 	});
 	
 	function showNoticeDetail(event, noticeNo) {
-		window.location.href = '${pageContext.servletContext.contextPath}/admin/notice/detail?noticeNo=' + noticeNo;
+		window.location.href = '${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=' + noticeNo;
 	}
+	
+	
 	</script>
 
 </body>

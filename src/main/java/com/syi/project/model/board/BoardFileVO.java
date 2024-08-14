@@ -1,11 +1,11 @@
-package com.syi.project.model.notice;
+package com.syi.project.model.board;
 
 import java.sql.Date;
 
 import lombok.Data;
 
 @Data
-public class NoticeFileVO {
+public class BoardFileVO {
 	private int fileNo;
 	private String fileOriginalName;
 	private String fileSavedName;
@@ -13,5 +13,5 @@ public class NoticeFileVO {
 	private long fileSize;
 	private String filePath;
 	private Date fileRegDate;
-	private int fileNoticeNo;
+	private int fileBoardNo;
 }
