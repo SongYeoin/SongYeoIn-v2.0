@@ -44,7 +44,8 @@ h2 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #333;
-     text-align: center;
+    text-align: center;
+    cursor: pointer;
 }
 
 form input[type="text"], 
@@ -97,7 +98,7 @@ p a {
 	<div id="login-wrap">
 
 		<div class="login-wrapper">
-			<h2>Login</h2>
+			<h2 onclick="location.href='${pageContext.servletContext.contextPath}/'">Login</h2>
 			<form action="${ pageContext.servletContext.contextPath }/member/login" method="post" id="login-form">
 				<p>ID</p>
 				<input type="text" name="memberId" id="memberId" placeholder="아이디를 입력하세요"><br>
