@@ -326,8 +326,14 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->
-	<%@ include file="../member/aside.jsp"%>
+	<!-- 사용자 역할일 때 사이드바 -->
+		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		    <%@ include file="../member/aside.jsp"%>
+		</c:if>
+	<!-- 관리자 역할일 때 사이드바 -->
+		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+		    <%@ include file="../admin/aside.jsp"%>
+		</c:if>
 	
 	<main>
 
@@ -377,7 +383,7 @@ td.checkStatus.N {
 						<button type="submit">조회</button>
 					</form>
 				</div>
-				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
 				<div class="icons">
 					<a href="/journal/admin/scheduleCreate"><i class="fas fa-square-plus"></i></a>
 				</div>
@@ -405,12 +411,12 @@ td.checkStatus.N {
 							<td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
 							<td><c:out value="${schedule.scheduleDate}" /></td>
 							<td>
-								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
 									<c:out value="${schedule.scheduleTitle}" />
 								</a>
 							</td>
 							<td>
-								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+								<a href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
 									<c:out value="${schedule.scheduleDescription}" />
 								</a>
 							</td>
@@ -465,7 +471,7 @@ td.checkStatus.N {
                 {
                     title: "${schedule.scheduleTitle}",
                     start: "${schedule.scheduleDate}",
-                    url: "${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
                 }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
             ],

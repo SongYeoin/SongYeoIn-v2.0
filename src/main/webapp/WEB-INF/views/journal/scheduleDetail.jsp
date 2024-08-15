@@ -151,7 +151,7 @@
                 </c:if> --%>
                     
                 <!-- 관리자 역할일 때만 수정 및 삭제 버튼 표시 -->
-				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' and sessionScope.loginMember.memberNo eq journal.memberNo}">
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
                     <!-- 일정 수정 버튼 -->
                     <a href="${pageContext.request.contextPath}/journal/admin/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}" class="btn btn-primary">수정</a>
                     

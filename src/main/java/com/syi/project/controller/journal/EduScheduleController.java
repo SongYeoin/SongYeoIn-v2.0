@@ -33,7 +33,7 @@ public class EduScheduleController {
 	public String showCreateScheduleForm() {
 		logger.info("새로운 일정 등록 페이지 요청됨");
 
-		return "journal/admin/scheduleCreate"; // 새로운 일정 생성 폼을 포함하는 JSP 페이지 경로
+		return "journal/scheduleCreate"; // 새로운 일정 생성 폼을 포함하는 JSP 페이지 경로
 	}
 	
 	// 새로운 일정 등록 요청 처리
@@ -70,7 +70,7 @@ public class EduScheduleController {
     }
 
     // 일정 상세 조회
-    @GetMapping("admin/scheduleDetail")
+    @GetMapping("scheduleDetail")
     public void scheduleDetail(@RequestParam("scheduleNo") int scheduleNo, Model model) {
     	logger.info("일정 상세 조회 요청: 일정 번호={}", scheduleNo);
     	
@@ -85,7 +85,7 @@ public class EduScheduleController {
 
         EduScheduleVO schedule = eduScheduleService.scheduleDetail(scheduleNo); // 특정 일정 조회
         model.addAttribute("schedule", schedule);
-        return "journal/admin/scheduleUpdate"; // 일정 수정 폼을 포함하는 JSP 페이지 경로
+        return "journal/scheduleUpdate"; // 일정 수정 폼을 포함하는 JSP 페이지 경로
     }
 
     // 일정 수정 처리
