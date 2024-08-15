@@ -82,11 +82,29 @@ public class ChatAdminController {
     	HttpSession session = request.getSession();
     	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
     	
-    	Integer classNo =  Integer.parseInt((String) data.get("classNo"));
+    	 Integer classNo = null;
+    	    if (data.get("classNo") != null && !((String) data.get("classNo")).isEmpty()) {
+    	        try {
+    	            classNo = Integer.parseInt((String) data.get("classNo"));
+    	        } catch (NumberFormatException e) {
+    	            log.error("Invalid classNo format", e);
+    	        }
+    	    }
+
+    	    // Criteria 객체 생성 및 memberName 설정
+    	    Criteria criteria = new Criteria();
+    	    if (data.get("memberName") != null) {
+    	        criteria.setMemberName((String) data.get("memberName"));
+    	    }
+    	    
+    	    
+    	    
+    	    
+    	//Integer classNo =  Integer.parseInt((String) data.get("classNo"));
     	log.info((String) data.get("classNo"));
     	
-    	Criteria criteria = new Criteria();
-    	criteria.setMemberName((String) data.get("memberName"));
+    	//Criteria criteria = new Criteria();
+    	//criteria.setMemberName((String) data.get("memberName"));
     	
     	List<ChatRoomVO> filterChatRoomList = chatService.selectChatRoomList(classNo,criteria,loginMember);
     	log.info("필터 처리되서 넘어오는 채팅방 리스트 >>>>>>>>" + filterChatRoomList.toString());
