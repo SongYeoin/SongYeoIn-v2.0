@@ -150,7 +150,7 @@ label {
                     </tr>
                     <tr>
                         <th>성별</th>
-                        <td>${member.memberGender}</td>
+                        <td>${member.memberGender == 'M' ? '남자' : '여자'}</td>
                     </tr>
                     <tr>
                         <th>전화번호</th>

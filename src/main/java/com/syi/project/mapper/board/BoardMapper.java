@@ -13,6 +13,9 @@ public interface BoardMapper {
 
 	// 게시글 목록
 	List<BoardVO> selectBoards(Criteria cri);
+	
+	// 게시글 총 수
+	int selectBoardTotal(Criteria cri);
 
 	// 공지사항 조회수 증가
 	void updateBoardCount(int boardNo);

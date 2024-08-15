@@ -228,7 +228,8 @@ button:hover {
     }
     
     $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/member/notice/list';
+    	window.history.back();
+        /* window.location.href = '${pageContext.servletContext.contextPath}/member/notice/list'; */
     });
 
     </script>

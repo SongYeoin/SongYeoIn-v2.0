@@ -25,10 +25,10 @@ import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.BoardService;
 
 @Controller
-@RequestMapping("/member/board")
-public class BoardController {
+@RequestMapping("/admin/board")
+public class AdminBoardController {
 
-	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
+	private static final Logger log = LoggerFactory.getLogger(AdminBoardController.class);
 
 	@Autowired
 	private BoardService boardService;
@@ -43,48 +43,9 @@ public class BoardController {
 	}
 
 	@GetMapping("/detail")
-	public String detailBoard(int boardNo, Model model) {
+	public void detailBoard(int boardNo, Model model) {
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
 		model.addAttribute("board", board);
-		return "member/board/detail";
-	}
-
-	@GetMapping("/enroll")
-	public String insertBoard() {
-		return "member/board/enroll";
-	}
-
-	@PostMapping("/enroll")
-	public String insertBoard(@ModelAttribute BoardVO board, RedirectAttributes rttr, HttpSession session) {
-		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int boardMemberNo = member.getMemberNo();
-		board.setBoardMemberNo(boardMemberNo);
-
-		int result = boardService.insertBoard(board);
-		if (result > 0) {
-			rttr.addFlashAttribute("message", "등록되었습니다.");
-		} else {
-			rttr.addFlashAttribute("message", "등록에 실패하였습니다.");
-		}
-		return "redirect:/member/board/list";
-	}
-
-	@GetMapping("/modify")
-	public String updateBoard(int boardNo, Model model) {
-		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
-		model.addAttribute("board", board);
-		return "member/board/modify";
-	}
-
-	@PostMapping("/modify")
-	public String updateBoard(@ModelAttribute BoardVO board, RedirectAttributes rttr) {
-		int result = boardService.updateBoard(board);
-		if (result > 0) {
-			rttr.addFlashAttribute("message", "정상적으로 수정되었습니다.");
-		} else {
-			rttr.addFlashAttribute("message", "수정에 실패하였습니다.");
-		}
-		return "redirect:/member/board/detail?boardNo=" + board.getBoardNo();
 	}
 
 	@PostMapping("/delete")
@@ -94,19 +55,6 @@ public class BoardController {
 		return result > 0 ? "success" : "fail";
 	}
 
-	// 좋아요
-	@PostMapping("/like")
-	@ResponseBody
-	public String likeBoard(@RequestParam("boardNo") int boardNo, HttpSession session) {
-		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-		int result = boardService.insertHeart(null);
-		return result > 0 ? "success" : "fail";
-	}
-	
-	
-	
-	
 	// 댓글
 	@PostMapping("/comment/add")
 	public String addComment(@ModelAttribute CommentsVO comment, @RequestParam("boardNo") int boardNo,

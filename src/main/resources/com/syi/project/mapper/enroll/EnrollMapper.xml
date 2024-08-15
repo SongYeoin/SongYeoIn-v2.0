@@ -50,7 +50,7 @@
 
 	
   <!-- 수강 중인 반 조회 -->
-  <select id="selectEnrollList" resultMap="enrollResultMap">
+  <select id="selectEnrollList" resultMap="classResultMap">
   	SELECT s.*, e.*, m.*
   	FROM ENROLL e
 		LEFT JOIN CLASS s ON e.CLASS_NO = s.CLASS_NO
