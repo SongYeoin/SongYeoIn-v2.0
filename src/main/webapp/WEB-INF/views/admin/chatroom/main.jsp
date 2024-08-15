@@ -52,23 +52,23 @@ a.custom{
     display: none; /* 숨김 */
     position: fixed; /* 고정 위치 */
     z-index: 1; /* 위쪽에 표시 */
-    left: 0;
-    top: 0;
-    width: 50%; /* 전체 너비 */
-    height: 50%; /* 전체 높이 */
     overflow: auto; /* 스크롤 가능 */
-    background-color: rgb(0,0,0); /* 배경 색 */
     background-color: rgba(0,0,0,0.4); /* 반투명 배경 색 */
+    display: flex; /* 플렉스 박스 레이아웃 사용 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
 }
 
 /* 모달 내용 스타일 */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 가운데 정렬 */
     padding: 20px;
     border: 1px solid #888;
     width: 80%; /* 너비 설정 */
+    max-width: 500px; /* 최대 너비 설정 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
 }
+
 
 /* 닫기 버튼 스타일 */
 .close {
@@ -125,7 +125,7 @@ a.custom{
 				<div class="d-flex align-items-start">
 				<div class="w-100 h-100  p-3 border --bs-light-border-subtle rounded-3">
 				
-					<select class="form-select" aria-label="Default select example">
+					<select id="classSelect" class="form-select" aria-label="Default select example" onchange="updateHiddenInput()">
 					  <option selected>반을 선택해주세요</option>
 					  <c:forEach items="${adminClassList}" var="class">
 					  	<option value="${class.classNo }"><c:out value="${class.className}"></c:out></option>
@@ -133,8 +133,9 @@ a.custom{
 					</select>
 					
 					<form class="d-flex align-items-center" role="search">
-				        <input class="form-control" type="search" placeholder="학생 이름을 검색해주세요." aria-label="Search">
-				        <button class="my-3  ms-2 btn btn-outline-dark text-nowrap" type="submit">검색</button>
+				        <input id="memberName" class="form-control" type="search" placeholder="학생 이름을 검색해주세요." aria-label="Search">
+				        <input type="hidden" id="selectedClassNo" name="selectedClassNo">
+				        <button id="searchBtn" class="my-3  ms-2 btn btn-outline-dark text-nowrap" type="submit" onclick="selectSearchCondition()">검색</button>
 				     </form>
 					
 					<button id="openModalBtn">채팅방 생성</button>
@@ -191,7 +192,7 @@ a.custom{
 					<div class="card">
 						<div class="card-body w-auto scrollable-div">
 
-							<ul class="list-unstyled mb-0">
+							<ul id="roomList" class="list-unstyled mb-0">
 								<c:forEach items="${roomList}"  var="room">
 								<li class="p-2 border-bottom bg-body-tertiary" 
 								data-chat-room-no="${room.chatRoomNo}"
@@ -261,6 +262,8 @@ a.custom{
 ></script>	
 
 
+
+<!--모달창 관련 함수  -->
 <script>
 
 //모달과 버튼을 변수에 저장합니다.
@@ -285,6 +288,8 @@ if (event.target == modal) {
 }
 }
 
+
+/*모달 창 내에서 라디오 버튼이 없는 줄은 비활성화 처럼 보이게 회색 처리  */
 document.addEventListener('DOMContentLoaded', function() {
     // 모든 tr 요소를 선택합니다.
     var rows = document.querySelectorAll('tr');
@@ -304,6 +309,109 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
+
+<!--필터링을 위한 함수로 샐렉 박스에서 값을 선택했을 시 밑에 있는 이름 검색 form에 있는 input 값으로 설정됨  -->
+<script>
+function updateHiddenInput() {
+    var selectedValue = document.getElementById("classSelect").value;
+    console.log("반 번호 : " + selectedValue);
+    
+    document.getElementById("selectedClassNo").value = selectedValue;
+    console.log("선택된 반 번호 : " + document.getElementById("selectedClassNo").value);
+    
+}
+
+/*비동기로 반과 이름 필터링 처리해서 해당하는 채팅방만 보여주기  */
+function selectSearchCondition(){
+	event.preventDefault(); // 폼 제출 시 페이지 리로드 방지
+	const data = {};
+
+	//memberName 값이 있는지 확인
+	if ($("#memberName").val()) {
+	    data.memberName = $("#memberName").val();
+	}
+
+	// classNo 값이 있는지 확인
+	if ($("#selectedClassNo").val()) {
+	    data.classNo = $("#selectedClassNo").val();
+	}
+	
+	
+	$.ajax({
+		url:"/admin/chatroom/search",
+		method: 'POST',
+	    contentType: 'application/json',
+	    data: JSON.stringify(data),
+	    dataType: 'json',
+	    success: function(response) {
+	    	console.log("응답 데이터:", response);
+	        updateRoomList(response);
+	    },
+	    error: function(error) {
+	        console.error('AJAX 오류:', error);
+	    }
+	});
+	
+	
+	function updateRoomList(roomList) {
+		
+		console.log(roomList);
+		
+		// 기존의 리스트 비우기
+	    let listContainer = $("#roomList");
+	    listContainer.empty();
+
+	    let listItem = '';
+	    // 새로운 리스트 추가
+	    $.each(roomList, function(index, room) {
+	        listItem = 
+	        	$('<li>', {
+	                class: 'p-2 border-bottom bg-body-tertiary',
+	                'data-chat-room-no': room.chatRoomNo
+	            }).append(
+	                $('<a>', {
+	                    class: 'custom d-flex justify-content-between',
+	                    click: function() {
+	                        selectChatRoom(room.chatRoomNo);
+	                    }
+	                }).append(
+	                    $('<div>', { class: 'd-flex flex-row' }).append(
+	                        $('<img>', {
+	                            src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp',
+	                            alt: 'avatar',
+	                            class: 'rounded-circle d-flex align-self-center me-3 shadow-1-strong',
+	                            width: 60
+	                        })
+	                    ).append(
+	                        $('<div>', { class: 'pt-1' }).append(
+	                            $('<p>', { class: 'fw-bold mb-0' }).text(room.member.memberName) // Member Name
+	                        ).append(
+	                            $('<p>', {
+	                                class: 'd-inline-block text-truncate small text-muted',
+	                                style: 'max-width: 150px;'
+	                            }).text('Hello, Are you there?') // Example message
+	                        )
+	                    )
+	                ).append(
+	                    $('<div>', { class: 'pt-1' }).append(
+	                        $('<p>', { class: 'small text-muted mb-1' }).text('Just now') // Time
+	                    ).append(
+	                        $('<span>', { class: 'badge bg-danger float-end' }).text('1') // Badge
+	                    )
+	                )
+	            );
+	        // 리스트에 추가
+	        listContainer.append(listItem);
+	});
+	}
+}
+ 
+
+
+</script>
+
+
+<!--처음 채팅방에 들어왔을 때 메시지 전송하는 컨테이너 보이지 않게 하기  -->
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -312,6 +420,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+<!--채팅방을 누르면 해당 채팅방에서 나눈 메시지 보이게 하는 함수  -->
 <script type="text/javascript">
 // 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
 const loginMemberNo = "${loginMember.memberNo}";
@@ -325,7 +435,7 @@ function selectChatRoom(chatRoomNo) {
     currentChatRoomNo = chatRoomNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
     
-    $.ajax({
+    $.ajax({/*채팅방 넘버로 메시지 리스트 가지고 오는 거여서 member여도 상관없다.  */
         url: '/member/chatroom/chats/' + currentChatRoomNo,
         method: 'GET',
         dataType: 'json',
@@ -403,6 +513,9 @@ function selectChatRoom(chatRoomNo) {
     }
 }
 
+
+
+/* 웹소켓으로 실시간 채팅이 가능하게 하는 함수들 */
 const chat = document.getElementById('chat');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');

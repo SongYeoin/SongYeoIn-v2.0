@@ -1,22 +1,25 @@
 package com.syi.project.controller.chat;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.chat.ChatRoomVO;
 import com.syi.project.model.member.MemberVO;
@@ -40,7 +43,7 @@ public class ChatAdminController {
     	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
     	
     	//채팅방 목록 조회
-    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(loginMember);
+    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(null,null,loginMember);
     	model.addAttribute("roomList",roomList);
     	
     	Set<Integer> countOneSet = new HashSet<Integer>();
@@ -61,12 +64,36 @@ public class ChatAdminController {
     		
     		List<SyclassVO> adminClassList = chatService.selectAdminClassList(loginMember.getMemberNo());
     		
-    		
     		model.addAttribute("countOneSet", countOneSet);
     		model.addAttribute("classList", classList);
     		model.addAttribute("adminClassList", adminClassList);
     	}
     }
+    
+    @PostMapping("/search")
+    @ResponseBody
+    public List<ChatRoomVO> adminSerachChatRoomPost(@RequestBody Map<String, Object> data, HttpServletRequest request) throws JsonProcessingException{
+    	
+    	log.info("ajax로 search 메소드 진입------------------------------");
+    	log.info(data.toString());
+    	
+    	
+    	//로그인한 멤버 번호와 멤버 역할, 필터링 조건 memberName, classNo를 가지고 가야함
+    	HttpSession session = request.getSession();
+    	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+    	
+    	Integer classNo =  Integer.parseInt((String) data.get("classNo"));
+    	log.info((String) data.get("classNo"));
+    	
+    	Criteria criteria = new Criteria();
+    	criteria.setMemberName((String) data.get("memberName"));
+    	
+    	List<ChatRoomVO> filterChatRoomList = chatService.selectChatRoomList(classNo,criteria,loginMember);
+    	log.info("필터 처리되서 넘어오는 채팅방 리스트 >>>>>>>>" + filterChatRoomList.toString());
+    	
+    	return filterChatRoomList;
+    }
+    
     
     @PostMapping("/createroom")
     public String adminCreateRoomPOST(HttpServletRequest request,int memberNo,Model model) {
