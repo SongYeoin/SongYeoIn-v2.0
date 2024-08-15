@@ -513,7 +513,8 @@ function selectChatRoom(chatRoomNo) {
     }
 }
 
-
+</script>
+<script>
 
 /* 웹소켓으로 실시간 채팅이 가능하게 하는 함수들 */
 const chat = document.getElementById('chat');
@@ -534,47 +535,100 @@ ws.onmessage = (event) => {
 
     console.log(messageData);
     
-    const message = document.createElement('li');
-    message.classList.add('d-flex', 'justify-content-between', 'mb-6');
+    if(messageData.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+    	console.log("오른쪽에 오는 사람");
+		const message = document.createElement('li');
+	    message.classList.add('d-flex', 'justify-content-end', 'mb-6');
 
-    const avatar = document.createElement('img');
-    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
-    avatar.alt = "avatar";
-    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
-    avatar.width = 60;
+	    
+	    const messageCard = document.createElement('div');
+	    messageCard.classList.add('card', 'w-100');
 
-    const messageCard = document.createElement('div');
-    messageCard.classList.add('card');
+	    const cardHeader = document.createElement('div');
+	    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
 
-    const cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+	    const senderName = document.createElement('p');
+	    senderName.classList.add('fw-bold', 'mb-0');
+	    senderName.textContent = messageData.memberName;
 
-    const senderName = document.createElement('p');
-    senderName.classList.add('fw-bold', 'mb-0');
-    senderName.textContent = messageData.memberName;
+	    const timestamp = document.createElement('p');
+	    timestamp.classList.add('text-muted', 'small', 'mb-0');
+	    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
+	    timestamp.textContent = messageData.regDateTime;
+	    
+	    const avatar = document.createElement('img');
+	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+	    avatar.alt = "avatar";
+	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	    avatar.width = 60;
 
-    const timestamp = document.createElement('p');
-    timestamp.classList.add('text-muted', 'small', 'mb-0');
-    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
-    timestamp.textContent = messageData.regDateTime;
-    
-    cardHeader.appendChild(senderName);
-    cardHeader.appendChild(timestamp);
+	    cardHeader.appendChild(senderName);
+	    cardHeader.appendChild(timestamp);
 
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body');
+	    const cardBody = document.createElement('div');
+	    cardBody.classList.add('card-body');
 
-    const messageText = document.createElement('p');
-    messageText.classList.add('mb-0');
-    messageText.textContent = messageData.message;
+	    const messageText = document.createElement('p');
+	    messageText.classList.add('mb-0');
+	    messageText.textContent = messageData.message;
 
-    cardBody.appendChild(messageText);
-    messageCard.appendChild(cardHeader);
-    messageCard.appendChild(cardBody);
+	    cardBody.appendChild(messageText);
+	    messageCard.appendChild(cardHeader);
+	    messageCard.appendChild(cardBody);
 
-    message.appendChild(avatar);
-    message.appendChild(messageCard);
-    chat.appendChild(message);
+	    message.appendChild(messageCard);
+	    message.appendChild(avatar);
+	    chat.appendChild(message);
+
+		
+	}else {/* 남-왼쪽에 와야 하는 사람  */
+		console.log("왼쪽에 오는 사람");
+		const message = document.createElement('li');
+	    message.classList.add('d-flex', 'justify-content-start', 'mb-6');
+
+	    const avatar = document.createElement('img');
+	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+	    avatar.alt = "avatar";
+	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	    avatar.width = 60;
+
+	    const messageCard = document.createElement('div');
+	    messageCard.classList.add('card', 'w-100');
+
+	    const cardHeader = document.createElement('div');
+	    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+
+	    const senderName = document.createElement('p');
+	    senderName.classList.add('fw-bold', 'mb-0');
+	    senderName.textContent = messageData.memberName;
+
+	    const timestamp = document.createElement('p');
+	    timestamp.classList.add('text-muted', 'small', 'mb-0');
+	    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
+	    timestamp.textContent = messageData.regDateTime;
+	    
+	    cardHeader.appendChild(senderName);
+	    cardHeader.appendChild(timestamp);
+
+	    const cardBody = document.createElement('div');
+	    cardBody.classList.add('card-body');
+
+	    const messageText = document.createElement('p');
+	    messageText.classList.add('mb-0');
+	    messageText.textContent = messageData.message;
+
+	    cardBody.appendChild(messageText);
+	    messageCard.appendChild(cardHeader);
+	    messageCard.appendChild(cardBody);
+
+	    message.appendChild(avatar);
+	    message.appendChild(messageCard);
+	    chat.appendChild(message);
+
+
+
+	}
+	
     chat.scrollTop = chat.scrollHeight;
 };
 
@@ -593,10 +647,9 @@ sendButton.addEventListener('click', () => {
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송
         ws.send(JSON.stringify(messageData));
-
+        
         chat.scrollTop = chat.scrollHeight;
-        // 입력 필드 초기화
-        messageInput.value = '';
+        document.getElementById('messageInput').value = '';
     } 
 });
 
