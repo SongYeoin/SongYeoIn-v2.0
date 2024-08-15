@@ -264,7 +264,7 @@ public class NoticeController {
 
 		List<NoticeFileVO> fileList = noticeService.selectNoticeFiles(noticeNo);
 
-		// 서버에서 파일 삭제
+		// 파일 삭제
 		for (NoticeFileVO file : fileList) {
 			String filePath = file.getFilePath();
 			File fileToDelete = new File("C:\\upload\\temp" + filePath);
@@ -276,12 +276,10 @@ public class NoticeController {
 					logger.error("Failed to delete file: " + filePath);
 				}
 			}
-		}
-
-		// 데이터베이스 데이터 삭제
-		int fileDeleteResult = noticeService.deleteNoticeFiles(noticeNo);
-		if (fileDeleteResult <= 0) {
-			return "fail";
+			int fileDeleteResult = noticeService.deleteNoticeFiles(noticeNo);
+			if (fileDeleteResult <= 0) {
+				return "fail";
+			}
 		}
 
 		int result = noticeService.deleteNotice(noticeNo);

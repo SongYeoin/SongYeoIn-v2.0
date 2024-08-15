@@ -150,7 +150,7 @@ button:hover {
 
 .file-list a {
     text-decoration: none;
-    color: #007bff;
+    color: blue !important; 
 }
 
 .file-list a:hover {
