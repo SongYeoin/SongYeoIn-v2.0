@@ -123,10 +123,10 @@ textarea {
 						value="${pageInfo.content}" /></textarea>
 			</div>
 			<div class="input_wrap">
-				<label>승인현황</label> <input name="checkStatus" readonly="readonly" id="checkStatusInput"
+				<label>승인상태</label> <input name="checkStatus" readonly="readonly" id="checkStatusInput"
 					value="${pageInfo.checkStatus == 'W' ? '대기' :
-                  (pageInfo.checkStatus == 'Y' ? '완료' :
-                  (pageInfo.checkStatus == 'N' ? '불가' : '알 수 없음'))}">
+                  (pageInfo.checkStatus == 'Y' ? '승인' :
+                  (pageInfo.checkStatus == 'N' ? '미승인' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
@@ -168,10 +168,10 @@ textarea {
 						value="${pageInfo.content}" /></textarea>
 			</div>
 			<div class="input_wrap">
-				<label>승인현황</label> <input name="checkStatus" readonly="readonly"
+				<label>승인상태</label> <input name="checkStatus" readonly="readonly"
 					value="${pageInfo.checkStatus == 'W' ? '대기' :
-                  (pageInfo.checkStatus == 'Y' ? '완료' :
-                  (pageInfo.checkStatus == 'N' ? '불가' : '알 수 없음'))}">
+                  (pageInfo.checkStatus == 'Y' ? '승인' :
+                  (pageInfo.checkStatus == 'N' ? '미승인' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
@@ -257,7 +257,7 @@ textarea {
 		            alert('참여 또는 활동일을 입력해 주세요.');
 		            return false; // 폼 제출을 막습니다.
 		        }
-		    }else if(checkStatus === '완료'){
+		    }else if(checkStatus === '승인'){
 		    	if (fileInput === 0) {
 			        alert('파일을 선택해 주세요.');
 			        return false; // 폼 제출을 막습니다.

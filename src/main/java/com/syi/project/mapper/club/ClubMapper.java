@@ -15,16 +15,19 @@ public interface ClubMapper {
 	public List<ClubVO> getList(int classNo);
 	
 	//동아리 등록
-	public void enroll(int classNo, String join, Date studyDate, String content, int memberNo);
+	//public void enroll(int classNo, String join, Date studyDate, String content, int memberNo);
+	public void enroll(ClubVO club);
 	
 	//동아리 조회
 	public ClubVO getPage(int clubNo);
 
 	//동아리 수정
 	public int modify(ClubVO club);
+	public int modifyAdmin(ClubVO club);
 	
 	//동아리 삭제
 	public int delete(int clubNo);
+	public int deleteAdmin(int clubNo);
 	
 	//동아리 로드시 반 번호
 	public Integer getDefaultClassNoByMember(Integer classNo);

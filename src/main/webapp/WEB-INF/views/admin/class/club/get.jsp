@@ -32,15 +32,38 @@ body {
 
 main {
 	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
+	margin-left: 300px;
+    margin-top: 160px;
 	overflow-y: auto;
-	top: 120px;
-	left: 250px;
+	height: 100%;
 }
 
-.box {
-	height: 100%;
+.classroom-header {
+    background-color: #f1f1f1;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ccc;
+    text-align: left;
+    padding-top: 91px;
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    
+    display: flex;
+    align-items: center;
+}
+
+.classroom-header .title {
+    font-size: 20px;
+    font-weight: bold;
+    /* margin-bottom: 10px; */
+    
+    margin-left: 10px;
+}
+
+.classroom-header .details {
+    font-size: 12px;
+    
+    margin-left: 10px;
 }
 
 .input_wrap {
@@ -88,19 +111,31 @@ textarea {
 	padding-left: 80px;
 	margin-top: 50px;
 }
+
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 </style>
 </head>
 <body>
 
 	<!-- 메뉴바 연결 -->
-	<%@ include file="../../common/header.jsp"%>
+	<%@ include file="../../../common/header.jsp"%>
+	
+	<div class="classroom-header">
+			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+            <div class="title">${syclass.className}</div>
+            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
+    </div>
 
 	<!-- 사이드바 연결 -->
 	<%@ include file="../aside.jsp"%>
 
 	<main>
 		<!-- Main content -->
-		<div class="box">
+		<div>
 			<h1>조회 페이지</h1>
 			<div class="input_wrap">
 				<label>번호</label> <input name="clubNo" readonly="readonly"
@@ -152,19 +187,21 @@ textarea {
 			</div>
 			
 			<div class="btn_wrap">
-				<a class="btn" id="list_btn">목록 페이지</a>
-				<c:if test="${pageInfo.enroll.member.memberNo == sessionScope.loginMember.memberNo }">
+				<a class="btn" id="list_btn" >목록 페이지</a>
+				<%-- <c:if test="${pageInfo.enroll.member.memberNo == sessionScope.loginMember.memberNo }">
 				<c:if test="${pageInfo.checkStatus != 'N' }">
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="delete_btn">삭제</a>
 				</c:if>
-				</c:if>
+				</c:if> --%>
+				<a class="btn" id="modify_btn">수정</a>
+				<a class="btn" id="delete_btn">삭제</a>
 			</div>
-			<form id="infoForm" action="/member/club/modify" method="get">
-				<input type="hidden" id="clubNo" name="clubNo"
-					value='<c:out value="${pageInfo.clubNo }"/>'> <input
-					type="hidden" name="keyword" value="${cri.keyword}"> <input
-					type="hidden" name="type" value="${cri.type}">
+			<form id="infoForm" action="/admin/class/club/modify" method="get">
+				<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
+				<input type="hidden" id="classNo" name="classNo" value='<c:out value="${param.classNo }"/>'>
+				<input type="hidden" name="keyword" value="${cri.keyword}">
+				<input type="hidden" name="type" value="${cri.type}">
 			</form>
 
 
@@ -173,25 +210,26 @@ textarea {
 	</main>
 
 	<!-- 푸터 연결 -->
-	<%@ include file="../../common/footer.jsp"%>
+	<%@ include file="../../../common/footer.jsp"%>
 
 
 	<script>
 		let form = $("#infoForm");
+		
 
 		$("#list_btn").on("click", function(e) {
 			form.find("#clubNo").remove();
-			form.attr("action", "/member/club/list");
+			form.attr("action", "/admin/class/club/list");
 			form.submit();
 		});
 
 		$("#modify_btn").on("click", function(e) {
-			form.attr("action", "/member/club/modify");
+			form.attr("action", "/admin/class/club/modify");
 			form.submit();
 		});
 		
 		$("#delete_btn").on("click", function(e){
-			form.attr("action", "/member/club/delete");
+			form.attr("action", "/admin/class/club/delete");
 			form.attr("method", "post");
 			form.submit();
 		});

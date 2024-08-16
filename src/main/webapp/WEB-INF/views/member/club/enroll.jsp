@@ -82,7 +82,7 @@ main {
 			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
-		<input type="hidden" name="classNo" value="${param.classNo }">
+		<%-- <input type="hidden" name="classNo" value="${param.classNo }"> --%>
 		<div class="input_wrap">
 			<label>참여자</label> <input type="text" name="join" id="joinInput">
 		</div>
