@@ -12,7 +12,7 @@ import lombok.Data;
 public class NoticeVO {
 	private int noticeNo;
 	private String noticeTitle;
-	private String noticeContents;
+	private String noticeContent;
 	private Date noticeRegDate;
 	private Date noticeModifyDate;
 	private int noticeCount;

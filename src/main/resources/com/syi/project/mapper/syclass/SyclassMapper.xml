@@ -49,6 +49,12 @@
         CLASS_STATUS = #{classStatus}
     WHERE CLASS_NO = #{classNo}
     </update>
+    
+    <!-- 반 삭제 -->
+    <update id="deleteClass" parameterType="com.syi.project.model.syclass.SyclassVO">
+    UPDATE class SET IS_DELETED = 'Y', MODIFIED_DATE = SYSDATE
+    WHERE CLASS_NO = #{classNo}
+    </update>
    
 
 </mapper>

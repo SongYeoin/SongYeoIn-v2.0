@@ -139,7 +139,7 @@ body {
       <div class="part1">
 		<div class="section section1">
 			<div class="menu-title">Attendance <br>출석</div>
-			<div class="submenu pd-top">
+			<div class="submenu pd-top" onclick="location.href='${pageContext.servletContext.contextPath}/member/attendance/enroll'">
 				<p>출석부 조회</p>
 				<p>출석하기</p>
 			</div>
@@ -162,13 +162,13 @@ body {
 		</div>
 		<div class="section section4">
 			<div class="menu-title">Anonymous Board <br>익명게시판</div>
-			<div class="submenu">
+			<div class="submenu" onclick="location.href='${pageContext.servletContext.contextPath}/member/board/list'">
 				<p>익명게시판</p>
 			</div>
 		</div>
 		<div class="section section5">
 			<div class="menu-title">Notices <br>공지사항</div>
-			<div class="submenu">
+			<div class="submenu" onclick="location.href='${pageContext.servletContext.contextPath}/member/notice/list'">
 			<p>공지사항</p>
               </div>
         </div>

@@ -32,7 +32,9 @@ public class SyclassVO {
     private Date modifiedDate;
     
     private String classStatus;
-    
+	
     private String isDeleted;
+	
+    private int adminNo;
 
 }

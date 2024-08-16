@@ -134,12 +134,12 @@ a:visited {
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-home"></i>익명게시판</a> 
+                <a href="${ pageContex.servletContext.contextPath }/member/board/list"><i class="fas fa-home"></i>익명게시판</a> 
             </div>
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-cog"></i>공지사항</a>
+                <a href="${ pageContext.servletContext.contextPath }/member/notice/list"><i class="fas fa-cog"></i>공지사항</a>
             </div>
         </div>
     </div>

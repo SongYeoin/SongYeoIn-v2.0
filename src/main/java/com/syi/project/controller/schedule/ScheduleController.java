@@ -1,5 +1,7 @@
 package com.syi.project.controller.schedule;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.period.PeriodVO;
 import com.syi.project.model.schedule.ScheduleVO;
@@ -30,8 +32,46 @@ public class ScheduleController {
 	
 	/* 시간표 등록 페이지 이동 */
 	@GetMapping("/class/enrollSchedule")
-	public void scheduleEnrollGET() throws Exception{
+	public String scheduleEnrollGET(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) throws Exception{
 		log.info("시간표 등록 페이지 이동");
+		
+		// 세션에서 반 정보 얻기
+		HttpSession session = request.getSession();
+		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
+		int classNo = syclass.getClassNo();
+		
+		// 등록된 시간표 유무 확인
+		ScheduleVO schedule = scheduleService.getSchedule(classNo);
+		
+		// 모든 요일 배열 준비
+	    List<String> allDays = Arrays.asList("월", "화", "수", "목", "금", "토", "일");
+	    
+	    // 남은 요일 목록 초기화
+	    List<String> availableDays = new ArrayList<>(allDays); 
+		
+		// 등록된 시간표가 있다면
+		if(schedule != null) {
+			// 교시 정보에서 등록된 요일 확인
+			List<PeriodVO> periodList = scheduleService.getPeriods(schedule.getScheduleNo());
+			
+			for(PeriodVO period : periodList) {
+				String[] days = period.getDayOfWeek().split(",");
+				
+				for(String day : days) {
+					availableDays.remove(day); // 이미 등록된 요일 제거
+				}
+			}
+		}
+		
+		if(availableDays.isEmpty()) {
+			redirectAttributes.addFlashAttribute("message", "추가 등록 가능한 요일이 없습니다.");
+			return "redirect:/admin/class/getSchedule";
+			
+		} else {
+			// 남은 요일 프론트에 보내기
+		    model.addAttribute("availableDays", availableDays);
+		}
+		return "admin/class/enrollSchedule";
 	}
 	
 	/* 시간표 조회 페이지 이동 */
@@ -39,31 +79,53 @@ public class ScheduleController {
 	public void getScheduleGET(HttpServletRequest request, Model model) throws Exception{
 		log.info("시간표 조회 페이지 이동");
 		
+		// 세션에서 반 정보 얻기
 		HttpSession session = request.getSession();
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		int classNo = syclass.getClassNo();
-		System.out.println(classNo);
 		
 		// classNo 으로 시간표 조회
-		ScheduleVO schedule = scheduleService.getSchedule(classNo);
+		try {
+			ScheduleVO schedule = scheduleService.getSchedule(classNo);
+			
+			// 교시 정보 조회
+			List<PeriodVO> periodList = scheduleService.getPeriods(schedule.getScheduleNo());
+			schedule.setPeriods(periodList);
+			
+			// 조회한 결과 프론트로 보내기
+			model.addAttribute("schedule", schedule);
+			
+		} catch (NullPointerException e) {
+			log.error("등록된 시간표가 없습니다.", e);
+	        model.addAttribute("result", "null");
+	        
+		} catch (Exception e) {
+			log.error("시간표 조회 중 오류 발생", e);
+	        model.addAttribute("result", "error");
+		}
 		
-		// 교시 정보 조회
-		List<PeriodVO> periodList = scheduleService.getPeriods(schedule.getScheduleNo());
-		schedule.setPeriods(periodList);
-		
-		// 조회한 정보 프론트로 보내기
-		model.addAttribute("schedule", schedule);
 	}
 	
 	/* 시간표 등록 */
 	@PostMapping("/class/enrollSchedule")
-	public void enrollSchedulePOST(ScheduleVO schedule) throws Exception{
-		log.info("시간표 등록 기능 시작");
-
-		System.out.println("Received Schedule: " + schedule);
-		System.out.println("Received Periods: " + schedule.getPeriods());
+	public void enrollSchedulePOST(HttpServletRequest request, ScheduleVO schedule) throws Exception{
 		
-		scheduleService.enrollSchedule(schedule);
+		HttpSession session = request.getSession();
+		int classNo = ((SyclassVO) session.getAttribute("syclass")).getClassNo();
+		schedule.setClassNo(classNo);
+		
+		scheduleService.enrollSchedule(request, schedule);
 		
 	}
+	
+	/* 시간표 수정 */
+	@PostMapping("/class/updateSchedule")
+	public void updateSchedulePOST(ScheduleVO schedule) throws Exception {
+		System.out.println("시간표 수정 컨트롤러 도착 : " + schedule);
+		
+		scheduleService.updateSchedule(schedule);
+		
+	}
+	
+	
 }

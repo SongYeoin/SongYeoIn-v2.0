@@ -37,12 +37,14 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	// 승인 처리
+	@Transactional
 	@Override
 	public int updateStatusY(int memberNo) {
 		return adminMapper.updateStatusY(memberNo);
 	}
 
 	// 미승인 처리
+	@Transactional
 	@Override
 	public int updateStatusN(int memberNo) {
 		return adminMapper.updateStatusN(memberNo);
@@ -73,6 +75,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	// 수강 신청 삭제
+	@Transactional
 	@Override
 	public int deleteEnroll(int enrollNo) {
 		return adminMapper.deleteEnroll(enrollNo);

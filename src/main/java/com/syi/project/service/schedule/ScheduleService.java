@@ -2,6 +2,8 @@ package com.syi.project.service.schedule;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +25,22 @@ public class ScheduleService {
 	PeriodMapper periodMapper;
 
 	/* 시간표 등록 */
-	public void enrollSchedule(ScheduleVO schedule) {
+	public void enrollSchedule(HttpServletRequest request, ScheduleVO schedule) {
+		int scheduleNo;
 		
-		// NullPointerException이 발생할 수 있는 부분을 로그로 확인
-		System.out.println("Schedule: " + schedule);
-		System.out.println("Periods: " + schedule.getPeriods());
-		
-		// 시간표 등록
-		scheduleMapper.enrollSchedule(schedule);
+		// 이미 있는 시간표라면 그 시간표 번호로 교시만 등록하기
+		if(scheduleMapper.getSchedule(schedule.getClassNo())!=null) {
+			scheduleNo = scheduleMapper.getSchedule(schedule.getClassNo()).getScheduleNo();
+			
+		} else {
+			// 없다면 새롭게 시간표 등록
+			scheduleMapper.enrollSchedule(schedule);
+			scheduleNo = schedule.getScheduleNo();
+		}
 		
 		// 교시 등록
 		for(PeriodVO period : schedule.getPeriods()) {
-			period.setScheduleNo(schedule.getScheduleNo());
+			period.setScheduleNo(scheduleNo);
 			periodMapper.enrollPeriod(period);
 		}
 	}
@@ -44,9 +50,33 @@ public class ScheduleService {
 		return scheduleMapper.getSchedule(classNo);
 	}
 
-	/* 교시 조회 */
+	/* 교시 리스트 조회 */
 	public List<PeriodVO> getPeriods(int scheduleNo) {
 		return periodMapper.getPeriods(scheduleNo);
+	}
+	
+	/* 교시 리스트 조회 */
+	public List<PeriodVO> getPeriodsWithDayOfWeek(int scheduleNo, String dayOfWeek) {
+		System.out.println("서비스에 도착한 dayOfWeek : " + dayOfWeek);
+		return periodMapper.getPeriodsWithDayOfWeek(scheduleNo, dayOfWeek);
+	}
+
+	/* 교시 조회 */
+	public PeriodVO getPeriod(Integer periodNo) {
+		return periodMapper.getPeriod(periodNo);
+	}
+
+	/* 시간표 수정 */
+	public void updateSchedule(ScheduleVO schedule) {
+		
+		// 시간표 업데이트
+		scheduleMapper.updateSchedule(schedule.getScheduleNo());
+		
+		// 교시 업데이트
+		for(PeriodVO period : schedule.getPeriods()) {
+			periodMapper.updatePeriod(period.getPeriodNo());
+		}
+		
 	}
 
 }

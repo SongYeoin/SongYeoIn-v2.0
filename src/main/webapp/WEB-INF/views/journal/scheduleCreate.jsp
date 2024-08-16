@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -112,6 +111,13 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        /* 경고 메시지 스타일 */
+        .warning {
+            color: red;
+            font-size: 0.875em;
+            display: none; /* 기본적으로 숨김 */
+        }
     </style>
 </head>
 <body>
@@ -129,12 +135,14 @@
     <!-- Main Content -->
     <div class="container">
         <h1>새 교육일정 등록</h1>
-        <form action="${pageContext.request.contextPath}/journal/scheduleCreate" method="post">
+        <form id="scheduleForm" action="${pageContext.request.contextPath}/journal/scheduleCreate" method="post">
             <label for="scheduleTitle">단원명:</label>
             <input type="text" name="scheduleTitle" id="scheduleTitle" required />
+            <span id="warn_scheduleTitle" class="warning">단원명을 입력해주세요.</span>
 
             <label for="scheduleDate">일자:</label>
             <input type="date" name="scheduleDate" id="scheduleDate" required />
+            <span id="warn_scheduleDate" class="warning">일자를 입력해주세요.</span>
 
             <label for="scheduleDescription">학습주제:</label>
             <input type="text" name="scheduleDescription" id="scheduleDescription" />
@@ -151,6 +159,36 @@
     <footer>
         <%@ include file="../common/footer.jsp"%>
     </footer>
+
+    <script>
+        document.getElementById('scheduleForm').addEventListener('submit', function(event) {
+            let valid = true;
+
+            // 단원명 검사
+            let scheduleTitle = document.getElementById('scheduleTitle').value;
+            let titleWarning = document.getElementById('warn_scheduleTitle');
+            if (scheduleTitle.trim() === '') {
+                titleWarning.style.display = 'block';
+                valid = false;
+            } else {
+                titleWarning.style.display = 'none';
+            }
+
+            // 일자 검사
+            let scheduleDate = document.getElementById('scheduleDate').value;
+            let dateWarning = document.getElementById('warn_scheduleDate');
+            if (scheduleDate.trim() === '') {
+                dateWarning.style.display = 'block';
+                valid = false;
+            } else {
+                dateWarning.style.display = 'none';
+            }
+
+            if (!valid) {
+                event.preventDefault(); // 폼 제출 방지
+            }
+        });
+    </script>
 
 </body>
 </html>

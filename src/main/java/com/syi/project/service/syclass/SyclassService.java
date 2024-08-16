@@ -34,4 +34,9 @@ public class SyclassService {
 		return syclassMapper.updateClass(syclass);
 	}
 
+	/* 반 삭제하기 */
+	public int deleteClass(SyclassVO syclass) {
+		return syclassMapper.deleteClass(syclass);
+	}
+
 }

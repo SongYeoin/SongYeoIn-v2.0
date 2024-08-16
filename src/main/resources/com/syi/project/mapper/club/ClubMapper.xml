@@ -42,6 +42,37 @@
     <result property="memberRole" column="MEMBER_ROLE"/>
   </resultMap>
   
+  <resultMap type="com.syi.project.model.syclass.SyclassVO" id="classResultMap">
+  		<id property="classNo" column="CLASS_NO"/>
+		<result property="className" column="CLASS_NAME"/>
+		<result property="description" column="description"/>
+		<result property="managerName" column="manager_name"/>
+		<result property="teacherName" column="teacher_name"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="classroomName" column="classroom_name"/>
+		<result property="enrollDate" column="enroll_date"/>
+		<result property="modifiedDate" column="modified_date"/>
+		<result property="classStatus" column="class_status"/>
+		<result property="isDeleted" column="is_deleted"/>
+  </resultMap>
+  
+
+	<!-- Default classNo 가져오는 쿼리 -->
+<select id="getDefaultClassNoByMember" resultType="java.lang.Integer">
+    SELECT MIN(class_no) 
+    FROM enroll 
+    WHERE member_no = #{memberNo}
+</select>
+
+<!-- 수강 반 목록 -->
+<select id="getClassNoListByMember" resultMap="classResultMap">
+	SELECT c.*
+	FROM enroll e
+	JOIN class c ON e.class_no = c.class_no
+	WHERE e.member_no = #{memberNo}
+</select>
+
   <!-- 리스트 -->
   <select id="getList" resultMap="clubResultMap">
     SELECT 
@@ -57,15 +88,16 @@
     FROM club a 
     JOIN enroll b ON a.enroll_no = b.enroll_no
     join member c on b.member_no = c.member_no
-    where c.member_status = 'Y'
+    where c.member_status = 'Y' and b.class_no = #{classNo}
     order by a.club_reg_date desc, a.club_study_date desc
   </select>
   
   <!-- 등록 -->
  <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 1)
-  </insert>
+    VALUES (#{join}, #{studyDate}, #{content}, 
+    		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
+ </insert>
   
   
   <!-- 조회 -->
@@ -79,6 +111,7 @@
       a.club_check_status,
       a.club_check_cmt,
       c.member_name,
+      c.member_no,
       a.file_name
 from club a
 join enroll b on a.enroll_no = b.enroll_no
