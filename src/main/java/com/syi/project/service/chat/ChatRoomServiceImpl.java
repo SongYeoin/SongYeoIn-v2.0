@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.syi.project.mapper.chat.ChatRoomMapper;
+import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.chat.ChatRoomVO;
 import com.syi.project.model.member.MemberVO;
@@ -69,8 +70,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public List<ChatRoomVO> selectChatRoomList(MemberVO loginMember) {
-		return chatRoomMapper.selectChatRoomList(loginMember);
+	public List<ChatRoomVO> selectChatRoomList(Integer classNo,Criteria cri,MemberVO loginMember) {
+		return chatRoomMapper.selectChatRoomList(classNo,cri,loginMember);
 	}
 
 

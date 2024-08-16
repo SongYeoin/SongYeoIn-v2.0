@@ -40,18 +40,85 @@
 	
 	
 	<!--채팅방 목록 조회  -->
-	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
+	<!-- <select id="selectChatRoomList" resultMap="chatRoomResultMap">
   		SELECT A.CHATROOM_NO,A.CHATROOM_ADMIN_NO,A.CHATROOM_MEMBER_NO,B.MEMBER_NAME
-  		<if test="memberRole == 'ROLE_ADMIN'">
+  		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
 	  		FROM CHATROOM A JOIN MEMBER B ON(A.CHATROOM_MEMBER_NO = B.MEMBER_NO)
-	  		WHERE A.CHATROOM_ADMIN_NO = #{memberNo}
+	  		WHERE A.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
   		</if>
-  		<if test="memberRole == 'ROLE_MEMBER'">
+  		<if test="loginMember.memberRole == 'ROLE_MEMBER'">
   			FROM CHATROOM A JOIN MEMBER B ON(A.CHATROOM_ADMIN_NO = B.MEMBER_NO)
-			WHERE A.CHATROOM_MEMBER_NO = #{memberNo}
+			WHERE A.CHATROOM_MEMBER_NO = #{loginMember.memberNo}
 		</if>
 			AND A.CHATROOM_STATUS = 'Y'
+			<if test="classNo != null">
+				AND 
+			</if>
+			<if test="cri.memberName != null">
+				
+			</if>
   	</select>
+  	 -->
+  	
+  	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
+  		SELECT CH.CHATROOM_NO,CH.CHATROOM_ADMIN_NO,CH.CHATROOM_MEMBER_NO,M.MEMBER_NAME
+  		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
+  			<if test="classNo != null or cri != null">
+	  			FROM CLASS C
+				INNER JOIN MEMBER A ON (C.ADMIN_NO = A.MEMBER_NO)
+				INNER JOIN ENROLL E ON (C.CLASS_NO = E.CLASS_NO)
+				INNER JOIN MEMBER M ON (E.MEMBER_NO = M.MEMBER_NO)
+				INNER JOIN CHATROOM CH ON (M.MEMBER_NO = CH.CHATROOM_MEMBER_NO AND A.MEMBER_NO = CH.CHATROOM_ADMIN_NO)
+				WHERE CH.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
+	  			<if test="classNo != null">
+					AND C.CLASS_NO = #{classNo}
+	  			</if>
+		  		<if test="cri.memberName != null">
+		  			AND M.MEMBER_NAME like '%'||#{cri.memberName}||'%'
+				</if>
+			</if>
+			<if test="classNo == null and cri == null">
+				FROM CHATROOM CH JOIN MEMBER M ON(CH.CHATROOM_MEMBER_NO = M.MEMBER_NO)
+	  			WHERE CH.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
+			</if>
+		</if>
+		<if test="loginMember.memberRole == 'ROLE_MEMBER'">
+  			FROM CHATROOM CH JOIN MEMBER M ON(CH.CHATROOM_ADMIN_NO = M.MEMBER_NO)
+			WHERE CH.CHATROOM_MEMBER_NO = #{loginMember.memberNo}
+		</if>
+		AND CH.CHATROOM_STATUS = 'Y'
+  	</select>
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	  <!-- <sql id="criteria">
+	  <trim prefix="AND (" suffix=")" prefixOverrides="OR">
+	  <foreach collection="typeArr" item="type">
+	  <trim prefix="OR">
+	  <choose>
+	  <when test="type == 'W'.toString()">
+	  	writer like '%'||#{keyword}||'%'
+	  </when>
+	  <when test="type == 'H'.toString()">
+	  	checkStatus like '%'||#{keyword}||'%'
+	  </when>
+	  <when test="type == 'C'.toString()">
+	  	content like '%'||#{keyword}||'%'
+	  </when> -->
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
   	
   	
   	<update id="updateChatRoomStatus" parameterType="_int">
@@ -67,6 +134,7 @@
   		SELECT A.CLASS_NO,A.MEMBER_NO,B.MANAGER_NAME, B.CLASS_NAME, B.ADMIN_NO
   		FROM ENROLL A JOIN CLASS B ON(A.CLASS_NO=B.CLASS_NO)
   		WHERE A.MEMBER_NO = #{memberNo}
+  		ORDER BY B.ADMIN_NO
   	</select>
   	
   	
@@ -95,6 +163,7 @@
 		    INNER JOIN MEMBER M ON (E.MEMBER_NO = M.MEMBER_NO)
 		WHERE
 		    C.ADMIN_NO = #{adminNo}
+		ORDER BY M.MEMBER_NO
   	</select>
 	
 	<select id="selectAdminClassList" resultMap="classResultMap">
