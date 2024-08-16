@@ -7,7 +7,7 @@
 	<resultMap id="periodResultMap" type="com.syi.project.model.period.PeriodVO">
 		<id property="periodNo" column="PERIOD_NO"/>
 		<result property="scheduleNo" column="SCHEDULE_NO"/>
-		<result property="dayOfWeek" column="DAY_OF_WEEK"/>
+		<result property="dayOfWeek" column="DAY_OF_WEEK" jdbcType="VARCHAR"/>
 		<result property="periodName" column="PERIOD_NAME"/>
 		<result property="startTime" column="START_TIME"/>
 		<result property="endTime" column="END_TIME"/>
@@ -39,8 +39,8 @@
     
     <!-- 교시 수정 -->
     <update id="updatePeriod" parameterType="com.syi.project.model.period.PeriodVO">
-    UPDATE PERIOD SET DAY_OF_WEEK=#{dayOfWeek}, START_TIME=#{startTime}, END_TIME=#{endTime}
-    WHERE PERIOD_NO=#{periodNo}
+    UPDATE PERIOD SET DAY_OF_WEEK=#{dayOfWeek, jdbcType=VARCHAR}, START_TIME=#{startTime, jdbcType=VARCHAR}, END_TIME=#{endTime, jdbcType=VARCHAR}
+    WHERE PERIOD_NO=#{periodNo, jdbcType=INTEGER}
     </update>
 
 </mapper>

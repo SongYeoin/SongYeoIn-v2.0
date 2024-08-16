@@ -348,11 +348,20 @@ function saveSchedule(button, dayOfWeek) {
         url: '/admin/class/updateSchedule',  // 실제 서버 URL로 교체
         contentType: 'application/json',
         data: JSON.stringify(schedule),
-        success: function(response) {
-            alert('시간표가 성공적으로 저장되었습니다.');
+        success: function(response, status, xhr) {
+        		if (xhr.status === 200) {  // 성공 상태 코드
+                alert('시간표가 성공적으로 저장되었습니다.');
+                window.location.href = '/admin/class/getSchedule';
+            } else {
+                alert('알 수 없는 응답을 받았습니다.');
+            }
         },
-        error: function(error) {
-            alert('저장 중 오류가 발생했습니다.');
+        error: function(xhr, status, error) {
+        		if (xhr.status === 500) {  // 서버 오류 상태 코드
+                alert('시간표 저장 중 오류가 발생했습니다.');
+            } else {
+                alert('알 수 없는 오류가 발생했습니다.');
+            }
         }
     });
 

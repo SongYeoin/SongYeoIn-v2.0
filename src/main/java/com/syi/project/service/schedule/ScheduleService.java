@@ -74,7 +74,8 @@ public class ScheduleService {
 		
 		// 교시 업데이트
 		for(PeriodVO period : schedule.getPeriods()) {
-			periodMapper.updatePeriod(period.getPeriodNo());
+			System.out.println("수정중 서비스에서 확인한 period : " + period);
+			periodMapper.updatePeriod(period);
 		}
 		
 	}

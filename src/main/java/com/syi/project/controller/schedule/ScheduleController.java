@@ -8,10 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -120,10 +123,15 @@ public class ScheduleController {
 	
 	/* 시간표 수정 */
 	@PostMapping("/class/updateSchedule")
-	public void updateSchedulePOST(ScheduleVO schedule) throws Exception {
-		System.out.println("시간표 수정 컨트롤러 도착 : " + schedule);
-		
-		scheduleService.updateSchedule(schedule);
+	public ResponseEntity<String> updateSchedulePOST(@RequestBody ScheduleVO schedule) throws Exception {
+		try {
+            scheduleService.updateSchedule(schedule);
+            return new ResponseEntity<>(HttpStatus.OK);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 		
 	}
 	
