@@ -157,11 +157,14 @@ a.custom{
 							        <!-- 리스트 항목을 반복해서 출력 -->
 							        <c:forEach items="${classList}" var="enroll" varStatus="status">
 							        <!-- 이전에 출력된 memberNo 값을 저장할 변수 -->
-							        <c:set var="previousMemberNo" value="${status.last ? null : (classList[status.index - 1].member.memberNo)}"/>
+							        <c:set var="previousAdminNo" value="${classList[status.index - 1].member.memberNo}"/>
+							        <c:set var="previousAdminName" value="${classList[status.index - 1].member.memberName}"/>
 							            <tr>
-							                <!-- 수강생명 출력 -->
+							                <!-- 수강생명 출력 중복으로 출력 안되게 바꾸기 -->
 							                <td>
-							                    <c:out value="${enroll.member.memberName}"/>
+							                	<%-- <c:when test="${enroll.member.memberName != previousAdminName}"> --%>
+							                    	<c:out value="${enroll.member.memberName}"/>
+							                    <%-- </c:when> --%>
 							                </td>
 							                <!-- 수강과목명 출력 -->
 							                <td>
@@ -170,7 +173,7 @@ a.custom{
 							                <!-- 라디오 버튼 -->
 							                <td>
 							                    <c:choose>
-							                        <c:when test="${status.index == 0 || enroll.member.memberNo != previousAdminNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
+							                        <c:when test="${enroll.member.memberNo != previousAdminNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
 							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}"/>
 							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}"/>
 							                        </c:when>
