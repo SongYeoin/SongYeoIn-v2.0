@@ -52,8 +52,9 @@ main {
 	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	width: 1320px;
-	height: 710px;
+	/* width: 1320px; */
+	max-width: 1320px;
+	/* height: 710px; */
 	border-radius: 10px;
 	padding-bottom: 20px;
     
@@ -169,7 +170,7 @@ thead {
 
 th, td {
 	padding: 10px;
-	text-align: left;
+	text-align: center !important;
 	border: 1px solid #ddd;
 }
 
@@ -297,7 +298,12 @@ a:hover {
 <script>
 function sendClassChange() {
     var classNo = $('#classSelect').val();
-    console.log("비동기 요청 시작");
+    if (!classNo) {
+        console.error("classNo 값이 누락되었습니다.");
+        return; // classNo가 없으면 요청을 중단합니다.
+    }
+    
+    console.log("비동기 요청 시작 classNo: " + classNo);
 
     $.ajax({
         url: '/member/club/list/getByClass', // AJAX 요청 URL
@@ -325,14 +331,20 @@ function sendClassChange() {
                     var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
                                 '<td>' + item.clubNo + '</td>' +
                                 '<td>' + item.enroll.member.memberName + '</td>' +
-                                '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '완료' : '불가') + '</td>' +
+                                '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
                                 '<td>' + item.checkCmt + '</td>' +
                                 '<td>' + formattedStudyDate + '</td>' +
                                 '<td>' + formattedRegDate + '</td>' +
-                                '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" onclick="' + event.stopPropagation() + '"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+                                '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
                               '</tr>';
                     tableBody.append(row);   
                 });
+            
+             // 첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
+                $('.file-download').on('click', function(event) {
+                    event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
+                });
+            
         },
         error: function() {
         	
@@ -380,15 +392,16 @@ function sendClassChange() {
 						<label for="status">상태:</label>
 						<select id="status" name="status">
 							<option value="">전체</option>
-							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>완료</option>
-							<option value="N" ${param.status == 'N' ? 'selected' : ''}>불가</option>
+							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>승인</option>
+							<option value="N" ${param.status == 'N' ? 'selected' : ''}>미승인</option>
 						</select>
 
 						<button type="submit">조회</button>
 					</form>
 				</div>
 				<div class="icons">
-					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a>
+					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
+<%-- 					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a> --%>
 				</div>
 			</div>
 
@@ -399,7 +412,7 @@ function sendClassChange() {
 						<tr>
 							<th class="clubNo_width">번호</th>
 							<th class="writer_width">작성자</th>
-							<th class="checkStatus_width">승인현황</th>
+							<th class="checkStatus_width">승인상태</th>
 							<th class="checkCmt_width">승인메시지</th>
 							<th class="studyDate_width">활동일</th>
 							<th class="regDate_width">작성일</th>
@@ -422,7 +435,7 @@ function sendClassChange() {
 						<tr>
 							<th class="clubNo_width">번호</th>
 							<th class="writer_width">작성자</th>
-							<th class="checkStatus_width">승인현황</th>
+							<th class="checkStatus_width">승인상태</th>
 							<th class="checkCmt_width">승인메시지</th>
 							<th class="studyDate_width">활동일</th>
 							<th class="regDate_width">작성일</th>
@@ -437,8 +450,8 @@ function sendClassChange() {
 								<td>
 									<c:choose>
 										<c:when test="${list.checkStatus == 'W'}">대기</c:when>
-										<c:when test="${list.checkStatus == 'Y'}">완료</c:when>
-										<c:when test="${list.checkStatus == 'N'}">불가</c:when>
+										<c:when test="${list.checkStatus == 'Y'}">승인</c:when>
+										<c:when test="${list.checkStatus == 'N'}">미승인</c:when>
 										<c:otherwise>알 수 없음</c:otherwise>
 									</c:choose>
 								</td>

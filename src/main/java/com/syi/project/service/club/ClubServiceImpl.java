@@ -27,10 +27,14 @@ public class ClubServiceImpl implements ClubService{
 	}
 
 	//등록
+//	@Override
+//	public void enroll(int classNo, String join, Date studyDate, String content, int memberNo) {
+//		mapper.enroll(classNo, join, studyDate, content, memberNo);
+//		
+//	}
 	@Override
-	public void enroll(int classNo, String join, Date studyDate, String content, int memberNo) {
-		mapper.enroll(classNo, join, studyDate, content, memberNo);
-		
+	public void enroll(ClubVO club) {
+		mapper.enroll(club);
 	}
 
 	//조회
@@ -44,11 +48,19 @@ public class ClubServiceImpl implements ClubService{
 	public int modify(ClubVO club) {
 		return mapper.modify(club);
 	}
+	@Override
+	public int modifyAdmin(ClubVO club) {
+		return mapper.modifyAdmin(club);
+	}
 
 	//삭제
 	@Override
 	public int delete(int clubNo) {
 		return mapper.delete(clubNo);
+	}
+	@Override
+	public int deleteAdmin(int clubNo) {
+		return mapper.deleteAdmin(clubNo);
 	}
 
 	//로드시 반 번호

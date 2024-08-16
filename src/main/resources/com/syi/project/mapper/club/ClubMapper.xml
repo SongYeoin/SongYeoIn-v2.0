@@ -93,12 +93,15 @@
   </select>
   
   <!-- 등록 -->
- <insert id="enroll">
+<!--  <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
     VALUES (#{join}, #{studyDate}, #{content}, 
     		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
- </insert>
-  
+ </insert> -->
+ <insert id="enroll">
+    INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
+    VALUES (#{join}, #{studyDate}, #{content}, 22)
+  </insert>
   
   <!-- 조회 -->
   <select id="getPage" resultMap="clubResultMap">
@@ -126,8 +129,18 @@ where club_No = #{clubNo}
   where club_no = #{clubNo}
   </update>
   
+  <update id="modifyAdmin">
+  update club 
+  set club_check_cmt = #{checkCmt}, club_check_status = #{checkStatus, jdbcType=VARCHAR}
+  where club_no = #{clubNo}
+  </update>
+  
+  
   <!-- 삭제 -->
   <delete id="delete">
+  	delete from club where club_no = #{clubNo}
+  </delete>
+  <delete id="deleteAdmin">
   	delete from club where club_no = #{clubNo}
   </delete>
   

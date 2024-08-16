@@ -32,16 +32,10 @@ body {
 
 main {
 	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
+	margin-left: 300px;
+	margin-top: 110px;
 	overflow-y: auto;
-	top: 120px;
-	left: 250px;
-}
-
-.box{
 	height: 100%;
-
 }
 
 .btn {
@@ -82,7 +76,7 @@ main {
 			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
-		<input type="hidden" name="classNo" value="${param.classNo }">
+		<%-- <input type="hidden" name="classNo" value="${param.classNo }"> --%>
 		<div class="input_wrap">
 			<label>참여자</label> <input type="text" name="join" id="joinInput">
 		</div>
