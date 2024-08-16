@@ -43,6 +43,7 @@ h2 {
     font-size: 24px;
     color: #333;
     text-align: center;
+    cursor: pointer;
 }
 
 form input[type="text"], 
@@ -149,7 +150,7 @@ p a:hover {
 <body>
 <div id="wrap">
 <div class="join-wrapper">
-		<h2>Sign Up</h2>
+		<h2 onclick="location.href='${pageContext.servletContext.contextPath}/'">Sign Up</h2>
 		<form action="${ pageContext.servletContext.contextPath }/member/join" method="post" id="join-form">
 		
 			<input type="text" name="memberId" id="memberId" placeholder="*아이디" ><br>

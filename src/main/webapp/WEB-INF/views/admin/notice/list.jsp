@@ -1,38 +1,44 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력개발센터</title>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
+
 /* CSS Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 html, body {
-    height: 1080px;
+	height: 1080px;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    /* min-height: 100vh; */
+	display: flex;
+	flex-direction: column;
 }
 
 main {
-    flex: 1;
-    margin-left: 250px;
-    margin-top: 160px;
-    overflow-y: auto;
-    height: 100%;
+	flex: 1;
+	margin-left: 300px;
+	margin-top: 160px;
+	overflow-y: auto;
+	height: 100%;
+}
+
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
 }
 
 .classroom-header {
@@ -51,115 +57,103 @@ main {
 .classroom-header .title {
     font-size: 20px;
     font-weight: bold;
-    /* margin-bottom: 10px; */
-    
     margin-left: 10px;
 }
 
 .classroom-header .details {
     font-size: 12px;
-    
     margin-left: 10px;
 }
 
 .content {
-    padding: 20px;
-    background-color: #fff;
+    margin: 20px auto;
+    background-color: #f9fafc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    border-radius: 10px;
+    padding-bottom: 20px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+   
 }
 
 .content h2 {
     margin-bottom: 20px;
 }
 
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
+.header {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+	background-color: #e2eff9;
+	
+	padding-top: 40px;
+    padding-right: 32px;
+    padding-left: 32px;
+    padding-bottom: 20px;
+    border-radius: 10px 10px 0 0;
 }
 
-/* noticeList-wrapper 스타일 */
-.noticeList-wrapper {
-	width: 70%;
-    background-color: #fff;
-    padding: 20px;
-    margin: 20px auto;
+.header h2 {
+	margin: 0;
+	flex-grow: 1;
 }
 
-/* 공지사항 제목 스타일 */
-.noticeList-wrapper h2 {
-    margin-bottom: 30px;
+.header .search_area {
+	display: flex;
+	align-items: center;
 }
 
-/* 테이블 스타일 */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+.header .search_area input[type="text"] {
+	margin-left: 10px;
 }
 
-table th, table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
+.header .icons {
+    display: flex;
 }
 
-/* 테이블 헤더 스타일 */
-table th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: bold;
-}
-
-/* 테이블 행 스타일 */
-table tr {
-    transition: background-color 0.3s ease;
-}
-
-/* 테이블 행에 마우스를 올렸을 때 배경색 변경 */
-table tr:hover {
-    background-color: #f9f9f9;
+.header .icons i {
     cursor: pointer;
+    margin-left: 10px; 
 }
 
-/* 테이블 번호 열 스타일 */
-table td:first-child {
-    font-weight: bold;
+.table_wrap {
+	margin: 50px 50px 0 50px;
 }
 
-.search_wrap {
-	margin-top: 20px;
-	text-align: center; 
+table thead tr {
+    cursor: default; /* 기본 커서 */
 }
 
-.search_input input[type=text] {
-	margin: 0 5px;
-	padding: 5px 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	font-size: 14px;
+table tbody tr {
+    cursor: pointer;  /* 포인터 커서 */
 }
 
-.search_input button, #enrollBtn {
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	cursor: pointer;
+table {
+ 	width: 100%;
+	border-collapse: collapse;
 }
 
-.search_input button :hover, #enrollBtn :hover {
-	background-color: #0056b3;
+thead {
+	background-color: #f5f5f5;
 }
 
-.btn-container {
-    text-align: right;
-    margin-bottom: 20px; /* 버튼과 테이블 사이의 간격을 조정 */
+th, td {
+	padding: 10px;
+	text-align: left;
+	border: 1px solid #ddd;
 }
 
 .pageMaker_wrap{
 	text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
+
 .pageMaker_wrap a{
 	color : black;
 }
@@ -181,7 +175,7 @@ table td:first-child {
 .next a, .prev a {
     color: #ccc;
 }
-.active{							/* 현재 페이지 버튼 */
+.active {							
 	border : 2px solid black;
 	font-weight:400;
 }
@@ -191,34 +185,53 @@ table td:first-child {
 </head>
 <body>
 
-    <!-- 메뉴바 연결 -->
-    <%@ include file="../../common/header.jsp"%>
-
+	<!-- 메뉴바 연결 -->
+	<%@ include file="../../common/header.jsp"%>
+	
 	<div class="classroom-header">
 			<i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
             <div class="title">${syclass.className}</div>
             <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
     </div>
 
-        
-    <!-- 사이드바 연결 -->    
-    <%@ include file="../class/aside.jsp"%>
+	<!-- 사이드바 연결 -->
+	<%@ include file="../class/aside.jsp"%>
+	<main>
+		<!-- Main content -->
+		<div class="content">
+			<div class="header">
+				<h2>공지사항</h2>
+				<div class="search_area">
+					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/class/notice/list" method="get">
+                  		<div class="search_input">
+                     		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
+                     		<input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
+                     		<button class='btn search_btn'><i class="bi bi-search"></i></button>
+                  		</div>
+               		</form>
+				</div>
+				<!-- 등록버튼 -->
+				<div class="icons">
+					<c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' }">
+                    	<a href="${pageContext.servletContext.contextPath}/admin/class/notice/enroll"><i class="fas fa-square-plus"></i></a>
+                    </c:if>
+                </div>
+			</div>
 
-    <main>
-        <!-- Main content -->
-        <div class="content">
-            <div class="noticeList-wrapper">
-				<h2 align="center">공지사항</h2>
-				<table>
-					<tr >
+			<div id="tableContainer" class="table_wrap">
+				
+			<table>
+				<thead>
+					<tr>
 						<th>번호</th>
 						<th width=70%>제목</th>
 						<th>조회수</th>
 						<th>등록일</th>
 					</tr>
-					<!-- 공지 -->
-					
-					<c:forEach items="${ noticeList }" var="notice">
+				</thead>
+				<tbody>
+                	<c:forEach items="${ noticeList }" var="notice">
 					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
 						<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
 						<td>${ notice.noticeTitle }</td>
@@ -226,33 +239,11 @@ table td:first-child {
 						<td>${ notice.noticeRegDate }</td>
 					</tr>
 					</c:forEach>
-				</table>
-				
-				<!-- 등록버튼 -->
-				<c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' }">
-					<div class="btn-container">
-						<button id="enrollBtn" class="btn search_btn">등록</button>
-					</div>
-				</c:if>
-					
-				<!-- 검색 영역 -->
-				<div class="search_wrap">
-					<form id="searchForm" action="/admin/class/notice/list" method="get">
-						<div class="search_input">
-							<input type="text" name="keyword"
-								value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
-							<input type="hidden" name="pageNum"
-								value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
-							<input type="hidden" name="amount"
-								value='${pageMaker.cri.amount}'>
-							<button class='btn search_btn'>검 색</button>
-						</div>
-					</form>
-				</div>
-
-				<!-- 페이지 이동 인터페이스 영역 -->
+            	</tbody>
+			</table>
+			
+			<!-- 페이지 이동 인터페이스 영역 -->
 				<div class="pageMaker_wrap">
-
 					<ul class="pageMaker">
 
 						<!-- 이전 버튼 -->
@@ -273,29 +264,26 @@ table td:first-child {
 					</ul>
 
 				</div>
-				<form id="moveForm" action="/admin/class/notice/list" method="get">
+				<form id="moveForm" action="${ pageContext.servletContext.contextPath }/admin/class/notice/list" method="get">
 					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 					<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 					<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
 				</form>
 			</div>
-        </div>
-    </main>
+		</div>
+	</main>
 
-    <!-- 푸터 연결 -->
-    <%@ include file="../../common/footer.jsp"%>
-    
-    <script>
-    let message = '${message}';
+	
+	<!-- 푸터 연결 -->
+	<%@ include file="../../common/footer.jsp"%>
+
+
+	<script>
+	let message = '${message}';
 	if(message) {
 		alert(message);
 	}
 	
-	
-    $("#enrollBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/enroll';
-    });
-    
 	let moveForm = $('#moveForm');
 	//페이지 이동 버튼
 	$(".pageMaker_btn a").on("click", function(e){
@@ -306,8 +294,9 @@ table td:first-child {
 	});
 	
 	function showNoticeDetail(event, noticeNo) {
-		window.location.href = '${pageContext.servletContext.contextPath}/admin/notice/detail?noticeNo=' + noticeNo;
+		window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=' + noticeNo;
 	}
+	
 	</script>
 
 </body>

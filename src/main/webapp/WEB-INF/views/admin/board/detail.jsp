@@ -197,43 +197,11 @@ button:hover {
                 </thead>
             </table>
             
-            <!-- 좋아요 기능 -->
-            <!--  
-            <div class="button-container">
-                <button id="likeBtn" data-board-no="${board.boardNo}">좋아요</button>
-                <span id="boardHeartCount">${board.boardHeartCount}</span> 
-            </div>
-            -->
-
-
-            <!-- 댓글 추가 폼 -->
-            <!--  
-            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-                <button type="submit">댓글 등록</button>
-            </form>
-            -->
-
-            <!-- 댓글 리스트 -->
-            <!--  
-            <c:forEach var="comment" items="${comments}">
-                <div class="comment">
-                    <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    <p>${comment.commentContent}</p>
-                    <c:if test="${sessionScope.loginMember.memberNo eq comment.memberNo}">
-                        <button onclick="deleteComment(${comment.commentId})">삭제</button>
-                    </c:if>
-                </div>
-            </c:forEach>
-            -->
+            
 
             <div class="button-container">
                 <button type="button" id="listBtn">목록</button>
-                <c:if test="${sessionScope.loginMember.memberNo eq board.boardMemberNo }">
-                    <button id="updateBtn">수정</button>
-                    <button id="deleteBtn" onclick="deleteboard(${board.boardNo})">삭제</button>
-                </c:if>
+                <button id="deleteBtn" onclick="deleteboard(${board.boardNo})">삭제</button>
             </div>
             
         </div>
@@ -249,24 +217,19 @@ button:hover {
     }
     
     $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/member/board/list';
-    });
-    
-    $("#updateBtn").click(function() {
-        var boardNo = ${board.boardNo}; 
-        window.location.href = '${pageContext.servletContext.contextPath}/member/board/modify?boardNo=' + boardNo;
+        window.location.href = '${pageContext.servletContext.contextPath}/admin/board/list';
     });
     
     function deleteboard(boardNo) {
         if (confirm("정말로 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/member/board/delete",
+                url: "/admin/board/delete",
                 type: "POST",
                 data: { boardNo: boardNo },
                 success: function(response) {
                     if (response === 'success') {
                         alert("삭제되었습니다.");
-                        window.location.href = "/member/board/list"; 
+                        window.location.href = "/admin/board/list"; 
                     } else {
                         alert("삭제에 실패했습니다.");
                     }

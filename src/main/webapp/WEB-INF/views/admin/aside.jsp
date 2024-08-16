@@ -98,14 +98,16 @@
         <div class="menu-item">
             <div class="menu-title">
                 <div>
-                    <a><i class="fas fa-user"></i>회원 관리</a>
+                    <a href="${ pageContext.servletContext.contextPath }/admin/member/list"><i class="fas fa-users"></i>수강생 관리</a>
                 </div>
-                <i class="fas fa-chevron-down arrow"></i>
+                <!-- <i class="fas fa-chevron-down arrow"></i> -->
             </div>
+            <!--  
             <div class="submenu">
                 <div class="submenu-item"><a href="${ pageContext.servletContext.contextPath }/admin/member/list"><i class="fas fa-users"></i>수강생 관리</a></div>
                 <div class="submenu-item"><a><i class="fas fa-user-tie"></i>직원 관리</a></div>
             </div>
+            -->
         </div>
         <div class="menu-item">
             <div class="menu-title">
@@ -114,7 +116,7 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-heart"></i>마음의 소리</a>                
+                <a href="${ pageContext.servletContext.contextPath }/admin/board/list"><i class="fas fa-heart"></i>익명 게시판</a>                
             </div>
         </div>
         <div class="menu-item">

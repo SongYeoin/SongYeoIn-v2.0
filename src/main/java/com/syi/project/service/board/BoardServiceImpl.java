@@ -23,6 +23,12 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardVO> selectBoards(Criteria cri) {
 		return boardMapper.selectBoards(cri);
 	}
+	
+	// 게시글 총 수
+	@Override
+	public int selectBoardTotal(Criteria cri) {
+		return boardMapper.selectBoardTotal(cri);
+	}
 
 	// 게시글 조회수 증가
 	@Transactional
@@ -93,5 +99,4 @@ public class BoardServiceImpl implements BoardService {
 	public int deleteComment(int commentId) {
 		return boardMapper.deleteComment(commentId);
 	}
-
 }

@@ -31,31 +31,31 @@ body {
 main {
 	flex: 1;
 	margin-left: 300px;
-	margin-top: 110px;
+	margin-top: 160px;
 	overflow-y: auto;
 	height: 100%;
 }
 
+/*
 .title-container{
 	display: flex;
-    align-items: center; /* 수직 가운데 정렬 */
+    align-items: center; 
 }
 
 .title-container h1{
-	margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+	margin-right: 20px; 
 	font-weight: bold;
 }
+*/
 
 .container {
 	margin: 20px auto;
-	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	width: 1320px;
 	height: 710px;
 	border-radius: 10px;
 	padding-bottom: 20px;
-    
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -69,7 +69,6 @@ main {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ddd;
 	background-color: #e2eff9;
-	
 	padding-top: 40px;
     padding-right: 32px;
     padding-left: 32px;
@@ -82,33 +81,11 @@ main {
 	flex-grow: 1;
 }
 
-.container {
-	margin: 20px auto;
-	background-color: #f9fafc;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	width: 1320px;
-	height: 710px;
-	border-radius: 10px;
-	padding-bottom: 20px;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.search_area {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-}
-
-.search_area label, .search_area select, .search_area button {
-	margin-left: 10px;
-}
-
-.search_area select, .search_area input {
-	height: 30px;
-	padding: 5px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
+.header input {
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 .header .icons {
@@ -121,12 +98,14 @@ main {
 }
 
 .table_wrap {
-    margin: 50px 50px 0 50px;
+    margin-left: 12px;
+    margin-right: 12px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 thead {
@@ -140,7 +119,7 @@ th, td {
 }
 
 table tbody tr {
-    cursor: pointer;  /* 포인터 커서 */
+    cursor: pointer;  
 }
 
 .pageMaker_wrap {
@@ -175,7 +154,7 @@ table tbody tr {
     color: #ccc;
 }
 
-.active { /* 현재 페이지 버튼 */
+.active { 
     border: 2px solid black;
     font-weight: 400;
 }
@@ -193,14 +172,14 @@ table tbody tr {
 
     <main>
         <div class="title-container">
-            <h1>익명게시판</h1>
+            <!-- <h1>익명게시판</h1> -->
         </div>
         <!-- Main content -->
         <div class="container">
             <div class="header">
                 <h2>익명게시판</h2>
                 <div class="search_area">
-					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/member/board/list" method="get">
+					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/board/list" method="get">
                   		<div class="search_input">
                      		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
                      		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
@@ -210,10 +189,6 @@ table tbody tr {
                   		</div>
                		</form>
 				</div>
-				<!-- 등록버튼 -->
-				<div class="icons">
-					<a href="${pageContext.servletContext.contextPath}/member/board/enroll"><i class="fas fa-square-plus"></i></a>
-                </div>
             </div>
 
             <div class="table_wrap">
@@ -229,7 +204,7 @@ table tbody tr {
                     </thead>
                     <tbody>
                         <c:forEach items="${boardList}" var="board">
-                            <tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/board/detail?boardNo=${board.boardNo}'">
+                            <tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/board/detail?boardNo=${board.boardNo}'">
                                 <td>${board.boardNo}</td>
                                 <td>${board.boardTitle}</td>
                                 <td>${board.member.memberNickname}</td>
@@ -261,7 +236,7 @@ table tbody tr {
 
                     </ul>
                 </div>
-                <form id="moveForm" action="/member/board/list" method="get">
+                <form id="moveForm" action="/admin/board/list" method="get">
                     <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
                     <input type="hidden" name="amount" value="${pageMaker.cri.amount}">
                     <input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
