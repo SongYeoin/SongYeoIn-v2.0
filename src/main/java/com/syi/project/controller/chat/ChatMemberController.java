@@ -45,7 +45,7 @@ public class ChatMemberController {
     	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
     	
     	//채팅방 목록 조회
-    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(loginMember);
+    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(null,null,loginMember);
     	model.addAttribute("roomList",roomList);
     	
     	

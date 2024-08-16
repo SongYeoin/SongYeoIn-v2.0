@@ -21,6 +21,6 @@ public interface PeriodMapper {
 	PeriodVO getPeriod(Integer periodNo);
 
 	/* 교시 수정 */
-	void updatePeriod(int periodNo);
+	void updatePeriod(PeriodVO period);
 
 }

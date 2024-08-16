@@ -3,7 +3,7 @@ package com.syi.project.service.chat;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.chat.ChatRoomVO;
 import com.syi.project.model.member.MemberVO;
@@ -21,7 +21,7 @@ public interface ChatRoomService {
 	
 	
 	
-	List<ChatRoomVO> selectChatRoomList(MemberVO loginMember);
+	List<ChatRoomVO> selectChatRoomList(Integer classNo,Criteria cri,MemberVO loginMember);
 	List<EnrollVO> selectClassMemberList(int adminNo);//관리자 조회
 	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
 	int updateChatRoomStatus(int chatRoomNo);

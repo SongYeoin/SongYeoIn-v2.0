@@ -150,7 +150,7 @@ button:hover {
 
 .file-list a {
     text-decoration: none;
-    color: #007bff;
+    color: blue !important; 
 }
 
 .file-list a:hover {
@@ -228,7 +228,8 @@ button:hover {
     }
     
     $("#listBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/member/notice/list';
+    	window.history.back();
+        /* window.location.href = '${pageContext.servletContext.contextPath}/member/notice/list'; */
     });
 
     </script>

@@ -69,19 +69,35 @@
     
     <!-- 게시판 목록 -->
     <select id="selectBoards" resultMap="BoardResultMap">
-    	<![CDATA[
-		    SELECT BOARD.*, MEMBER.*
-		    FROM (
-		        SELECT BOARD.*, ROW_NUMBER() OVER (ORDER BY BOARD_NO) AS RN
-		        FROM BOARD
-		        WHERE BOARD_STATUS = 'Y'
-		    ) BOARD
-		    LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
-		    WHERE RN > (#{ pageNum } - 1) * #{ amount }
-		    AND RN <= #{ pageNum } * #{ amount }
-		    ORDER BY BOARD_REG_DATE DESC
-		 ]]>
-    </select>
+    <![CDATA[
+	    SELECT BOARD.*, MEMBER.*
+	    FROM (
+	        SELECT BOARD.*,
+	               ROW_NUMBER() OVER (
+	                   ORDER BY BOARD_REG_DATE DESC
+	               ) AS RN
+	        FROM BOARD
+	        LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
+	        WHERE BOARD.BOARD_STATUS = 'Y'
+	    ) BOARD
+	    LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
+	    WHERE RN > (#{pageNum} - 1) * #{amount}
+	      AND RN <= #{pageNum} * #{amount}
+	    ]]>
+	    <if test="keyword != null and keyword.trim() != ''">
+	        AND BOARD.BOARD_TITLE LIKE '%' || #{keyword} || '%'
+	    </if>
+	</select>
+
+    <!-- 게시글 총 수 -->
+    <select id="selectBoardTotal" resultType="int">
+	    SELECT COUNT(*)
+	    FROM BOARD
+	    WHERE BOARD_STATUS = 'Y'
+	    <if test="keyword != null and keyword.trim() != ''">
+	        AND (BOARD_TITLE LIKE '%' || #{ keyword } || '%')
+	    </if>
+	</select>
     
     <!-- 게시글 조회수 증가 -->
   	<update id="updateBoardCount">

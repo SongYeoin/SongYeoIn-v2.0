@@ -26,15 +26,31 @@ import com.syi.project.service.member.AdminService;
 
 @Controller
 @RequestMapping(value = "/admin")
-public class MemberAdminController {
+public class AdminController {
 
-	private static final Logger logger = LoggerFactory.getLogger(MemberAdminController.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 	@Autowired
 	private AdminService adminService;
 
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
+
+	// 관리자 메인페이지, 관리자 수강생 조회 페이지
+	@GetMapping(value = { "main", "member/list" })
+	public String memberListGet(Criteria cri, Model model) throws Exception {
+		logger.info("관리자 수강 조회 페이지 접속");
+
+		List<MemberVO> memberList = adminService.selectMemberList(cri);
+		model.addAttribute("memberList", memberList);
+
+		// 페이지 이동 인터페이스 데이터
+		int total = adminService.selectTotalCount(cri);
+		PageDTO pageMaker = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMaker);
+
+		return "admin/member/list";
+	}
 
 	// 관리자 로그인 페이지 이동
 	@GetMapping("login")
@@ -72,22 +88,6 @@ public class MemberAdminController {
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMember);
 		return "redirect:/admin/main";
-	}
-
-	// 관리자 수강생 조회 페이지
-	@GetMapping("member/list")
-	public String memberListGet(Criteria cri, Model model) throws Exception {
-		logger.info("관리자 수강 조회 페이지 접속");
-
-		List<MemberVO> memberList = adminService.selectMemberList(cri);
-		model.addAttribute("memberList", memberList);
-
-		// 페이지 이동 인터페이스 데이터
-		int total = adminService.selectTotalCount(cri);
-		PageDTO pageMaker = new PageDTO(cri, total);
-		model.addAttribute("pageMaker", pageMaker);
-
-		return "admin/member/list";
 	}
 
 	// 승인 처리

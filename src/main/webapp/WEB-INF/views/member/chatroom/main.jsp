@@ -54,22 +54,21 @@ a.custom{
     display: none; /* 숨김 */
     position: fixed; /* 고정 위치 */
     z-index: 1; /* 위쪽에 표시 */
-    left: 0;
-    top: 0;
-    width: 50%; /* 전체 너비 */
-    height: 50%; /* 전체 높이 */
     overflow: auto; /* 스크롤 가능 */
-    background-color: rgb(0,0,0); /* 배경 색 */
     background-color: rgba(0,0,0,0.4); /* 반투명 배경 색 */
+    display: flex; /* 플렉스 박스 레이아웃 사용 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
 }
 
 /* 모달 내용 스타일 */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 가운데 정렬 */
     padding: 20px;
     border: 1px solid #888;
     width: 80%; /* 너비 설정 */
+    max-width: 500px; /* 최대 너비 설정 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
 }
 
 /* 닫기 버튼 스타일 */
@@ -158,11 +157,11 @@ a.custom{
 							            <th>선택</th> <!-- 라디오 버튼을 위한 열 -->
 							        </tr>
 							
-							        <!-- 이전에 출력된 adminNo 값을 저장할 변수 -->
-							        <c:set var="previousAdminNo" value=""/>
 							
 							        <!-- 리스트 항목을 반복해서 출력 -->
-							        <c:forEach items="${enrollList}" var="enroll">
+							        <c:forEach items="${enrollList}" var="enroll" varStatus="status">
+							        <!-- 이전에 출력된 adminNo 값을 저장할 변수 -->
+							        <c:set var="previousAdminNo" value="${status.last ? null : (enrollList[status.index - 1].syclass.adminNo)}"/>
 							            <tr>
 							                <!-- 담당자명 출력 -->
 							                <td>
@@ -175,7 +174,7 @@ a.custom{
 							                <!-- 라디오 버튼 -->
 							                <td>
 							                    <c:choose>
-												    <c:when test="${previousAdminNo != enroll.syclass.adminNo && !fn:contains(countOneSet, enroll.syclass.adminNo)}">
+												    <c:when test="${status.index == 0 || enroll.syclass.adminNo != previousAdminNo && !fn:contains(countOneSet, enroll.syclass.adminNo)}">
 												        <input type="radio" name="adminNO" value="${enroll.syclass.adminNo}"/>
 												        <c:set var="previousAdminNo" value="${enroll.syclass.adminNo}"/>
 												    </c:when>
@@ -408,7 +407,8 @@ function selectChatRoom(chatRoomNo) {
 }
 
 
-
+</script>
+<script>
 
 
 
@@ -432,47 +432,100 @@ ws.onmessage = (event) => {
     console.log(messageData);
     
     
-    const message = document.createElement('li');
-    message.classList.add('d-flex', 'justify-content-between', 'mb-6');
+    if(messageData.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+    	console.log("오른쪽에 오는 사람");
+		const message = document.createElement('li');
+	    message.classList.add('d-flex', 'justify-content-end', 'mb-6');
 
-    const avatar = document.createElement('img');
-    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
-    avatar.alt = "avatar";
-    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
-    avatar.width = 60;
+	    
+	    const messageCard = document.createElement('div');
+	    messageCard.classList.add('card', 'w-100');
 
-    const messageCard = document.createElement('div');
-    messageCard.classList.add('card');
+	    const cardHeader = document.createElement('div');
+	    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
 
-    const cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+	    const senderName = document.createElement('p');
+	    senderName.classList.add('fw-bold', 'mb-0');
+	    senderName.textContent = messageData.memberName;
 
-    const senderName = document.createElement('p');
-    senderName.classList.add('fw-bold', 'mb-0');
-    senderName.textContent = messageData.memberName;
+	    const timestamp = document.createElement('p');
+	    timestamp.classList.add('text-muted', 'small', 'mb-0');
+	    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
+	    timestamp.textContent = messageData.regDateTime;
+	    
+	    const avatar = document.createElement('img');
+	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+	    avatar.alt = "avatar";
+	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	    avatar.width = 60;
 
-    const timestamp = document.createElement('p');
-    timestamp.classList.add('text-muted', 'small', 'mb-0');
-    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
-    timestamp.textContent = messageData.regDateTime;
+	    cardHeader.appendChild(senderName);
+	    cardHeader.appendChild(timestamp);
 
-    cardHeader.appendChild(senderName);
-    cardHeader.appendChild(timestamp);
+	    const cardBody = document.createElement('div');
+	    cardBody.classList.add('card-body');
 
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body');
+	    const messageText = document.createElement('p');
+	    messageText.classList.add('mb-0');
+	    messageText.textContent = messageData.message;
 
-    const messageText = document.createElement('p');
-    messageText.classList.add('mb-0');
-    messageText.textContent = messageData.message;
+	    cardBody.appendChild(messageText);
+	    messageCard.appendChild(cardHeader);
+	    messageCard.appendChild(cardBody);
 
-    cardBody.appendChild(messageText);
-    messageCard.appendChild(cardHeader);
-    messageCard.appendChild(cardBody);
+	    message.appendChild(messageCard);
+	    message.appendChild(avatar);
+	    chat.appendChild(message);
 
-    message.appendChild(avatar);
-    message.appendChild(messageCard);
-    chat.appendChild(message);
+		
+	}else {/* 남-왼쪽에 와야 하는 사람  */
+		console.log("왼쪽에 오는 사람");
+		const message = document.createElement('li');
+	    message.classList.add('d-flex', 'justify-content-start', 'mb-6');
+
+	    const avatar = document.createElement('img');
+	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
+	    avatar.alt = "avatar";
+	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	    avatar.width = 60;
+
+	    const messageCard = document.createElement('div');
+	    messageCard.classList.add('card', 'w-100');
+
+	    const cardHeader = document.createElement('div');
+	    cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'p-3');
+
+	    const senderName = document.createElement('p');
+	    senderName.classList.add('fw-bold', 'mb-0');
+	    senderName.textContent = messageData.memberName;
+
+	    const timestamp = document.createElement('p');
+	    timestamp.classList.add('text-muted', 'small', 'mb-0');
+	    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
+	    timestamp.textContent = messageData.regDateTime;
+	    
+	    cardHeader.appendChild(senderName);
+	    cardHeader.appendChild(timestamp);
+
+	    const cardBody = document.createElement('div');
+	    cardBody.classList.add('card-body');
+
+	    const messageText = document.createElement('p');
+	    messageText.classList.add('mb-0');
+	    messageText.textContent = messageData.message;
+
+	    cardBody.appendChild(messageText);
+	    messageCard.appendChild(cardHeader);
+	    messageCard.appendChild(cardBody);
+
+	    message.appendChild(avatar);
+	    message.appendChild(messageCard);
+	    chat.appendChild(message);
+
+
+
+	}
+	
     chat.scrollTop = chat.scrollHeight;
 };
 
@@ -491,10 +544,9 @@ sendButton.addEventListener('click', () => {
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송
         ws.send(JSON.stringify(messageData));
-
+        
         chat.scrollTop = chat.scrollHeight;
-        // 입력 필드 초기화
-        messageInput.value = '';
+        document.getElementById('messageInput').value = '';
     }
 });
 
