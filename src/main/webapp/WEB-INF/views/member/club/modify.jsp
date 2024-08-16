@@ -32,14 +32,9 @@ body {
 
 main {
 	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
+	margin-left: 300px;
+	margin-top: 110px;
 	overflow-y: auto;
-	top: 120px;
-	left: 250px;
-}
-
-.box {
 	height: 100%;
 }
 
@@ -100,7 +95,7 @@ textarea {
 
 	<main>
 		<!-- Main content -->
-		<div class="box">
+		<div>
 			<h1>수정 페이지</h1>
 			<form id="modifyForm" action="/member/club/modify" method="post" enctype="multipart/form-data">
 			

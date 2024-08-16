@@ -32,16 +32,10 @@ body {
 
 main {
 	flex: 1;
-	margin-left: 250px;
-	padding-top: 90px;
+	margin-left: 300px;
+	margin-top: 110px;
 	overflow-y: auto;
-	top: 120px;
-	left: 250px;
-}
-
-.box{
 	height: 100%;
-
 }
 
 .btn {
