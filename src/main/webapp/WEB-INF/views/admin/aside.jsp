@@ -124,7 +124,14 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a href="/journal/journalList"><i class="fas fa-chalkboard-teacher"></i>journal</a>
+                <div>
+                    <a><i class="fas fa-chalkboard-teacher"></i>journal</a>
+                </div>
+                <i class="fas fa-chevron-down arrow"></i>
+            </div>
+            <div class="submenu">
+                <div class="submenu-item"><a href="/journal/journalList"><i class="fas fa-book"></i>교육일지 조회</a></div>
+                <div class="submenu-item"><a href="/journal/scheduleList"><i class="fas fa-calendar"></i>교육일정 관리</a></div>
             </div>
         </div>
     </div>

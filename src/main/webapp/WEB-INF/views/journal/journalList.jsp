@@ -337,16 +337,16 @@ td.checkStatus.N {
 	<main>
 	
 	<!-- 제목과 클래스 선택 박스 -->
-		<div class="title-container">
-		<h1>교육 일지</h1>
-			<div class="select-box">
-				<select id="classSelect" name="classSelect" onchange="sendClassChange()">
-					<c:forEach var="classItem" items="${classList}">
-	                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-	                    </c:forEach>
-				</select>
-			</div>
-		</div>
+        <div class="title-container">
+        <h1>교육 일지</h1>
+            <div class="select-box">
+                <select id="classSelect" name="classSelect" onchange="loadMembers()">
+                    <c:forEach var="classItem" items="${classList}">
+                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
 		
 	<!-- 캘린더 출력 영역 -->
 	<!-- 사용자 역할일 때만 캘린더 표시 -->
@@ -362,18 +362,15 @@ td.checkStatus.N {
 					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
 						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
 				        
-				        <!-- 추가된 수강생 선택 박스 -->
-				        <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-		                    <select id="memberName" name="memberName">
-					            <option value="">전체</option>
-					            <!-- 수강생 이름 목록을 담는 JSP 스크립틀릿 -->
-					            <c:forEach var="member" items="${journalList}">
-					                <option value="${member.MEMBER_NAME}" ${member.MEMBER_NAME eq param.memberName ? 'selected' : ''}>
-					                    ${member.MEMBER_NAME}
-					                </option>
-					            </c:forEach>
-					        </select>
-	                    </c:if>
+				        <!-- 수강생 선택 박스 -->
+                        <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+                            <select id="memberName" name="memberName">
+                                <option value="">전체</option>
+                                <c:forEach var="member" items="${memberList}">
+                                    <option value="${member.memberId}" <c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
+                                </c:forEach>
+                            </select>
+                        </c:if>
 				        
 				        <select id="year" name="year">
 						    <option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
@@ -468,6 +465,7 @@ td.checkStatus.N {
 
 						</ul>
 					</div>
+					<p class="totalCount">총 ${pageMaker.total}건</p>
 				</div>
 			</div>
 		</div>
@@ -478,6 +476,32 @@ td.checkStatus.N {
 	<%@ include file="../common/footer.jsp"%>
 	
 	<script>
+	    $(document).ready(function() {
+	        $('#calendar').fullCalendar({
+	            // FullCalendar 설정을 여기에 추가
+	        });
+
+	        $('#classSelect').on('change', function() {
+	            loadMembers();
+	        });
+	    });
+
+	    function loadMembers() {
+	        var classNo = $('#classSelect').val();
+	        var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
+
+	        $.get(url, function(data) {
+	            var memberSelect = $('#memberName');
+	            memberSelect.empty();
+	            memberSelect.append('<option value="">전체</option>');
+	            
+	            $.each(data.memberList, function(index, member) {
+	                memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
+	            });
+	        });
+	    }
+	</script>
+	<%-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -501,6 +525,29 @@ td.checkStatus.N {
         
         console.log("Calendar events: ", calendar.getEvents());
     });
-	</script>
+    
+    function loadMembers() {
+        var classNo = document.getElementById("classSelect").value;
+        var memberSelect = document.getElementById("memberName");
+
+        // 모든 수강생을 제거하고 "전체" 옵션만 추가
+        memberSelect.innerHTML = '<option value="">전체</option>';
+
+        // 선택한 반에 따른 수강생 목록을 가져옵니다.
+        var options = '';
+        <% for (Member member : memberList) { %>
+            if ('${member.getClassNo()}' === classNo) {
+                options += '<option value="${member.getMemberId()}">${member.getMemberName()}</option>';
+            }
+        <% } %>
+        
+        memberSelect.innerHTML += options;
+    }
+    
+    function sendClassChange() {
+        var selectedClass = document.getElementById("classSelect").value;
+        window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + selectedClass;
+    }
+	</script> --%>
 </body>
 </html>
