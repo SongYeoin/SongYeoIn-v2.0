@@ -190,7 +190,7 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam("file") MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
 		
 		// 파일 업로드 처리
