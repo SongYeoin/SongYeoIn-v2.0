@@ -153,11 +153,11 @@ a.custom{
 							            <th>선택</th> <!-- 라디오 버튼을 위한 열 -->
 							        </tr>
 							
-							        <!-- 이전에 출력된 memberNo 값을 저장할 변수 -->
-							        <c:set var="previousMemberNo" value=""/>
 							
 							        <!-- 리스트 항목을 반복해서 출력 -->
-							        <c:forEach items="${classList}" var="enroll">
+							        <c:forEach items="${classList}" var="enroll" varStatus="status">
+							        <!-- 이전에 출력된 memberNo 값을 저장할 변수 -->
+							        <c:set var="previousMemberNo" value="${status.last ? null : (classList[status.index - 1].member.memberNo)}"/>
 							            <tr>
 							                <!-- 수강생명 출력 -->
 							                <td>
@@ -170,7 +170,7 @@ a.custom{
 							                <!-- 라디오 버튼 -->
 							                <td>
 							                    <c:choose>
-							                        <c:when test="${previousMemberNo != enroll.member.memberNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
+							                        <c:when test="${status.index == 0 || enroll.member.memberNo != previousAdminNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
 							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}"/>
 							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}"/>
 							                        </c:when>
