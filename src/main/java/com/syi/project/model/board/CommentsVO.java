@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CommentsVO {
 	private int commentsNo;
+	private int commentsParentNo;
 	private String comment;
 	private Date commentRegDate;
 	private Date commentModifyDate;

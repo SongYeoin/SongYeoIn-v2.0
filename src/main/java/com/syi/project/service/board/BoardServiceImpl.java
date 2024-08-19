@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.syi.project.mapper.board.BoardMapper;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.board.BoardVO;
-import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.board.HeartVO;
 
 @Service
@@ -89,14 +88,4 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.selectHeartTotal(heart);
 	}
 
-	// 댓글
-	@Override
-	public int insertComment(CommentsVO comment) {
-		return boardMapper.insertComment(comment);
-	}
-
-	@Override
-	public int deleteComment(int commentId) {
-		return boardMapper.deleteComment(commentId);
-	}
 }

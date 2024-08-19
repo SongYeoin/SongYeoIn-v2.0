@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.board.BoardVO;
-import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.board.HeartVO;
 
 public interface BoardService {
@@ -42,9 +41,5 @@ public interface BoardService {
 	// 좋아요 갯수
 	int selectHeartTotal(HeartVO heart);
 
-	// 댓글
-	int insertComment(CommentsVO comment);
-
-	int deleteComment(int commentId);
-
+	
 }

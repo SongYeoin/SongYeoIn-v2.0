@@ -165,18 +165,5 @@
     	FROM HEART
     	WHERE HEART_BOARD_NO = #{ heartBoardNo }
     </select>
-    
-	<!-- 댓글 -->
-	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
-	    INSERT INTO COMMENTS (COMMENT_MEMBER_NO, COMMENT_MEMBER_NO, COMMENT)
-	    VALUES (#{ commentBoardNo }, #{ commentMemberNo }, #{ comment })
-	</insert>
-
-	<delete id="deleteComment" parameterType="_int">
-	    DELETE FROM COMMENTS WHERE COMMENT_ID = #{ commentId }
-	</delete>
-	
-	
-	
   
   </mapper>

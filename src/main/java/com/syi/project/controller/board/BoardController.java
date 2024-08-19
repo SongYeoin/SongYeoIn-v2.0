@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.board.BoardVO;
-import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.BoardService;
 
@@ -107,30 +106,6 @@ public class BoardController {
 	
 	
 	
-	// 댓글
-	@PostMapping("/comment/add")
-	public String addComment(@ModelAttribute CommentsVO comment, @RequestParam("boardNo") int boardNo,
-			HttpSession session, RedirectAttributes rttr) {
-		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-
-		comment.setCommentBoardNo(boardNo);
-		comment.setCommentMemberNo(memberNo);
-
-		int result = boardService.insertComment(comment);
-		if (result > 0) {
-			rttr.addFlashAttribute("message", "댓글이 등록되었습니다.");
-		} else {
-			rttr.addFlashAttribute("message", "댓글 등록에 실패하였습니다.");
-		}
-		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
-	}
-
-	@PostMapping("/comment/delete")
-	@ResponseBody
-	public String deleteComment(@RequestParam("commentId") int commentId) {
-		int result = boardService.deleteComment(commentId);
-		return result > 0 ? "success" : "fail";
-	}
+	
 
 }

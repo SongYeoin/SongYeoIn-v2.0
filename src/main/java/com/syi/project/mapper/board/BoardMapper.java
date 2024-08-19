@@ -2,11 +2,8 @@ package com.syi.project.mapper.board;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.syi.project.model.Criteria;
 import com.syi.project.model.board.BoardVO;
-import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.board.HeartVO;
 
 public interface BoardMapper {
@@ -44,10 +41,4 @@ public interface BoardMapper {
 	// 좋아요 갯수
 	int selectHeartTotal(HeartVO heart);
 	
-
-	// 댓글
-	int insertComment(CommentsVO comment);
-
-	int deleteComment(int commentId);
-
 }
