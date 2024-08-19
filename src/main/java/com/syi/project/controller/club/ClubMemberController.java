@@ -102,9 +102,13 @@ public class ClubMemberController {
 	
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
-	public List<ClubVO> getClubListByClassNo(@RequestParam("classNo") Integer classNo) {
-	    List<ClubVO> clubs = cservice.getList(classNo);
-	   
+	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo) {
+		if (classNo == null) {
+	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
+	        return new ArrayList<>();
+	    }
+		
+		List<ClubVO> clubs = cservice.getList(classNo);
 	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
 
 	}
@@ -115,17 +119,39 @@ public class ClubMemberController {
 		log.info("등록 페이지 진입");
 	}
 	
+//	@PostMapping("/club/enroll")
+//	public String clubEnrollPOST(@RequestParam(value = "classNo", required = false) Integer classNo, 
+//            @RequestParam("join") String join, 
+//            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") java.util.Date studyDate, 
+//            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException{
+//		
+//		MemberVO member = (MemberVO)session.getAttribute("loginMember");
+//		int memberNo = member.getMemberNo();
+//		
+//		if(classNo == null) {
+//			System.out.println("classNo null");
+//			classNo = cservice.getDefaultClassNoByMember(memberNo);
+//		}
+//		
+//		log.info("classNo : "+classNo);
+//		
+//		// Date 타입을 SQL Date로 변환
+//	    java.sql.Date sqlDate = new java.sql.Date(studyDate.getTime());
+//	 
+//		cservice.enroll(classNo, join, sqlDate, content, memberNo);
+//		
+//		rttr.addFlashAttribute("result", "enroll success");
+//		
+//		return "redirect:/member/club/list";
+//	}
+	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(@RequestParam("classNo") Integer classNo, 
-            @RequestParam("join") String join, 
-            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date studyDate, 
-            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException {
-		log.info("classNo : "+classNo);
+	public String clubEnrollPOST(ClubVO club, RedirectAttributes rttr) {
+		log.info("ClubVO : "+club);
 		
-		MemberVO member = (MemberVO)session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-
-		cservice.enroll(classNo, join, studyDate, content, memberNo);
+		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
+		
+		cservice.enroll(club);
 		
 		rttr.addFlashAttribute("result", "enroll success");
 		
@@ -164,7 +190,7 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam("file") MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
 		
 		// 파일 업로드 처리

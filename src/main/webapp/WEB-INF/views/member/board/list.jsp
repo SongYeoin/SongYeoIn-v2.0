@@ -7,41 +7,33 @@
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력개발센터</title>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
+
 /* CSS Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 html, body {
-    height: 1080px;
+	height: 1080px;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    /* min-height: 100vh; */
+	display: flex;
+	flex-direction: column;
 }
 
 main {
-    flex: 1;
-    margin-left: 250px;
-    margin-top: 160px;
-    overflow-y: auto;
-    height: 100%;
-}
-
-.content {
-    padding: 20px;
-    background-color: #fff;
-}
-
-.content h2 {
-    margin-bottom: 20px;
+	flex: 1;
+	margin-left: 300px;
+	margin-top: 110px;
+	overflow-y: auto;
+	height: 100%;
 }
 
 .title-container{
@@ -54,101 +46,118 @@ main {
 	font-weight: bold;
 }
 
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
+.container {
+	margin: 20px auto;
+	/* padding: 20px; */
+	background-color: #f9fafc;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 1320px;
+	height: 710px;
+	border-radius: 10px;
+	padding-bottom: 20px;
+    
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
-/* boardList-wrapper 스타일 */
-.boardList-wrapper {
-	width: 70%;
-    background-color: #fff;
-    padding: 20px;
-    margin: 20px auto;
+.header {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+	background-color: #e2eff9;
+	
+	padding-top: 40px;
+    padding-right: 32px;
+    padding-left: 32px;
+    padding-bottom: 20px;
+    border-radius: 10px 10px 0 0;
 }
 
-.boardList-wrapper h2 {
-    margin-bottom: 30px;
+.header h2 {
+	margin: 0;
+	flex-grow: 1;
 }
 
-/* 테이블 스타일 */
+.container {
+	margin: 20px auto;
+	background-color: #f9fafc;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 1320px;
+	height: 710px;
+	border-radius: 10px;
+	padding-bottom: 20px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.search_area {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.search_area label, .search_area select, .search_area button {
+	margin-left: 10px;
+}
+
+.search_area select, .search_area input {
+	height: 30px;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}
+
+.header .icons {
+    display: flex;
+}
+
+.header .icons i {
+    cursor: pointer;
+    margin-left: 10px; 
+}
+
+.table_wrap {
+    margin: 50px 50px 0 50px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
 }
 
-table th, table td {
+thead {
+    background-color: #f5f5f5;
+}
+
+th, td {
     padding: 10px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
+    border: 1px solid #ddd;
 }
 
-/* 테이블 헤더 스타일 */
-table th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: bold;
+table tbody tr {
+    cursor: pointer;  /* 포인터 커서 */
 }
 
-/* 테이블 행 스타일 */
-table tr {
-    transition: background-color 0.3s ease;
-}
-
-/* 테이블 행에 마우스를 올렸을 때 배경색 변경 */
-table tr:hover {
-    background-color: #f9f9f9;
-    cursor: pointer;
-}
-
-/* 테이블 번호 열 스타일 */
-table td:first-child {
-    font-weight: bold;
-}
-
-.search_wrap {
-	margin-top: 20px;
-	text-align: center; 
-}
-
-.search_input input[type=text] {
-	margin: 0 5px;
-	padding: 5px 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	font-size: 14px;
-}
-
-.search_input button, #enrollBtn {
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	cursor: pointer;
-}
-
-.search_input button :hover, #enrollBtn :hover {
-	background-color: #0056b3;
-}
-
-.btn-container {
-    text-align: right;
-    margin-bottom: 20px; /* 버튼과 테이블 사이의 간격을 조정 */
-}
-
-.pageMaker_wrap{
-	text-align: center;
+.pageMaker_wrap {
+    text-align: center;
     margin-top: 30px;
     margin-bottom: 40px;
 }
-.pageMaker_wrap a{
-	color : black;
+
+.pageMaker_wrap a {
+    color: black;
 }
-.pageMaker{
+
+.pageMaker {
     list-style: none;
     display: inline-block;
-}	
+}
+
 .pageMaker_btn {
     float: left;
     width: 40px;
@@ -156,16 +165,19 @@ table td:first-child {
     line-height: 40px;
     margin-left: 20px;
 }
+
 .next, .prev {
     border: 1px solid #ccc;
     padding: 0 10px;
 }
+
 .next a, .prev a {
     color: #ccc;
 }
-.active{							/* 현재 페이지 버튼 */
-	border : 2px solid black;
-	font-weight:400;
+
+.active { /* 현재 페이지 버튼 */
+    border: 2px solid black;
+    font-weight: 400;
 }
 
 </style>
@@ -180,113 +192,120 @@ table td:first-child {
     <%@ include file="../aside.jsp"%>
 
     <main>
+        <div class="title-container">
+            <h1>익명게시판</h1>
+        </div>
         <!-- Main content -->
-        <div class="content">
-            <div class="boardList-wrapper">
-				<table>
-					<tr>
-						<th>번호</th>
-						<th width=70%>제목</th>
-						<th>글쓴이</th>
-						<th>등록일</th>
-						<th>조회수</th>
-						<th>좋아요</th>
-					</tr>
-					<c:set var="seq" value="0" />
-            		<c:forEach items="${boardList}" var="board">
-                		<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/board/detail?boardNo=${board.boardNo}'">
-                    		<td>${ board.boardNo }</td>
-							<td>${ board.boardTitle }</td>
-							<td>${ board.member.memberNickname }</td>
-							<td>${ board.boardRegDate }</td>
-							<td>${ board.boardCount }</td>
-							<td>${ board.boardHeartCount }</td>
-						</tr>
-					</c:forEach>
-				</table>
-				
+        <div class="container">
+            <div class="header">
+                <h2>익명게시판</h2>
+                <div class="search_area">
+					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/member/board/list" method="get">
+                  		<div class="search_input">
+                     		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
+                     		<input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
+                     		<input type="hidden" name="classNo" value='<c:out value="${param.classNo}"></c:out>'>
+                     		<button class='btn search_btn'><i class="bi bi-search"></i></button>
+                  		</div>
+               		</form>
+				</div>
 				<!-- 등록버튼 -->
-				<c:if test="${ sessionScope.loginMember.memberRole eq 'ROLE_MEMBER' }">
-					<div class="btn-container">
-						<button id="enrollBtn" class="btn search_btn">등록</button>
-					</div>
-				</c:if>
-				
-				<!-- 검색 영역 -->
-				<div class="search_wrap">
-					<form id="searchForm" action="/member/board/list" method="get">
-						<div class="search_input">
-							<input type="text" name="keyword"
-								value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
-							<input type="hidden" name="pageNum"
-								value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
-							<input type="hidden" name="amount"
-								value='${pageMaker.cri.amount}'>
-							<button class='btn search_btn'>검 색</button>
-						</div>
-					</form>
-				</div>
+				<div class="icons">
+					<a href="${pageContext.servletContext.contextPath}/member/board/enroll"><i class="fas fa-square-plus"></i></a>
+                </div>
+            </div>
 
-				<!-- 페이지 이동 인터페이스 영역 -->
-				<div class="pageMaker_wrap">
+            <div class="table_wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th width="60%">제목</th>
+                            <th>글쓴이</th>
+                            <th>조회수</th>
+                            <th>등록일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${boardList}" var="board">
+                            <tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/board/detail?boardNo=${board.boardNo}'">
+                                <td>${board.boardNo}</td>
+                                <td>${board.boardTitle}</td>
+                                <td>${board.member.memberNickname}</td>
+                                <td>${board.boardCount}</td>
+                                <td>${board.boardRegDate}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
 
-					<ul class="pageMaker">
+                <!-- 페이지 이동 인터페이스 영역 -->
+                <div class="pageMaker_wrap">
+                    <ul class="pageMaker">
 
-						<!-- 이전 버튼 -->
-						<c:if test="${pageMaker.prev}">
-							<li class="pageMaker_btn prev"><a href="${pageMaker.pageStart - 1}">이전</a></li>
-						</c:if>
+                        <!-- 이전 버튼 -->
+                        <c:if test="${pageMaker.prev}">
+                            <li class="pageMaker_btn prev"><a href="${pageMaker.pageStart - 1}">이전</a></li>
+                        </c:if>
 
-						<!-- 페이지 번호 -->
-						<c:forEach begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}" var="num">
-							<li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="${num}">${num}</a></li>
-						</c:forEach>
+                        <!-- 페이지 번호 -->
+                        <c:forEach begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}" var="num">
+                            <li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="${num}">${num}</a></li>
+                        </c:forEach>
 
-						<!-- 다음 버튼 -->
-						<c:if test="${pageMaker.next}">
-							<li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1 }">다음</a></li>
-						</c:if>
+                        <!-- 다음 버튼 -->
+                        <c:if test="${pageMaker.next}">
+                            <li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1}">다음</a></li>
+                        </c:if>
 
-					</ul>
-
-				</div>
-				<form id="moveForm" action="/member/board/list" method="get">
-					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
-					<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
-					<input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
-				</form>
-			</div>
+                    </ul>
+                </div>
+                <form id="moveForm" action="/member/board/list" method="get">
+                    <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+                    <input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+                    <input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
+                </form>
+            </div>
         </div>
     </main>
 
     <!-- 푸터 연결 -->
     <%@ include file="../../common/footer.jsp"%>
-    
+
     <script>
     let message = '${message}';
-	if(message) {
-		alert(message);
-	}
-	
-	$("#enrollBtn").click(function() {
-        window.location.href = '${pageContext.servletContext.contextPath}/member/board/enroll';
+    if (message) {
+        alert(message);
+    }
+
+    // 검색 버튼 클릭 시 페이지 번호를 1로 설정하고 폼 제출
+    $('#searchForm').on('submit', function() {
+        let form = $(this);
+        form.find("input[name='pageNum']").val('1');
+        return true;  
     });
-	
-	let moveForm = $('#moveForm');
-	//페이지 이동 버튼
-	$(".pageMaker_btn a").on("click", function(e){
-	    e.preventDefault();
-	    let pageNum = $(this).attr("href");
-	    moveForm.find("input[name='pageNum']").val(pageNum);
-	    moveForm.submit();
-	});
-	
-	function showboardDetail(event, boardNo) {
-		window.location.href = '${pageContext.servletContext.contextPath}/member/board/detail?boardNo=' + boardNo;
-	}
-	
-	
-	</script>
+
+    // 페이지 이동 버튼
+    $(".pageMaker_btn a").on("click", function(e) {
+        e.preventDefault();
+        let pageNum = $(this).attr("href");
+
+        // 현재 URL에서 모든 쿼리 파라미터를 유지하면서 pageNum만 변경
+        let url = new URL(window.location.href);
+        url.searchParams.set('pageNum', pageNum);
+
+        let keyword = $('input[name="keyword"]').val();
+
+        if (keyword) {
+            url.searchParams.set('keyword', keyword);
+        } else {
+            url.searchParams.delete('keyword');
+        }
+
+        window.location.href = url.toString();
+    });
+    </script>
 
 </body>
 </html>

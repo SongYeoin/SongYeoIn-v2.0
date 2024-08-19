@@ -17,7 +17,7 @@ body {
     width: 250px;
     background-color: #F2F2F2;
     color: #333333;
-    height: 100vh;
+    height: 960px;
     position: fixed;
     top: 70px;
     overflow-y: auto;
@@ -129,7 +129,7 @@ a:visited {
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-heart"></i>동아리</a>
+                <a href="${ pageContex.servletContext.contextPath }/member/club/list"><i class="fas fa-heart"></i>동아리</a>
             </div>
         </div>
         <div class="menu-item">

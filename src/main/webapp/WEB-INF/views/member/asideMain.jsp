@@ -31,22 +31,30 @@ body {
 }
 
 main {
+<<<<<<< HEAD
+    flex: 1;
+    margin-left: 300px;
+    margin-top: 110px;
+    overflow-y: auto;
+    height: 100%;
+=======
 	flex: 1;
 	margin-left: 300px;
 	margin-top: 110px;
 	overflow-y: auto;
 	height: 100%;
+>>>>>>> refs/heads/develop
 }
 
 </style>
 </head>
 <body>
 
-	<!-- 메뉴바 연결 -->
-	<%@ include file="../common/header.jsp"%>
+    <!-- 메뉴바 연결 -->
+    <%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->	
-	<%@ include file="aside.jsp"%>
+    <!-- 사이드바 연결 -->
+    <%@ include file="aside.jsp"%>
 
    <main>
         <!-- Main content -->   

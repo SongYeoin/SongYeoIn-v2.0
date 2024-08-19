@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.PageDTO;
 import com.syi.project.model.board.BoardVO;
 import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.member.MemberVO;
@@ -36,6 +37,9 @@ public class BoardController {
 	public void listBoards(Criteria cri, Model model) {
 		List<BoardVO> boardList = boardService.selectBoards(cri);
 		model.addAttribute("boardList", boardList);
+		int total = boardService.selectBoardTotal(cri);
+		PageDTO pageMaker = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMaker);
 	}
 
 	@GetMapping("/detail")

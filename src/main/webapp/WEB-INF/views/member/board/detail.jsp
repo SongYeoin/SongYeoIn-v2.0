@@ -197,11 +197,13 @@ button:hover {
                 </thead>
             </table>
             
-             <!-- 좋아요 기능 -->
+            <!-- 좋아요 기능 -->
+            <!--  
             <div class="button-container">
                 <button id="likeBtn" data-board-no="${board.boardNo}">좋아요</button>
                 <span id="boardHeartCount">${board.boardHeartCount}</span> 
             </div>
+            -->
 
 
             <!-- 댓글 추가 폼 -->

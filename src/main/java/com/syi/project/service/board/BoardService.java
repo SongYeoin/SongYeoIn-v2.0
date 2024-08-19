@@ -11,6 +11,9 @@ public interface BoardService {
 
 	// 게시글 목록
 	List<BoardVO> selectBoards(Criteria cri);
+	
+	// 게시글 총 수
+	int selectBoardTotal(Criteria cri);
 
 	// 게시글 조회수 증가
 	void updateBoardCount(int boardNo);

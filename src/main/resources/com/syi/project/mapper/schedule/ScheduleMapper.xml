@@ -22,6 +22,12 @@
     <select id="getSchedule" resultMap="scheduleResultMap">
     SELECT * FROM SCHEDULE WHERE CLASS_NO=#{classNo}
     </select>
-   
+    
+    <!-- 시간표 (교시정보 변경 날짜) 수정 -->
+    <update id="updateSchedule" parameterType="com.syi.project.model.schedule.ScheduleVO">
+    UPDATE SCHEDULE SET MODIFIED_DATE=SYSDATE
+    WHERE SCHEDULE_NO=#{scheduleNo}
+    </update>
+    
 
 </mapper>

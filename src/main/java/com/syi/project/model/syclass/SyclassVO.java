@@ -33,6 +33,8 @@ public class SyclassVO {
     
     private String classStatus;
 	
+    private String isDeleted;
+    
     private int adminNo;
 
 }

@@ -12,7 +12,7 @@
 	width: 250px;
 	background-color: #2c2c2c;
 	color: white;
-	height: 960px;
+	height: 950px;
 	position: fixed;
 	top: 130px;
 	overflow-y: auto;
@@ -109,7 +109,7 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-heart"></i>동아리</a>                
+                <a a href="${ pageContext.servletContext.contextPath }/admin/class/club/list?classNo=${param.classNo}"><i class="fas fa-heart"></i>동아리</a>                
             </div>
         </div>
         <div class="menu-item">
