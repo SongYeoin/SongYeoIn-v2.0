@@ -104,7 +104,12 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a><i class="fas fa-chalkboard-teacher"></i>교육일지</a>
+                <a a href="${ pageContext.servletContext.contextPath }/journal/journalList"><i class="fas fa-chalkboard-teacher"></i>교육일지</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-title">
+                <a a href="${ pageContext.servletContext.contextPath }/journal/scheduleList"><i class="fa-solid fa-calendar-days"></i>교육일정</a>
             </div>
         </div>
         <div class="menu-item">

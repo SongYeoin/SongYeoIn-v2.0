@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
@@ -8,8 +8,10 @@
 <meta charset="UTF-8">
 <title>교육일지 목록</title>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<link rel='stylesheet'
+	href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' />
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <style>
 /* 모든 요소에 기본 스타일을 초기화하고 박스 모델을 설정 */
 * {
@@ -25,7 +27,8 @@ html, body {
 
 /* body의 기본 폰트와 레이아웃 설정 */
 body {
-	font-family: Arial, sans-serif; /* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
+	font-family: Arial, sans-serif;
+	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
 	display: flex; /* flexbox 레이아웃 사용 */
 	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
 }
@@ -33,20 +36,45 @@ body {
 /* main 요소의 위치와 스크롤 설정 */
 main {
 	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
-	margin-left: 300px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
-	margin-top: 110px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
+	margin-left: 250px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
+	margin-top: 160px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
 	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
 	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
 }
 
+.classroom-header {
+	background-color: #f1f1f1;
+	padding: 10px 20px;
+	border-bottom: 2px solid #ccc;
+	text-align: left;
+	padding-top: 91px;
+	position: fixed;
+	width: 100%;
+	z-index: 999;
+	display: flex;
+	align-items: center;
+}
+
+.classroom-header .title {
+	font-size: 20px;
+	font-weight: bold;
+	/* margin-bottom: 10px; */
+	margin-left: 10px;
+}
+
+.classroom-header .details {
+	font-size: 12px;
+	margin-left: 10px;
+}
+
 /* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
-.title-container{
+.title-container {
 	display: flex; /* flexbox 레이아웃 사용 */
-    align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
 }
 
 /* 제목과 선택 박스 사이의 간격을 설정 */
-.title-container h1{
+.title-container h1 {
 	margin-right: 20px; /* 제목 오른쪽에 20px 간격 설정 */
 	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
 }
@@ -59,9 +87,8 @@ main {
 	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
 	border-radius: 10px; /* 모서리를 둥글게 설정 */
 	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
-    
-    padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
-    padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
 }
 
 /* 헤더의 스타일 설정 */
@@ -74,12 +101,11 @@ main {
 	padding-bottom: 10px; /* 하단 패딩을 10px로 설정 */
 	border-bottom: 1px solid #ddd; /* 하단 경계를 연한 회색으로 설정 */
 	background-color: #e2eff9; /* 배경색을 연한 파란색으로 설정 */
-	
 	padding-top: 40px; /* 상단 패딩을 40px로 설정 */
-    padding-right: 32px; /* 오른쪽 패딩을 32px로 설정 */
-    padding-left: 32px; /* 왼쪽 패딩을 32px로 설정 */
-    padding-bottom: 20px; /* 하단 패딩을 20px로 설정 */
-    border-radius: 10px 10px 0 0; /* 상단 모서리를 둥글게 설정 */
+	padding-right: 32px; /* 오른쪽 패딩을 32px로 설정 */
+	padding-left: 32px; /* 왼쪽 패딩을 32px로 설정 */
+	padding-bottom: 20px; /* 하단 패딩을 20px로 설정 */
+	border-radius: 10px 10px 0 0; /* 상단 모서리를 둥글게 설정 */
 }
 
 /* 헤더의 제목 스타일 설정 */
@@ -167,17 +193,17 @@ main {
 
 /* 테이블 헤더의 기본 커서 설정 */
 table thead tr {
-    cursor: default; /* 기본 커서 */
+	cursor: default; /* 기본 커서 */
 }
 
 /* 테이블 본문의 행에 포인터 커서 설정 */
 table tbody tr {
-    cursor: pointer; /* 포인터 커서 */
+	cursor: pointer; /* 포인터 커서 */
 }
 
 /* 테이블의 기본 스타일 설정 */
 table {
- 	width: 100%; /* 테이블의 너비를 100%로 설정 */
+	width: 100%; /* 테이블의 너비를 100%로 설정 */
 	border-collapse: collapse; /* 테두리가 겹치지 않도록 설정 */
 	text-align: center; /* 가운데 정렬 */
 }
@@ -214,7 +240,7 @@ td.checkStatus.N {
 }
 
 .hidden {
-    display: none;
+	display: none;
 }
 
 /* 페이지 정보 영역의 스타일 설정 */
@@ -261,62 +287,65 @@ td.checkStatus.N {
 	color: white; /* 호버 시 텍스트 색상을 흰색으로 설정 */
 }
 
-
 /* Custom FullCalendar Styles */
 #calendar {
-    max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
-    margin: 0 auto; /* 캘린더를 중앙에 배치 */
-    height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
-    min-height: 500px; /* 캘린더의 최소 높이 설정 */
-    overflow: hidden; /* 스크롤 제거 */
-    border-radius: 5px; /* 모서리를 둥글게 설정 */
+	max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
+	margin: 0 auto; /* 캘린더를 중앙에 배치 */
+	height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
+	min-height: 500px; /* 캘린더의 최소 높이 설정 */
+	overflow: hidden; /* 스크롤 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
 }
 
 /* Custom FullCalendar Styles */
 .fc {
-    font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif;
 }
 
 .fc-daygrid-day-number {
-    color: #333; /* 날짜 숫자 색상 */
+	color: #333; /* 날짜 숫자 색상 */
 }
 
 .fc-daygrid-day-top {
-    background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
-    border-bottom: 1px solid #ddd;
+	background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
+	border-bottom: 1px solid #ddd;
 }
 
 .fc-daygrid-day {
-    border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
-    background-color: #ffffff; /* 날짜 셀 배경 색상 */
-    border-radius: 8px; /* 둥글게 처리 */
+	border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
+	background-color: #ffffff; /* 날짜 셀 배경 색상 */
+	border-radius: 8px; /* 둥글게 처리 */
 }
 
 .fc-daygrid-day.fc-day-today {
-    background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
+	background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
 }
 
 .fc-daygrid-day.fc-day-past {
-    background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
+	background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
 }
 
 .fc-daygrid-day.fc-day-future {
-    background-color: #ffffff; /* 미래 날짜 배경 색상 */
+	background-color: #ffffff; /* 미래 날짜 배경 색상 */
 }
 
 .fc-button {
-    background-color: #6c757d; /* 버튼 배경 색상 */
-    color: #ffffff;
-    border-radius: 4px;
+	background-color: #6c757d; /* 버튼 배경 색상 */
+	color: #ffffff;
+	border-radius: 4px;
 }
 
 .fc-button:hover {
-    background-color: #5a6268; /* 버튼 호버 색상 */
+	background-color: #5a6268; /* 버튼 호버 색상 */
 }
 </style>
 
 <!-- Bootstrap CSS를 불러오기 위한 링크 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+	crossorigin="anonymous">
 </head>
 
 <body>
@@ -324,68 +353,83 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-
 	<!-- 사용자 역할일 때 사이드바 -->
-		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		    <%@ include file="../member/aside.jsp"%>
-		</c:if>
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		<%@ include file="../member/aside.jsp"%>
+	</c:if>
 	<!-- 관리자 역할일 때 사이드바 -->
-		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-		    <%@ include file="../admin/aside.jsp"%>
-		</c:if>
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+
+		<div class="classroom-header">
+			<i class="bi bi-house-fill"
+				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+			<div class="title">${syclass.className}</div>
+			<div class="details">담당자: ${syclass.managerName} | 강사명:
+				${syclass.teacherName}</div>
+		</div>
+
+		<!-- 사이드바 연결 -->
+		<%@ include file="../admin/class/aside.jsp"%>
+	</c:if>
 
 	<main>
-	
-	<!-- 제목과 클래스 선택 박스 -->
-        <div class="title-container">
-        <h1>교육 일지</h1>
-            <div class="select-box">
-                <select id="classSelect" name="classSelect" onchange="loadMembers()">
-                    <c:forEach var="classItem" items="${classList}">
-                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-                    </c:forEach>
-                </select>
-            </div>
-        </div>
-		
-	<!-- 캘린더 출력 영역 -->
-	<!-- 사용자 역할일 때만 캘린더 표시 -->
+
+		<!-- 제목과 클래스 선택 박스 -->
+		<div class="title-container">
+			<h1>교육 일지</h1>
+			<div class="select-box">
+				<select id="classSelect" name="classSelect" onchange="loadMembers()">
+					<c:forEach var="classItem" items="${classList}">
+						<option value="${classItem.classNo}"
+							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+					</c:forEach>
+				</select>
+			</div>
+		</div>
+
+		<!-- 캘린더 출력 영역 -->
+		<!-- 사용자 역할일 때만 캘린더 표시 -->
 		<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		    <div id='calendar'></div>
+			<div id='calendar'></div>
 		</c:if>
-	
-	<!-- 메인 콘텐츠 -->
+
+		<!-- 메인 콘텐츠 -->
 		<div class="container">
 			<div class="header">
 				<h2>교육일지 제출 목록</h2>
 				<div class="search_area">
-					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
-						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="제목으로 검색">
-				        
-				        <!-- 수강생 선택 박스 -->
-                        <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-                            <select id="memberName" name="memberName">
-                                <option value="">전체</option>
-                                <c:forEach var="member" items="${memberList}">
-                                    <option value="${member.memberId}" <c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
-                                </c:forEach>
-                            </select>
-                        </c:if>
-				        
-				        <select id="year" name="year">
-						    <option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
-						    <c:forEach var="i" begin="2020" end="2025">
-						        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
-						    </c:forEach>
+					<form id="searchForm" method="get"
+						action="${pageContext.request.contextPath}/journal/journalList">
+						<input type="text" id="keyword" name="keyword"
+							value="${param.keyword}" placeholder="제목으로 검색">
+
+						<!-- 수강생 선택 박스 -->
+						<c:if
+							test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+							<select id="memberName" name="memberName">
+								<option value="">전체</option>
+								<c:forEach var="memberList" items="${memberList}">
+									<option value="${member.memberId}"
+										<c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
+								</c:forEach>
+							</select>
+						</c:if>
+
+						<select id="year" name="year">
+							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
+							<c:forEach var="i" begin="2020" end="2025">
+								<option value="${i}"
+									<c:if test="${param.year == i}">selected</c:if>>${i}</option>
+							</c:forEach>
+						</select> <select id="month" name="month">
+							<option value=""
+								<c:if test="${empty param.month}">selected</c:if>>월</option>
+							<c:forEach var="i" begin="1" end="12">
+								<option value="${i}"
+									<c:if test="${param.month == i}">selected</c:if>>${i}</option>
+							</c:forEach>
 						</select>
-						
-						<select id="month" name="month">
-						    <option value="" <c:if test="${empty param.month}">selected</c:if>>월</option>
-							    <c:forEach var="i" begin="1" end="12">
-							        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
-							    </c:forEach>
-						</select>
-	
+
 						<button type="submit">조회</button>
 					</form>
 				</div>
@@ -394,75 +438,75 @@ td.checkStatus.N {
 						<a href="/journal/journalEnroll"><i class="fas fa-square-plus"></i></a>
 					</div>
 				</c:if>
-				
+
 			</div>
-			
+
 			<div class="table_wrap">
-			
+
 				<table>
 					<thead>
 						<tr>
 							<th>번호</th>
 							<th class="hidden journalNo_width">번호</th>
-				            <th class="title_width">제목</th>
-				            <th class="regdate_width">작성일자</th>
+							<th class="title_width">제목</th>
+							<th class="regdate_width">작성일자</th>
 							<th class="file_width">첨부</th>
 						</tr>
 					</thead>
-					
-				    <tbody>
-					    <c:forEach items="${journalList}" var="journal" varStatus="i">
-					        <tr>
-					        	<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
-					            <td class="hidden journalNo_width"><c:out value="${journal.journalNo}" /></td>
-					            <td>
-					                <a href="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}">
-					                    <c:out value="${journal.journalTitle}" />
-					                </a>
-					            </td>
-					            <td><fmt:formatDate pattern="yyyy/MM/dd" value="${journal.journalWriteDate}" /></td>
-					            <td>
-					            	<c:choose>
+
+					<tbody>
+						<c:forEach items="${journalList}" var="journal" varStatus="i">
+							<tr data-journal-no="${journal.journalNo}">
+								<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
+								<td class="hidden journalNo_width"><c:out
+										value="${journal.journalNo}" /></td>
+								<td><c:out value="${journal.journalTitle}" /></td>
+								<td><fmt:formatDate pattern="yyyy/MM/dd"
+										value="${journal.journalWriteDate}" /></td>
+								<td><c:choose>
 										<c:when test="${journal.fileName != null }">
-										<a href="${pageContext.request.contextPath}/journal/downloadFile?fileName=${journal.fileName}" onclick="event.stopPropagation();">
-											<i class="bi bi-paperclip"></i>
-                            			</a>
+											<a
+												href="${pageContext.request.contextPath}/journal/downloadFile?fileName=${journal.fileName}"
+												onclick="event.stopPropagation();"> <i
+												class="bi bi-paperclip"></i>
+											</a>
 										</c:when>
 										<c:otherwise>
 											<c:out value="" />
 										</c:otherwise>
-									</c:choose>
-					            </td>
-					        </tr>
-					    </c:forEach>
-				    </tbody>
-			   </table>
-			   
-			   <div class="pageInfo_wrap">
+									</c:choose></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+
+				<div class="pageInfo_wrap">
 					<div class="pageInfo_area">
 						<ul id="pageInfo" class="pageInfo">
-							
+
 							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
+								<li class="pageInfo_btn previous"><a
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
 								</li>
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
+							<c:forEach var="num" begin="${pageMaker.pageStart}"
+								end="${pageMaker.pageEnd}">
+								<li
+									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+									<a
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
 								</li>
 							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next">
-									<a href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
+								<li class="pageInfo_btn next"><a
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
 								</li>
 							</c:if>
-
 						</ul>
 					</div>
 					<p class="totalCount">총 ${pageMaker.total}건</p>
@@ -470,37 +514,63 @@ td.checkStatus.N {
 			</div>
 		</div>
 	</main>
-	
-	
+
+
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
-	
+
 	<script>
-	    $(document).ready(function() {
-	        $('#calendar').fullCalendar({
-	            // FullCalendar 설정을 여기에 추가
-	        });
+$(document).ready(function() {
+    // 테이블 행 클릭 시 상세 페이지로 이동
+    $('table tbody tr').click(function() {
+        var journalNo = $(this).data('journal-no');
+        if (journalNo) {
+            window.location.href = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo;
+        }
+    });
 
-	        $('#classSelect').on('change', function() {
-	            loadMembers();
-	        });
-	    });
+    // FullCalendar 초기화
+    $('#calendar').fullCalendar({
+        initialView: 'dayGridMonth',
+        events: [
+            <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+            {
+                title: "${journal.journalTitle}",
+                start: "${journal.journalWriteDate}",
+                url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
+            }<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ],
+        eventClick: function(info) {
+            if (info.event.url) {
+                window.location.href = info.event.url;
+            }
+        }
+    });
 
-	    function loadMembers() {
-	        var classNo = $('#classSelect').val();
-	        var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
+    // 수강생 목록 로드 함수
+    function loadMembers() {
+        var classNo = $('#classSelect').val();
+        var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
 
-	        $.get(url, function(data) {
-	            var memberSelect = $('#memberName');
-	            memberSelect.empty();
-	            memberSelect.append('<option value="">전체</option>');
-	            
-	            $.each(data.memberList, function(index, member) {
-	                memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
-	            });
-	        });
-	    }
-	</script>
+        $.get(url, function(data) {
+            var memberSelect = $('#memberName');
+            memberSelect.empty();
+            memberSelect.append('<option value="">전체</option>');
+            
+            $.each(data.memberList, function(index, member) {
+                memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
+            });
+        });
+    }
+
+    // 함수 바깥으로 빼는 것을 잊지 마세요
+    window.loadMembers = loadMembers;
+});
+</script>
+
+
+
 	<%-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
