@@ -68,9 +68,9 @@ public class JournalServiceImpl implements JournalService {
 
 	// 캘린더 전체 일지 조회
 	@Override
-	public List<JournalVO> journalAllList() {
-		List<JournalVO> journalAllList = journalMapper.journalAllList();
-		logger.info("---------> 서비스 : journalAllList : " + journalAllList);
+	public List<JournalVO> journalAllList(int classNo) {
+        logger.info("---------> 서비스 : journalAllList : classNo = " + classNo);
+		List<JournalVO> journalAllList = journalMapper.journalAllList(classNo);
 		return journalAllList;
 	}
 

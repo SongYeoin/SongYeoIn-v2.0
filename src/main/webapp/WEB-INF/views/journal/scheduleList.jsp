@@ -7,9 +7,13 @@
 <head>
 <meta charset="UTF-8">
 <title>교육일정 목록</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link
+	href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css'
+	rel='stylesheet' />
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <style>
 /* 모든 요소에 기본 스타일을 초기화하고 박스 모델을 설정 */
@@ -26,7 +30,8 @@ html, body {
 
 /* body의 기본 폰트와 레이아웃 설정 */
 body {
-	font-family: Arial, sans-serif; /* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
+	font-family: Arial, sans-serif;
+	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
 	display: flex; /* flexbox 레이아웃 사용 */
 	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
 }
@@ -34,10 +39,35 @@ body {
 /* main 요소의 위치와 스크롤 설정 */
 main {
 	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
-	margin-left: 300px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
-	margin-top: 110px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
+	margin-left: 250px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
+	margin-top: 160px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
 	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
 	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+}
+
+.classroom-header {
+	background-color: #f1f1f1;
+	padding: 10px 20px;
+	border-bottom: 2px solid #ccc;
+	text-align: left;
+	padding-top: 91px;
+	position: fixed;
+	width: 100%;
+	z-index: 999;
+	display: flex;
+	align-items: center;
+}
+
+.classroom-header .title {
+	font-size: 20px;
+	font-weight: bold;
+	/* margin-bottom: 10px; */
+	margin-left: 10px;
+}
+
+.classroom-header .details {
+	font-size: 12px;
+	margin-left: 10px;
 }
 
 /* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
@@ -213,7 +243,7 @@ td.checkStatus.N {
 }
 
 .hidden {
-    display: none;
+	display: none;
 }
 
 /* 페이지 정보 영역의 스타일 설정 */
@@ -326,137 +356,166 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->
-	<%@ include file="../member/aside.jsp"%>
-	
+	<!-- 사용자 역할일 때 사이드바 -->
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		<%@ include file="../member/aside.jsp"%>
+	</c:if>
+	<!-- 관리자 역할일 때 사이드바 -->
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+
+		<div class="classroom-header">
+			<i class="bi bi-house-fill"
+				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+			<div class="title">${syclass.className}</div>
+			<div class="details">담당자: ${syclass.managerName} | 강사명:
+				${syclass.teacherName}</div>
+		</div>
+
+		<!-- 사이드바 연결 -->
+		<%@ include file="../admin/class/aside.jsp"%>
+	</c:if>
+
 	<main>
 
-	<!-- 제목과 클래스 선택 박스 -->
+		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
-		<h1>교육 일정</h1>
+			<h1>교육 일정</h1>
 			<div class="select-box">
-				<select id="classSelect" name="classSelect" onchange="sendClassChange()">
+				<select id="classSelect" name="classSelect"
+					onchange="sendClassChange()">
 					<c:forEach var="classItem" items="${classList}">
-	                        <option value="${classItem.classNo}" <c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-	                    </c:forEach>
+						<option value="${classItem.classNo}"
+							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
-		
-	<!-- 캘린더 출력 영역 -->
+
+		<!-- 캘린더 출력 영역 -->
 		<div id='calendar'></div>
-		
-	<!-- 메인 콘텐츠 -->
+
+		<!-- 메인 콘텐츠 -->
 		<div class="container">
 			<div class="header">
 				<h2>교육일정 목록</h2>
 				<div class="search_area">
-					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
+					<form id="searchForm" method="get"
+						action="${pageContext.request.contextPath}/journal/scheduleList">
 
 						<select id="category" name="category">
-							<option value="all"<c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
-							<option value="title"<c:if test="${param.category == 'title'}">selected</c:if>>단원명</option>
-							<option value="instructor"<c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
-						</select> 
-						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색">
-						
-				        <select id="year" name="year">
-						    <option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
-						    <c:forEach var="i" begin="2020" end="2025">
-						        <option value="${i}" <c:if test="${param.year == i}">selected</c:if>>${i}</option>
-						    </c:forEach>
+							<option value="all"
+								<c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
+							<option value="title"
+								<c:if test="${param.category == 'title'}">selected</c:if>>단원명</option>
+							<option value="instructor"
+								<c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
+						</select> <input type="text" id="keyword" name="keyword"
+							value="${param.keyword}" placeholder="검색"> <select
+							id="year" name="year">
+							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
+							<c:forEach var="i" begin="2020" end="2025">
+								<option value="${i}"
+									<c:if test="${param.year == i}">selected</c:if>>${i}</option>
+							</c:forEach>
+						</select> <select id="month" name="month">
+							<option value=""
+								<c:if test="${empty param.month}">selected</c:if>>월</option>
+							<c:forEach var="i" begin="1" end="12">
+								<option value="${i}"
+									<c:if test="${param.month == i}">selected</c:if>>${i}</option>
+							</c:forEach>
 						</select>
-						
-						<select id="month" name="month">
-						    <option value="" <c:if test="${empty param.month}">selected</c:if>>월</option>
-						    <c:forEach var="i" begin="1" end="12">
-						        <option value="${i}" <c:if test="${param.month == i}">selected</c:if>>${i}</option>
-						    </c:forEach>
-						</select>
-	
+
 						<button type="submit">조회</button>
 					</form>
 				</div>
-				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-				<div class="icons">
-					<a href="/journal/admin/scheduleCreate"><i class="fas fa-square-plus"></i></a>
-				</div>
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+					<div class="icons">
+						<a href="/journal/admin/scheduleCreate"><i
+							class="fas fa-square-plus"></i></a>
+					</div>
 				</c:if>
 			</div>
-			
+
 			<div class="table_wrap">
-			
+
 				<table>
 					<thead>
 						<tr>
 							<th>회차</th>
 							<th class="hidden scheduleNo">회차</th>
-				            <th class="date_width">일자</th>
-				            <th class="title_width">단원명</th>
-				            <th class="title_width">학습주제</th>
+							<th class="date_width">일자</th>
+							<th class="title_width">단원명</th>
+							<th class="title_width">학습주제</th>
 							<th class="instructor_width">강사</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
-					<c:forEach items="${schedules}" var="schedule" varStatus="i">
-						<tr>
-							<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
-							<td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
-							<td><c:out value="${schedule.scheduleDate}" /></td>
-							<td>
-								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-									<c:out value="${schedule.scheduleTitle}" />
-								</a>
-							</td>
-							<td>
-								<a href="${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-									<c:out value="${schedule.scheduleDescription}" />
-								</a>
-							</td>
-							<td><c:out value="${schedule.scheduleInstructor}" /></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-	
-			<div class="pageInfo_wrap">
+						<c:forEach items="${schedules}" var="schedule" varStatus="i">
+							<tr data-schedule-no="${schedule.scheduleNo}">
+								<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
+								<td class="hidden scheduleNo"><c:out
+										value="${schedule.scheduleNo}" /></td>
+								<td><c:out value="${schedule.scheduleDate}" /></td>
+								<td><a
+									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+										<c:out value="${schedule.scheduleTitle}" />
+								</a></td>
+								<td><a
+									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
+										<c:out value="${schedule.scheduleDescription}" />
+								</a></td>
+								<td><c:out value="${schedule.scheduleInstructor}" /></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+
+				<div class="pageInfo_wrap">
 					<div class="pageInfo_area">
 						<ul id="pageInfo" class="pageInfo">
-							
+
 							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">이전</a>
+								<li class="pageInfo_btn previous"><a
+									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">이전</a>
 								</li>
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">${num}</a>
+							<c:forEach var="num" begin="${pageMaker.pageStart}"
+								end="${pageMaker.pageEnd}">
+								<li
+									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+									<a
+									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">${num}</a>
 								</li>
 							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next">
-									<a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">다음</a>
+								<li class="pageInfo_btn next"><a
+									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">다음</a>
 								</li>
 							</c:if>
-
 						</ul>
 					</div>
+					<p class="totalCount">총 ${pageMaker.total}건</p>
 				</div>
 			</div>
 		</div>
 	</main>
-	
+
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
-	
+
+	<script
+		src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 	<script>
     document.addEventListener('DOMContentLoaded', function() {
+        // FullCalendar 초기화
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
@@ -465,7 +524,7 @@ td.checkStatus.N {
                 {
                     title: "${schedule.scheduleTitle}",
                     start: "${schedule.scheduleDate}",
-                    url: "${pageContext.request.contextPath}/journal/admin/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
                 }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
             ],
@@ -479,6 +538,36 @@ td.checkStatus.N {
         
         console.log("Calendar events: ", calendar.getEvents());
     });
-	</script>
+
+    $(document).ready(function() {
+        // 테이블 행 클릭 시 상세 페이지로 이동
+        $('table tbody tr').click(function() {
+            var scheduleNo = $(this).data('schedule-no');
+            if (scheduleNo) {
+                window.location.href = '${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=' + scheduleNo;
+            }
+        });
+
+        // 수강생 목록 로드 함수
+        function loadMembers() {
+            var classNo = $('#classSelect').val();
+            var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
+
+            $.get(url, function(data) {
+                var memberSelect = $('#memberName');
+                memberSelect.empty();
+                memberSelect.append('<option value="">전체</option>');
+
+                $.each(data.memberList, function(index, member) {
+                    memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
+                });
+            });
+        }
+
+        // 함수 바깥으로 빼는 것을 잊지 마세요
+        window.loadMembers = loadMembers;
+    });
+</script>
+
 </body>
 </html>

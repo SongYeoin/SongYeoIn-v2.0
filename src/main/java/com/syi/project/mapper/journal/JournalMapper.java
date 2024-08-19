@@ -29,7 +29,5 @@ public interface JournalMapper {
 	public int journalDelete(int journalNo);
 	
 	// 캘린더 전체 일지 조회
-	List<JournalVO> journalAllList();
-	
-	
+	List<JournalVO> journalAllList(int calssNo);
 }
