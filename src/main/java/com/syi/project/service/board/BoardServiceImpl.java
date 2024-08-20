@@ -65,6 +65,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	// 좋아요 추가
+	@Transactional
 	@Override
 	public int insertHeart(HeartVO heart) {
 		return boardMapper.insertHeart(heart);
@@ -77,6 +78,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	// 좋아요 취소
+	@Transactional
 	@Override
 	public int deleteHeart(HeartVO heart) {
 		return boardMapper.deleteHeart(heart);

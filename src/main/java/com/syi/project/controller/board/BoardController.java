@@ -20,8 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.board.BoardVO;
+import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.BoardService;
+import com.syi.project.service.board.CommentService;
 
 @Controller
 @RequestMapping("/member/board")
@@ -31,6 +33,9 @@ public class BoardController {
 
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private CommentService commentService;
 
 	@GetMapping("/list")
 	public void listBoards(Criteria cri, Model model) {
@@ -44,7 +49,9 @@ public class BoardController {
 	@GetMapping("/detail")
 	public String detailBoard(int boardNo, Model model) {
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
+		List<CommentsVO> commentList = commentService.selectCommentList(boardNo);
 		model.addAttribute("board", board);
+		model.addAttribute("commentList", commentList);
 		return "member/board/detail";
 	}
 

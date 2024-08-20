@@ -20,7 +20,7 @@ import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.CommentService;
 
 @Controller
-@RequestMapping("/commnet")
+@RequestMapping("/member/board/comment")
 public class CommentController {
 
 	@Autowired
@@ -35,13 +35,16 @@ public class CommentController {
 
 		comment.setCommentBoardNo(boardNo);
 		comment.setCommentMemberNo(memberNo);
-
-		int result = commentService.insertComment(comment);
+		
+		System.out.println("댓글 생성 " + comment);
+		commentService.insertComment(comment);
+		/*
 		if (result > 0) {
 			rttr.addFlashAttribute("message", "댓글이 등록되었습니다.");
 		} else {
 			rttr.addFlashAttribute("message", "댓글 등록에 실패하였습니다.");
 		}
+		*/
 		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
 	}
 
@@ -63,8 +66,8 @@ public class CommentController {
 	// 댓글 삭제
 	@PostMapping("/delete")
 	@ResponseBody
-	public String deleteComment(@RequestParam("commentId") int commentId) {
-		int result = commentService.deleteComment(commentId);
+	public String deleteComment(@RequestParam("commentNo") int commentNo) {
+		int result = commentService.deleteComment(commentNo);
 		return result > 0 ? "success" : "fail";
 	}
 

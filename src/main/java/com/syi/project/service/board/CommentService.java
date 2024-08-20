@@ -12,6 +12,9 @@ public interface CommentService {
 	// 댓글 조회
 	List<CommentsVO> selectCommentList(int boardNo);
 	
+	// 댓글 총 갯수
+	int selectCommentTotal(int boardNo);
+	
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
 

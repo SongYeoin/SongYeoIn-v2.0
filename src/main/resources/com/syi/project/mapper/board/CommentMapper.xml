@@ -6,47 +6,48 @@
 <mapper namespace="com.syi.project.mapper.board.CommentMapper">
 
 	<resultMap id="CommentResultMap" type="com.syi.project.model.board.CommentsVO">
-        <id column="COMMENTS_NO" property="commentsNo"/>
-        <result column="COMMENTS_PARENT_NO" property="commentsParentNo"/>
-        <result column="COMMENT" property="comment"/>
-        <result column="COMMENT_REG_DATE" property="commentRegDate"/>
-        <result column="COMMENT_MODIFY_DATE" property="commentModifyDate"/>
-        <result column="COMMENT_STATUS" property="commentStatus"/>
-        <result column="COMMENT_MEMBER_NO" property="commentMemberNo"/>
-        <result column="COMMENT_BOARD_NO" property="commentBoardNo"/>
+        <id property="commentNo" column="COMMENT_NO"/>
+        <result property="commentParentNo" column="COMMENT_PARENT_NO"/>
+	    <result property="commentContent" column="COMMENT_CONTENT"/>
+	    <result property="commentRegDate" column="COMMENT_REG_DATE"/>
+	    <result property="commentModifyDate" column="COMMENT_MODIFY_DATE"/>
+	    <result property="commentStatus" column="COMMENT_STATUS"/>
+	    <result property="commentMemberNo" column="COMMENT_MEMBER_NO"/>
+	    <result property="commentBoardNo" column="COMMENT_BOARD_NO"/>
+	    <association property="member" resultMap="memberResultMap"/>
     </resultMap>
 
 	<resultMap id="BoardResultMap" type="com.syi.project.model.board.BoardVO">
-        <id column="BOARD_NO" property="boardNo"/>
-        <result column="BOARD_TITLE" property="boardTitle"/>
-        <result column="BOARD_CONTENT" property="boardContent"/>
-        <result column="BOARD_REG_DATE" property="boardRegDate"/>
-        <result column="BOARD_MODIFY_DATE" property="boardModifyDate"/>
-        <result column="BOARD_COUNT" property="boardCount"/>
-        <result column="BOARD_HEART_COUNT" property="boardHeartCount"/>
-        <result column="BOARD_COMMENTS_COUNT" property="boardCommentsCount"/>
-        <result column="BOARD_STATUS" property="boardStatus"/>
-        <result column="BOARD_MEMBER_NO" property="boardMemberNo"/>
+         <id property="boardNo" column="BOARD_NO"/>
+        <result property="boardTitle" column="BOARD_TITLE"/>
+	    <result property="boardContent" column="BOARD_CONTENT"/>
+	    <result property="boardRegDate" column="BOARD_REG_DATE"/>
+	    <result property="boardModifyDate" column="BOARD_MODIFY_DATE"/>
+	    <result property="boardCount" column="BOARD_COUNT"/>
+	    <result property="boardHeartCount" column="BOARD_HEART_COUNT"/>
+	    <result property="boardCommentsCount" column="BOARD_COMMENTS_COUNT"/>
+	    <result property="boardStatus" column="BOARD_STATUS"/>
+	    <result property="boardMemberNo" column="BOARD_MEMBER_NO"/>
         <association property="member" resultMap="memberResultMap"/>
 		<collection property="commentsList" resultMap="CommentResultMap"/>
     </resultMap>
 
     <resultMap id="HeartResultMap" type="com.syi.project.model.board.HeartVO">
-        <id column="HEART_ID" property="heartId"/>
-        <result column="HEART_REG_DATE" property="heartRegDate"/>
-        <result column="HEART_MEMBER_NO" property="heartMemberNo"/>
-        <result column="HEART_BOARD_NO" property="heartBoardNo"/>
+        <id property="heartId" column="HEART_ID"/>
+        <result property="heartRegDate" column="HEART_REG_DATE"/>
+	    <result property="heartMemberNo" column="HEART_MEMBER_NO"/>
+	    <result property="heartBoardNo" column="HEART_BOARD_NO"/>
     </resultMap>
 
     <resultMap id="BoardFileResultMap" type="com.syi.project.model.board.BoardFileVO">
-        <id column="FILE_NO" property="fileNo"/>
-        <result column="FILE_ORIGINAL_NAME" property="fileOriginalName"/>
-        <result column="FILE_SAVED_NAME" property="fileSavedName"/>
-        <result column="FILE_TYPE" property="fileType"/>
-        <result column="FILE_SIZE" property="fileSize"/>
-        <result column="FILE_PATH" property="filePath"/>
-        <result column="FILE_REG_DATE" property="fileRegDate"/>
-        <result column="FILE_BOARD_NO" property="fileBoardNo"/>
+        <id property="fileNo" column="FILE_NO"/>
+        <result property="fileOriginalName" column="FILE_ORIGINAL_NAME"/>
+	    <result property="fileSavedName" column="FILE_SAVED_NAME"/>
+	    <result property="fileType" column="FILE_TYPE"/>
+	    <result property="fileSize" column="FILE_SIZE"/>
+	    <result property="filePath" column="FILE_PATH"/>
+	    <result property="fileRegDate" column="FILE_REG_DATE"/>
+	    <result property="fileBoardNo" column="FILE_BOARD_NO"/>
     </resultMap>
     
     <resultMap type="com.syi.project.model.member.MemberVO" id="memberResultMap">
@@ -72,30 +73,40 @@
 
 	<!-- 댓글 생성 -->
 	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
-		INSERT INTO COMMENTS (COMMENT_BOARD_NO, COMMENT_MEMBER_NO, COMMENT)
-		VALUES (#{ commentBoardNo }, #{ commentMemberNo }, #{ comment })
+		INSERT INTO COMMENTS (COMMENT_BOARD_NO, COMMENT_MEMBER_NO, "COMMENT_CONTENT")
+		VALUES (#{ commentBoardNo }, #{ commentMemberNo }, #{ commentContent })
 	</insert>
 	
 	<!-- 댓글 조회 -->
 	<select id="selectCommentList" resultMap="CommentResultMap">
-		SELECT * 
-		FROM COMMENTS
-		WHERE COMMENTS_BOARD_NO = #{ commentBoardNo } 
-			AND COMMENTS_STATUS = 'Y'
+		SELECT C.*, M.*
+	    FROM COMMENTS C
+	    LEFT JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
+	    WHERE C.COMMENT_BOARD_NO = #{ commentBoardNo } 
+	        AND C.COMMENT_STATUS = 'Y'
+	    ORDER BY COMMENT_REG_DATE DESC
+	</select>
+	
+	<!-- 댓글 총 갯수 -->
+	<select id="selectCommentTotal" parameterType="_int" resultType="_int">
+		SELECT COUNT(*)
+    	FROM COMMENTS
+    	WHERE COMMENT_BOARD_NO = #{ commentBoardNo }
+    		AND COMMENT_STATUS = 'Y'
 	</select>
 	
 	<!-- 댓글 수정 -->
-	<update id="updateComment" parameterType="com.syi.projcet.model.board.CommentsVO">
+	<update id="updateComment" parameterType="com.syi.project.model.board.CommentsVO">
 		UPDATE COMMENTS
 		SET
 			COMMENT = #{ comment },
 			COMMENT_MODIFY_DATE = SYSDATE,
-		WHERE COMMENTS_NO = #{ commentsNo }
+		WHERE COMMENT_NO = #{ commentNo }
 	</update>
 	
 	<!-- 댓글 삭제  -->
 	<delete id="deleteComment" parameterType="_int">
-		DELETE FROM COMMENTS WHERE COMMENT_ID = #{ commentId }
+		DELETE FROM COMMENTS WHERE COMMENT_NO = #{ commentNo }
 	</delete>
 
 

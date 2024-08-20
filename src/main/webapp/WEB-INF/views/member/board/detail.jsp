@@ -156,6 +156,11 @@ button:hover {
 .file-list a:hover {
     text-decoration: underline;
 }
+
+.edit-form {
+    display: none;
+}
+
 </style>
 </head>
 <body>
@@ -207,27 +212,39 @@ button:hover {
 
 
             <!-- 댓글 추가 폼 -->
-            <!--  
             <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
                 <input type="hidden" name="boardNo" value="${board.boardNo}" />
                 <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-                <button type="submit">댓글 등록</button>
+                <button type="submit">등록</button>
             </form>
-            -->
 
             <!-- 댓글 리스트 -->
-            <!--  
-            <c:forEach var="comment" items="${comments}">
-                <div class="comment">
+            <c:forEach var="comment" items="${commentList}">
+                <div id="comment-${comment.commentNo}" class="comment">
                     <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    <p>${comment.commentContent}</p>
-                    <c:if test="${sessionScope.loginMember.memberNo eq comment.memberNo}">
-                        <button onclick="deleteComment(${comment.commentId})">삭제</button>
+                    
+                    <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
+                        <!-- 댓글 수정 폼 -->
+			            <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;" action="${pageContext.request.contextPath}/member/board/comment/modify" method="post">
+			                <input type="hidden" name="commentNo" value="${comment.commentNo}" />
+			                <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+			                <button type="submit">수정</button>
+			                <button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+			            </form>
+			
+			            <!-- 댓글 수정 버튼 -->
+			            <button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+			            
+			            <!-- 댓글 삭제 버튼 -->
+			            <button id="deleteCommentBtn" onclick="deleteComment(${comment.commentNo})">삭제</button>
                     </c:if>
+                    
+                    <!-- 댓글 -->
+                    <p>${comment.commentContent}</p>
                 </div>
             </c:forEach>
-            -->
 
+			<!-- 게시글 버튼 -->
             <div class="button-container">
                 <button type="button" id="listBtn">목록</button>
                 <c:if test="${sessionScope.loginMember.memberNo eq board.boardMemberNo }">
@@ -269,6 +286,37 @@ button:hover {
                         window.location.href = "/member/board/list"; 
                     } else {
                         alert("삭제에 실패했습니다.");
+                    }
+                },
+                error: function() {
+                    alert("서버 오류가 발생했습니다.");
+                }
+            });
+        }
+    }
+    
+    function editComment(commentNo) {
+        document.getElementById('comment-' + commentNo).style.display = 'none';
+        document.getElementById('edit-form-' + commentNo).style.display = 'block';
+    }
+
+    function cancelEdit(commentNo) {
+        document.getElementById('edit-form-' + commentNo).style.display = 'none';
+        document.getElementById('comment-' + commentNo).style.display = 'block';
+    }
+    
+    function deleteComment(commentNo) {
+        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: "${pageContext.request.contextPath}/member/board/comment/delete",
+                type: "POST",
+                data: { commentNo: commentNo },
+                success: function(response) {
+                    if (response === 'success') {
+                        alert("댓글이 삭제되었습니다.");
+                        $("#comment-" + commentNo).remove();
+                    } else {
+                        alert("댓글 삭제에 실패했습니다.");
                     }
                 },
                 error: function() {
