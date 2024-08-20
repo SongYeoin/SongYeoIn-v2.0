@@ -356,24 +356,19 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사용자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		<%@ include file="../member/aside.jsp"%>
-	</c:if>
-	<!-- 관리자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-
-		<div class="classroom-header">
-			<i class="bi bi-house-fill"
-				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-			<div class="title">${syclass.className}</div>
-			<div class="details">담당자: ${syclass.managerName} | 강사명:
-				${syclass.teacherName}</div>
-		</div>
-
-		<!-- 사이드바 연결 -->
-		<%@ include file="../admin/class/aside.jsp"%>
-	</c:if>
+	<c:choose>
+    	<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+	        <%@ include file="../member/aside.jsp"%>
+	    </c:when>
+	    <c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+	        <div class="classroom-header">
+	            <i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+	            <div class="title">${syclass.className}</div>
+	            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
+	        </div>
+	        <%@ include file="../admin/class/aside.jsp"%>
+	    </c:when>
+	</c:choose>
 
 	<main>
 
@@ -514,30 +509,29 @@ td.checkStatus.N {
 		src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 	<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // FullCalendar 초기화
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: [
-                <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
-                {
-                    title: "${schedule.scheduleTitle}",
-                    start: "${schedule.scheduleDate}",
-                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
-                }<c:if test="${!status.last}">,</c:if>
-                </c:forEach>
-            ],
-            eventClick: function(info) {
-                if (info.event.url) {
-                    window.location.href = info.event.url;
-                }
-            }
-        });
-        calendar.render();
-        
-        console.log("Calendar events: ", calendar.getEvents());
-    });
+	document.addEventListener('DOMContentLoaded', function() {
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	        initialView: 'dayGridMonth',
+	        events: [
+	            <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
+	            {
+	                title: "${schedule.scheduleTitle}",
+	                start: "${schedule.scheduleDate}",
+	                url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+	            }<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ],
+	        eventClick: function(info) {
+	            if (info.event.url) {
+	                window.location.href = info.event.url;
+	            }
+	        }
+	    });
+	    calendar.render();
+	    
+	    console.log("Calendar events: ", calendar.getEvents());  // 이벤트 로깅 추가
+	});
 
     $(document).ready(function() {
         // 테이블 행 클릭 시 상세 페이지로 이동

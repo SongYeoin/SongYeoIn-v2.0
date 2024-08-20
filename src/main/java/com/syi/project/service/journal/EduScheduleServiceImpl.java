@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.syi.project.mapper.journal.EduScheduleMapper;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.journal.EduScheduleVO;
+import com.syi.project.model.syclass.SyclassVO;
 
 @Service
 public class EduScheduleServiceImpl implements EduScheduleService{
@@ -28,24 +29,33 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 		logger.info("일정 등록 완료: {}", schedule);
 	}
 
+	// 사용자의 수강 중인 반 조회
+	@Override
+	public List<SyclassVO> getUserClasses(int memberNo) {
+		logger.info("사용자의 수강 중인 반 목록 조회 요청: 회원 번호={}", memberNo);
+        List<SyclassVO> classes = eduScheduleMapper.getUserClasses(memberNo);
+        logger.info("조회된 수강 중인 반 개수: {}", classes.size());
+        return classes;
+	}
+	
 	// 모든 일정 조회 (페이징)
 	@Override
-	public List<EduScheduleVO> scheduleList(Criteria cri) {
+	public List<EduScheduleVO> scheduleList(Criteria cri, Integer classNo) {
 		logger.info("일정 목록 조회 요청: {}", cri);
-		List<EduScheduleVO> schedules = eduScheduleMapper.scheduleList(cri);
-		if (schedules.isEmpty()) {
-			logger.info("조회된 일정이 없습니다.");
-		} else {
-			logger.info("조회된 일정 개수: {}", schedules.size());
-		}
-		return schedules;
+        List<EduScheduleVO> schedules = eduScheduleMapper.scheduleList(cri, classNo);
+        if (schedules.isEmpty()) {
+            logger.info("조회된 일정이 없습니다.");
+        } else {
+            logger.info("조회된 일정 개수: {}", schedules.size());
+        }
+        return schedules;
 	}
 	
 	// 일정 총 갯수
 	@Override
-	public int scheduleGetTotal(Criteria cri) {
+	public int scheduleGetTotal(Criteria cri, Integer classNo) {
 		logger.info("일정 총 갯수 조회 요청: {}", cri);
-		int total = eduScheduleMapper.scheduleGetTotal(cri);
+		int total = eduScheduleMapper.scheduleGetTotal(cri, classNo);
 		logger.info("조회된 일정 총 갯수: {}", total);
 		return total;
 	}
@@ -86,10 +96,10 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 
 	// 캘린더 전체 일정 조회
 	@Override
-	public List<EduScheduleVO> scheduleAllList() {
-		List<EduScheduleVO> scheduleAllList = eduScheduleMapper.scheduleAllList();
-        logger.info("---------> 서비스 : scheduleAllList : " + scheduleAllList);
-
-		return scheduleAllList;
+	public List<EduScheduleVO> scheduleAllList(Integer classNo) {
+		logger.info("캘린더 전체 일정 조회 요청: 반 번호={}", classNo);
+        List<EduScheduleVO> scheduleAllList = eduScheduleMapper.scheduleAllList(classNo);
+        logger.info("조회된 전체 일정 개수: {}", scheduleAllList.size());
+        return scheduleAllList;
 	}
 }

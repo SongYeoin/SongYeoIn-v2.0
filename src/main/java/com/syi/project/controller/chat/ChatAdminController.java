@@ -94,7 +94,7 @@ public class ChatAdminController {
     	    // Criteria 객체 생성 및 memberName 설정
     	    Criteria criteria = new Criteria();
     	    if (data.get("memberName") != null) {
-    	        criteria.setMemberName((String) data.get("memberName"));
+    	        //criteria.setMemberName((String) data.get("memberName"));
     	    }
     	    
     	    
