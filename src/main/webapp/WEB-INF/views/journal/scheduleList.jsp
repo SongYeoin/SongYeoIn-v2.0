@@ -376,13 +376,15 @@ td.checkStatus.N {
 		<div class="title-container">
 			<h1>교육 일정</h1>
 			<div class="select-box">
-				<select id="classSelect" name="classSelect"
-					onchange="sendClassChange()">
-					<c:forEach var="classItem" items="${classList}">
-						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-					</c:forEach>
-				</select>
+				<!-- 반 선택 드롭다운 -->
+<select id="classSelect" name="classNo" onchange="changeClass(this.value)">
+    <c:forEach var="classItem" items="${classList}">
+        <option value="${classItem.classNo}" 
+            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+            ${classItem.className}
+        </option>
+    </c:forEach>
+</select>
 			</div>
 		</div>
 
@@ -394,8 +396,9 @@ td.checkStatus.N {
 			<div class="header">
 				<h2>교육일정 목록</h2>
 				<div class="search_area">
-					<form id="searchForm" method="get"
-						action="${pageContext.request.contextPath}/journal/scheduleList">
+<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
+    <input type="hidden" name="classNo" value="${selectedClassNo}">
+
 
 						<select id="category" name="category">
 							<option value="all"
@@ -446,25 +449,24 @@ td.checkStatus.N {
 						</tr>
 					</thead>
 
-					<tbody>
-						<c:forEach items="${schedules}" var="schedule" varStatus="i">
-							<tr data-schedule-no="${schedule.scheduleNo}">
-								<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
-								<td class="hidden scheduleNo"><c:out
-										value="${schedule.scheduleNo}" /></td>
-								<td><c:out value="${schedule.scheduleDate}" /></td>
-								<td><a
-									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-										<c:out value="${schedule.scheduleTitle}" />
-								</a></td>
-								<td><a
-									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-										<c:out value="${schedule.scheduleDescription}" />
-								</a></td>
-								<td><c:out value="${schedule.scheduleInstructor}" /></td>
-							</tr>
-						</c:forEach>
-					</tbody>
+<tbody>
+    <c:forEach items="${scheduleList}" var="schedule" varStatus="i">
+        <tr onclick="window.location.href='${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}&page=${pageMaker.cri.pageNum}'">
+            <td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
+            <td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
+            <td><c:out value="${schedule.scheduleDate}" /></td>
+            <td><c:out value="${schedule.scheduleTitle}" /></td>
+            <td><c:out value="${schedule.scheduleDescription}" /></td>
+            <td><c:out value="${schedule.scheduleInstructor}" /></td>
+        </tr>
+    </c:forEach>
+</tbody>
+<!-- 디버깅을 위한 코드 추가 -->
+<c:if test="${empty scheduleList}">
+    <tr>
+        <td colspan="6">No schedules found.</td>
+    </tr>
+</c:if>
 				</table>
 
 				<div class="pageInfo_wrap">
@@ -479,14 +481,12 @@ td.checkStatus.N {
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
-							<c:forEach var="num" begin="${pageMaker.pageStart}"
-								end="${pageMaker.pageEnd}">
-								<li
-									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a
-									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">${num}</a>
-								</li>
-							</c:forEach>
+							<!-- 페이징 부분 수정 -->
+<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
+    <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+        <a href="javascript:void(0);" onclick="changePage(${num})">${num}</a>
+    </li>
+</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
@@ -509,11 +509,35 @@ td.checkStatus.N {
 		src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 	<script>
+	function changeClass(classNo) {
+	    window.location.href = '${pageContext.request.contextPath}/journal/scheduleList?classNo=' + classNo;
+	}
+
+	function changePage(pageNum) {
+	    var form = document.getElementById('searchForm');
+	    var pageInput = document.createElement('input');
+	    pageInput.type = 'hidden';
+	    pageInput.name = 'pageNum';
+	    pageInput.value = pageNum;
+	    form.appendChild(pageInput);
+	    form.submit();
+	}
+	
 	document.addEventListener('DOMContentLoaded', function() {
 	    var calendarEl = document.getElementById('calendar');
 	    var calendar = new FullCalendar.Calendar(calendarEl, {
 	        initialView: 'dayGridMonth',
-	        events: [
+	        events: getCalendarEvents()
+	    });
+	    calendar.render();
+
+	    // 클래스 변경 시 캘린더 이벤트 업데이트
+	    $('#classSelect').change(function() {
+	        updateCalendarEvents();
+	    });
+
+	    function getCalendarEvents() {
+	        return [
 	            <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
 	            {
 	                title: "${schedule.scheduleTitle}",
@@ -521,17 +545,32 @@ td.checkStatus.N {
 	                url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
 	            }<c:if test="${!status.last}">,</c:if>
 	            </c:forEach>
-	        ],
-	        eventClick: function(info) {
-	            if (info.event.url) {
-	                window.location.href = info.event.url;
+	        ];
+	    }
+
+	    function updateCalendarEvents() {
+	        var selectedClassNo = $('#classSelect').val();
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/journal/getScheduleForClass',
+	            data: { classNo: selectedClassNo },
+	            success: function(data) {
+	                calendar.removeAllEvents();
+	                calendar.addEventSource(data);
 	            }
-	        }
-	    });
-	    calendar.render();
-	    
-	    console.log("Calendar events: ", calendar.getEvents());  // 이벤트 로깅 추가
+	        });
+	    }
 	});
+	
+	// 페이지 로드 시 캘린더 초기화
+	document.addEventListener('DOMContentLoaded', function() {
+	    updateCalendar(${selectedClassNo});
+	});
+	
+	// 클래스 변경 시 호출되는 함수
+	function sendClassChange() {
+	    var selectedClassNo = $('#classSelect').val();
+	    window.location.href = '${pageContext.request.contextPath}/journal/scheduleList?classNo=' + selectedClassNo;
+	}
 
     $(document).ready(function() {
         // 테이블 행 클릭 시 상세 페이지로 이동

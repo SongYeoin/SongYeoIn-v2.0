@@ -151,11 +151,14 @@ main {
 			<div class="form-container">
 				<h1>교육 일정 수정하기</h1>
 				<!-- 일정 업데이트 폼 -->
-				<form id="scheduleForm"
-					action="${pageContext.request.contextPath}/journal/scheduleUpdate"
-					method="post">
-					<input type="hidden" name="scheduleNo"
-						value="${schedule.scheduleNo}" />
+				<form id="scheduleForm" action="${pageContext.request.contextPath}/journal/scheduleUpdate" method="post">
+                    <input type="hidden" name="scheduleNo" value="${schedule.scheduleNo}" />
+                    <input type="hidden" name="classNo" value="${schedule.classNo}" />  <!-- classNo 추가 -->
+<!-- 현재 선택된 반 정보 표시 -->
+                    <div class="form-group">
+                        <label>현재 선택된 반:</label>
+                        <span>${syclass.className}</span>
+                    </div>
 
 					<div class="form-group">
 						<label for="scheduleTitle">단원명:</label> <input type="text"

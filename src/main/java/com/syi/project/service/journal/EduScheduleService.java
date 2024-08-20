@@ -1,6 +1,7 @@
 package com.syi.project.service.journal;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -17,10 +18,10 @@ public interface EduScheduleService {
     List<SyclassVO> getUserClasses(@Param("memberNo") int memberNo);
 
 	// 모든 일정 조회 (페이징, 검색, 반별 필터링)
-    List<EduScheduleVO> scheduleList(Criteria cri, Integer classNo);
+    List<EduScheduleVO> scheduleList(Criteria cri, int classNo);
     
     // 일정 총 갯수
-    int scheduleGetTotal(Criteria cri, Integer classNo);
+    int scheduleGetTotal(Criteria cri, int classNo);
     
     // 일정 상세 조회
     EduScheduleVO scheduleDetail(int scheduleNo);
@@ -32,6 +33,7 @@ public interface EduScheduleService {
     int scheduleDelete(int scheduleNo);
 
     // 캘린더 전체 일정 조회 (반별 필터링 포함)
-    List<EduScheduleVO> scheduleAllList(@Param("classNo") Integer classNo);
+    List<EduScheduleVO> scheduleAllList(int classNo);
+    
 
 }

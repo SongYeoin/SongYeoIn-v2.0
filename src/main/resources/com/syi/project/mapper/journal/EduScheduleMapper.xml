@@ -58,76 +58,83 @@
     </insert>
 
 	<!-- 사용자의 수강 중인 반 목록 조회 -->
-    <select id="getUserClasses" resultMap="classResultMap">
-        SELECT c.*
-        FROM SYCLASS c
-        JOIN USER_CLASS uc ON c.CLASS_NO = uc.CLASS_NO
-        WHERE uc.MEMBER_NO = #{memberNo}
-    </select>
+	<select id="getUserClasses" parameterType="int" resultMap="classResultMap">
+	    SELECT c.*
+	    FROM CLASS c
+	    JOIN EDU_SCHEDULE es ON c.CLASS_NO = es.CLASS_NO
+	    JOIN MEMBER m ON es.SCHEDULE_NO = m.MEMBER_NO
+	    WHERE m.MEMBER_NO = #{memberNo}
+	</select>
+
 
     <!-- 교육 일정 전체 조회 (페이징, 검색, 반별 필터링) -->
     <select id="scheduleList" resultMap="EduScheduleResultMap">
-        <![CDATA[
-        SELECT * 
+    <![CDATA[
+    SELECT * 
+    FROM (
+        SELECT rn, schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor, class_no
         FROM (
-            SELECT rn, schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor, class_no
-            FROM (
-                SELECT es.schedule_no, es.schedule_date, es.schedule_title, es.schedule_description, es.schedule_instructor, es.class_no,
-                       ROW_NUMBER() OVER (ORDER BY es.schedule_date DESC) AS rn
-                FROM edu_schedule es
-                WHERE 1=1
-        ]]>
-                <if test="classNo != null and classNo != ''">
-                    AND es.class_no = #{classNo}
-                </if>
-                <if test="category == 'title'">
-                    AND UPPER(es.schedule_title) LIKE UPPER('%' || #{keyword} || '%')
-                </if>
-                <if test="category == 'instructor'">
-                    AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
-                </if>
-                <if test="category == 'all'">
-                    AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{keyword} || '%')
-                    OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
-                </if>
-                <if test="year != null and year != ''">
-                    AND EXTRACT(YEAR FROM es.schedule_date) = #{year}
-                </if>
-                <if test="month != null and month != ''">
-                    AND EXTRACT(MONTH FROM es.schedule_date) = #{month}
-                </if>
-        <![CDATA[
-            )
-            WHERE rn > (#{pageNum} - 1) * #{amount} AND rn <= #{pageNum} * #{amount}
+            SELECT es.schedule_no, es.schedule_date, es.schedule_title, es.schedule_description, es.schedule_instructor, es.class_no,
+                   ROW_NUMBER() OVER (
+                       ORDER BY 
+                           CASE
+                               WHEN es.class_no = #{classNo} THEN 1
+                               WHEN es.class_no IS NULL THEN 2
+                               ELSE 3
+                           END,
+                           es.schedule_date DESC
+                   ) AS rn
+            FROM edu_schedule es
+            WHERE 1=1
+            AND (es.class_no = #{classNo} OR es.class_no IS NULL)
+    ]]>
+        <if test="cri.category == 'title'">
+            AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+        </if>
+        <if test="cri.category == 'instructor'">
+            AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
+        </if>
+        <if test="cri.category == 'all'">
+            AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+            OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
+        </if>
+        <if test="cri.year != null and cri.year != ''">
+            AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}
+        </if>
+        <if test="cri.month != null and cri.month != ''">
+            AND EXTRACT(MONTH FROM es.schedule_date) = #{cri.month}
+        </if>
+    <![CDATA[
         )
-        ]]>
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount} AND rn <= #{cri.pageNum} * #{cri.amount}
+    )
+    ]]>
+</select>
+
+    <!-- 교육 일정 총 갯수 조회 (반별 필터링) -->
+    <select id="scheduleGetTotal" resultType="int">
+        SELECT COUNT(*) 
+        FROM edu_schedule es
+        WHERE 1=1
+        AND (es.class_no = #{classNo} OR es.class_no IS NULL)
+        <if test="cri.category == 'title'">
+            AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+        </if>
+        <if test="cri.category == 'instructor'">
+            AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
+        </if>
+        <if test="cri.category == 'all'">
+            AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+            OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
+        </if>
+        <if test="cri.year != null and cri.year != ''">
+            AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}
+        </if>
+        <if test="cri.month != null and cri.month != ''">
+            AND EXTRACT(MONTH FROM es.schedule_date) = #{cri.month}
+        </if>
     </select>
 
-    <!-- 교육 일정 총 갯수 조회 (반별 필터링 추가) -->
-    <select id="scheduleGetTotal" resultType="int">
-        SELECT count(*) 
-        FROM edu_schedule
-        WHERE 1=1
-        <if test="classNo != null and classNo != ''">
-            AND class_no = #{classNo}
-        </if>
-        <if test="category == 'title'">
-            AND UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
-        </if>
-        <if test="category == 'instructor'">
-            AND UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%')
-        </if>
-        <if test="category == 'all'">
-            AND (UPPER(schedule_title) LIKE UPPER('%' || #{keyword} || '%')
-            OR UPPER(schedule_instructor) LIKE UPPER('%' || #{keyword} || '%'))
-        </if>
-        <if test="year != null and year != ''">
-            AND EXTRACT(YEAR FROM schedule_date) = #{year}
-        </if>
-        <if test="month != null and month != ''">
-            AND EXTRACT(MONTH FROM schedule_date) = #{month}
-        </if>
-    </select>
 
     <!-- 교육 일정 상세 조회 -->
     <select id="scheduleDetail" resultMap="EduScheduleResultMap">
@@ -152,7 +159,7 @@
 	
 	<!-- 캘린더 전체 일정 조회 쿼리 (반별 필터링 추가) -->
     <select id="scheduleAllList" resultMap="EduScheduleResultMap">
-        SELECT * FROM edu_schedule
+        SELECT * FROM EDU_SCHEDULE
         <where>
             <if test="classNo != null and classNo != ''">
                 CLASS_NO = #{classNo}

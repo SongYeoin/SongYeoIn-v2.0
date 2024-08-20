@@ -188,8 +188,8 @@ button[type="submit"]:hover {
 					</c:if>
 
 					<!-- 목록으로 돌아가기 버튼 -->
-					<a href="${pageContext.request.contextPath}/journal/scheduleList"
-						class="btn btn-link">목록</a>
+					<a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-secondary">목록으로</a>
+
 				</div>
 			</div>
 		</div>
