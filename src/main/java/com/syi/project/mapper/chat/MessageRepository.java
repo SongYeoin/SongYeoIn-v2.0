@@ -12,4 +12,6 @@ public interface MessageRepository extends MongoRepository<ChatMessageDTO, Strin
 
 	List<ChatMessageDTO> findByChatRoomNo(String chatRoomNo);
 
+	//int updateIsReadtoTrue(String chatRoomNo);
+
 }

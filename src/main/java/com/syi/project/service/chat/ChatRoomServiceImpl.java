@@ -70,8 +70,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public List<ChatRoomVO> selectChatRoomList(Integer classNo,Criteria cri,MemberVO loginMember) {
-		return chatRoomMapper.selectChatRoomList(classNo,cri,loginMember);
+	public List<ChatRoomVO> selectChatRoomList(Integer classNo,String searchName,MemberVO loginMember) {
+		return chatRoomMapper.selectChatRoomList(classNo,searchName,loginMember);
 	}
 
 

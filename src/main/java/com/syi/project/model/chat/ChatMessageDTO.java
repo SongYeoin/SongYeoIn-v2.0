@@ -43,5 +43,8 @@ public class ChatMessageDTO {
 	//@JsonProperty("regDateTime")
 	//@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private String regDateTime; // 메시지 발송 시간
+	
+	@Field(name="isRead")
+	private boolean isRead;//상대방이 읽었냐
 
 }

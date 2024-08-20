@@ -197,27 +197,29 @@ a.custom{
 
 							<ul id="roomList" class="list-unstyled mb-0">
 								<c:forEach items="${roomList}"  var="room">
-								<li class="p-2 border-bottom bg-body-tertiary" 
-								data-chat-room-no="${room.chatRoomNo}"
-								onclick="selectChatRoom('${room.chatRoomNo}')"
-								 ><a
-									class="custom d-flex justify-content-between">
-										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
-											<div class="pt-1">
-												<p class="fw-bold mb-0"><c:out value="${room.member.memberName}"/></p>
-												<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;">Hello, Are you there?????????????</p>
-											</div>
-										</div>
-										<div class="pt-1">
-											<p class="small text-muted mb-1">Just now</p>
-											<span class="badge bg-danger float-end">1</span>
-										</div>
-								</a></li>
+									<c:forEach items="${lastMessageList}"  var="message">
+										<li class="p-2 border-bottom bg-body-tertiary" 
+										data-chat-room-no="${room.chatRoomNo}"
+										onclick="selectChatRoom('${room.chatRoomNo}')"
+										 ><a
+											class="custom d-flex justify-content-between">
+												<div class="d-flex flex-row">
+													<img
+														src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
+														alt="avatar"
+														class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+														width="60">
+													<div class="pt-1">
+														<p class="fw-bold mb-0"><c:out value="${room.member.memberName}"/></p>
+														<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${message.message}"/></p>
+													</div>
+												</div>
+												<div class="pt-1">
+													<p class="small text-muted mb-1"><c:out value="${message.regDateTime}"/></p>
+													<span class="badge bg-danger float-end">1</span>
+												</div>
+										</a></li>
+									</c:forEach>
 							</c:forEach>
 							</ul>
 
@@ -356,55 +358,91 @@ function selectSearchCondition(){
 	});
 	
 	
-	function updateRoomList(roomList) {
+	function updateRoomList(returnData) {
 		
-		console.log(roomList);
+		console.log(returnData);
 		
 		// 기존의 리스트 비우기
 	    let listContainer = $("#roomList");
 	    listContainer.empty();
 
 	    let listItem = '';
+	    
+	    let roomList = returnData.get('filterChatRoomList');
+	    let messageList = returnData.get('lastMessageList');
+	    
+	    
 	    // 새로운 리스트 추가
 	    $.each(roomList, function(index, room) {
-	        listItem = 
-	        	$('<li>', {
-	                class: 'p-2 border-bottom bg-body-tertiary',
-	                'data-chat-room-no': room.chatRoomNo
-	            }).append(
-	                $('<a>', {
-	                    class: 'custom d-flex justify-content-between',
-	                    click: function() {
-	                        selectChatRoom(room.chatRoomNo);
-	                    }
-	                }).append(
-	                    $('<div>', { class: 'd-flex flex-row' }).append(
-	                        $('<img>', {
-	                            src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp',
-	                            alt: 'avatar',
-	                            class: 'rounded-circle d-flex align-self-center me-3 shadow-1-strong',
-	                            width: 60
-	                        })
-	                    ).append(
-	                        $('<div>', { class: 'pt-1' }).append(
-	                            $('<p>', { class: 'fw-bold mb-0' }).text(room.member.memberName) // Member Name
-	                        ).append(
-	                            $('<p>', {
-	                                class: 'd-inline-block text-truncate small text-muted',
-	                                style: 'max-width: 150px;'
-	                            }).text('Hello, Are you there?') // Example message
-	                        )
-	                    )
-	                ).append(
-	                    $('<div>', { class: 'pt-1' }).append(
-	                        $('<p>', { class: 'small text-muted mb-1' }).text('Just now') // Time
-	                    ).append(
-	                        $('<span>', { class: 'badge bg-danger float-end' }).text('1') // Badge
-	                    )
-	                )
-	            );
-	        // 리스트에 추가
-	        listContainer.append(listItem);
+	    	$.each(messageList, function(index,message) {
+		    	let timeMatch = message.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
+				console.log(message.regDateTime);
+				console.log(timeMatch);
+				let timeString = '';
+				
+				if (timeMatch) {
+					
+					  // 시간과 분 추출
+					  let hours = parseInt(timeMatch[1], 10);//10진수로
+					  let minutes = timeMatch[2];
+	
+					  // 24시간제를 12시간제로 변환
+					  let period = hours >= 12 ? '오후' : '오전';
+					  hours = hours % 12;
+					  hours = hours ? hours : 12; // '0'시를 '12'로 표시
+					
+					  // 포맷된 시간 문자열
+					  //timeString = `${period} ${hours}:${minutes}`;
+					  timeString = period +" "+ hours+ ":"+ minutes;
+	
+					  console.log("포맷된 시간 문자열: " + timeString);
+					} else {
+					  console.error('시간 정보를 추출할 수 없습니다.');
+					}
+				
+				
+				
+		        listItem = 
+		        	$('<li>', {
+		                class: 'p-2 border-bottom bg-body-tertiary',
+		                'data-chat-room-no': room.chatRoomNo
+		            }).append(
+		                $('<a>', {
+		                    class: 'custom d-flex justify-content-between',
+		                    click: function() {
+		                        selectChatRoom(room.chatRoomNo);
+		                    }
+		                }).append(
+		                    $('<div>', { class: 'd-flex flex-row' }).append(
+		                        $('<img>', {
+		                            src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp',
+		                            alt: 'avatar',
+		                            class: 'rounded-circle d-flex align-self-center me-3 shadow-1-strong',
+		                            width: 60
+		                        })
+		                    ).append(
+		                        $('<div>', { class: 'pt-1' }).append(
+		                            $('<p>', { class: 'fw-bold mb-0' }).text(room.member.memberName)
+		                        ).append(
+		                            $('<p>', {
+		                                class: 'd-inline-block text-truncate small text-muted',
+		                                style: 'max-width: 150px;'
+		                            }).text(message.message)
+		                        )
+		                    )
+		                ).append(
+		                    $('<div>', { class: 'pt-1' }).append(
+		                        $('<p>', { class: 'small text-muted mb-1' }).text(timeString) 
+		                    ).append(
+		                        $('<span>', { class: 'badge bg-danger float-end' }).text('1') 
+		                    )
+		                )
+		            );
+		        // 리스트에 추가
+		        listContainer.append(listItem);
+				
+				
+			});
 	});
 	}
 }
@@ -464,7 +502,31 @@ function selectChatRoom(chatRoomNo) {
         
         
         $.each(messages, function(index, message) {
-        	
+        	let timeMatch = message.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
+			console.log(message.regDateTime);
+			console.log(timeMatch);
+			let timeString = '';
+			
+			if (timeMatch) {
+				
+				  // 시간과 분 추출
+				  let hours = parseInt(timeMatch[1], 10);//10진수로
+				  let minutes = timeMatch[2];
+
+				  // 24시간제를 12시간제로 변환
+				  let period = hours >= 12 ? '오후' : '오전';
+				  hours = hours % 12;
+				  hours = hours ? hours : 12; // '0'시를 '12'로 표시
+				
+				  // 포맷된 시간 문자열
+				  //timeString = `${period} ${hours}:${minutes}`;
+				  timeString = period +" "+ hours+ ":"+ minutes;
+
+				  console.log("포맷된 시간 문자열: " + timeString);
+				} else {
+				  console.error('시간 정보를 추출할 수 없습니다.');
+				}
+			
         	if(message.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
         		
         		var messageItem = $('<li>', { class: 'd-flex justify-content-end mb-6'})
@@ -472,7 +534,7 @@ function selectChatRoom(chatRoomNo) {
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
         	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
         	            .append($('<p>', { class: 'text-muted small mb-0' })
-        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
+        	                .append($('<i>', { class: 'far fa-clock' }).text(timeString)) // 타임스탬프
         	            )
         	        )
         	        .append($('<div>', { class: 'card-body' })
@@ -499,7 +561,7 @@ function selectChatRoom(chatRoomNo) {
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
         	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
         	            .append($('<p>', { class: 'text-muted small mb-0' })
-        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
+        	                .append($('<i>', { class: 'far fa-clock' }).text(timeString)) // 타임스탬프
         	            )
         	        )
         	        .append($('<div>', { class: 'card-body' })

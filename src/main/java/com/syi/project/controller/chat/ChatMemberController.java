@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,9 +71,11 @@ public class ChatMemberController {
     }
     
     @GetMapping("/chats/{chatRoomNo}")
+    @Transactional
     @ResponseBody
     public List<ChatMessageDTO> memberChatAJAXGET(@PathVariable String chatRoomNo) throws JsonProcessingException {
     	log.info("ajax로 매핑되어 온 메소드에 진입함");
+    	messageService.updateIsReadtoTrue(chatRoomNo);
     	List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
     	log.info(messageList.toString());
     	return messageList;

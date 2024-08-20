@@ -63,7 +63,7 @@
   	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
   		SELECT CH.CHATROOM_NO,CH.CHATROOM_ADMIN_NO,CH.CHATROOM_MEMBER_NO,M.MEMBER_NAME
   		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
-  			<if test="classNo != null or cri != null">
+  			<if test="classNo != null or searchName != null">
 	  			FROM CLASS C
 				INNER JOIN MEMBER A ON (C.ADMIN_NO = A.MEMBER_NO)
 				INNER JOIN ENROLL E ON (C.CLASS_NO = E.CLASS_NO)
@@ -73,11 +73,11 @@
 	  			<if test="classNo != null">
 					AND C.CLASS_NO = #{classNo}
 	  			</if>
-		  		<if test="cri.memberName != null">
-		  			AND M.MEMBER_NAME like '%'||#{cri.memberName}||'%'
+		  		<if test="searchName != null">
+		  			AND M.MEMBER_NAME like '%'||#{searchName}||'%'
 				</if>
 			</if>
-			<if test="classNo == null and cri == null">
+			<if test="classNo == null and searchName == null">
 				FROM CHATROOM CH JOIN MEMBER M ON(CH.CHATROOM_MEMBER_NO = M.MEMBER_NO)
 	  			WHERE CH.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
 			</if>
@@ -87,6 +87,7 @@
 			WHERE CH.CHATROOM_MEMBER_NO = #{loginMember.memberNo}
 		</if>
 		AND CH.CHATROOM_STATUS = 'Y'
+		ORDER BY CH.CHATROOM_NO DESC
   	</select>
   	
   	

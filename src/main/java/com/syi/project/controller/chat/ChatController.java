@@ -100,6 +100,9 @@ public class ChatController {
 			String formattedDateTime = now.format(formatter);
 			chatMessage.setRegDateTime(formattedDateTime);
 			System.out.println("현재시간 설정 : " + chatMessage.getRegDateTime());
+			
+			//읽지 않음 표시
+			chatMessage.setRead(false);
 
 			System.out.println("최종 chatMessage : " + chatMessage);
 
