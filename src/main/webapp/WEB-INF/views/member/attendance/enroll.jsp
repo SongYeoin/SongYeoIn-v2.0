@@ -330,7 +330,9 @@ window.onload = function() {
 
     if (!window.location.search.includes("classNo")) {
         var dayOfWeek = getDayOfWeek();
-        window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
+        var today = new Date();
+        var formattedDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+        window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek + "&attendanceDate=" + formattedDate;
     }
     
  	// resultMessage가 있으면 alert로 표시
@@ -344,7 +346,10 @@ function sendClassChange() {
     var selectBox = document.getElementById("classSelect");
     var selectedClassNo = selectBox.options[selectBox.selectedIndex].value;
     var dayOfWeek = getDayOfWeek();
-    window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek;
+    var today = new Date();
+    var formattedDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+
+    window.location.href = "/member/attendance/enroll?classNo=" + selectedClassNo + "&dayOfWeek=" + dayOfWeek + "&attendanceDate=" + formattedDate;
 }
 
 //폼 제출 시 dayOfWeek 설정
@@ -354,6 +359,17 @@ function setDayOfWeek(form) {
   
     if (dayOfWeekField) {
         dayOfWeekField.value = dayOfWeek; // dayOfWeek 필드에 값을 설정
+        
+     	// 오늘 날짜를 yyyy-MM-dd 형식으로 추가
+        var today = new Date();
+        var formattedDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+
+        var attendanceDateField = document.createElement("input");
+        attendanceDateField.setAttribute("type", "hidden");
+        attendanceDateField.setAttribute("name", "attendanceDate");
+        attendanceDateField.setAttribute("value", formattedDate);
+        form.appendChild(attendanceDateField);
+        
         return true; // 폼을 정상적으로 제출하도록 true 반환
         
     } else {

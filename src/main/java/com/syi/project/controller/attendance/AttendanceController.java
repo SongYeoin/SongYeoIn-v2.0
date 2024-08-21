@@ -1,7 +1,9 @@
 package com.syi.project.controller.attendance;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +50,12 @@ public class AttendanceController {
 	
 	/* 출석 등록 페이지로 이동 */
 	@GetMapping("/attendance/enroll")
-	public void attendanceEnrollGET(HttpServletRequest request, Integer classNo, String dayOfWeek, Model model) throws Exception{
+	public void attendanceEnrollGET(HttpServletRequest request, Integer classNo, String dayOfWeek, String attendanceDate, Model model) throws Exception{
+		
+		// 현재 날짜를 기본값으로 설정 (프론트엔드에서 보내지 않았을 경우)
+	    if (attendanceDate == null || attendanceDate.isEmpty()) {
+	        attendanceDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	    }
 		
 		// 수강생 정보 조회
 		HttpSession session = request.getSession();
@@ -66,14 +73,16 @@ public class AttendanceController {
 			List<PeriodVO> periodList = scheduleService.getPeriodsWithDayOfWeek(schedule.getScheduleNo(), dayOfWeek);
 			schedule.setPeriods(periodList);
 			
+			// 출석 가능한 교시 정보 담기
 			Map<Integer, Boolean> attendanceStatus = new HashMap<>();
+			// 교시 별 출석 상태 담기
 			Map<Integer, String> periodAttendanceStatus = new HashMap<>();
 			
 			// 출석 가능 상태인지 확인하기
 			for(PeriodVO period : periodList) {
 				
 				// 해당 교시의 출석 상태 조회
-				AttendanceVO attendance = attendanceService.getAttendanceByPeriodAndMember(period.getPeriodNo(), loginMember.getMemberNo());
+				AttendanceVO attendance = attendanceService.getAttendanceByPeriodAndMember(period.getPeriodNo(), loginMember.getMemberNo(), Date.valueOf(attendanceDate));
 				if(attendance != null) {
 					periodAttendanceStatus.put(period.getPeriodNo(), attendance.getAttendanceStatus());
 				} else {
@@ -90,6 +99,9 @@ public class AttendanceController {
 			model.addAttribute("schedule", schedule);
 			model.addAttribute("attendanceStatus", attendanceStatus);
 			model.addAttribute("periodAttendanceStatus", periodAttendanceStatus);
+			
+			System.out.println("컨트롤러에서 확인한 attendanceStatus : " + attendanceStatus);
+			System.out.println("컨트롤러에서 확인한 periodAttendanceStatus : " + periodAttendanceStatus);
 			
 		} catch (NullPointerException e) {
 			log.error("등록된 시간표가 없습니다.", e);

@@ -30,7 +30,7 @@
 	
 	<!-- 교시번호와 수강생번호로 단일 출석 조회하기 --> 
 	<select id="getAttendanceByPeriodAndMember" resultMap="attendanceResultMap">
-		select * from ATTENDANCE where PERIOD_NO = #{periodNo} and MEMBER_NO = #{memberNo}
+		select * from ATTENDANCE where PERIOD_NO = #{periodNo} and MEMBER_NO = #{memberNo} and ATTENDANCE_DATE = #{attendanceDate, jdbcType=DATE}
 	</select>
    
 

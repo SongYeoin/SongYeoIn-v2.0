@@ -1,5 +1,6 @@
 package com.syi.project.service.attendance;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +22,11 @@ public class AttendanceService {
 	}
 
 	/* 교시번호와 수강생번호로 단일 출석 조회하기 */
-	public AttendanceVO getAttendanceByPeriodAndMember(Integer periodNo, Integer memberNo) {
+	public AttendanceVO getAttendanceByPeriodAndMember(Integer periodNo, Integer memberNo, Date date) {
 		Map<String, Object> params = new HashMap<>();
 	    params.put("periodNo", periodNo);
 	    params.put("memberNo", memberNo);
+	    params.put("attendanceDate", date);
 		return attendanceMapper.getAttendanceByPeriodAndMember(params);
 	}
 
