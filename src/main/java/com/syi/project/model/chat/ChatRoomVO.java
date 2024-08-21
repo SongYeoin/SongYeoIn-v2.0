@@ -17,18 +17,19 @@ import lombok.Data;
 public class ChatRoomVO {
 	// 채팅방 넘버
 	private int chatRoomNo;
+	private String chatRoomName;
 	private int adminNo;
 	private int memberNo;
 
 	private MemberVO member;
 
 	// 채팅방에 속한 사람들
-	 private Set<Session> chatRoomUserSessions = new HashSet<>();
+	 //private Set<Session> chatRoomUserSessions = new HashSet<>();
 
 	/* private SyclassVO syClass; */
 
 	// DB에 세션 정보를 저장하기 위해 사용될 필드 (세션 ID 목록을 문자열로 저장)
-	 private String sessionIds;
+	 //private String sessionIds;
 
 
 		/*

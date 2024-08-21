@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -196,8 +196,7 @@ a.custom{
 						<div class="card-body w-auto scrollable-div">
 
 							<ul id="roomList" class="list-unstyled mb-0">
-								<c:forEach items="${roomList}"  var="room">
-									<c:forEach items="${lastMessageList}"  var="message">
+								<c:forEach items="${chatRoomInfos}"  var="room">
 										<li class="p-2 border-bottom bg-body-tertiary" 
 										data-chat-room-no="${room.chatRoomNo}"
 										onclick="selectChatRoom('${room.chatRoomNo}')"
@@ -210,17 +209,18 @@ a.custom{
 														class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
 														width="60">
 													<div class="pt-1">
-														<p class="fw-bold mb-0"><c:out value="${room.member.memberName}"/></p>
-														<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${message.message}"/></p>
+														<p class="fw-bold mb-0"><c:out value="${room.chatRoomName}"/></p>
+														<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${room.message}"/></p>
 													</div>
 												</div>
 												<div class="pt-1">
-													<p class="small text-muted mb-1"><c:out value="${message.regDateTime}"/></p>
+													<p class="small text-muted mb-1">
+													<fmt:formatDate value="${room.regDateTime}" pattern="a hh:mm"/>
+													<%-- <c:out value="${room.regDateTime}"/> --%></p>
 													<span class="badge bg-danger float-end">1</span>
 												</div>
 										</a></li>
 									</c:forEach>
-							</c:forEach>
 							</ul>
 
 						</div>
@@ -358,9 +358,9 @@ function selectSearchCondition(){
 	});
 	
 	
-	function updateRoomList(returnData) {
+	function updateRoomList(chatRoomInfos) {
 		
-		console.log(returnData);
+		console.log(chatRoomInfos);
 		
 		// 기존의 리스트 비우기
 	    let listContainer = $("#roomList");
@@ -368,19 +368,14 @@ function selectSearchCondition(){
 
 	    let listItem = '';
 	    
-	    let roomList = returnData.get('filterChatRoomList');
-	    let messageList = returnData.get('lastMessageList');
-	    
-	    
 	    // 새로운 리스트 추가
-	    $.each(roomList, function(index, room) {
-	    	$.each(messageList, function(index,message) {
-		    	let timeMatch = message.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
-				console.log(message.regDateTime);
-				console.log(timeMatch);
-				let timeString = '';
+	    $.each(chatRoomInfos, function(index, room) {
 				
-				if (timeMatch) {
+				if (room.regDateTime) {
+				    	let timeMatch = room.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
+						console.log(room.regDateTime);
+						console.log(timeMatch);
+						let timeString = '';
 					
 					  // 시간과 분 추출
 					  let hours = parseInt(timeMatch[1], 10);//10진수로
@@ -422,7 +417,7 @@ function selectSearchCondition(){
 		                        })
 		                    ).append(
 		                        $('<div>', { class: 'pt-1' }).append(
-		                            $('<p>', { class: 'fw-bold mb-0' }).text(room.member.memberName)
+		                            $('<p>', { class: 'fw-bold mb-0' }).text(room.chatRoomName)
 		                        ).append(
 		                            $('<p>', {
 		                                class: 'd-inline-block text-truncate small text-muted',
@@ -443,7 +438,6 @@ function selectSearchCondition(){
 				
 				
 			});
-	});
 	}
 }
  

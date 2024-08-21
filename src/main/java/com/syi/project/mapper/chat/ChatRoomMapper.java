@@ -13,25 +13,11 @@ import com.syi.project.model.syclass.SyclassVO;
 
 public interface ChatRoomMapper {
 	
-	// 채팅방 정보를 가져오는 메소드
-    ChatRoomVO SelectChatRoomByNo(String chatRoomNo);
-	
-    // 채팅방 개설하는 메소드
-    int insertChatRoom(ChatRoomVO chatroom);
-
-	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
-
-	int selectAdminNoByClassNo(int classNo);
-	
-	int updateChatRoomStatus(int chatRoomNo);
-	
-
-	List<ChatRoomVO> selectChatRoomList(@Param("classNo") Integer classNo,@Param("searchName")String searchName,@Param("loginMember")MemberVO loginMember);
-
-	List<EnrollVO> selectClassMemberList(int adminNo);
-
+	int insertChatRoom(ChatRoomVO chatroom);
 	int selectCountOneRoomList(ChatRoomVO chatroom);
-	
 	List<SyclassVO> selectAdminClassList(int adminNo);
-	
+	List<EnrollVO> selectClassMemberList(int adminNo);
+	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
+	int updateChatRoomStatus(int chatRoomNo);
+	List<ChatRoomVO> selectChatRoomList(@Param("cri") Criteria cri,@Param("loginMember")MemberVO loginMember);
 }

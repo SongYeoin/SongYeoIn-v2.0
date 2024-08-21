@@ -1,10 +1,12 @@
 package com.syi.project.controller.chat;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.EndpointConfig;
@@ -90,16 +92,31 @@ public class ChatController {
 			 * chatMessage.getType());
 			 */
 
-			// 현재 날짜와 시간을 가져옵니다.
-			LocalDateTime now = LocalDateTime.now();
+			/*
+			 * 
+			 * 
+			 * // 원하는 포맷으로 DateTimeFormatter를 생성합니다. DateTimeFormatter formatter =
+			 * DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
+			 * 
+			 * // 포맷을 사용하여 현재 날짜와 시간을 문자열로 변환합니다. String formattedDateTime =
+			 * now.format(formatter);
+			 */
+			
+			/*
+			 * // 현재 날짜와 시간을 가져옵니다. LocalDateTime now = LocalDateTime.now();
+			 * 
+			 * // LocalDateTime을 ZonedDateTime으로 변환 (UTC 시간대 사용) ZonedDateTime zonedDateTime
+			 * = now.atZone(ZoneId.of("UTC"));
+			 * 
+			 * // ZonedDateTime을 Instant로 변환 Instant instant = zonedDateTime.toInstant();
+			 * 
+			 * // Instant를 Date로 변환 Date isoDate = Date.from(instant);
+			 */
+			Instant instantNow = Instant.now();
+			Date dateFromInstant = Date.from(instantNow);
 
-			// 원하는 포맷으로 DateTimeFormatter를 생성합니다.
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
-
-			// 포맷을 사용하여 현재 날짜와 시간을 문자열로 변환합니다.
-			String formattedDateTime = now.format(formatter);
-			chatMessage.setRegDateTime(formattedDateTime);
-			System.out.println("현재시간 설정 : " + chatMessage.getRegDateTime());
+			
+			chatMessage.setRegDateTime(dateFromInstant);
 			
 			//읽지 않음 표시
 			chatMessage.setRead(false);

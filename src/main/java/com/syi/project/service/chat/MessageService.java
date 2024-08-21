@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.syi.project.model.chat.ChatMessageDTO;
+import com.syi.project.model.chat.ChatRoomInfo;
 
 public interface MessageService {
 	
@@ -11,9 +12,14 @@ public interface MessageService {
 	public List<ChatMessageDTO> getAllMessage();
 	public ChatMessageDTO getMessageOne(String id);
 	public void deleteMessageById(String id);
+	
+	// 채팅방 누르면 나오는 메시지 리스트
 	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo);
+	
+	
 	public void updateIsReadtoTrue(String chatRoomNo);
-	public Map<String, ChatMessageDTO> getLatestMessagesByChatRoom();
+	//public Map<String, ChatMessageDTO> getLatestMessagesByChatRoom(int chatRoomNo);
+	public ChatRoomInfo getLatestMessagesByChatRoom(String chatRoomNo);
 	
 
 }

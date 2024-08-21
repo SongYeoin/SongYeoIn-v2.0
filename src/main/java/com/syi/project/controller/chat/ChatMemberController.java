@@ -46,7 +46,7 @@ public class ChatMemberController {
     	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
     	
     	//채팅방 목록 조회
-    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(null,null,loginMember);
+    	List<ChatRoomVO> roomList = chatService.selectChatRoomList(null,loginMember);
     	model.addAttribute("roomList",roomList);
     	
     	
@@ -71,7 +71,6 @@ public class ChatMemberController {
     }
     
     @GetMapping("/chats/{chatRoomNo}")
-    @Transactional
     @ResponseBody
     public List<ChatMessageDTO> memberChatAJAXGET(@PathVariable String chatRoomNo) throws JsonProcessingException {
     	log.info("ajax로 매핑되어 온 메소드에 진입함");
@@ -83,14 +82,17 @@ public class ChatMemberController {
     
     
     @PostMapping("/createroom")
+    @Transactional
     public String memberCreateRoomPOST(HttpServletRequest request,int adminNO,Model model) {
     	HttpSession session = request.getSession();
     	MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
     	
     	int memberNo = loginMember.getMemberNo();
+    	String memberName = loginMember.getMemberName();
     	ChatRoomVO chatroom = new ChatRoomVO();
     	chatroom.setMemberNo(memberNo);
     	chatroom.setAdminNo(adminNO);
+    	chatroom.setChatRoomName(memberName);
     	
         chatService.createChatRoom(chatroom);
         return "redirect:/member/chatroom/main";

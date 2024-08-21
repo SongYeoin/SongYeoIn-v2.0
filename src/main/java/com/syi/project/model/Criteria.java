@@ -41,6 +41,8 @@ public class Criteria {
     
     private Integer memberNo; // 수강생 번호
     
+    private String memberName;
+    
 	/* Criteria 생성자 */
 	public Criteria(int pageNum, int amount) {
 		this.pageNum = pageNum;

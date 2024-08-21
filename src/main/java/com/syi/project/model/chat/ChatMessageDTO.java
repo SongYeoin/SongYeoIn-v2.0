@@ -1,10 +1,10 @@
 package com.syi.project.model.chat;
 
-import org.springframework.data.annotation.Id;
+import java.util.Date;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -39,10 +39,9 @@ public class ChatMessageDTO {
 	@JsonProperty("message")
 	private String message; // 메시지
 
-	@Field(name = "regDateTime")
 	//@JsonProperty("regDateTime")
 	//@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private String regDateTime; // 메시지 발송 시간
+	private Date regDateTime; // 메시지 발송 시간
 	
 	@Field(name="isRead")
 	private boolean isRead;//상대방이 읽었냐
