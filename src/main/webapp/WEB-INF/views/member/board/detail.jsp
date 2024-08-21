@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>송파여성인력개발센터</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <style>
 /* CSS Reset */
@@ -157,10 +158,6 @@ button:hover {
     text-decoration: underline;
 }
 
-.edit-form {
-    display: none;
-}
-
 </style>
 </head>
 <body>
@@ -202,14 +199,13 @@ button:hover {
                 </thead>
             </table>
             
-            <!-- 좋아요 기능 -->
-            <!--  
+            <!-- 좋아요 기능 -->    
             <div class="button-container">
-                <button id="likeBtn" data-board-no="${board.boardNo}">좋아요</button>
-                <span id="boardHeartCount">${board.boardHeartCount}</span> 
+                <button id="heartBtn" data-boardNo="${board.boardNo}">
+                	<i id="heartIcon" class="bi ${heartCount > 0 ? 'bi-heart-fill' : 'bi-heart' }"></i>
+                </button>
+                <span id="boardHeartCount">${ board.boardHeartCount }</span> 
             </div>
-            -->
-
 
             <!-- 댓글 추가 폼 -->
             <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
@@ -240,7 +236,7 @@ button:hover {
                     </c:if>
                     
                     <!-- 댓글 -->
-                    <p>${comment.commentContent}</p>
+                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
                 </div>
             </c:forEach>
 
@@ -296,13 +292,13 @@ button:hover {
     }
     
     function editComment(commentNo) {
-        document.getElementById('comment-' + commentNo).style.display = 'none';
+        document.getElementById('comment-content-' + commentNo).style.display = 'none';
         document.getElementById('edit-form-' + commentNo).style.display = 'block';
     }
 
     function cancelEdit(commentNo) {
         document.getElementById('edit-form-' + commentNo).style.display = 'none';
-        document.getElementById('comment-' + commentNo).style.display = 'block';
+        document.getElementById('comment-content-' + commentNo).style.display = 'block';
     }
     
     function deleteComment(commentNo) {
@@ -325,7 +321,33 @@ button:hover {
             });
         }
     }
-
+    
+    $('#heartBtn').click(function() {
+    	var button = $(this);
+        var boardNo = button.data('boardno');
+    	
+        $.ajax({
+            url: "${pageContext.request.contextPath}/member/board/heart", 
+            type: "POST",
+            data: { boardNo: boardNo },
+            success: function(response) {
+                var heartIcon = $('#heartIcon');
+                var heartCount = $('#boardHeartCount');
+                if (response === 'heartAdded') {
+                    heartIcon.removeClass('bi-heart').addClass('bi-heart-fill');
+                    heartCount.text(parseInt(heartCount.text()) + 1);
+                } else if (response === 'heartRemoved') {
+                    heartIcon.removeClass('bi-heart-fill').addClass('bi-heart');
+                    heartCount.text(parseInt(heartCount.text()) - 1);
+                } else {
+                    alert('좋아요 처리에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('네트워크 오류가 발생했습니다.');
+            }
+        });
+    });
     </script>
 
 </body>

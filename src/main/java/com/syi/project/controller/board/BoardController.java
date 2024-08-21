@@ -21,6 +21,7 @@ import com.syi.project.model.Criteria;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.board.BoardVO;
 import com.syi.project.model.board.CommentsVO;
+import com.syi.project.model.board.HeartVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.BoardService;
 import com.syi.project.service.board.CommentService;
@@ -47,11 +48,19 @@ public class BoardController {
 	}
 
 	@GetMapping("/detail")
-	public String detailBoard(int boardNo, Model model) {
+	public String detailBoard(int boardNo, Model model, HeartVO heart, HttpSession session) {
+		MemberVO member = (MemberVO) session.getAttribute("loginMember");
+		
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
 		List<CommentsVO> commentList = commentService.selectCommentList(boardNo);
+		
+		heart.setHeartBoardNo(boardNo);
+		heart.setHeartMemberNo(member.getMemberNo());
+		int heartCount = boardService.selectMyHeart(heart);
+		
 		model.addAttribute("board", board);
 		model.addAttribute("commentList", commentList);
+		model.addAttribute("heartCount", heartCount);
 		return "member/board/detail";
 	}
 
@@ -101,18 +110,30 @@ public class BoardController {
 	}
 
 	// 좋아요
-	@PostMapping("/like")
+	@PostMapping("/heart")
 	@ResponseBody
-	public String likeBoard(@RequestParam("boardNo") int boardNo, HttpSession session) {
+	public String heartBoard(@RequestParam int boardNo, HttpSession session) {
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-		int result = boardService.insertHeart(null);
-		return result > 0 ? "success" : "fail";
+		
+		HeartVO heart = new HeartVO();
+		heart.setHeartBoardNo(boardNo);
+		heart.setHeartMemberNo(member.getMemberNo());
+		
+		int heartCount = boardService.selectMyHeart(heart);
+		
+		if(heartCount > 0) {
+			int result = boardService.deleteHeart(heart);
+			if(result > 0) {
+				boardService.decreaseHeartCount(boardNo);
+				return "heartRemoved";
+			}
+		} else {
+			int result = boardService.insertHeart(heart);
+			if(result > 0) {
+				boardService.increaseHeartCount(boardNo);
+				return "heartAdded";
+			}
+		}
+		return "fail";
 	}
-	
-	
-	
-	
-	
-
 }

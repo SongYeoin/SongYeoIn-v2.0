@@ -10,11 +10,11 @@ public interface BoardMapper {
 
 	// 게시글 목록
 	List<BoardVO> selectBoards(Criteria cri);
-	
+
 	// 게시글 총 수
 	int selectBoardTotal(Criteria cri);
 
-	// 공지사항 조회수 증가
+	// 조회수 증가
 	void updateBoardCount(int boardNo);
 
 	// 게시글 상세 조회
@@ -29,16 +29,22 @@ public interface BoardMapper {
 	// 게시글 삭제
 	int deleteBoard(int boardNo);
 
-	// 좋아요 추가
-	int insertHeart(HeartVO heart);
-	
+	// 좋아요 갯수
+	int selectHeartTotal(HeartVO heart);
+
 	// 좋아요 확인
 	int selectMyHeart(HeartVO heart);
+
+	// 좋아요 추가
+	int insertHeart(HeartVO heart);
+
+	// 좋아요 수 증가
+	void increaseHeartCount(int boardNo);
 	
 	// 좋아요 취소
 	int deleteHeart(HeartVO heart);
 	
-	// 좋아요 갯수
-	int selectHeartTotal(HeartVO heart);
-	
+	// 좋아요 수 감소
+	void decreaseHeartCount(int boardNo);
+
 }

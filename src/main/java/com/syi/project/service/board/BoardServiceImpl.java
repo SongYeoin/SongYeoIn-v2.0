@@ -22,7 +22,7 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardVO> selectBoards(Criteria cri) {
 		return boardMapper.selectBoards(cri);
 	}
-	
+
 	// 게시글 총 수
 	@Override
 	public int selectBoardTotal(Criteria cri) {
@@ -64,6 +64,18 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.deleteBoard(boardNo);
 	}
 
+	// 좋아요 총 갯수
+	@Override
+	public int selectHeartTotal(HeartVO heart) {
+		return boardMapper.selectHeartTotal(heart);
+	}
+
+	// 좋아요 확인
+	@Override
+	public int selectMyHeart(HeartVO heart) {
+		return boardMapper.selectMyHeart(heart);
+	}
+
 	// 좋아요 추가
 	@Transactional
 	@Override
@@ -71,10 +83,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.insertHeart(heart);
 	}
 
-	// 좋아요 확인
+	// 좋아요 수 증가
+	@Transactional
 	@Override
-	public int selectMyHeart(HeartVO heart) {
-		return boardMapper.selectMyHeart(heart);
+	public void increaseHeartCount(int boardNo) {
+		boardMapper.increaseHeartCount(boardNo);
 	}
 
 	// 좋아요 취소
@@ -84,10 +97,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.deleteHeart(heart);
 	}
 
-	// 좋아요 총 갯수
+	// 좋아요 수 감소
+	@Transactional
 	@Override
-	public int selectHeartTotal(HeartVO heart) {
-		return boardMapper.selectHeartTotal(heart);
+	public void decreaseHeartCount(int boardNo) {
+		boardMapper.decreaseHeartCount(boardNo);
 	}
 
 }

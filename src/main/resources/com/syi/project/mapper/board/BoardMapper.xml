@@ -72,7 +72,9 @@
     <!-- 게시판 목록 -->
     <select id="selectBoards" resultMap="BoardResultMap">
     <![CDATA[
-	    SELECT BOARD.*, MEMBER.*
+	    SELECT BOARD.*, MEMBER.*,
+	    		(SELECT COUNT(*) FROM HEART WHERE HEART.HEART_BOARD_NO = BOARD.BOARD_NO) AS BOARD_HEART_COUNT,
+	    		(SELECT COUNT(*) FROM COMMENTS WHERE COMMENTS.COMMENT_BOARD_NO = BOARD.BOARD_NO) AS BOARD_COMMENTS_COUNT
 	    FROM (
 	        SELECT BOARD.*,
 	               ROW_NUMBER() OVER (
@@ -110,7 +112,9 @@
   	
   	<!-- 게시글 상세 조회 -->
   	<select id="selectBoardByBoardNo" parameterType="_int" resultMap="BoardResultMap">
-  		SELECT b.*, m.*
+  		SELECT b.*, m.*,
+  				(SELECT COUNT(*) FROM HEART WHERE HEART.HEART_BOARD_NO = b.BOARD_NO) AS BOARD_HEART_COUNT,
+  				(SELECT COUNT(*) FROM COMMENTS WHERE COMMENTS.COMMENT_BOARD_NO = b.BOARD_NO) AS BOARD_COMMENTS_COUNT
     	FROM BOARD b
     		LEFT JOIN MEMBER m ON b.BOARD_MEMBER_NO = m.MEMBER_NO
     	WHERE b.BOARD_NO = #{ boardNo }
@@ -139,19 +143,33 @@
 	</update>
 	
 	<!-- 좋아요 -->
-	<!-- 좋아요 추가 -->
-	<insert id="insertHeart" parameterType="com.syi.project.model.board.HeartVO">
-    	INSERT INTO HEART (HEART_BOARD_NO, HEART_MEMBER_NO)
-    	VALUES (#{ heartBoardNo }, #{ heartMemberNo })
-    </insert>
+	<!-- 좋아요 총 갯수 -->
+    <select id="selectHeartTotal" resultType="_int">
+    	SELECT COUNT(*)
+    	FROM HEART
+    	WHERE HEART_BOARD_NO = #{ heartBoardNo }
+    </select>
     
-    <!-- 좋아요 확인 -->
+	<!-- 좋아요 확인 -->
     <select id="selectMyHeart" resultType="_int">
     	SELECT COUNT(*)
     	FROM HEART
     	WHERE HEART_BOARD_NO = #{ heartBoardNo }
     		AND HEART_MEMBER_NO = #{ heartMemberNo }
     </select>
+    
+	<!-- 좋아요 추가 -->
+	<insert id="insertHeart" parameterType="com.syi.project.model.board.HeartVO">
+    	INSERT INTO HEART (HEART_BOARD_NO, HEART_MEMBER_NO)
+    	VALUES (#{ heartBoardNo }, #{ heartMemberNo })
+    </insert>
+    
+    <!-- 좋아요 수 증가 -->
+    <update id="increaseHeartCount">
+    	UPDATE BOARD
+    	SET BOARD_HEART_COUNT = BOARD_HEART_COUNT + 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
     
     <!-- 좋아요 취소 -->
     <delete id="deleteHeart">
@@ -161,11 +179,10 @@
     		AND HEART_MEMBER_NO = #{ heartMemberNo }
     </delete>
     
-    <!-- 좋아요 총 갯수 -->
-    <select id="selectHeartTotal" resultType="_int">
-    	SELECT COUNT(*)
-    	FROM HEART
-    	WHERE HEART_BOARD_NO = #{ heartBoardNo }
-    </select>
-  
+    <!-- 좋아요 수 감소 -->
+    <update id="decreaseHeartCount">
+    	UPDATE BOARD
+    	SET BOARD_HEART_COUNT = BOARD_HEART_COUNT - 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
   </mapper>

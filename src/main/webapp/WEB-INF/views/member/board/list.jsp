@@ -224,6 +224,8 @@ table tbody tr {
                             <th width="60%">제목</th>
                             <th>글쓴이</th>
                             <th>조회수</th>
+                            <th>댓글수</th>
+                            <th>좋아요수</th>
                             <th>등록일</th>
                         </tr>
                     </thead>
@@ -234,6 +236,8 @@ table tbody tr {
                                 <td>${board.boardTitle}</td>
                                 <td>${board.member.memberNickname}</td>
                                 <td>${board.boardCount}</td>
+                                <td>${board.boardCommentsCount}</td>
+                                <td>${board.boardHeartCount}</td>
                                 <td>${board.boardRegDate}</td>
                             </tr>
                         </c:forEach>
