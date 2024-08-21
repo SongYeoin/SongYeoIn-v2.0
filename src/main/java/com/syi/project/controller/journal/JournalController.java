@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
+import com.syi.project.model.journal.EduScheduleVO;
 import com.syi.project.model.journal.JournalVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
+import com.syi.project.service.enroll.EnrollService;
 import com.syi.project.service.journal.JournalService;
 import com.syi.project.service.member.AdminService;
 import com.syi.project.service.syclass.SyclassService;
@@ -47,11 +53,8 @@ public class JournalController {
 	private JournalService journalService;
 	
 	@Autowired
-	private SyclassService SyclassService;
+	private EnrollService enrollService;
 	
-	@Autowired
-    private AdminService adminService;
-
 	// 파일 업로드 경로를 저장할 필드
 	@Value("${file.upload.path}")
 	private String fileUploadPath;
@@ -63,24 +66,30 @@ public class JournalController {
 
 	/* 일지 등록 페이지로 이동 */
 	@GetMapping("journalEnroll")
-	public String journalEnrollGET(Model model) throws Exception {
+	public String journalEnrollGET(Model model, HttpSession session) throws Exception {
 		logger.info("일지 등록 폼 페이지 접속");
-		
-		// 반 리스트 조회
-        List<SyclassVO> classList = adminService.selectClassList();
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return "redirect:/login";
+        }
+        List<EnrollVO> classList = enrollService.selectEnrollList(loginMember.getMemberNo());
         model.addAttribute("classList", classList);
-
-        // 수강생 리스트 조회
-        List<MemberVO> memberList = adminService.selectMemberList(new Criteria());
-        model.addAttribute("memberList", memberList);
-		
 		return "journal/journalEnroll";
 	}
 
 	/* 일지 등록 */
 	@PostMapping("/journalEnroll")
-	public String addJournal(JournalVO journal, @RequestParam("file") MultipartFile file) throws Exception {
+	public String addJournal(JournalVO journal, @RequestParam("file") MultipartFile file, @RequestParam("classNo") int classNo, HttpSession session, RedirectAttributes rttr) throws Exception {
+		logger.info("교육일지 등록");
 
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return "redirect:/member/login";
+        }
+
+        journal.setMemberNo(loginMember.getMemberNo());
+        journal.setClassNo(classNo);
+		
 		// 파일 업로드 처리
 		if (!file.isEmpty()) {
 			// 파일 이름 정리 (파일의 불필요한 경로, 요소를 제거하고 이름만 남겨놓음)
@@ -114,6 +123,7 @@ public class JournalController {
 		// 일지 등록 처리
 		logger.info(">>> Received journal date: {}", journal.getJournalWriteDate());
 		journalService.journalEnroll(journal, file);
+		rttr.addFlashAttribute("message", "교육일지가 등록되었습니다.");
 		return "redirect:/journal/journalList";
 	}
 
@@ -151,46 +161,45 @@ public class JournalController {
 
 	/* 교육일지 목록 조회 페이지 */
 	@GetMapping("journalList")
-	public void journalListGET(Criteria cri, 
-			@RequestParam(required = false) Integer memberNo, 
-            @RequestParam(required = false) Integer classNo, Model model) throws Exception {
+	public String journalListGET(Criteria cri, Model model, HttpSession session
+			, @RequestParam(value = "classNo", required = false) Integer classNo) throws Exception {
 		logger.info(">>>>>>>>>>       교육일지 목록 페이지 접속             >>>>>>>>>>");
 
-		// Criteria 객체에 멤버 번호와 클래스 번호 설정
-        if (memberNo != null) {
-            cri.setMemberNo(memberNo);
-        }
-        if (classNo != null) {
-            cri.setClassNo(classNo);
-        }
-		
-        // 필터 값이 포함된 Criteria 객체를 사용하여 일지 리스트 조회
-        List<JournalVO> journalList = journalService.journalList(cri);
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		int memberNo = loginMember.getMemberNo();
 
-        if (!journalList.isEmpty()) {
-            model.addAttribute("journalList", journalList);
-        } else {
-            model.addAttribute("listCheck", "empty");
+		// 클래스 번호가 제공되지 않았다면 세션에서 가져오거나 기본값 설정
+        if (classNo == null) {
+            classNo = (Integer) session.getAttribute("selectedClassNo");
+            if (classNo == null) {
+                classNo = enrollService.selectClassNo(memberNo);
+                if (classNo == null) {
+                    // 기본 클래스 번호를 설정하거나 에러 페이지로 리다이렉트
+                    classNo = 0; // 또는 적절한 기본값
+                    // return "error";
+                }
+            }
         }
+        session.setAttribute("selectedClassNo", classNo);
+
+		
+		List<JournalVO> journalList = journalService.journalList(cri, classNo, memberNo);
+        model.addAttribute("journalList", journalList);
+		
+        // 사용자의 수강 중인 반 목록 조회
+        List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
+        model.addAttribute("classList", classList);
 
 		/* 페이지 인터페이스 데이터 */
-		model.addAttribute("pageMaker", new PageDTO(cri, journalService.journalGetTotal(cri)));
+		model.addAttribute("pageMaker", new PageDTO(cri, journalService.journalGetTotal(cri, classNo, memberNo)));
 		
-		// 전체 일지 조회 캘린더용, 클래스 번호에 따라 필터링
-	    List<JournalVO> journalAllList = journalService.journalAllList(cri.getClassNo() != null ? cri.getClassNo() : 0);
-	    logger.info("---------> journalAllList : " + journalAllList);
-	    model.addAttribute("journalAllList", journalAllList);
+		// 캘린더용 전체 일지 조회
+        List<JournalVO> journalAllList = journalService.journalAllList(classNo);
+        model.addAttribute("journalAllList", journalAllList);
 
-		// 수강생 이름 필터 값을 모델에 추가
-        model.addAttribute("memberNo", memberNo);
-        model.addAttribute("classNo", classNo);
-        
-        // 클래스 리스트와 회원 리스트 조회
-        List<SyclassVO> classList = adminService.selectClassList();
-        List<MemberVO> memberList = adminService.selectMemberList(new Criteria());
+        model.addAttribute("selectedClassNo", classNo);
 
-        model.addAttribute("classList", classList);
-        model.addAttribute("memberList", memberList);
+        return "journal/journalList";
 	}
 
 	/* 교육일지 상세 정보 페이지 */
@@ -213,7 +222,8 @@ public class JournalController {
 
 	/* 교육일지 수정 처리 */
 	@PostMapping("journalModify.do")
-	public String journalModifyPOST(JournalVO journal, @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
+	public String journalModifyPOST(JournalVO journal, @RequestParam(value = "file", required = false) MultipartFile file, HttpSession session,
+			RedirectAttributes rttr) throws Exception {
 		logger.info("교육일지 수정 요청 / 일지 글번호 ---> " + journal.getJournalNo());
 
 		// 파일이 업로드된 경우

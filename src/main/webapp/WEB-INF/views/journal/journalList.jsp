@@ -353,24 +353,21 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사용자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		<%@ include file="../member/aside.jsp"%>
-	</c:if>
-	<!-- 관리자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-
-		<div class="classroom-header">
-			<i class="bi bi-house-fill"
-				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-			<div class="title">${syclass.className}</div>
-			<div class="details">담당자: ${syclass.managerName} | 강사명:
-				${syclass.teacherName}</div>
-		</div>
-
-		<!-- 사이드바 연결 -->
-		<%@ include file="../admin/class/aside.jsp"%>
-	</c:if>
+	<c:choose>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+			<%@ include file="../member/aside.jsp"%>
+		</c:when>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+			<div class="classroom-header">
+				<i class="bi bi-house-fill"
+					onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+				<div class="title">${syclass.className}</div>
+				<div class="details">담당자: ${syclass.managerName} | 강사명:
+					${syclass.teacherName}</div>
+			</div>
+			<%@ include file="../admin/class/aside.jsp"%>
+		</c:when>
+	</c:choose>
 
 	<main>
 
@@ -378,10 +375,13 @@ td.checkStatus.N {
 		<div class="title-container">
 			<h1>교육 일지</h1>
 			<div class="select-box">
-				<select id="classSelect" name="classSelect" onchange="loadMembers()">
+				<!-- 반 선택 드롭다운 -->
+				<select id="classSelect" name="classNo"
+					onchange="changeClass(this.value)">
 					<c:forEach var="classItem" items="${classList}">
 						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
+							<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+							${classItem.className}</option>
 					</c:forEach>
 				</select>
 			</div>
@@ -402,8 +402,6 @@ td.checkStatus.N {
 						action="${pageContext.request.contextPath}/journal/journalList">
 						<input type="text" id="keyword" name="keyword"
 							value="${param.keyword}" placeholder="제목으로 검색">
-
-						<!-- 수강생 선택 박스 -->
 						<c:if
 							test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
 							<select id="memberName" name="memberName">
@@ -414,7 +412,6 @@ td.checkStatus.N {
 								</c:forEach>
 							</select>
 						</c:if>
-
 						<select id="year" name="year">
 							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
 							<c:forEach var="i" begin="2020" end="2025">
@@ -428,10 +425,10 @@ td.checkStatus.N {
 								<option value="${i}"
 									<c:if test="${param.month == i}">selected</c:if>>${i}</option>
 							</c:forEach>
-						</select>
-
+						</select> <input type="hidden" name="classNo" value="${param.classNo}" />
 						<button type="submit">조회</button>
 					</form>
+
 				</div>
 				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
 					<div class="icons">
@@ -484,29 +481,23 @@ td.checkStatus.N {
 					<div class="pageInfo_area">
 						<ul id="pageInfo" class="pageInfo">
 
-							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
 								<li class="pageInfo_btn previous"><a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
-								</li>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">이전</a></li>
 							</c:if>
-
-							<!-- 각 번호 페이지 버튼 -->
 							<c:forEach var="num" begin="${pageMaker.pageStart}"
 								end="${pageMaker.pageEnd}">
 								<li
 									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
 									<a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">${num}</a>
 								</li>
 							</c:forEach>
-
-							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
 								<li class="pageInfo_btn next"><a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
-								</li>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">다음</a></li>
 							</c:if>
+
 						</ul>
 					</div>
 					<p class="totalCount">총 ${pageMaker.total}건</p>
@@ -519,105 +510,93 @@ td.checkStatus.N {
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 
+<!-- Hidden div 추가 -->
+<div id="journalAllListData" style="display: none;">
+    <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+        <div class="journal-data"
+             data-title="${journal.journalTitle}"
+             data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
+             data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
+        </div>
+    </c:forEach>
+</div>
+
 	<script>
-$(document).ready(function() {
-    // 테이블 행 클릭 시 상세 페이지로 이동
-    $('table tbody tr').click(function() {
-        var journalNo = $(this).data('journal-no');
-        if (journalNo) {
-            window.location.href = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo;
-        }
-    });
 
-    // FullCalendar 초기화
-    $('#calendar').fullCalendar({
-        initialView: 'dayGridMonth',
-        events: [
-            <c:forEach var="journal" items="${journalAllList}" varStatus="status">
-            {
-                title: "${journal.journalTitle}",
-                start: "${journal.journalWriteDate}",
-                url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
-            }<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ],
-        eventClick: function(info) {
-            if (info.event.url) {
-                window.location.href = info.event.url;
-            }
-        }
-    });
+	$(document).ready(function() {
+	    var calendar;
 
-    // 수강생 목록 로드 함수
-    function loadMembers() {
-        var classNo = $('#classSelect').val();
-        var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
+	    function initializeCalendar() {
+	        var calendarEl = document.getElementById('calendar');
+	        calendar = new FullCalendar.Calendar(calendarEl, {
+	            initialView: 'dayGridMonth',
+	            events: getCalendarEvents()
+	        });
+	        calendar.render();
+	    }
 
-        $.get(url, function(data) {
-            var memberSelect = $('#memberName');
-            memberSelect.empty();
-            memberSelect.append('<option value="">전체</option>');
-            
-            $.each(data.memberList, function(index, member) {
-                memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
-            });
-        });
-    }
+	    function getCalendarEvents() {
+	        var events = [];
+	        $('#journalAllListData .journal-data').each(function() {
+	            var event = {
+	                title: $(this).data('title'),
+	                start: $(this).data('start'),
+	                url: $(this).data('url')
+	            };
+	            events.push(event);
+	        });
+	        console.log('Calendar events:', events);  // 디버깅: 이벤트 로그 출력
+	        return events;
+	    }
 
-    // 함수 바깥으로 빼는 것을 잊지 마세요
-    window.loadMembers = loadMembers;
-});
+	    function updateCalendar(classNo) {
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/journal/journalList',
+	            data: { classNo: classNo },
+	            success: function(response) {
+	                var $response = $(response);
+	                var newJournalAllList = $response.find('#journalAllListData').html();
+	                $('#journalAllListData').html(newJournalAllList);
+	                
+	                console.log('Updated journalAllListData:', $('#journalAllListData').html());  // 디버깅: 업데이트된 데이터 로그 출력
+
+	                if (calendar) {
+	                    calendar.removeAllEvents();
+	                    var newEvents = getCalendarEvents();
+	                    calendar.addEventSource(newEvents);
+	                    calendar.refetchEvents();  // 이벤트 다시 불러오기
+	                }
+
+	                // 리스트 업데이트
+	                $('.table_wrap').html($response.find('.table_wrap').html());
+	                
+	                // 페이지네이션 업데이트
+	                $('.pageInfo_wrap').html($response.find('.pageInfo_wrap').html());
+	            }
+	        });
+	    }
+
+	    // 클래스 변경 시 호출되는 함수
+	    window.changeClass = function(classNo) {
+	        console.log('Changing class to:', classNo);  // 디버깅: 클래스 변경 로그 출력
+	        updateCalendar(classNo);
+	    }
+
+	    // 페이지 로드 시 캘린더 초기화
+	    initializeCalendar();
+
+	    // 테이블 행 클릭 이벤트
+	    $(document).on('click', 'table tbody tr', function() {
+	        var journalNo = $(this).data('journal-no');
+	        if (journalNo) {
+	            window.location.href = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo;
+	        }
+	    });
+
+	    console.log('Initial journalAllListData:', $('#journalAllListData').html());  // 디버깅: 초기 데이터 로그 출력
+	});
+
 </script>
 
-
-
-	<%-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: [
-                <c:forEach var="journal" items="${journalAllList}" varStatus="status">
-                {
-                    title: "${journal.journalTitle}",
-                    start: "${journal.journalWriteDate}",
-                    url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
-                }<c:if test="${!status.last}">,</c:if>
-                </c:forEach>
-            ],
-            eventClick: function(info) {
-                if (info.event.url) {
-                    window.location.href = info.event.url;
-                }
-            }
-        });
-        calendar.render();
-        
-        console.log("Calendar events: ", calendar.getEvents());
-    });
-    
-    function loadMembers() {
-        var classNo = document.getElementById("classSelect").value;
-        var memberSelect = document.getElementById("memberName");
-
-        // 모든 수강생을 제거하고 "전체" 옵션만 추가
-        memberSelect.innerHTML = '<option value="">전체</option>';
-
-        // 선택한 반에 따른 수강생 목록을 가져옵니다.
-        var options = '';
-        <% for (Member member : memberList) { %>
-            if ('${member.getClassNo()}' === classNo) {
-                options += '<option value="${member.getMemberId()}">${member.getMemberName()}</option>';
-            }
-        <% } %>
-        
-        memberSelect.innerHTML += options;
-    }
-    
-    function sendClassChange() {
-        var selectedClass = document.getElementById("classSelect").value;
-        window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + selectedClass;
-    }
-	</script> --%>
 </body>
 </html>

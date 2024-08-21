@@ -357,17 +357,19 @@ td.checkStatus.N {
 	<%@ include file="../common/header.jsp"%>
 
 	<c:choose>
-    	<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-	        <%@ include file="../member/aside.jsp"%>
-	    </c:when>
-	    <c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-	        <div class="classroom-header">
-	            <i class="bi bi-house-fill" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-	            <div class="title">${syclass.className}</div>
-	            <div class="details">담당자: ${syclass.managerName} | 강사명: ${syclass.teacherName}</div>
-	        </div>
-	        <%@ include file="../admin/class/aside.jsp"%>
-	    </c:when>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+			<%@ include file="../member/aside.jsp"%>
+		</c:when>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+			<div class="classroom-header">
+				<i class="bi bi-house-fill"
+					onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+				<div class="title">${syclass.className}</div>
+				<div class="details">담당자: ${syclass.managerName} | 강사명:
+					${syclass.teacherName}</div>
+			</div>
+			<%@ include file="../admin/class/aside.jsp"%>
+		</c:when>
 	</c:choose>
 
 	<main>
@@ -377,14 +379,14 @@ td.checkStatus.N {
 			<h1>교육 일정</h1>
 			<div class="select-box">
 				<!-- 반 선택 드롭다운 -->
-<select id="classSelect" name="classNo" onchange="changeClass(this.value)">
-    <c:forEach var="classItem" items="${classList}">
-        <option value="${classItem.classNo}" 
-            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-            ${classItem.className}
-        </option>
-    </c:forEach>
-</select>
+				<select id="classSelect" name="classNo"
+					onchange="changeClass(this.value)">
+					<c:forEach var="classItem" items="${classList}">
+						<option value="${classItem.classNo}"
+							<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+							${classItem.className}</option>
+					</c:forEach>
+				</select>
 			</div>
 		</div>
 
@@ -396,8 +398,8 @@ td.checkStatus.N {
 			<div class="header">
 				<h2>교육일정 목록</h2>
 				<div class="search_area">
-<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
-    <input type="hidden" name="classNo" value="${selectedClassNo}">
+					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
+						<input type="hidden" name="classNo" value="${selectedClassNo}">
 
 
 						<select id="category" name="category">
@@ -449,24 +451,26 @@ td.checkStatus.N {
 						</tr>
 					</thead>
 
-<tbody>
-    <c:forEach items="${scheduleList}" var="schedule" varStatus="i">
-        <tr onclick="window.location.href='${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}&page=${pageMaker.cri.pageNum}'">
-            <td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
-            <td class="hidden scheduleNo"><c:out value="${schedule.scheduleNo}" /></td>
-            <td><c:out value="${schedule.scheduleDate}" /></td>
-            <td><c:out value="${schedule.scheduleTitle}" /></td>
-            <td><c:out value="${schedule.scheduleDescription}" /></td>
-            <td><c:out value="${schedule.scheduleInstructor}" /></td>
-        </tr>
-    </c:forEach>
-</tbody>
-<!-- 디버깅을 위한 코드 추가 -->
-<c:if test="${empty scheduleList}">
-    <tr>
-        <td colspan="6">No schedules found.</td>
-    </tr>
-</c:if>
+					<tbody>
+						<c:forEach items="${scheduleList}" var="schedule" varStatus="i">
+							<tr
+								onclick="window.location.href='${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}&page=${pageMaker.cri.pageNum}'">
+								<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
+								<td class="hidden scheduleNo"><c:out
+										value="${schedule.scheduleNo}" /></td>
+								<td><c:out value="${schedule.scheduleDate}" /></td>
+								<td><c:out value="${schedule.scheduleTitle}" /></td>
+								<td><c:out value="${schedule.scheduleDescription}" /></td>
+								<td><c:out value="${schedule.scheduleInstructor}" /></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+					<!-- 디버깅을 위한 코드 추가 -->
+					<c:if test="${empty scheduleList}">
+						<tr>
+							<td colspan="6">No schedules found.</td>
+						</tr>
+					</c:if>
 				</table>
 
 				<div class="pageInfo_wrap">
@@ -482,11 +486,13 @@ td.checkStatus.N {
 
 							<!-- 각 번호 페이지 버튼 -->
 							<!-- 페이징 부분 수정 -->
-<c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-    <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-        <a href="javascript:void(0);" onclick="changePage(${num})">${num}</a>
-    </li>
-</c:forEach>
+							<c:forEach var="num" begin="${pageMaker.pageStart}"
+								end="${pageMaker.pageEnd}">
+								<li
+									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+									<a href="javascript:void(0);" onclick="changePage(${num})">${num}</a>
+								</li>
+							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">

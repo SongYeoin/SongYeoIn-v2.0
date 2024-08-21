@@ -13,10 +13,10 @@ public interface JournalService {
     public void journalEnroll(JournalVO journal, MultipartFile file) throws Exception;
     
     /* 일지 목록 */
-    public List<JournalVO> journalList(Criteria cri) throws Exception;
+    public List<JournalVO> journalList(Criteria cri, int classNo, int memberNo) throws Exception;
     
     /* 일지 총 갯수 */
-    public int journalGetTotal(Criteria cri) throws Exception;
+    public int journalGetTotal(Criteria cri, int classNo, int memberNo) throws Exception;
     
     /* 일지 상세 조회 */
 	public JournalVO journalDetail(int journalNo);
@@ -28,5 +28,5 @@ public interface JournalService {
 	public int journalDelete(int journalNo) throws Exception;
 
 	/* 캘린더 전체 일지 조회용*/
-	public List<JournalVO> journalAllList(int classNo);
+    public List<JournalVO> journalAllList(int classNo);
 }

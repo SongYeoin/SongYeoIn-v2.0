@@ -28,7 +28,6 @@ import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.enroll.EnrollService;
 import com.syi.project.service.journal.EduScheduleService;
 import com.syi.project.service.journal.EduScheduleServiceImpl;
-import com.syi.project.service.syclass.SyclassService;
 
 @Controller
 @RequestMapping("/journal")
@@ -41,9 +40,6 @@ public class EduScheduleController {
     
     @Autowired
     private EnrollService enrollService;
-    
-    @Autowired
-    private SyclassService syclassService;
     
     // 사용자 수강중 반 가져오기?
     @GetMapping("/userClasses")

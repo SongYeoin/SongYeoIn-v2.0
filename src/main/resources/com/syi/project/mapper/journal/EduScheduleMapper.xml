@@ -5,6 +5,7 @@
 
 <!-- MyBatis 매퍼 XML 파일의 시작 -->
 <mapper namespace="com.syi.project.mapper.journal.EduScheduleMapper">
+
     <resultMap id="EduScheduleResultMap" type="com.syi.project.model.journal.EduScheduleVO">
         <id property="scheduleNo" column="SCHEDULE_NO"/>
         <result property="scheduleDate" column="SCHEDULE_DATE"/>
