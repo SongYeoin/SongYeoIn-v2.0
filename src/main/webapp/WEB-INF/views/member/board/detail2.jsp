@@ -221,12 +221,12 @@ button:hover {
                     
                     <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
                         <!-- 댓글 수정 폼 -->
-	                    <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
-	                        <input type="hidden" name="commentNo" value="${comment.commentNo}" />
-	                        <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                        <button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                        <button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-	                    </form>
+			            <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;" action="${pageContext.request.contextPath}/member/board/comment/modify" method="post">
+			                <input type="hidden" name="commentNo" value="${comment.commentNo}" />
+			                <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+			                <button type="submit">수정</button>
+			                <button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+			            </form>
 			
 			            <!-- 댓글 수정 버튼 -->
 			            <button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
@@ -261,30 +261,28 @@ button:hover {
         alert(message);
     }
     
- 	// 목록 버튼
+    
     $("#listBtn").click(function() {
         window.location.href = '${pageContext.servletContext.contextPath}/member/board/list';
     });
- 
-    // 게시글 수정
+    
     $("#updateBtn").click(function() {
-        const boardNo = ${board.boardNo}; 
+        var boardNo = ${board.boardNo}; 
         window.location.href = '${pageContext.servletContext.contextPath}/member/board/modify?boardNo=' + boardNo;
     });
     
- 	// 게시글 삭제
     function deleteboard(boardNo) {
         if (confirm("정말로 삭제하시겠습니까?")) {
             $.ajax({
-                url: "${pageContext.request.contextPath}/member/board/delete",
+                url: "/member/board/delete",
                 type: "POST",
                 data: { boardNo: boardNo },
                 success: function(response) {
                     if (response === 'success') {
-                        alert("게시글이 삭제되었습니다.");
-                        window.location.href = "${pageContext.request.contextPath}/member/board/list";
+                        alert("삭제되었습니다.");
+                        window.location.href = "/member/board/list"; 
                     } else {
-                        alert("게시글 삭제에 실패했습니다.");
+                        alert("삭제에 실패했습니다.");
                     }
                 },
                 error: function() {
@@ -293,19 +291,53 @@ button:hover {
             });
         }
     }
- 	
- 	// 게시글 좋아요
-    $("#heartBtn").click(function() {
-        const button = $(this);
-        const boardNo = button.data('boardno');
-        
+    
+    function editComment(commentNo) {
+        document.getElementById('updateCommentBtn-' + commentNo).style.display = 'none';
+        document.getElementById('deleteCommentBtn-' + commentNo).style.display = 'none';
+        document.getElementById('comment-content-' + commentNo).style.display = 'none';
+        document.getElementById('edit-form-' + commentNo).style.display = 'block';
+    }
+
+    function cancelEdit(commentNo) {
+        document.getElementById('edit-form-' + commentNo).style.display = 'none';
+        document.getElementById('comment-content-' + commentNo).style.display = 'block';
+        document.getElementById('updateCommentBtn-' + commentNo).style.display = 'inline-block';
+        document.getElementById('deleteCommentBtn-' + commentNo).style.display = 'inline-block';
+    }
+    
+    function deleteComment(commentNo) {
+        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: "${pageContext.request.contextPath}/member/board/comment/delete",
+                type: "POST",
+                data: { commentNo: commentNo },
+                success: function(response) {
+                    if (response === 'success') {
+                        alert("댓글이 삭제되었습니다.");
+                        $("#comment-" + commentNo).remove();
+                    } else {
+                        alert("댓글 삭제에 실패했습니다.");
+                    }
+                },
+                error: function() {
+                    alert("서버 오류가 발생했습니다.");
+                }
+            });
+        }
+    }
+    
+    $('#heartBtn').click(function() {
+    	var button = $(this);
+        var boardNo = button.data('boardno');
+    	
         $.ajax({
-            url: "${pageContext.request.contextPath}/member/board/heart",
+            url: "${pageContext.request.contextPath}/member/board/heart", 
             type: "POST",
             data: { boardNo: boardNo },
             success: function(response) {
-                const heartIcon = $('#heartIcon');
-                const heartCount = $('#boardHeartCount');
+                var heartIcon = $('#heartIcon');
+                var heartCount = $('#boardHeartCount');
                 if (response === 'heartAdded') {
                     heartIcon.removeClass('bi-heart').addClass('bi-heart-fill');
                     heartCount.text(parseInt(heartCount.text()) + 1);
@@ -321,92 +353,6 @@ button:hover {
             }
         });
     });
-
-    
- 	// 댓글 추가
-    $("#addCommentForm").submit(function(event) {
-        event.preventDefault();
-        const formData = $(this).serialize();
-        $.ajax({
-            url: "${pageContext.request.contextPath}/member/board/comment/add",
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                if (response === 'success') {
-                    location.reload(); 
-                } else {
-                    alert("댓글 추가에 실패했습니다.");
-                }
-            },
-            error: function() {
-                alert("서버 오류가 발생했습니다.");
-            }
-        });
-    });
-    
- 	// 댓글 수정 폼을 표시
-    function editComment(commentNo) {
-    	$('#updateCommentBtn-' + commentNo).hide();
-        $('#deleteCommentBtn-' + commentNo).hide();
-        $('#comment-content-' + commentNo).hide();
-        $('#edit-form-' + commentNo).show();
-    }
-
-    // 댓글 수정 폼을 취소
-    function cancelEdit(commentNo) {
-    	$('#edit-form-' + commentNo).hide();
-        $('#comment-content-' + commentNo).show();
-        $('#updateCommentBtn-' + commentNo).show();
-        $('#deleteCommentBtn-' + commentNo).show();
-    }
-
-    // 댓글 수정
-    function submitEdit(commentNo) {
-    	let commentContent = $('#edit-form-' + commentNo + ' textarea').val();
-        $.ajax({
-            url: "${pageContext.request.contextPath}/member/board/comment/modify",
-            type: "POST",
-            data: {
-                commentNo: commentNo,
-                commentContent: commentContent
-            },
-            success: function(response) {
-                if (response === 'success') {
-                    $('#comment-content-' + commentNo).text(commentContent).show();
-                    cancelEdit(commentNo);
-                    alert("댓글이 수정되었습니다.");
-                } else {
-                    alert("댓글 수정에 실패했습니다.");
-                }
-            },
-            error: function() {
-                alert("서버 오류가 발생했습니다.");
-            }
-        });
-    }
-
-    // 댓글 삭제
-    function deleteComment(commentNo) {
-        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
-            $.ajax({
-                url: "${pageContext.request.contextPath}/member/board/comment/delete",
-                type: "POST",
-                data: { commentNo: commentNo },
-                success: function(response) {
-                    if (response === 'success') {
-                        alert("댓글이 삭제되었습니다.");
-                        $('#comment-' + commentNo).remove();
-                    } else {
-                        alert("댓글 삭제에 실패했습니다.");
-                    }
-                },
-                error: function() {
-                    alert("서버 오류가 발생했습니다.");
-                }
-            });
-        }
-    }
-
     </script>
 
 </body>

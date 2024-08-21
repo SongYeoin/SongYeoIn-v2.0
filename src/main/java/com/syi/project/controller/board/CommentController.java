@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,8 @@ import com.syi.project.service.board.CommentService;
 @Controller
 @RequestMapping("/member/board/comment")
 public class CommentController {
+	
+	private static final Logger log = LoggerFactory.getLogger(CommentController.class);
 
 	@Autowired
 	private CommentService commentService;
@@ -38,26 +42,12 @@ public class CommentController {
 		
 		System.out.println("댓글 생성 " + comment);
 		commentService.insertComment(comment);
-		/*
-		if (result > 0) {
-			rttr.addFlashAttribute("message", "댓글이 등록되었습니다.");
-		} else {
-			rttr.addFlashAttribute("message", "댓글 등록에 실패하였습니다.");
-		}
-		*/
 		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
-	}
-
-	// 댓글 조회
-	@GetMapping("/list")
-	public String selectCommentList(int boardNo, Model model) {
-		List<CommentsVO> commentList = commentService.selectCommentList(boardNo);
-		model.addAttribute("commentList", commentList);
-		return "commentList";
 	}
 
 	// 댓글 수정
 	@PostMapping("/modify")
+	@ResponseBody
 	public String updateComment(CommentsVO comment) {
 		int result = commentService.updateComment(comment);
 		return result > 0 ? "success" : "fail";

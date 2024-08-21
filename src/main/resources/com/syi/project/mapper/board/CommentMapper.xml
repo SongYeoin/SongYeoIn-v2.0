@@ -99,8 +99,8 @@
 	<update id="updateComment" parameterType="com.syi.project.model.board.CommentsVO">
 		UPDATE COMMENTS
 		SET
-			COMMENT = #{ comment },
-			COMMENT_MODIFY_DATE = SYSDATE,
+			COMMENT_CONTENT = #{ commentContent },
+			COMMENT_MODIFY_DATE = SYSDATE
 		WHERE COMMENT_NO = #{ commentNo }
 	</update>
 	
