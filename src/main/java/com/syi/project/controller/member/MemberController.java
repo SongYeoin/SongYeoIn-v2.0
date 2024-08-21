@@ -194,7 +194,6 @@ public class MemberController {
 	// 로그아웃
 	@GetMapping("logout")
 	public String logoutMember(HttpSession session, RedirectAttributes rttr) {
-		System.out.println("로그아웃 중");
 		session.invalidate();
 		rttr.addFlashAttribute("logout_result", "success");
 		return "redirect:/";
