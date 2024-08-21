@@ -99,9 +99,9 @@
         </if>
         
         <!-- 수강생 필터링 조건 -->
-        <if test="memberNo != null">
-            AND MEMBER_NO = #{memberNo}
-        </if>
+        <if test="memberNo != null and memberNo != 0">
+	        AND member_no = #{memberNo}
+	    </if>
         
         <![CDATA[
             )

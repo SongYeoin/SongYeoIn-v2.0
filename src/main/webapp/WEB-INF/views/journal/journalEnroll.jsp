@@ -92,24 +92,24 @@ main {
 </main>
 
 <script>
-    /* 등록 버튼 */
+    // 서버에서 설정한 `selectedClassNo` 값을 JavaScript 변수로 설정합니다.
+    var selectedClassNo = '${selectedClassNo}';
+
+    // 등록 버튼 클릭 시 처리
     $("#enrollBtn").click(function() {
-        /* 검사 통과 유무 변수 */
         let titleCheck = false; // 일지 제목
         let writeDateCheck = false; // 일지 작성일자
         let fileCheck = false; // 일지 첨부파일
 
-        /* 입력값 변수 */
         let journalTitle = $('input[name=journalTitle]').val(); // 일지 제목
         let writeDate = $('input[name=journalWriteDate]').val(); // 일지 작성일자
         let file = $('input[name=file]')[0].files; // 일지 첨부파일
 
-        /* 공란 경고 span 태그 */
         let wJournalTitle = $('#warn_journalTitle');
-        let wWriteDate = $('#warn_date'); 
+        let wWriteDate = $('#warn_date');
         let wFile = $('#warn_file');
 
-        /* 일지 제목 공란 체크 */
+        // 일지 제목 공란 체크
         if (journalTitle === '') {
             wJournalTitle.css('display', 'block');
             titleCheck = false;
@@ -118,7 +118,7 @@ main {
             titleCheck = true;
         }
 
-        /* 일지 작성일자 공란 체크 */
+        // 일지 작성일자 공란 체크
         if (writeDate === '') {
             wWriteDate.css('display', 'block');
             writeDateCheck = false;
@@ -127,7 +127,7 @@ main {
             writeDateCheck = true;
         }
 
-        /* 첨부파일 공란 체크 */
+        // 첨부파일 공란 체크
         if (file.length === 0) {
             wFile.css('display', 'block');
             fileCheck = false;
@@ -136,17 +136,25 @@ main {
             fileCheck = true;
         }
 
-        /* 최종 검사 */
+        // 최종 검사 및 폼 제출
         if (titleCheck && writeDateCheck && fileCheck) {
-            $("#enrollForm").submit();
+            // `classNo` 값을 폼에 설정
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'classNo',
+                value: selectedClassNo
+            }).appendTo('#enrollForm');
+
+            $("#enrollForm").submit(); // 폼 제출
         }
     });
 
-    /* 취소 버튼 */
+    // 취소 버튼 클릭 시 처리
     $("#cancelBtn").click(function() {
         location.href = "/journal/journalList";
     });
 </script>
+
 
 <!-- 푸터 연결 -->
 <%@ include file="../common/footer.jsp"%>

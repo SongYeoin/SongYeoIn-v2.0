@@ -372,20 +372,35 @@ td.checkStatus.N {
 	<main>
 
 		<!-- 제목과 클래스 선택 박스 -->
-		<div class="title-container">
-			<h1>교육 일지</h1>
-			<div class="select-box">
-				<!-- 반 선택 드롭다운 -->
-				<select id="classSelect" name="classNo"
-					onchange="changeClass(this.value)">
-					<c:forEach var="classItem" items="${classList}">
-						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-							${classItem.className}</option>
-					</c:forEach>
-				</select>
-			</div>
-		</div>
+<div class="title-container">
+    <h1>교육 일지</h1>
+    <div class="select-box">
+        <!-- 반 선택 드롭다운 -->
+        <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
+            <c:forEach var="classItem" items="${classList}">
+                <option value="${classItem.classNo}"
+                    <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+                    ${classItem.className}
+                </option>
+            </c:forEach>
+        </select>
+    </div>
+</div>
+
+<!-- 관리자용 수강생 선택 드롭다운 추가 -->
+<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+    <div class="select-box">
+        <select id="memberSelect" name="memberNo" onchange="changeMember(this.value)">
+            <option value="">모든 수강생</option>
+            <c:forEach var="enroll" items="${classMembers}">
+                <option value="${enroll.memberNo}" <c:if test="${enroll.memberNo == selectedMemberNo}">selected</c:if>>
+                    ${enroll.member.memberName}
+                </option>
+            </c:forEach>
+        </select>
+    </div>
+</c:if>
+		
 
 		<!-- 캘린더 출력 영역 -->
 		<!-- 사용자 역할일 때만 캘린더 표시 -->
@@ -595,6 +610,11 @@ td.checkStatus.N {
 
 	    console.log('Initial journalAllListData:', $('#journalAllListData').html());  // 디버깅: 초기 데이터 로그 출력
 	});
+	
+	function changeMember(memberNo) {
+	    var classNo = document.getElementById('classSelect').value;
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo + '&memberNo=' + memberNo;
+	}
 
 </script>
 
