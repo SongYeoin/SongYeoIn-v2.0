@@ -2,12 +2,22 @@ package com.syi.project.controller.attendance;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,9 +110,6 @@ public class AttendanceController {
 			model.addAttribute("attendanceStatus", attendanceStatus);
 			model.addAttribute("periodAttendanceStatus", periodAttendanceStatus);
 			
-			System.out.println("컨트롤러에서 확인한 attendanceStatus : " + attendanceStatus);
-			System.out.println("컨트롤러에서 확인한 periodAttendanceStatus : " + periodAttendanceStatus);
-			
 		} catch (NullPointerException e) {
 			log.error("등록된 시간표가 없습니다.", e);
 	        model.addAttribute("result", "null");
@@ -111,6 +118,139 @@ public class AttendanceController {
 			log.error("시간표 조회 중 오류 발생", e);
 	        model.addAttribute("result", "error");
 		}
+	}
+	
+	/* 출석 전체 조회 페이지로 이동 */
+	@GetMapping("/attendance/attendanceList")
+	public void attendanceListGET(HttpServletRequest request, Integer classNo, Model model) {
+		
+		// 선택 할 반 정보 보내기
+		List<SyclassVO> classList = syclassService.getClassList();
+		model.addAttribute("classList", classList);
+		
+		// 만약 classNo가 null이라면, 기본적으로 첫 번째 반을 선택한 것으로 간주
+	    if (classNo == null && !classList.isEmpty()) {
+	        classNo = classList.get(0).getClassNo();
+	    }
+		
+		// 선택된 반 정보 가져오기
+		SyclassVO syclass = syclassService.getClassDetail(classNo);
+		
+		/* 해당 과목이 몇주차 과정인지 계산 */
+		// 1. 날짜를 LocalDate로 변환
+        LocalDate startDate = syclass.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = syclass.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+        // 2. 시작일과 종강일 사이의 주차 계산
+        long weeksBetween = ChronoUnit.WEEKS.between(startDate, endDate) + 1; // 1주차도 포함
+        model.addAttribute("weeksBetween", weeksBetween); 
+        
+		// 해당 과목의 시간표 조회하여 요일 정보 추출
+        ScheduleVO schedule = scheduleService.getSchedule(classNo);
+        int scheduleNo = schedule.getScheduleNo();
+        
+        List<PeriodVO> periods = scheduleService.getPeriods(scheduleNo);
+        
+        // dayOfWeek 중복 제거하여 Set으로 변환
+        Set<String> uniqueDaysOfWeek = periods.stream()
+        								.flatMap(period -> Arrays.stream(period.getDayOfWeek().split(",")))
+        								.collect(Collectors.toSet());
+        // 중복되지 않은 요일 정보를 List로 변환
+        List<String> dayOfWeekList = new ArrayList<>(uniqueDaysOfWeek); 
+        
+        // 요일 순서대로 정렬
+        List<String> orderedDaysOfWeek = Arrays.asList("월", "화", "수", "목", "금", "토", "일");
+        dayOfWeekList.sort(Comparator.comparingInt(orderedDaysOfWeek::indexOf));
+        model.addAttribute("dayOfWeekList", dayOfWeekList); 
+        
+        // 수강생 정보 조회
+ 		HttpSession session = request.getSession();
+ 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+ 		
+ 		// 해당반 + 해당 학생의 출석 정보 조회
+        List<AttendanceVO> attendanceList = attendanceService.getAttendanceByClassAndMember(classNo, loginMember.getMemberNo());
+		Map<String, List<String>> attendanceMap = new HashMap<>();
+		
+		for (AttendanceVO attendance : attendanceList) {
+			LocalDate attendanceDate = attendance.getAttendanceDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long weekNumber = ChronoUnit.WEEKS.between(startDate, attendanceDate) + 1;
+			String dayOfWeek = attendanceDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+			String key = "week-" + weekNumber + "-" + dayOfWeek;
+			
+			// 키가 존재하지 않으면 람다식 실행
+		    attendanceMap.computeIfAbsent(key, k -> new ArrayList<String>());
+		    
+		    // 출석 상태를 리스트에 추가
+		    attendanceMap.get(key).add(attendance.getAttendanceStatus());
+		}
+		
+		Map<String, String> finalAttendanceMap = new HashMap<>();
+		
+		// 각 요일별로 최종 출석 상태 계산
+		for (Map.Entry<String, List<String>> entry : attendanceMap.entrySet()) {
+		    String key = entry.getKey();
+		    List<String> statuses = entry.getValue();
+
+		    // 초기값 설정
+		    boolean hasLateness = false;
+		    boolean allAbsent = true;
+		    boolean allPresent = true;
+		    boolean hasEarlyLeave = false;
+
+		    for (int i = 0; i < statuses.size(); i++) {
+		        String status = statuses.get(i);
+		        if (status.equals("지각")) {
+		            hasLateness = true;
+		        }
+		        if (!status.equals("결석")) {
+		            allAbsent = false;
+		        }
+		        if (!status.equals("출석")) {
+		            allPresent = false;
+		        }
+		        // 앞 교시가 결석이고, 뒷 교시가 출석일 경우 지각으로 처리
+		        if (i > 0 && statuses.get(i - 1).equals("결석") && status.equals("출석")) {
+		            hasLateness = true;
+		        }
+		        // 앞 교시가 출석이고, 뒷 교시가 결석일 경우 조퇴로 처리
+		        if (i > 0 && statuses.get(i - 1).equals("출석") && status.equals("결석")) {
+		            hasEarlyLeave = true;
+		        }
+		    }
+
+		    String finalStatus;
+		    if (hasLateness) {
+		        finalStatus = "지각";
+		    } else if (allAbsent) {
+		        finalStatus = "결석";
+		    } else if (allPresent) {
+		        finalStatus = "출석";
+		    } else if (hasEarlyLeave) {
+		        finalStatus = "조퇴";
+		    } else {
+		        finalStatus = "출석";
+		    }
+
+		    // 최종 출석 상태 저장
+		    finalAttendanceMap.put(key, finalStatus);
+		}
+
+		System.out.println(finalAttendanceMap);
+		model.addAttribute("finalAttendanceMap", finalAttendanceMap);
+		
+		// 컨트롤러에서 각 주차와 요일에 해당하는 실제 날짜 계산
+		Map<String, LocalDate> dateMap = new HashMap<>();
+
+		for (long week = 1; week <= weeksBetween; week++) {
+		    for (String dayOfWeek : dayOfWeekList) {
+		        LocalDate date = startDate.plusWeeks(week - 1).with(ChronoField.DAY_OF_WEEK, orderedDaysOfWeek.indexOf(dayOfWeek) + 1);
+		        String key = "week-" + week + "-" + dayOfWeek;
+		        dateMap.put(key, date);
+		    }
+		}
+
+		model.addAttribute("dateMap", dateMap);
+
 	}
 	
 	/* 출석 등록 */

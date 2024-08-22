@@ -2,6 +2,7 @@ package com.syi.project.service.attendance;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class AttendanceService {
 	    params.put("memberNo", memberNo);
 	    params.put("attendanceDate", date);
 		return attendanceMapper.getAttendanceByPeriodAndMember(params);
+	}
+
+	/* 클래스번호와 수강생번호로 전체 출석 조회하기 */
+	public List<AttendanceVO> getAttendanceByClassAndMember(Integer classNo, Integer memberNo) {
+		return attendanceMapper.getAttendanceByClassAndMember(classNo, memberNo);
 	}
 
 }
