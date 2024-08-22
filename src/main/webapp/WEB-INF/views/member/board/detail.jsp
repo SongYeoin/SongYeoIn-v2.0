@@ -22,10 +22,8 @@ html, body {
 }
 
 body {
-    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    /* min-height: 100vh; */
 }
 
 main {
@@ -34,24 +32,6 @@ main {
     margin-top: 160px;
     overflow-y: auto;
     height: 100%;
-}
-
-.content {
-    padding: 20px;
-    background-color: #fff;
-}
-
-.content h2 {
-    margin-bottom: 20px;
-}
-
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
-}
-
-.main-content {
-    padding: 20px;
 }
 
 .board-wrapper {
@@ -90,15 +70,6 @@ table td {
     vertical-align: top;
 }
 
-.info-row {
-    display: flex;
-    align-items: center;
-}
-
-.info-row div {
-    margin-right: 20px;
-}
-
 .table-content {
     min-height: 200px; 
     overflow-y: auto; 
@@ -111,10 +82,6 @@ input[type="text"], textarea, input[type="file"] {
     border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 14px;
-}
-
-textarea {
-    resize: vertical;
 }
 
 button {
@@ -135,7 +102,7 @@ button:hover {
 .button-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px;
     gap: 20px;
 }
 
@@ -156,6 +123,47 @@ button:hover {
 
 .file-list a:hover {
     text-decoration: underline;
+}
+
+.heart-container {
+	color: red;
+}
+
+#heartIcon {
+	font-size: 22px;
+	cursor: pointer;
+}
+
+.comment-form-container {
+    display: flex; 
+    align-items: flex-start; 
+    gap: 10px; 
+    margin: 10px 0;
+}
+
+.comment-form-container form {
+    display: flex; 
+    flex: 1; 
+}
+
+.comment-form-container textarea {
+    flex: 1; 
+    margin-right: 10px; 
+}
+
+.comment-form-container button {
+    align-self: flex-start; 
+}
+
+.comment {
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+.comment-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 </style>
@@ -201,42 +209,75 @@ button:hover {
             
             <!-- 좋아요 기능 -->    
             <div class="button-container">
-                <button id="heartBtn" data-boardNo="${board.boardNo}">
-                	<i id="heartIcon" class="bi ${heartCount > 0 ? 'bi-heart-fill' : 'bi-heart' }"></i>
-                </button>
-                <span id="boardHeartCount">${ board.boardHeartCount }</span> 
+            	<div class="heart-container">
+	                <i id="heartIcon" class="bi ${heartCount > 0 ? 'bi-heart-fill' : 'bi-heart'}" data-board-no="${board.boardNo}"></i>
+	                <span id="boardHeartCount">${board.boardHeartCount}</span> 
+                </div>
             </div>
 
             <!-- 댓글 추가 폼 -->
-            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-                <button type="submit">등록</button>
-            </form>
+            <div class="comment-form-container">
+	            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
+	                <button type="submit">등록</button>
+	            </form>
+            </div>
 
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
                 <div id="comment-${comment.commentNo}" class="comment">
                     <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
                     
+                    <!-- 댓글 -->
+                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+                    
+                    <!-- 댓글 수정 및 삭제 -->
                     <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
                         <!-- 댓글 수정 폼 -->
 	                    <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
 	                        <input type="hidden" name="commentNo" value="${comment.commentNo}" />
 	                        <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                        <button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                        <button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+	                        <div class="comment-button-container">
+	                        	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+	                        	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+	                        </div>
 	                    </form>
 			
-			            <!-- 댓글 수정 버튼 -->
-			            <button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            
-			            <!-- 댓글 삭제 버튼 -->
-			            <button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
+			            <!-- 댓글 수정 삭제 버튼 -->
+			            <div class="comment-button-container">
+			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
+			            </div>
                     </c:if>
                     
-                    <!-- 댓글 -->
-                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+                    <!-- 대댓글 추가 폼 -->
+                    <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
+			            <form action="${pageContext.request.contextPath}/member/board/comment/reply" method="post">
+			                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+			                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
+			                <textarea name="commentContent" rows="4" placeholder="대댓글을 입력하세요"></textarea>
+			                <button type="submit">등록</button>
+			            </form>
+			        </div>
+			        
+			        <!-- 대댓글 버튼 -->
+			        <button onclick="toggleReplyForm(${comment.commentNo})">답글</button>
+			        
+			        <!-- 대댓글 리스트 -->
+			        <c:forEach var="reply" items="${comment.replyList}">
+			            <div id="reply-${reply.commentNo}" class="comment" style="margin-left: 20px;">
+			                <p><strong>${reply.member.memberNickname}</strong> ${reply.commentRegDate}</p>
+			                <p id="reply-content-${reply.commentNo}">${reply.commentContent}</p>
+			                
+			                <c:if test="${sessionScope.loginMember.memberNo eq reply.commentMemberNo}">
+			                    <div class="comment-button-container">
+			                        <button id="updateReplyBtn-${reply.commentNo}" onclick="editComment(${reply.commentNo})">수정</button>
+			                        <button id="deleteReplyBtn-${reply.commentNo}" onclick="deleteComment(${reply.commentNo})">삭제</button>
+			                    </div>
+			                </c:if>
+			            </div>
+       			 	</c:forEach>
                 </div>
             </c:forEach>
 
@@ -295,22 +336,21 @@ button:hover {
     }
  	
  	// 게시글 좋아요
-    $("#heartBtn").click(function() {
-        const button = $(this);
-        const boardNo = button.data('boardno');
+    $("#heartIcon").click(function() {
+        const icon = $(this);
+        const boardNo = icon.data('boardNo');
         
         $.ajax({
             url: "${pageContext.request.contextPath}/member/board/heart",
             type: "POST",
             data: { boardNo: boardNo },
             success: function(response) {
-                const heartIcon = $('#heartIcon');
                 const heartCount = $('#boardHeartCount');
                 if (response === 'heartAdded') {
-                    heartIcon.removeClass('bi-heart').addClass('bi-heart-fill');
+                	icon.removeClass('bi-heart').addClass('bi-heart-fill');
                     heartCount.text(parseInt(heartCount.text()) + 1);
                 } else if (response === 'heartRemoved') {
-                    heartIcon.removeClass('bi-heart-fill').addClass('bi-heart');
+                	icon.removeClass('bi-heart-fill').addClass('bi-heart');
                     heartCount.text(parseInt(heartCount.text()) - 1);
                 } else {
                     alert('좋아요 처리에 실패했습니다.');

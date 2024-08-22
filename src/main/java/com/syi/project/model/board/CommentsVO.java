@@ -1,6 +1,7 @@
 package com.syi.project.model.board;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.syi.project.model.member.MemberVO;
 
@@ -17,4 +18,5 @@ public class CommentsVO {
 	private int commentMemberNo;
 	private int commentBoardNo;
 	private MemberVO member;
+	private List<CommentsVO> replyList;
 }

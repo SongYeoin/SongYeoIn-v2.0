@@ -22,10 +22,8 @@ html, body {
 }
 
 body {
-    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    /* min-height: 100vh; */
 }
 
 main {
@@ -34,24 +32,6 @@ main {
     margin-top: 160px;
     overflow-y: auto;
     height: 100%;
-}
-
-.content {
-    padding: 20px;
-    background-color: #fff;
-}
-
-.content h2 {
-    margin-bottom: 20px;
-}
-
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
-}
-
-.main-content {
-    padding: 20px;
 }
 
 .board-wrapper {
@@ -90,15 +70,6 @@ table td {
     vertical-align: top;
 }
 
-.info-row {
-    display: flex;
-    align-items: center;
-}
-
-.info-row div {
-    margin-right: 20px;
-}
-
 .table-content {
     min-height: 200px; 
     overflow-y: auto; 
@@ -111,10 +82,6 @@ input[type="text"], textarea, input[type="file"] {
     border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 14px;
-}
-
-textarea {
-    resize: vertical;
 }
 
 button {
@@ -135,7 +102,7 @@ button:hover {
 .button-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px;
     gap: 20px;
 }
 
@@ -156,6 +123,47 @@ button:hover {
 
 .file-list a:hover {
     text-decoration: underline;
+}
+
+.heart-container {
+	color: red;
+}
+
+#heartIcon {
+	font-size: 22px;
+	cursor: pointer;
+}
+
+.comment-form-container {
+    display: flex; 
+    align-items: flex-start; 
+    gap: 10px; 
+    margin: 10px 0;
+}
+
+.comment-form-container form {
+    display: flex; 
+    flex: 1; 
+}
+
+.comment-form-container textarea {
+    flex: 1; 
+    margin-right: 10px; 
+}
+
+.comment-form-container button {
+    align-self: flex-start; 
+}
+
+.comment {
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+.comment-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 </style>
@@ -201,42 +209,46 @@ button:hover {
             
             <!-- 좋아요 기능 -->    
             <div class="button-container">
-                <button id="heartBtn" data-boardNo="${board.boardNo}">
-                	<i id="heartIcon" class="bi ${heartCount > 0 ? 'bi-heart-fill' : 'bi-heart' }"></i>
-                </button>
-                <span id="boardHeartCount">${ board.boardHeartCount }</span> 
+            	<div class="heart-container">
+	                <i id="heartIcon" class="bi ${heartCount > 0 ? 'bi-heart-fill' : 'bi-heart'}" data-board-no="${board.boardNo}"></i>
+	                <span id="boardHeartCount">${board.boardHeartCount}</span> 
+                </div>
             </div>
 
             <!-- 댓글 추가 폼 -->
-            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-                <button type="submit">등록</button>
-            </form>
+            <div class="comment-form-container">
+	            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
+	                <button type="submit">등록</button>
+	            </form>
+            </div>
 
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
                 <div id="comment-${comment.commentNo}" class="comment">
                     <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
                     
-                    <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
-                        <!-- 댓글 수정 폼 -->
-			            <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;" action="${pageContext.request.contextPath}/member/board/comment/modify" method="post">
-			                <input type="hidden" name="commentNo" value="${comment.commentNo}" />
-			                <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-			                <button type="submit">수정</button>
-			                <button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-			            </form>
-			
-			            <!-- 댓글 수정 버튼 -->
-			            <button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            
-			            <!-- 댓글 삭제 버튼 -->
-			            <button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
-                    </c:if>
-                    
                     <!-- 댓글 -->
                     <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+                    
+                    <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
+                        <!-- 댓글 수정 폼 -->
+	                    <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
+	                        <input type="hidden" name="commentNo" value="${comment.commentNo}" />
+	                        <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+	                        <div class="comment-button-container">
+	                        	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+	                        	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+	                        </div>
+	                    </form>
+			
+			            <!-- 댓글 수정 삭제 버튼 -->
+			            <div class="comment-button-container">
+			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
+			            </div>
+                    </c:if>
                 </div>
             </c:forEach>
 
@@ -261,28 +273,30 @@ button:hover {
         alert(message);
     }
     
-    
+ 	// 목록 버튼
     $("#listBtn").click(function() {
         window.location.href = '${pageContext.servletContext.contextPath}/member/board/list';
     });
-    
+ 
+    // 게시글 수정
     $("#updateBtn").click(function() {
-        var boardNo = ${board.boardNo}; 
+        const boardNo = ${board.boardNo}; 
         window.location.href = '${pageContext.servletContext.contextPath}/member/board/modify?boardNo=' + boardNo;
     });
     
+ 	// 게시글 삭제
     function deleteboard(boardNo) {
         if (confirm("정말로 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/member/board/delete",
+                url: "${pageContext.request.contextPath}/member/board/delete",
                 type: "POST",
                 data: { boardNo: boardNo },
                 success: function(response) {
                     if (response === 'success') {
-                        alert("삭제되었습니다.");
-                        window.location.href = "/member/board/list"; 
+                        alert("게시글이 삭제되었습니다.");
+                        window.location.href = "${pageContext.request.contextPath}/member/board/list";
                     } else {
-                        alert("삭제에 실패했습니다.");
+                        alert("게시글 삭제에 실패했습니다.");
                     }
                 },
                 error: function() {
@@ -291,58 +305,23 @@ button:hover {
             });
         }
     }
-    
-    function editComment(commentNo) {
-        document.getElementById('updateCommentBtn-' + commentNo).style.display = 'none';
-        document.getElementById('deleteCommentBtn-' + commentNo).style.display = 'none';
-        document.getElementById('comment-content-' + commentNo).style.display = 'none';
-        document.getElementById('edit-form-' + commentNo).style.display = 'block';
-    }
-
-    function cancelEdit(commentNo) {
-        document.getElementById('edit-form-' + commentNo).style.display = 'none';
-        document.getElementById('comment-content-' + commentNo).style.display = 'block';
-        document.getElementById('updateCommentBtn-' + commentNo).style.display = 'inline-block';
-        document.getElementById('deleteCommentBtn-' + commentNo).style.display = 'inline-block';
-    }
-    
-    function deleteComment(commentNo) {
-        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
-            $.ajax({
-                url: "${pageContext.request.contextPath}/member/board/comment/delete",
-                type: "POST",
-                data: { commentNo: commentNo },
-                success: function(response) {
-                    if (response === 'success') {
-                        alert("댓글이 삭제되었습니다.");
-                        $("#comment-" + commentNo).remove();
-                    } else {
-                        alert("댓글 삭제에 실패했습니다.");
-                    }
-                },
-                error: function() {
-                    alert("서버 오류가 발생했습니다.");
-                }
-            });
-        }
-    }
-    
-    $('#heartBtn').click(function() {
-    	var button = $(this);
-        var boardNo = button.data('boardno');
-    	
+ 	
+ 	// 게시글 좋아요
+    $("#heartIcon").click(function() {
+        const icon = $(this);
+        const boardNo = icon.data('boardNo');
+        
         $.ajax({
-            url: "${pageContext.request.contextPath}/member/board/heart", 
+            url: "${pageContext.request.contextPath}/member/board/heart",
             type: "POST",
             data: { boardNo: boardNo },
             success: function(response) {
-                var heartIcon = $('#heartIcon');
-                var heartCount = $('#boardHeartCount');
+                const heartCount = $('#boardHeartCount');
                 if (response === 'heartAdded') {
-                    heartIcon.removeClass('bi-heart').addClass('bi-heart-fill');
+                	icon.removeClass('bi-heart').addClass('bi-heart-fill');
                     heartCount.text(parseInt(heartCount.text()) + 1);
                 } else if (response === 'heartRemoved') {
-                    heartIcon.removeClass('bi-heart-fill').addClass('bi-heart');
+                	icon.removeClass('bi-heart-fill').addClass('bi-heart');
                     heartCount.text(parseInt(heartCount.text()) - 1);
                 } else {
                     alert('좋아요 처리에 실패했습니다.');
@@ -353,6 +332,92 @@ button:hover {
             }
         });
     });
+
+    
+ 	// 댓글 추가
+    $("#addCommentForm").submit(function(event) {
+        event.preventDefault();
+        const formData = $(this).serialize();
+        $.ajax({
+            url: "${pageContext.request.contextPath}/member/board/comment/add",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response === 'success') {
+                    location.reload(); 
+                } else {
+                    alert("댓글 추가에 실패했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버 오류가 발생했습니다.");
+            }
+        });
+    });
+    
+ 	// 댓글 수정 폼을 표시
+    function editComment(commentNo) {
+    	$('#updateCommentBtn-' + commentNo).hide();
+        $('#deleteCommentBtn-' + commentNo).hide();
+        $('#comment-content-' + commentNo).hide();
+        $('#edit-form-' + commentNo).show();
+    }
+
+    // 댓글 수정 폼을 취소
+    function cancelEdit(commentNo) {
+    	$('#edit-form-' + commentNo).hide();
+        $('#comment-content-' + commentNo).show();
+        $('#updateCommentBtn-' + commentNo).show();
+        $('#deleteCommentBtn-' + commentNo).show();
+    }
+
+    // 댓글 수정
+    function submitEdit(commentNo) {
+    	let commentContent = $('#edit-form-' + commentNo + ' textarea').val();
+        $.ajax({
+            url: "${pageContext.request.contextPath}/member/board/comment/modify",
+            type: "POST",
+            data: {
+                commentNo: commentNo,
+                commentContent: commentContent
+            },
+            success: function(response) {
+                if (response === 'success') {
+                    $('#comment-content-' + commentNo).text(commentContent).show();
+                    cancelEdit(commentNo);
+                    alert("댓글이 수정되었습니다.");
+                } else {
+                    alert("댓글 수정에 실패했습니다.");
+                }
+            },
+            error: function() {
+                alert("서버 오류가 발생했습니다.");
+            }
+        });
+    }
+
+    // 댓글 삭제
+    function deleteComment(commentNo) {
+        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: "${pageContext.request.contextPath}/member/board/comment/delete",
+                type: "POST",
+                data: { commentNo: commentNo },
+                success: function(response) {
+                    if (response === 'success') {
+                        alert("댓글이 삭제되었습니다.");
+                        $('#comment-' + commentNo).remove();
+                    } else {
+                        alert("댓글 삭제에 실패했습니다.");
+                    }
+                },
+                error: function() {
+                    alert("서버 오류가 발생했습니다.");
+                }
+            });
+        }
+    }
+
     </script>
 
 </body>

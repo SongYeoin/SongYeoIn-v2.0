@@ -1,15 +1,11 @@
 package com.syi.project.controller.board;
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +29,7 @@ public class CommentController {
 	// 댓글 생성
 	@PostMapping("/add")
 	public String addComment(@ModelAttribute CommentsVO comment, @RequestParam("boardNo") int boardNo,
+			@RequestParam(value = "parentCommentNo", required = false) Integer parentCommentNo,
 			HttpSession session, RedirectAttributes rttr) {
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		int memberNo = member.getMemberNo();
@@ -40,7 +37,13 @@ public class CommentController {
 		comment.setCommentBoardNo(boardNo);
 		comment.setCommentMemberNo(memberNo);
 		
-		System.out.println("댓글 생성 " + comment);
+		if(parentCommentNo != null) {
+			comment.setCommentParentNo(parentCommentNo);
+			log.info(">>> 대댓글 생성 {}", comment);
+		} else {
+			log.info(">>> 댓글 생성 {}", comment);
+		}
+		
 		commentService.insertComment(comment);
 		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
 	}
