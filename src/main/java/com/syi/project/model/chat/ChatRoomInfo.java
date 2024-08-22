@@ -1,9 +1,9 @@
 package com.syi.project.model.chat;
 
-import java.util.Date;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,8 @@ public class ChatRoomInfo {
     private String message;
     
 	@Field(name = "regDateTime")
-	private Date regDateTime;
+	//@JsonFormat(pattern = "a HH:mm")
+	private String regDateTime;
 
 	
 }

@@ -223,11 +223,13 @@
   	<insert id="insertChatRoom">
   		INSERT INTO CHATROOM(
   			CHATROOM_ADMIN_NO,
-  			CHATROOM_MEMBER_NO
+  			CHATROOM_MEMBER_NO,
+  			CHATROOM_NAME
   		)
   		VALUES(
   			#{adminNo},
-  			#{memberNo}
+  			#{memberNo},
+  			#{chatRoomName}
   		)
   	</insert>
   	

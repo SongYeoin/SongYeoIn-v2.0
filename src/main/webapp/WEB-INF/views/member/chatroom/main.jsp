@@ -166,6 +166,7 @@ a.custom{
 							                <!-- 담당자명 출력 -->
 							                <td>
 							                    <c:out value="${enroll.syclass.managerName}"/>
+							                    <input type="hidden" name="chatRoomName" value="${enroll.syclass.managerName}">
 							                </td>
 							                <!-- 수강과목명 출력 -->
 							                <td>
@@ -197,7 +198,7 @@ a.custom{
 						<div class="card-body w-auto scrollable-div">
 
 							<ul class="list-unstyled mb-0">
-							<c:forEach items="${roomList}"  var="room">
+							<c:forEach items="${chatRoomInfos}"  var="room">
 								<li class="p-2 border-bottom bg-body-tertiary"
 								data-chat-room-no="${room.chatRoomNo}"
 								onclick="selectChatRoom('${room.chatRoomNo}')"
@@ -209,12 +210,13 @@ a.custom{
 												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
 												width="60">
 											<div class="pt-1">
-												<p class="fw-bold mb-0"><c:out value="${room.member.memberName}"/></p>
-												<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;">Hello, Are you there?????????????</p>
+												<p class="fw-bold mb-0"><c:out value="${room.chatRoomName}"/></p>
+												<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${room.message}"/></p>
 											</div>
 										</div>
 										<div class="pt-1">
-											<p class="small text-muted mb-1">Just now</p>
+											<p class="small text-muted mb-1">
+											<c:out value="${room.regDateTime}"/></p>
 											<span class="badge bg-danger float-end">1</span>
 										</div>
 								</a></li>
@@ -308,13 +310,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-
+<!--처음 채팅방에 들어왔을 때 메시지 전송하는 컨테이너 보이지 않게 하기  -->
 document.addEventListener('DOMContentLoaded', function () {
 	var chatBox = document.getElementById("chatBox");
 	chatBox.style.visibility = "hidden";
 });
 </script>
 
+
+<!--채팅방을 누르면 해당 채팅방에서 나눈 메시지 보이게 하는 함수  -->
 <script type="text/javascript">
 // 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
 const loginMemberNo = "${loginMember.memberNo}";
@@ -552,6 +556,7 @@ sendButton.addEventListener('click', () => {
 
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
+    	e.preventDefault();
         sendButton.click();
     }
 });

@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,12 +35,6 @@ import lombok.extern.log4j.Log4j2;
 public class ChatController {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
-
-	/*
-	 * public ChatController() {
-	 * this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-	 * false); // ISO-8601 형식으로 날짜 직렬화 }
-	 */
 
 	private MessageService messageService;
 
@@ -87,36 +82,10 @@ public class ChatController {
 			System.out.println("멤버넘버 설정 : " + chatMessage.getMemberNo());
 			chatMessage.setMemberName(loginMember.getMemberName());
 			System.out.println("멤버이름 설정 : " + chatMessage.getMemberName());
-			/*
-			 * chatMessage.setType(MessageType.TALK); System.out.println("타입 설정 : " +
-			 * chatMessage.getType());
-			 */
 
-			/*
-			 * 
-			 * 
-			 * // 원하는 포맷으로 DateTimeFormatter를 생성합니다. DateTimeFormatter formatter =
-			 * DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
-			 * 
-			 * // 포맷을 사용하여 현재 날짜와 시간을 문자열로 변환합니다. String formattedDateTime =
-			 * now.format(formatter);
-			 */
-			
-			/*
-			 * // 현재 날짜와 시간을 가져옵니다. LocalDateTime now = LocalDateTime.now();
-			 * 
-			 * // LocalDateTime을 ZonedDateTime으로 변환 (UTC 시간대 사용) ZonedDateTime zonedDateTime
-			 * = now.atZone(ZoneId.of("UTC"));
-			 * 
-			 * // ZonedDateTime을 Instant로 변환 Instant instant = zonedDateTime.toInstant();
-			 * 
-			 * // Instant를 Date로 변환 Date isoDate = Date.from(instant);
-			 */
-			Instant instantNow = Instant.now();
-			Date dateFromInstant = Date.from(instantNow);
-
-			
-			chatMessage.setRegDateTime(dateFromInstant);
+			//현재날짜를 문자열로 표시해서 저장함
+			Instant instantNow = Instant.now();//기본적으로 UTC 기준임
+			chatMessage.setRegDateTime(instantNow.toString());
 			
 			//읽지 않음 표시
 			chatMessage.setRead(false);
@@ -134,7 +103,13 @@ public class ChatController {
 				// 추가적인 디버깅 정보 출력
 				System.err.println("NullPointerException at createMessage: " + e.getMessage());
 			}
-
+			
+			
+			//날짜 변환 후 내보내기
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)").withZone(ZoneId.of("Asia/Seoul"));
+			chatMessage.setRegDateTime(formatter.format(instantNow));
+			
+			
 			String updatedJson = objectMapper.writeValueAsString(chatMessage);
 			System.out.println("updatedJson : " + updatedJson);
 
@@ -149,22 +124,9 @@ public class ChatController {
 			System.err.println("Exception occurred: " + e.getMessage());
 		}
 
-		// -----이미 채팅방이 개설되었다는 전제하에 코드가 작성됨----
-		// 채팅방 정보를 불러옴
-		/*
-		 * ChatRoomVO room =
-		 * chatService.SelectChatRoomByNo(chatMessage.getChatRoomNo()); if (room ==
-		 * null) { log.error("채팅방을 찾을 수 없음"); return; }
-		 */
-
 	}
 
 	private void broadcast(String message) throws IOException {
-		/*
-		 * sessions.values().parallelStream() .filter(Session::isOpen) // 세션이 열린 상태인지 확인
-		 * .forEach(session -> { try { session.getBasicRemote().sendText(message); }
-		 * catch (IOException e) { e.printStackTrace(); // 예외 처리 } });
-		 */
 
 		for (Session session : sessions.values()) {
 			if (session.isOpen()) {
@@ -174,25 +136,6 @@ public class ChatController {
 
 	}
 
-	/*
-	 * private void sendToEachSocket(Set<Session> sessions, String message) {
-	 * sessions.parallelStream().forEach(roomSession -> { try {
-	 * roomSession.getBasicRemote().sendText(message); } catch (IOException e) {
-	 * log.error("메시지 보내기 실패", e); } }); }
-	 */
-	/*
-	 * room.addSession(session); // 데이터베이스에 채팅방 업데이트
-	 * chatService.updateChatRoomSessions(room);
-	 * 
-	 * //Set<WebSocketSession> sessions = room.getChatRoomUserSessions(); //방에 있는 현재
-	 * 사용자 한명이 WebsocketSession if
-	 * (chatMessage.getType().equals(ChatMessageDTO.MessageType.ENTER)) { //사용자가 방에
-	 * 입장하면 Enter chatMessage.setMessage(loginMember.getMemberName() +
-	 * "님이 입장했습니다."); sendToEachSocket(room.getChatRoomUserSessions(),new
-	 * TextMessage(objectMapper.writeValueAsString(chatMessage)) ); }else {
-	 * sendToEachSocket(room.getChatRoomUserSessions(),new TextMessage(message) );
-	 * //입장 아닐 때는 클라이언트로부터 온 메세지 그대로 전달. }
-	 */
 
 	@OnClose
 	public void onClose(Session session) {

@@ -174,7 +174,8 @@ a.custom{
 							                <td>
 							                    <c:choose>
 							                        <c:when test="${enroll.member.memberNo != previousAdminNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
-							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}"/>
+							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}" data-member-name="${enroll.member.memberName}"/>
+									                    <input type="hidden" id="chatRoomName" name="chatRoomName">
 							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}"/>
 							                        </c:when>
 							                        <c:otherwise>
@@ -186,7 +187,7 @@ a.custom{
 							    </table>
 							
 							    <!-- 제출 버튼 -->
-							    <input type="submit" value="생성하기">
+							    <input id="submitButton" type="submit" value="생성하기">
 							</form>
 					 	</div>
 					 </div>
@@ -215,8 +216,7 @@ a.custom{
 												</div>
 												<div class="pt-1">
 													<p class="small text-muted mb-1">
-													<fmt:formatDate value="${room.regDateTime}" pattern="a hh:mm"/>
-													<%-- <c:out value="${room.regDateTime}"/> --%></p>
+													<c:out value="${room.regDateTime}"/></p>
 													<span class="badge bg-danger float-end">1</span>
 												</div>
 										</a></li>
@@ -312,6 +312,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+document.getElementById('submitButton').addEventListener('click', (event) => {
+    // 선택된 라디오 버튼을 찾습니다.
+    const selectedRadio = document.querySelector('input[name="memberNo"]:checked');
+
+    if (selectedRadio) {
+        // 선택된 라디오 버튼의 데이터 속성에서 memberName 값을 가져옵니다.
+        const memberName = selectedRadio.getAttribute('data-member-name');
+        console.log( "멤버네임 : "+memberName);
+        
+        // 숨겨진 입력 필드에 값을 설정합니다.
+        document.getElementById('chatRoomName').value = memberName;
+    } else {
+        // 선택된 라디오 버튼이 없으면 경고를 표시합니다.
+        alert('라디오 버튼을 선택해 주세요.');
+        // 폼 제출을 막습니다.
+        event.preventDefault();
+    }
+});
+
 </script>
 
 
@@ -371,32 +390,6 @@ function selectSearchCondition(){
 	    // 새로운 리스트 추가
 	    $.each(chatRoomInfos, function(index, room) {
 				
-				if (room.regDateTime) {
-				    	let timeMatch = room.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
-						console.log(room.regDateTime);
-						console.log(timeMatch);
-						let timeString = '';
-					
-					  // 시간과 분 추출
-					  let hours = parseInt(timeMatch[1], 10);//10진수로
-					  let minutes = timeMatch[2];
-	
-					  // 24시간제를 12시간제로 변환
-					  let period = hours >= 12 ? '오후' : '오전';
-					  hours = hours % 12;
-					  hours = hours ? hours : 12; // '0'시를 '12'로 표시
-					
-					  // 포맷된 시간 문자열
-					  //timeString = `${period} ${hours}:${minutes}`;
-					  timeString = period +" "+ hours+ ":"+ minutes;
-	
-					  console.log("포맷된 시간 문자열: " + timeString);
-					} else {
-					  console.error('시간 정보를 추출할 수 없습니다.');
-					}
-				
-				
-				
 		        listItem = 
 		        	$('<li>', {
 		                class: 'p-2 border-bottom bg-body-tertiary',
@@ -422,12 +415,12 @@ function selectSearchCondition(){
 		                            $('<p>', {
 		                                class: 'd-inline-block text-truncate small text-muted',
 		                                style: 'max-width: 150px;'
-		                            }).text(message.message)
+		                            }).text(room.message)
 		                        )
 		                    )
 		                ).append(
 		                    $('<div>', { class: 'pt-1' }).append(
-		                        $('<p>', { class: 'small text-muted mb-1' }).text(timeString) 
+		                        $('<p>', { class: 'small text-muted mb-1' }).text(room.regDateTime) 
 		                    ).append(
 		                        $('<span>', { class: 'badge bg-danger float-end' }).text('1') 
 		                    )
@@ -471,7 +464,7 @@ function selectChatRoom(chatRoomNo) {
     console.log('Selected Chat Room No:', currentChatRoomNo);
     
     $.ajax({/*채팅방 넘버로 메시지 리스트 가지고 오는 거여서 member여도 상관없다.  */
-        url: '/member/chatroom/chats/' + currentChatRoomNo,
+        url: '/admin/chatroom/chats/' + currentChatRoomNo,
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -496,31 +489,6 @@ function selectChatRoom(chatRoomNo) {
         
         
         $.each(messages, function(index, message) {
-        	let timeMatch = message.regDateTime.match(/(\d{2})시 (\d{2})분 (\d{2})초/);
-			console.log(message.regDateTime);
-			console.log(timeMatch);
-			let timeString = '';
-			
-			if (timeMatch) {
-				
-				  // 시간과 분 추출
-				  let hours = parseInt(timeMatch[1], 10);//10진수로
-				  let minutes = timeMatch[2];
-
-				  // 24시간제를 12시간제로 변환
-				  let period = hours >= 12 ? '오후' : '오전';
-				  hours = hours % 12;
-				  hours = hours ? hours : 12; // '0'시를 '12'로 표시
-				
-				  // 포맷된 시간 문자열
-				  //timeString = `${period} ${hours}:${minutes}`;
-				  timeString = period +" "+ hours+ ":"+ minutes;
-
-				  console.log("포맷된 시간 문자열: " + timeString);
-				} else {
-				  console.error('시간 정보를 추출할 수 없습니다.');
-				}
-			
         	if(message.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
         		
         		var messageItem = $('<li>', { class: 'd-flex justify-content-end mb-6'})
@@ -528,7 +496,7 @@ function selectChatRoom(chatRoomNo) {
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
         	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
         	            .append($('<p>', { class: 'text-muted small mb-0' })
-        	                .append($('<i>', { class: 'far fa-clock' }).text(timeString)) // 타임스탬프
+        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
         	            )
         	        )
         	        .append($('<div>', { class: 'card-body' })
@@ -555,7 +523,7 @@ function selectChatRoom(chatRoomNo) {
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
         	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
         	            .append($('<p>', { class: 'text-muted small mb-0' })
-        	                .append($('<i>', { class: 'far fa-clock' }).text(timeString)) // 타임스탬프
+        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
         	            )
         	        )
         	        .append($('<div>', { class: 'card-body' })
@@ -714,6 +682,7 @@ sendButton.addEventListener('click', () => {
 
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
+    	e.preventDefault();
         sendButton.click();
     }
 });
