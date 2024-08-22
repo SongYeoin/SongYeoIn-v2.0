@@ -371,35 +371,39 @@ td.checkStatus.N {
 
 	<main>
 
-		<!-- 제목과 클래스 선택 박스 -->
+<!-- 제목과 클래스 선택 박스 -->
 <div class="title-container">
     <h1>교육 일지</h1>
-    <div class="select-box">
-        <!-- 반 선택 드롭다운 -->
-        <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
-            <c:forEach var="classItem" items="${classList}">
-                <option value="${classItem.classNo}"
-                    <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-                    ${classItem.className}
-                </option>
-            </c:forEach>
-        </select>
-    </div>
+    <c:choose>
+        <c:when test="${isAdmin}">
+            <div class="class-info">
+                <h2>현재 선택된 반: ${syclass.className}</h2>
+            </div>
+            <div class="student-select">
+                <select id="studentSelect" onchange="changeStudent(this.value)">
+                    <option value="">모든 학생</option>
+                    <c:forEach var="enroll" items="${enrollList}">
+                        <option value="${enroll.memberNo}" <c:if test="${enroll.memberNo == selectedMemberNo}">selected</c:if>>
+                            ${enroll.memberNo}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="select-box">
+                <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
+                    <c:forEach var="classItem" items="${classList}">
+                        <option value="${classItem.classNo}"
+                            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+                            ${classItem.className}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </c:otherwise>
+    </c:choose>
 </div>
-
-<!-- 관리자용 수강생 선택 드롭다운 추가 -->
-<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-    <div class="select-box">
-        <select id="memberSelect" name="memberNo" onchange="changeMember(this.value)">
-            <option value="">모든 수강생</option>
-            <c:forEach var="enroll" items="${classMembers}">
-                <option value="${enroll.memberNo}" <c:if test="${enroll.memberNo == selectedMemberNo}">selected</c:if>>
-                    ${enroll.member.memberName}
-                </option>
-            </c:forEach>
-        </select>
-    </div>
-</c:if>
 		
 
 		<!-- 캘린더 출력 영역 -->
@@ -417,7 +421,7 @@ td.checkStatus.N {
 						action="${pageContext.request.contextPath}/journal/journalList">
 						<input type="text" id="keyword" name="keyword"
 							value="${param.keyword}" placeholder="제목으로 검색">
-						<c:if
+						<%-- <c:if
 							test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
 							<select id="memberName" name="memberName">
 								<option value="">전체</option>
@@ -426,7 +430,7 @@ td.checkStatus.N {
 										<c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
 								</c:forEach>
 							</select>
-						</c:if>
+						</c:if> --%>
 						<select id="year" name="year">
 							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
 							<c:forEach var="i" begin="2020" end="2025">
@@ -538,6 +542,14 @@ td.checkStatus.N {
 
 	<script>
 
+	function changeStudent(memberNo) {
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?memberNo=' + memberNo;
+	}
+
+	function changeClass(classNo) {
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo;
+	}
+	
 	$(document).ready(function() {
 	    var calendar;
 

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -162,46 +163,78 @@ public class JournalController {
 	/* 교육일지 목록 조회 페이지 */
 	@GetMapping("journalList")
 	public String journalListGET(Criteria cri, Model model, HttpSession session
-			, @RequestParam(value = "classNo", required = false) Integer classNo) throws Exception {
-		logger.info(">>>>>>>>>>       교육일지 목록 페이지 접속             >>>>>>>>>>");
+	        , @RequestParam(value = "classNo", required = false) Integer classNo
+	        , @RequestParam(value = "memberNo", required = false) Integer selectedMemberNo) throws Exception {
+	    logger.info(">>>>>>>>>>       교육일지 목록 페이지 접속             >>>>>>>>>>");
 
-		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = loginMember.getMemberNo();
+	    MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+	    int memberNo = loginMember.getMemberNo();
 
-		// 클래스 번호가 제공되지 않았다면 세션에서 가져오거나 기본값 설정
-        if (classNo == null) {
-            classNo = (Integer) session.getAttribute("selectedClassNo");
-            if (classNo == null) {
-                classNo = enrollService.selectClassNo(memberNo);
-                if (classNo == null) {
-                    // 기본 클래스 번호를 설정하거나 에러 페이지로 리다이렉트
-                    classNo = 0; // 또는 적절한 기본값
-                    // return "error";
-                }
-            }
-        }
-        session.setAttribute("selectedClassNo", classNo);
+	    // 관리자 여부 확인
+	    boolean isAdmin = "ROLE_ADMIN".equals(loginMember.getMemberRole());
 
-		
-		List<JournalVO> journalList = journalService.journalList(cri, classNo, memberNo);
-        model.addAttribute("journalList", journalList);
-		
-        // 사용자의 수강 중인 반 목록 조회
-        List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
-        model.addAttribute("classList", classList);
+	    if (isAdmin) {
+	        // 관리자의 경우 세션에서 syclass 정보를 가져옴
+	        SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
+	        if (syclass == null) {
+	            return "error";
+	        }
+	        classNo = syclass.getClassNo();
+	        
+	        // 수강 중인 수강생 정보 조회
+	        List<EnrollVO> enrollList = enrollService.selectEnrollListByClassNo(classNo);
+	        model.addAttribute("enrollList", enrollList);
+	    } else {
+	        // 일반 사용자의 경우
+	        if (classNo == null) {
+	            classNo = (Integer) session.getAttribute("selectedClassNo");
+	            if (classNo == null) {
+	                classNo = enrollService.selectClassNo(memberNo);
+	                if (classNo == null) {
+	                    return "error";
+	                }
+	            }
+	        }
+	        // 사용자의 수강 중인 반 목록 조회
+	        List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
+	        model.addAttribute("classList", classList);
+	    }
+	    
+	    // 세션에 선택된 클래스 번호 저장
+	    session.setAttribute("selectedClassNo", classNo);
+	    
+	    List<JournalVO> journalList;
+	    int total;
 
-		/* 페이지 인터페이스 데이터 */
-		model.addAttribute("pageMaker", new PageDTO(cri, journalService.journalGetTotal(cri, classNo, memberNo)));
-		
-		// 캘린더용 전체 일지 조회
-        List<JournalVO> journalAllList = journalService.journalAllList(classNo);
-        model.addAttribute("journalAllList", journalAllList);
+	    if (isAdmin) {
+	        // 관리자: 선택된 클래스의 모든 일지 또는 특정 학생의 일지 조회
+	        if (selectedMemberNo != null) {
+	            journalList = journalService.journalList(cri, classNo, selectedMemberNo);
+	            total = journalService.journalGetTotal(cri, classNo, selectedMemberNo);
+	        } else {
+	            journalList = journalService.journalList(cri, classNo, memberNo);
+	            total = journalService.journalGetTotal(cri, classNo, memberNo);
+	        }
+	    } else {
+	        // 일반 사용자: 자신의 일지만 조회
+	        journalList = journalService.journalList(cri, classNo, memberNo);
+	        total = journalService.journalGetTotal(cri, classNo, memberNo);
+	    }
+	    
+	    model.addAttribute("journalList", journalList);
+	    model.addAttribute("pageMaker", new PageDTO(cri, total));
+	    
+	 // 캘린더용 전체 일지 조회
+	    List<JournalVO> journalAllList = journalService.journalAllList(classNo);
+	    model.addAttribute("journalAllList", journalAllList);
 
-        model.addAttribute("selectedClassNo", classNo);
+	    model.addAttribute("selectedClassNo", classNo);
+	    model.addAttribute("selectedMemberNo", selectedMemberNo);
+	    model.addAttribute("isAdmin", isAdmin);
 
-        return "journal/journalList";
+	    return "journal/journalList";
 	}
-
+    
 	/* 교육일지 상세 정보 페이지 */
 	@GetMapping("journalDetail")
 	public void journalDetailGET(@RequestParam("journalNo") int journalNo, Model model) throws Exception {

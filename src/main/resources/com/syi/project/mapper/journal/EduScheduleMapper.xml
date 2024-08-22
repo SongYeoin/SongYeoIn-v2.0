@@ -148,8 +148,7 @@
         SET SCHEDULE_DATE = #{scheduleDate},
             SCHEDULE_TITLE = #{scheduleTitle},
             SCHEDULE_DESCRIPTION = #{scheduleDescription},
-            SCHEDULE_INSTRUCTOR = #{scheduleInstructor},
-            CLASS_NO = #{syclass.classNo}
+            SCHEDULE_INSTRUCTOR = #{scheduleInstructor}
         WHERE SCHEDULE_NO = #{scheduleNo}
     </update>
 

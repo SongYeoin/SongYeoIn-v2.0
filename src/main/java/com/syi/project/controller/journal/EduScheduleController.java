@@ -164,18 +164,39 @@ public class EduScheduleController {
     	return "journal/scheduleCreate";
     }
     
-    // 일정 등록 처리
     @PostMapping("scheduleCreate")
     public String scheduleCreate(EduScheduleVO schedule, HttpSession session, RedirectAttributes rttr) {
-    	MemberVO member = (MemberVO) session.getAttribute("loginMember");
-    	if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-    		return "redirect:/login";
-    	}
-    	eduScheduleService.scheduleCreate(schedule);
-    	rttr.addFlashAttribute("message", "일정이 성공적으로 등록되었습니다.");
-    	return "redirect:/journal/scheduleList";
+        logger.info("교육일정 등록 시작");
+
+        MemberVO member = (MemberVO) session.getAttribute("loginMember");
+        if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
+            logger.warn("권한 없는 사용자의 접근 시도");
+            return "redirect:/login";
+        }
+
+        SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
+        if (syclass == null) {
+            logger.error("세션에 syclass 정보가 없습니다.");
+            rttr.addFlashAttribute("error", "클래스 정보를 찾을 수 없습니다.");
+            return "redirect:/journal/scheduleList";
+        }
+
+        int classNo = syclass.getClassNo();
+        schedule.setSyclass(syclass); // syclass 객체 전체를 설정
+
+        logger.info("등록할 일정 정보: {}", schedule.toString());
+
+        try {
+            eduScheduleService.scheduleCreate(schedule); // 서비스 메서드 호출
+            logger.info("일정 등록 성공");
+            rttr.addFlashAttribute("message", "일정이 성공적으로 등록되었습니다.");
+        } catch (Exception e) {
+            logger.error("일정 등록 중 오류 발생", e);
+            rttr.addFlashAttribute("error", "일정 등록에 실패했습니다: " + e.getMessage());
+        }
+
+        return "redirect:/journal/scheduleList";
     }
-    
 
 
     // 일정 수정
@@ -183,7 +204,7 @@ public class EduScheduleController {
     public String showUpdateScheduleForm(@RequestParam("scheduleNo") int scheduleNo, Model model, HttpSession session) {
         MemberVO member = (MemberVO) session.getAttribute("loginMember");
         if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-            return "redirect:/login";
+            return "redirect:/member/login";
         }
         EduScheduleVO schedule = eduScheduleService.scheduleDetail(scheduleNo);
         model.addAttribute("schedule", schedule);
@@ -198,11 +219,14 @@ public class EduScheduleController {
             return "redirect:/login";
         }
         
-        
         eduScheduleService.scheduleUpdate(schedule);
-        rttr.addFlashAttribute("message", "일정이 성공적으로 수정되었습니다.");
+        
+        EduScheduleVO updatedSchedule = eduScheduleService.scheduleDetail(schedule.getScheduleNo());
+
+
         return "redirect:/journal/scheduleList";
     }
+    
     
     // 일정 삭제
     @PostMapping("admin/scheduleDelete")
