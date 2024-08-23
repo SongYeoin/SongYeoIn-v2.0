@@ -17,13 +17,16 @@ public class ChatRoomInfo {
 
     private String chatRoomNo;
     private String chatRoomName;
+    private Long UnReadCount;
     
+    
+    // 마지막 메시지와 시간
 	@Field(name = "message")
     private String message;
     
 	@Field(name = "regDateTime")
-	//@JsonFormat(pattern = "a HH:mm")
 	private String regDateTime;
+	
 
 	
 }

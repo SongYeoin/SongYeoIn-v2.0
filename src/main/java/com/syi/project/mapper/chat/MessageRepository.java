@@ -10,6 +10,10 @@ import com.syi.project.model.chat.ChatMessageDTO;
 @Repository
 public interface MessageRepository extends MongoRepository<ChatMessageDTO, String>{
 
+	//long countByChatRoomNoAndReceiverNoAndIsRead(String chatRoomNo, String receiverNo, boolean isRead);
+	
+	//List<ChatMessageDTO> findByChatRoomNoAndReceiverNoAndIsRead(String chatRoomNo, String receiverNo, boolean isRead);
+	
 	List<ChatMessageDTO> findByChatRoomNo(String chatRoomNo);
 
 	//int updateIsReadtoTrue(String chatRoomNo);

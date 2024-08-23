@@ -21,7 +21,10 @@ public class ChatMessageDTO {
 	private String memberNo;// 메시지 보낸 사람
 
 	@Field(name = "memberName")
-	private String memberName; // 메새지 보낸 사람 이름
+	private String memberName; // 메시지 보낸 사람 이름
+	
+	@Field(name = "receiverNo")
+	private String receiverNo;// 메시지 받은 사람
 
 	@Field(name = "message")
 	private String message; // 메시지

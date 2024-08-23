@@ -40,10 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/member/chatroom")
 public class ChatMemberController {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-
 	private final ChatRoomService chatService;
-
 	private final MessageService messageService;
 
 	@GetMapping("/main")
@@ -60,14 +57,18 @@ public class ChatMemberController {
 			String chatRoomName = chatRoom.getChatRoomName();
 			String chatRoomNo = chatRoom.getChatRoomNo() + "";
 
-			// 마지막 메시지 내용, 시간, *안 읽은 메시지 개수 총 몇개인지*
-			ChatRoomInfo chatRoomInfo = messageService.getLatestMessagesByChatRoom(chatRoomNo);
+			// 마지막 메시지 내용, 시간
+			ChatMessageDTO chatMessage = messageService.getLatestMessagesByChatRoom(chatRoomNo);
+
+			String receiverNo = chatRoom.getAdminNo() + "";
+			// *안 읽은 메시지 개수 총 몇개인지*
+			Long UnReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
 
 			String messageContent = null;
 			String messageTime = null;
-			if (chatRoomInfo != null) {
-				messageContent = chatRoomInfo.getMessage();
-				messageTime = chatRoomInfo.getRegDateTime();
+			if (chatMessage != null) {
+				messageContent = chatMessage.getMessage();
+				messageTime = chatMessage.getRegDateTime();
 
 				// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
 				Instant instant = Instant.parse(messageTime);
@@ -93,7 +94,7 @@ public class ChatMemberController {
 
 			}
 			// 채팅방 정보와 최근 메시지 정보를 객체로 생성
-			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, messageContent, messageTime));
+			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, UnReadCount, messageContent, messageTime));
 
 		}
 
@@ -122,9 +123,16 @@ public class ChatMemberController {
 
 	@GetMapping("/chats/{chatRoomNo}")
 	@ResponseBody
-	public List<ChatMessageDTO> memberChatAJAXGET(@PathVariable String chatRoomNo) throws JsonProcessingException {
-		log.info("ajax로 매핑되어 온 메소드에 진입함");
-		messageService.updateIsReadtoTrue(chatRoomNo);
+	@Transactional
+	public List<ChatMessageDTO> memberChatAJAXGET(HttpServletRequest request,@PathVariable String chatRoomNo) throws JsonProcessingException {
+		log.info("ajax 호출 메소드 : 하나의 채팅방을 누름");
+		
+		
+		HttpSession session = request.getSession();
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		String receiverNo = loginMember.getMemberNo()+"";
+		
+		messageService.updateIsReadtoTrue(chatRoomNo,receiverNo);
 		List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
 		log.info(messageList.toString());
 
@@ -166,6 +174,7 @@ public class ChatMemberController {
 	}
 
 	@GetMapping("/delete/{chatRoomNo}")
+	@Transactional
 	public String memberDeleteRoomGET(@PathVariable int chatRoomNo) {
 		chatService.updateChatRoomStatus(chatRoomNo);
 		return "redirect:/member/chatroom/main";

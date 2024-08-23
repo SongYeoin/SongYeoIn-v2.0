@@ -17,9 +17,10 @@ public interface MessageService {
 	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo);
 	
 	
-	public void updateIsReadtoTrue(String chatRoomNo);
+	public void updateIsReadtoTrue(String chatRoomNo,String receiverNo);
 	//public Map<String, ChatMessageDTO> getLatestMessagesByChatRoom(int chatRoomNo);
-	public ChatRoomInfo getLatestMessagesByChatRoom(String chatRoomNo);
+	public ChatMessageDTO getLatestMessagesByChatRoom(String chatRoomNo);
+	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(String chatRoomNo, String receiverNo);
 	
 
 }

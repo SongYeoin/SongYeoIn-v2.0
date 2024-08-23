@@ -51,7 +51,7 @@ public class ChatAdminController {
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 
-		// 채팅방 목록 조회
+		// 채팅방 목록 조회-조건 없이 모든 채팅방 목록
 		List<ChatRoomVO> roomList = chatService.selectChatRoomList(null, loginMember);
 		// 실제 보여지는 채팅방 목록 정보
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
@@ -60,41 +60,45 @@ public class ChatAdminController {
 			String chatRoomName = chatRoom.getChatRoomName();
 			String chatRoomNo = chatRoom.getChatRoomNo() + "";
 
-			// 마지막 메시지 내용, 시간, *안 읽은 메시지 개수 총 몇개인지*
-			ChatRoomInfo chatRoomInfo = messageService.getLatestMessagesByChatRoom(chatRoomNo);
+			// 마지막 메시지 내용, 시간
+			ChatMessageDTO chatMessage = messageService.getLatestMessagesByChatRoom(chatRoomNo);
+
+			String receiverNo = chatRoom.getAdminNo() + "";
+			// *안 읽은 메시지 개수 총 몇개인지*
+			Long UnReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
 
 			String messageContent = null;
 			String messageTime = null;
-			if (chatRoomInfo != null) {
-				messageContent = chatRoomInfo.getMessage();
-				messageTime = chatRoomInfo.getRegDateTime();
+			if (chatMessage != null) {
+				messageContent = chatMessage.getMessage();
+				messageTime = chatMessage.getRegDateTime();
 
 				// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
 				Instant instant = Instant.parse(messageTime);
-				
+
 				// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
 				DateTimeFormatter formatter;
-				
-				
-				Instant now = Instant.now();//현재 날짜시간
-				Duration duration = Duration.between(instant, now);//현재와 메시지 보낸 시간과의 차이
-				
-				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일 로 표시
-				if(duration.toDays() < 1) {//하루가 안 지났다면
+
+				Instant now = Instant.now();// 현재 날짜시간
+				Duration duration = Duration.between(instant, now);// 현재와 메시지 보낸 시간과의 차이
+
+				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일
+				// 로 표시
+				if (duration.toDays() < 1) {// 하루가 안 지났다면
 					formatter = DateTimeFormatter.ofPattern("a hh:mm").withZone(ZoneId.of("Asia/Seoul"));
 					messageTime = formatter.format(instant);
-					
-				}else if(duration.toDays() >= 1 && duration.toDays() < 2) {//하루와 이틀 사이
-					messageTime="어제";
-				}else {
+
+				} else if (duration.toDays() >= 1 && duration.toDays() < 2) {// 하루와 이틀 사이
+					messageTime = "어제";
+				} else {
 					formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
 					messageTime = formatter.format(instant);
 				}
 
-				
 			}
+
 			// 채팅방 정보와 최근 메시지 정보를 객체로 생성
-			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, messageContent, messageTime));
+			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, UnReadCount, messageContent, messageTime));
 
 		}
 
@@ -113,6 +117,8 @@ public class ChatAdminController {
 					countOneSet.add(classVO.getMemberNo());
 				}
 			}
+			
+			log.info("채팅방이 존재하는 모임 : " + countOneSet);
 
 			List<SyclassVO> adminClassList = chatService.selectAdminClassList(loginMember.getMemberNo());
 
@@ -124,13 +130,14 @@ public class ChatAdminController {
 
 			// 담당자가 맡은 반의 수강생 이름이 포함된 리스트(모달창)
 			model.addAttribute("classList", classMemberList);
-			
+
 			// 담당자가 맡은 반 리스트(select box)
 			model.addAttribute("adminClassList", adminClassList);
 
 		}
 	}
 
+	// main과 중복되지만 비동기 처리를 위해서 해당 매핑을 따로 해줌
 	@PostMapping("/search")
 	@ResponseBody
 	public List<ChatRoomInfo> adminSerachChatRoomPost(@RequestBody Criteria cri, HttpServletRequest request)
@@ -145,8 +152,6 @@ public class ChatAdminController {
 		log.info("classNo : " + cri.getClassNo());
 		log.info("memberName : " + cri.getMemberName());
 
-
-
 		// classNo, memberName처리됨
 		List<ChatRoomVO> filterChatRoomList = chatService.selectChatRoomList(cri, loginMember);
 		log.info("필터 처리되서 넘어오는 채팅방 리스트 >>>>>>>>" + filterChatRoomList.toString());
@@ -158,40 +163,46 @@ public class ChatAdminController {
 			String chatRoomName = chatRoom.getChatRoomName();
 			String chatRoomNo = chatRoom.getChatRoomNo() + "";
 
-			// 마지막 메시지 내용, 시간, *안 읽은 메시지 개수 총 몇개인지*
-			ChatRoomInfo chatRoomInfo = messageService.getLatestMessagesByChatRoom(chatRoomNo);
+			// 마지막 메시지 내용, 시간
+			ChatMessageDTO chatMessage = messageService.getLatestMessagesByChatRoom(chatRoomNo);
 
+			String receiverNo = chatRoom.getAdminNo() + "";
+			// *안 읽은 메시지 개수 총 몇개인지*
+			Long UnReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
+			
+			
 			String messageContent = null;
 			String messageTime = null;
-			if (chatRoomInfo != null) {
-				messageContent = chatRoomInfo.getMessage();
-				messageTime = chatRoomInfo.getRegDateTime();
+			if (chatMessage != null) {
+				messageContent = chatMessage.getMessage();
+				messageTime = chatMessage.getRegDateTime();
 
 				// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
 				Instant instant = Instant.parse(messageTime);
-				
+
 				// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
 				DateTimeFormatter formatter;
-				
-				
-				Instant now = Instant.now();//현재 날짜시간
-				Duration duration = Duration.between(instant, now);//현재와 메시지 보낸 시간과의 차이
-				
-				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일 로 표시
-				if(duration.toDays() < 1) {//하루가 안 지났다면
+
+				Instant now = Instant.now();// 현재 날짜시간
+				Duration duration = Duration.between(instant, now);// 현재와 메시지 보낸 시간과의 차이
+
+				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일
+				// 로 표시
+				if (duration.toDays() < 1) {// 하루가 안 지났다면
 					formatter = DateTimeFormatter.ofPattern("a hh:mm").withZone(ZoneId.of("Asia/Seoul"));
 					messageTime = formatter.format(instant);
-					
-				}else if(duration.toDays() >= 1 && duration.toDays() < 2) {//하루와 이틀 사이
-					messageTime="어제";
-				}else {
+
+				} else if (duration.toDays() >= 1 && duration.toDays() < 2) {// 하루와 이틀 사이
+					messageTime = "어제";
+				} else {
 					formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
 					messageTime = formatter.format(instant);
 				}
 
 			}
+
 			// 채팅방 정보와 최근 메시지 정보를 객체로 생성
-			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, messageContent, messageTime));
+			chatRoomInfos.add(new ChatRoomInfo(chatRoomNo, chatRoomName, UnReadCount, messageContent, messageTime));
 
 		}
 
@@ -200,43 +211,49 @@ public class ChatAdminController {
 		return chatRoomInfos;
 
 	}
-	
+
 	@GetMapping("/chats/{chatRoomNo}")
-    @ResponseBody
-    public List<ChatMessageDTO> memberChatAJAXGET(@PathVariable String chatRoomNo) throws JsonProcessingException {
-    	log.info("ajax로 매핑되어 온 메소드에 진입함");
-    	messageService.updateIsReadtoTrue(chatRoomNo);
-    	List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
-    	log.info(messageList.toString());
-    	
-    	for(ChatMessageDTO message: messageList) {
-    		String messageTime = message.getRegDateTime();
-    		
-    		// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
+	@ResponseBody
+	@Transactional
+	public List<ChatMessageDTO> memberChatAJAXGET(HttpServletRequest request,@PathVariable String chatRoomNo) throws JsonProcessingException {
+		log.info("ajax 호출 메소드 : 하나의 채팅방을 누름");
+		
+		HttpSession session = request.getSession();
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		String receiverNo = loginMember.getMemberNo()+"";
+		
+		messageService.updateIsReadtoTrue(chatRoomNo,receiverNo);
+		List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
+		log.info(messageList.toString());
+
+		for (ChatMessageDTO message : messageList) {
+			String messageTime = message.getRegDateTime();
+
+			// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
 			Instant instant = Instant.parse(messageTime);
-			
+
 			// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)").withZone(ZoneId.of("Asia/Seoul"));
-			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)")
+					.withZone(ZoneId.of("Asia/Seoul"));
+
 			messageTime = formatter.format(instant);
-			
+
 			message.setRegDateTime(messageTime);
-    	}
-    	
-    	return messageList;
+		}
+
+		return messageList;
 	}
-	
 
 	@PostMapping("/createroom")
 	@Transactional
 	public String adminCreateRoomPOST(HttpServletRequest request, ChatRoomVO chatroom, Model model) {
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-		
+
 		// 콤마 제거
 		String chatRoomName = chatroom.getChatRoomName();
 		chatRoomName = chatRoomName.replaceAll(",+$", "");
-		
+
 		chatroom.setChatRoomName(chatRoomName);
 
 		int adminNo = loginMember.getMemberNo();
@@ -247,6 +264,7 @@ public class ChatAdminController {
 	}
 
 	@GetMapping("/delete/{chatRoomNo}")
+	@Transactional
 	public String adminDeleteRoomGET(@PathVariable int chatRoomNo) {
 		chatService.updateChatRoomStatus(chatRoomNo);
 		return "redirect:/admin/chatroom/main";

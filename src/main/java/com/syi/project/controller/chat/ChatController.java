@@ -2,11 +2,9 @@ package com.syi.project.controller.chat;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,7 +22,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syi.project.config.WebSocketConfig;
 import com.syi.project.model.chat.ChatMessageDTO;
+import com.syi.project.model.chat.ChatRoomVO;
 import com.syi.project.model.member.MemberVO;
+import com.syi.project.service.chat.ChatRoomService;
 import com.syi.project.service.chat.MessageService;
 
 import lombok.extern.log4j.Log4j2;
@@ -37,6 +37,7 @@ public class ChatController {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	private MessageService messageService;
+	private ChatRoomService chatRoomService;
 
 	// 현재 채팅방에 속한 사람들을 알기 위한 Set
 	// 구독한 사람들(session)이니까 메시지를 모두 보내줘야 한다.
@@ -75,6 +76,17 @@ public class ChatController {
 			if (loginMember == null) {
 				log.error("로그인 상태가 아님");
 				return;
+			}
+			
+			String chatRoomNo = chatMessage.getChatRoomNo();
+			ChatRoomVO room = chatRoomService.getAdminNoAndMemberNoByChatRoomNo(chatRoomNo);
+			
+			if(loginMember.getMemberRole()=="ROLE_ADMIN") {
+				//관리자라면
+				chatMessage.setReceiverNo(room.getMemberNo()+"");
+			}else {
+				chatMessage.setReceiverNo(room.getAdminNo()+"");
+				
 			}
 
 			// 메시지 MongoDB에 저장
@@ -127,6 +139,7 @@ public class ChatController {
 	}
 
 	private void broadcast(String message) throws IOException {
+		log.info("현재 채팅방의 들어와 있는 사람의 수 : ---------> " + sessions.size());
 
 		for (Session session : sessions.values()) {
 			if (session.isOpen()) {

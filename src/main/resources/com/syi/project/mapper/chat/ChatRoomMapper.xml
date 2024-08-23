@@ -62,7 +62,7 @@
   	 -->
   	
   	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
-  		SELECT CH.CHATROOM_NO,CH.CHATROOM_NAME
+  		SELECT CH.CHATROOM_NO,CH.CHATROOM_NAME,CH.CHATROOM_ADMIN_NO,CH.CHATROOM_MEMBER_NO
   		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
   			<if test="cri != null">
 	  			FROM CLASS C
