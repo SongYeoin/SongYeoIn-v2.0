@@ -15,7 +15,7 @@ import com.syi.project.model.board.CommentsVO;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-	
+
 	@Autowired
 	private CommentMapper commentMapper;
 
@@ -29,34 +29,48 @@ public class CommentServiceImpl implements CommentService {
 	// 댓글 조회
 	@Override
 	public List<CommentsVO> selectCommentList(int boardNo) {
-		
+
 		// 댓글 전체 조회
 		List<CommentsVO> comments = commentMapper.selectCommentList(boardNo);
-		
-		// 댓글과 대댓글 계층 구조로 정리
+
 		Map<Integer, CommentsVO> commentMap = new HashMap<>();
-		for(CommentsVO comment : comments) {
+		for (CommentsVO comment : comments) {
 			commentMap.put(comment.getCommentNo(), comment);
 		}
-		
-		// 대댓글을 부모 댓글에 추가
-		for(CommentsVO comment : comments) {
-			if(comment.getCommentParentNo() != null) {
+
+		// 댓글을 계층적으로 정리
+		for (CommentsVO comment : comments) {
+			if (comment.getCommentParentNo() != null) {
 				CommentsVO parent = commentMap.get(comment.getCommentParentNo());
-				if(parent != null) {
-					if(parent.getReplyList() == null)
+				if (parent != null) {
+					if (parent.getReplyList() == null) {
 						parent.setReplyList(new ArrayList<>());
+					}
 					parent.getReplyList().add(comment);
 				}
 			}
 		}
-		
-		// 부모 댓글만 반환
-		return comments.stream()
-				.filter(comment -> comment.getCommentParentNo() == null)
-				.collect(Collectors.toList());
+
+		// 최상위 댓글을 찾고 재귀적으로 정리
+		List<CommentsVO> topLevelComments = new ArrayList<>();
+		for (CommentsVO comment : comments) {
+			if (comment.getCommentParentNo() == null) {
+				organizeReplies(comment);
+				topLevelComments.add(comment);
+			}
+		}
+		return topLevelComments;
 	}
-	
+
+	// 댓글을 재귀적으로 정리
+	private void organizeReplies(CommentsVO comment) {
+		if (comment.getReplyList() != null) {
+			for (CommentsVO reply : comment.getReplyList()) {
+				organizeReplies(reply);
+			}
+		}
+	}
+
 	// 댓글 총 갯수
 	@Override
 	public int selectCommentTotal(int boardNo) {
@@ -76,7 +90,5 @@ public class CommentServiceImpl implements CommentService {
 	public int deleteComment(int commentId) {
 		return commentMapper.deleteComment(commentId);
 	}
-
-	
 
 }

@@ -73,8 +73,18 @@
 
 	<!-- 댓글 생성 -->
 	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
-		INSERT INTO COMMENTS (COMMENT_BOARD_NO, COMMENT_MEMBER_NO, COMMENT_PARENT_NO, COMMENT_CONTENT)
-		VALUES (#{ commentBoardNo }, #{ commentMemberNo }, #{ commentParentNo }, #{ commentContent })
+		INSERT INTO COMMENTS (
+        	COMMENT_BOARD_NO,
+	        COMMENT_MEMBER_NO,
+	        COMMENT_CONTENT
+	        <if test="commentParentNo != null">, COMMENT_PARENT_NO</if>
+	    	)
+    	VALUES (
+	        #{commentBoardNo},
+	        #{commentMemberNo},
+	        #{commentContent}
+	        <if test="commentParentNo != null">, #{commentParentNo}</if>
+	    	)
 	</insert>
 	
 	<!-- 댓글 조회 -->
