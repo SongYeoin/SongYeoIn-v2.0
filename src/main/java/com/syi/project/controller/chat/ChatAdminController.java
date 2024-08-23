@@ -233,13 +233,14 @@ public class ChatAdminController {
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		log.info("채팅방 이름이 될 이름 : "+chatroom.getChatRoomName());
+		// 콤마 제거
+		String chatRoomName = chatroom.getChatRoomName();
+		chatRoomName = chatRoomName.replaceAll(",+$", "");
+		
+		chatroom.setChatRoomName(chatRoomName);
 
 		int adminNo = loginMember.getMemberNo();
-		//ChatRoomVO chatroom = new ChatRoomVO();
-		//chatroom.setMemberNo(memberNo);
 		chatroom.setAdminNo(adminNo);
-		//chatroom.setChatRoomName(chatRoomName);
 
 		chatService.createChatRoom(chatroom);
 		return "redirect:/admin/chatroom/main";

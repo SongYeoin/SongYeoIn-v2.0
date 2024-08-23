@@ -148,7 +148,7 @@ a.custom{
 					 	<div class="modal-content">
 					 		<span class="close">닫기</span>
 					 		<h5>담당자를 선택해주세요</h5>
-							 <form action="${pageContext.servletContext.contextPath}/member/chatroom/createroom" method="post" id="createRoomForm">
+							 <form action="${pageContext.servletContext.contextPath}/member/chatroom/createroom" method="post" id="createRoomForm" onsubmit="return setChatRoomName();">
 							    <table border="1">
 							        <!-- 테이블 헤더 -->
 							        <tr>
@@ -166,7 +166,6 @@ a.custom{
 							                <!-- 담당자명 출력 -->
 							                <td>
 							                    <c:out value="${enroll.syclass.managerName}"/>
-							                    <input type="hidden" name="chatRoomName" value="${enroll.syclass.managerName}">
 							                </td>
 							                <!-- 수강과목명 출력 -->
 							                <td>
@@ -176,7 +175,8 @@ a.custom{
 							                <td>
 							                    <c:choose>
 												    <c:when test="${enroll.syclass.adminNo != previousAdminNo && !fn:contains(countOneSet, enroll.syclass.adminNo)}">
-												        <input type="radio" name="adminNO" value="${enroll.syclass.adminNo}"/>
+												        <input type="radio" name="adminNo" value="${enroll.syclass.adminNo}" data-admin-name="${enroll.syclass.managerName}"/>
+												        <input type="hidden" id="chatRoomName" name="chatRoomName">
 												        <c:set var="previousAdminNo" value="${enroll.syclass.adminNo}"/>
 												    </c:when>
 												    <c:otherwise>
@@ -304,6 +304,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function setChatRoomName() {
+    var form = document.getElementById('createRoomForm');
+    var selectedRadio = form.querySelector('input[name="adminNo"]:checked');
+    if (selectedRadio) {
+        var adminName = selectedRadio.getAttribute('data-admin-name');
+        var chatRoomNameInput = form.querySelector('input[name="chatRoomName"]');
+        chatRoomNameInput.value = adminName;
+    } else {
+        alert('담당자를 선택해 주세요.');
+        return false; // 폼 제출을 방지
+    }
+    return true; // 폼을 정상적으로 제출
+}
 
 
 

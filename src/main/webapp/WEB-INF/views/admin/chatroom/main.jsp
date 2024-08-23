@@ -144,7 +144,7 @@ a.custom{
 					 	<div class="modal-content">
 					 		<span class="close">닫기</span>
 					 		<h5>수강생을 선택해주세요</h5>
-							 <form action="${pageContext.servletContext.contextPath}/admin/chatroom/createroom" method="post" id="createRoomForm">
+							 <form action="${pageContext.servletContext.contextPath}/admin/chatroom/createroom" method="post" id="createRoomForm" onsubmit="return setChatRoomName();">
 							    <table border="1">
 							        <!-- 테이블 헤더 -->
 							        <tr>
@@ -158,13 +158,10 @@ a.custom{
 							        <c:forEach items="${classList}" var="enroll" varStatus="status">
 							        <!-- 이전에 출력된 memberNo 값을 저장할 변수 -->
 							        <c:set var="previousAdminNo" value="${classList[status.index - 1].member.memberNo}"/>
-							        <c:set var="previousAdminName" value="${classList[status.index - 1].member.memberName}"/>
 							            <tr>
 							                <!-- 수강생명 출력 중복으로 출력 안되게 바꾸기 -->
 							                <td>
-							                	<%-- <c:when test="${enroll.member.memberName != previousAdminName}"> --%>
 							                    	<c:out value="${enroll.member.memberName}"/>
-							                    <%-- </c:when> --%>
 							                </td>
 							                <!-- 수강과목명 출력 -->
 							                <td>
@@ -174,9 +171,9 @@ a.custom{
 							                <td>
 							                    <c:choose>
 							                        <c:when test="${enroll.member.memberNo != previousAdminNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
-							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}" data-member-name="${enroll.member.memberName}"/>
-									                    <input type="hidden" id="chatRoomName" name="chatRoomName">
-							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}"/>
+							                            <input type="radio" id="chatroomMemberNo" name="memberNo" value="${enroll.member.memberNo}" data-member-name="${enroll.member.memberName}"/>
+							                            <input type="hidden" id="chatRoomName" name="chatRoomName">
+							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}" />
 							                        </c:when>
 							                        <c:otherwise>
 							                        </c:otherwise>
@@ -310,26 +307,25 @@ document.addEventListener('DOMContentLoaded', function() {
             row.style.backgroundColor = '#f0f0f0'; // 옅은 회색
         }
     });
+    
+    
 });
 
-document.getElementById('submitButton').addEventListener('click', (event) => {
-    // 선택된 라디오 버튼을 찾습니다.
-    const selectedRadio = document.querySelector('input[name="memberNo"]:checked');
-
+function setChatRoomName() {
+    var form = document.getElementById('createRoomForm');
+    var selectedRadio = form.querySelector('input[name="memberNo"]:checked');
     if (selectedRadio) {
-        // 선택된 라디오 버튼의 데이터 속성에서 memberName 값을 가져옵니다.
-        const memberName = selectedRadio.getAttribute('data-member-name');
-        console.log( "멤버네임 : "+memberName);
-        
-        // 숨겨진 입력 필드에 값을 설정합니다.
-        document.getElementById('chatRoomName').value = memberName;
+        var memberName = selectedRadio.getAttribute('data-member-name');
+        var chatRoomNameInput = form.querySelector('input[name="chatRoomName"]');
+        chatRoomNameInput.value = memberName;
     } else {
-        // 선택된 라디오 버튼이 없으면 경고를 표시합니다.
-        alert('라디오 버튼을 선택해 주세요.');
-        // 폼 제출을 막습니다.
-        event.preventDefault();
+        alert('수강생을 선택해 주세요.');
+        return false; // 폼 제출을 방지
     }
-});
+    return true; // 폼을 정상적으로 제출
+}
+
+
 
 </script>
 

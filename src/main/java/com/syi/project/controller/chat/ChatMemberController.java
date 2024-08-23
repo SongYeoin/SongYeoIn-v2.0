@@ -127,35 +127,39 @@ public class ChatMemberController {
 		messageService.updateIsReadtoTrue(chatRoomNo);
 		List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
 		log.info(messageList.toString());
-		
-		for(ChatMessageDTO message: messageList) {
-    		String messageTime = message.getRegDateTime();
-    		
-    		// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
+
+		for (ChatMessageDTO message : messageList) {
+			String messageTime = message.getRegDateTime();
+
+			// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
 			Instant instant = Instant.parse(messageTime);
-			
+
 			// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)").withZone(ZoneId.of("Asia/Seoul"));
-			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)")
+					.withZone(ZoneId.of("Asia/Seoul"));
+
 			messageTime = formatter.format(instant);
-			
+
 			message.setRegDateTime(messageTime);
-    	}
-		
+		}
+
 		return messageList;
 	}
 
 	@PostMapping("/createroom")
 	@Transactional
-	public String memberCreateRoomPOST(HttpServletRequest request, int adminNO, String chatRoomName ,Model model) {
+	public String memberCreateRoomPOST(HttpServletRequest request, ChatRoomVO chatroom, Model model) {
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 
-		int memberNo = loginMember.getMemberNo();
-		ChatRoomVO chatroom = new ChatRoomVO();
-		chatroom.setMemberNo(memberNo);
-		chatroom.setAdminNo(adminNO);
+		// 콤마 제거
+		String chatRoomName = chatroom.getChatRoomName();
+		chatRoomName = chatRoomName.replaceAll(",+$", "");
+
 		chatroom.setChatRoomName(chatRoomName);
+
+		int memberNo = loginMember.getMemberNo();
+		chatroom.setMemberNo(memberNo);
 
 		chatService.createChatRoom(chatroom);
 		return "redirect:/member/chatroom/main";
