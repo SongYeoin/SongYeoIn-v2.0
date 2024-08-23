@@ -36,9 +36,9 @@ public class CommentController {
 
 		comment.setCommentBoardNo(boardNo);
 		comment.setCommentMemberNo(memberNo);
+		comment.setCommentParentNo(parentCommentNo);
 		
-		if(parentCommentNo != null) {
-			comment.setCommentParentNo(parentCommentNo);
+		if (parentCommentNo != null) {
 			log.info(">>> 대댓글 생성 {}", comment);
 		} else {
 			log.info(">>> 댓글 생성 {}", comment);

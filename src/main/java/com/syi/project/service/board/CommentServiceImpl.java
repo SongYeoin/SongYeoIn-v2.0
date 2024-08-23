@@ -1,6 +1,10 @@
 package com.syi.project.service.board;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,32 @@ public class CommentServiceImpl implements CommentService {
 	// 댓글 조회
 	@Override
 	public List<CommentsVO> selectCommentList(int boardNo) {
-		return commentMapper.selectCommentList(boardNo);
+		
+		// 댓글 전체 조회
+		List<CommentsVO> comments = commentMapper.selectCommentList(boardNo);
+		
+		// 댓글과 대댓글 계층 구조로 정리
+		Map<Integer, CommentsVO> commentMap = new HashMap<>();
+		for(CommentsVO comment : comments) {
+			commentMap.put(comment.getCommentNo(), comment);
+		}
+		
+		// 대댓글을 부모 댓글에 추가
+		for(CommentsVO comment : comments) {
+			if(comment.getCommentParentNo() != null) {
+				CommentsVO parent = commentMap.get(comment.getCommentParentNo());
+				if(parent != null) {
+					if(parent.getReplyList() == null)
+						parent.setReplyList(new ArrayList<>());
+					parent.getReplyList().add(comment);
+				}
+			}
+		}
+		
+		// 부모 댓글만 반환
+		return comments.stream()
+				.filter(comment -> comment.getCommentParentNo() == null)
+				.collect(Collectors.toList());
 	}
 	
 	// 댓글 총 갯수

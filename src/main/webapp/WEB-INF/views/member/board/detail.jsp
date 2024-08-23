@@ -228,56 +228,62 @@ button:hover {
             <c:forEach var="comment" items="${commentList}">
                 <div id="comment-${comment.commentNo}" class="comment">
                     <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    
-                    <!-- 댓글 -->
                     <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
                     
-                    <!-- 댓글 수정 및 삭제 -->
-                    <c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
-                        <!-- 댓글 수정 폼 -->
-	                    <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
-	                        <input type="hidden" name="commentNo" value="${comment.commentNo}" />
-	                        <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                        <div class="comment-button-container">
-	                        	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                        	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-	                        </div>
-	                    </form>
-			
-			            <!-- 댓글 수정 삭제 버튼 -->
-			            <div class="comment-button-container">
+                    <!-- 댓글 버튼 -->
+			        <div class="comment-button-container">
+				        <button class="reply-btn" onclick="showReplyForm(${comment.commentNo})">답글</button>
+                    	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
 			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
 			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
-			            </div>
-                    </c:if>
-                    
-                    <!-- 대댓글 추가 폼 -->
-                    <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
-			            <form action="${pageContext.request.contextPath}/member/board/comment/reply" method="post">
+                    	</c:if>
+			        </div>
+			        
+			        <!-- 댓글 수정 폼 -->
+			        <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
+			        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
+	                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+	                    <div class="comment-button-container">
+	                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+	                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+	                    </div>
+	                </form>
+	                
+			        <!-- 답글 작성 폼 -->
+			        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
+			            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
 			                <input type="hidden" name="boardNo" value="${board.boardNo}" />
 			                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
-			                <textarea name="commentContent" rows="4" placeholder="대댓글을 입력하세요"></textarea>
+			                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
 			                <button type="submit">등록</button>
 			            </form>
 			        </div>
-			        
-			        <!-- 대댓글 버튼 -->
-			        <button onclick="toggleReplyForm(${comment.commentNo})">답글</button>
-			        
+			
 			        <!-- 대댓글 리스트 -->
 			        <c:forEach var="reply" items="${comment.replyList}">
-			            <div id="reply-${reply.commentNo}" class="comment" style="margin-left: 20px;">
+			            <div id="comment-${reply.commentNo}" class="comment" style="margin-left: 20px;">
 			                <p><strong>${reply.member.memberNickname}</strong> ${reply.commentRegDate}</p>
-			                <p id="reply-content-${reply.commentNo}">${reply.commentContent}</p>
+			                <p id="comment-content-${reply.commentNo}">${reply.commentContent}</p>
 			                
+			                <!-- 대댓글 수정 및 삭제 -->
 			                <c:if test="${sessionScope.loginMember.memberNo eq reply.commentMemberNo}">
 			                    <div class="comment-button-container">
-			                        <button id="updateReplyBtn-${reply.commentNo}" onclick="editComment(${reply.commentNo})">수정</button>
-			                        <button id="deleteReplyBtn-${reply.commentNo}" onclick="deleteComment(${reply.commentNo})">삭제</button>
+			                        <button id="updateCommentBtn-${reply.commentNo}" onclick="editComment(${reply.commentNo})">수정</button>
+			                        <button id="deleteCommentBtn-${reply.commentNo}" onclick="deleteComment(${reply.commentNo})">삭제</button>
 			                    </div>
+			                    
+			                    <!-- 대댓글 수정 폼 -->
+			                    <form id="edit-form-${reply.commentNo}" class="edit-form" style="display:none;">
+			                        <input type="hidden" name="commentNo" value="${reply.commentNo}" />
+			                        <textarea name="commentContent" rows="4">${reply.commentContent}</textarea>
+			                        <div class="comment-button-container">
+			                            <button type="button" onclick="submitEdit(${reply.commentNo})">수정</button>
+			                            <button type="button" onclick="cancelEdit(${reply.commentNo})">취소</button>
+			                        </div>
+			                    </form>
 			                </c:if>
 			            </div>
-       			 	</c:forEach>
+			        </c:forEach>
                 </div>
             </c:forEach>
 
@@ -446,6 +452,13 @@ button:hover {
             });
         }
     }
+    
+ 	// 답글 작성 폼 표시
+    function showReplyForm(commentNo) {
+        $('#reply-form-' + commentNo).toggle(); // 답글 폼을 토글 표시
+    }
+    
+    
 
     </script>
 

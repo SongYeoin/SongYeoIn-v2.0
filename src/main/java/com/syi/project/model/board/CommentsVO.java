@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class CommentsVO {
 	private int commentNo;
-	private int commentParentNo;
+	private Integer commentParentNo;
 	private String commentContent;
 	private Date commentRegDate;
 	private Date commentModifyDate;
