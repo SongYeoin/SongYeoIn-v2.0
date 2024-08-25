@@ -20,4 +20,5 @@ public interface ChatRoomMapper {
 	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
 	int updateChatRoomStatus(int chatRoomNo);
 	List<ChatRoomVO> selectChatRoomList(@Param("cri") Criteria cri,@Param("loginMember")MemberVO loginMember);
+	ChatRoomVO selectAdminNoAndMemberNoByChatRoomNo(int chatRoomNo);
 }

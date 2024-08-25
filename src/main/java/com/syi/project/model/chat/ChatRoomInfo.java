@@ -15,9 +15,10 @@ import lombok.NoArgsConstructor;
 @Document(collection = "messages")
 public class ChatRoomInfo {
 
-    private String chatRoomNo;
+    private int chatRoomNo;
     private String chatRoomName;
-    private Long UnReadCount;
+    private int receiverNo;
+    private Long unReadCount;
     
     
     // 마지막 메시지와 시간

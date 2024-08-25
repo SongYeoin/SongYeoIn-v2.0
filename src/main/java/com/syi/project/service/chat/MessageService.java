@@ -14,13 +14,13 @@ public interface MessageService {
 	public void deleteMessageById(String id);
 	
 	// 채팅방 누르면 나오는 메시지 리스트
-	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo);
+	public List<ChatMessageDTO> getMessagesByChatRoomNo(int chatRoomNo);
 	
 	
-	public void updateIsReadtoTrue(String chatRoomNo,String receiverNo);
+	public void updateIsReadtoTrue(int chatRoomNo, int receiverNo);
 	//public Map<String, ChatMessageDTO> getLatestMessagesByChatRoom(int chatRoomNo);
-	public ChatMessageDTO getLatestMessagesByChatRoom(String chatRoomNo);
-	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(String chatRoomNo, String receiverNo);
+	public ChatMessageDTO getLatestMessagesByChatRoom(int chatRoomNo);
+	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(int chatRoomNo, int receiverNo);
 	
 
 }

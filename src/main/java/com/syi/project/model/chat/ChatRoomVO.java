@@ -8,9 +8,8 @@ import lombok.Data;
 public class ChatRoomVO {
 	// 채팅방 넘버
 	private int chatRoomNo;
-	private String chatRoomName;
 	private int adminNo;
-	private int memberNo;
+	private int memberNo;//수강생
 
 	private MemberVO member;
 

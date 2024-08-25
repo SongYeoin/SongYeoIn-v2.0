@@ -26,8 +26,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 	// 채팅방 개설
 	@Override
-	public void createChatRoom(ChatRoomVO chatroom) {
-		chatRoomMapper.insertChatRoom(chatroom);
+	public int createChatRoom(ChatRoomVO chatroom) {
+		//이미 만들어진 채팅방이 있는지 확인하기
+		int result = chatRoomMapper.selectCountOneRoomList(chatroom);
+		if(result>0) {
+			//이미 채팅방 존재
+			return 0;
+		}else {
+			//없으니까 생성
+			return chatRoomMapper.insertChatRoom(chatroom);
+		}
+		
 	}
 
 	@Override
@@ -58,6 +67,19 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Override
 	public List<SyclassVO> selectAdminClassList(int adminNo) {
 		return chatRoomMapper.selectAdminClassList(adminNo);
+	}
+
+	@Override
+	public ChatRoomVO getAdminNoAndMemberNoByChatRoomNo(int chatRoomNo) {
+		System.out.println("서비스에서 찍힌 chatRoomNo : " + chatRoomNo);
+		
+		ChatRoomVO chatroom = chatRoomMapper.selectAdminNoAndMemberNoByChatRoomNo(chatRoomNo);
+		if(chatroom == null) {
+			System.out.println("서비스에서 찍힌 chatroom 정보 없음 null!!!!!!!");
+		}else {
+			System.out.println("서비스에서 찍힌 chatRoom 정보 : " + chatroom);
+		}
+		return chatroom;
 	}
 
 

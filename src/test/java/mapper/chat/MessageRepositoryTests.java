@@ -32,7 +32,7 @@ public class MessageRepositoryTests {
 	 */
 	@Test
 	public void createMessage() {
-		log.info("마지막 메시지와 시간" + messageService.getLatestMessagesByChatRoom("43"));
+		log.info("마지막 메시지와 시간" + messageService.getLatestMessagesByChatRoom(43));
 	}
 
 	/*

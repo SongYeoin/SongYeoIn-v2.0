@@ -86,7 +86,7 @@ a.custom{
 }
 
 #chat {
-    max-height: 100vh; /* 화면 높이의 50%로 설정하여 반응형 처리 */
+    max-height: 100vh; 
     max-width: 100vw;
     overflow-y: auto;  /* 수직 스크롤 추가 */
     padding: 0;
@@ -170,8 +170,7 @@ a.custom{
 							                <td>
 							                    <c:choose>
 							                        <c:when test="${enroll.member.memberNo != previousMemberNo && !fn:contains(countOneSet, enroll.member.memberNo)}">
-							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}" data-member-name="${enroll.member.memberName}"/>
-							                            <input type="hidden" id="chatRoomName" name="chatRoomName">
+							                            <input type="radio" name="memberNo" value="${enroll.member.memberNo}"/>
 							                            <c:set var="previousMemberNo" value="${enroll.member.memberNo}" />
 							                        </c:when>
 							                        <c:otherwise>
@@ -196,7 +195,7 @@ a.custom{
 								<c:forEach items="${chatRoomInfos}"  var="room">
 										<li class="p-2 border-bottom bg-body-tertiary" 
 										data-chat-room-no="${room.chatRoomNo}"
-										onclick="selectChatRoom('${room.chatRoomNo}')"
+										onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this)"
 										 ><a
 											class="custom d-flex justify-content-between">
 												<div class="d-flex flex-row">
@@ -213,7 +212,7 @@ a.custom{
 												<div class="pt-1">
 													<p class="small text-muted mb-1">
 													<c:out value="${room.regDateTime}"/></p>
-													<span class="badge bg-danger float-end">1</span>
+													<span id="cntMessages" class="badge bg-danger float-end"><c:out value="${room.unReadCount}"/></span>
 												</div>
 										</a></li>
 									</c:forEach>
@@ -308,15 +307,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     
+    var result = '${result}';
+    if (result === '0') {			//이미 채팅방이 존재함
+        alert("이미 채팅방이 존재합니다.");
+    } else if (result === '1') {	// 잘 만들어짐
+        alert("채팅방이 생성되었습니다.");
+    }
+
+    /* 온 채팅의 개수가 0이면 숫자 span이 보이지 않게 하기  */
+    const cntMessagesElements = document.querySelectorAll('#cntMessages');
+    
+    cntMessagesElements.forEach(function(spanElement) {
+        if (spanElement.innerText === "0") {
+            // 값이 0이면 요소를 숨깁니다.
+            spanElement.style.display = 'none';
+        }
+    });
+    
+    
 });
 
 function setChatRoomName() {
     var form = document.getElementById('createRoomForm');
     var selectedRadio = form.querySelector('input[name="memberNo"]:checked');
     if (selectedRadio) {
-        var memberName = selectedRadio.getAttribute('data-member-name');
+        /* var memberName = selectedRadio.getAttribute('data-member-name');
         var chatRoomNameInput = form.querySelector('input[name="chatRoomName"]');
-        chatRoomNameInput.value = memberName;
+        chatRoomNameInput.value = memberName; */
     } else {
         alert('수강생을 선택해 주세요.');
         return false; // 폼 제출을 방지
@@ -417,7 +434,7 @@ function selectSearchCondition(){
 		                    $('<div>', { class: 'pt-1' }).append(
 		                        $('<p>', { class: 'small text-muted mb-1' }).text(room.regDateTime) 
 		                    ).append(
-		                        $('<span>', { class: 'badge bg-danger float-end' }).text('1') 
+		                        $('<span>', { class: 'badge bg-danger float-end' }).text(room.unReadCount) 
 		                    )
 		                )
 		            );
@@ -452,11 +469,17 @@ const loginMemberName = "${loginMember.memberName}";
 
 
 let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
-
+let currentReceiverNo = null;
 //채팅방 클릭 시 호출되는 함수
-function selectChatRoom(chatRoomNo) {
+function selectChatRoom(chatRoomNo,receiverNo,liElement) {
+	/* 채팅방을 누르면 숫자span이 사라지게 하기 */
+    const cntMessagesElement = liElement.querySelector('#cntMessages');
+    cntMessagesElement.style.display = 'none';
+	
     currentChatRoomNo = chatRoomNo;
+    currentReceiverNo = receiverNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
+    console.log('상대방의 No:' + receiverNo);
     
     $.ajax({/*채팅방 넘버로 메시지 리스트 가지고 오는 거여서 member여도 상관없다.  */
         url: '/admin/chatroom/chats/' + currentChatRoomNo,
@@ -482,9 +505,10 @@ function selectChatRoom(chatRoomNo) {
         var chatPlaceholder = document.getElementById("chatPlaceholder");
         chatPlaceholder.style.display = "none";
         
+        console.log("로그인한 사람의 NO : "+loginMemberNo);
         
         $.each(messages, function(index, message) {
-        	if(message.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+        	if(message.memberNo === Number(loginMemberNo)){//나-오른쪽에 와야 햐는 사람
         		
         		var messageItem = $('<li>', { class: 'd-flex justify-content-end mb-6'})
         	    .append($('<div>', { class: 'card w-100' })
@@ -556,8 +580,13 @@ ws.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
 
     console.log(messageData);
-    
-    if(messageData.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+   	console.log("메시지 보낸 사람의 NO:" + messageData.memberNo);
+   	console.log(typeof messageData.memberNo); // 자료형 확인-int
+   	console.log("로그인한 사람의 NO : " + loginMemberNo);
+   	console.log(typeof loginMemberNo); // 자료형 확인-String
+    console.log("두 사람의 No가 같은지 확인 " + (messageData.memberNo === Number(loginMemberNo)));
+   	
+    if(messageData.memberNo === Number(loginMemberNo)){//나-오른쪽에 와야 햐는 사람
     	console.log("오른쪽에 오는 사람");
 		const message = document.createElement('li');
 	    message.classList.add('d-flex', 'justify-content-end', 'mb-6');
@@ -664,7 +693,8 @@ sendButton.addEventListener('click', () => {
             chatRoomNo: currentChatRoomNo,  
             memberNo:  loginMemberNo,  
             memberName: loginMemberName,  
-            message: messageContent
+            message: messageContent,
+            receiverNo: currentReceiverNo
         };
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송

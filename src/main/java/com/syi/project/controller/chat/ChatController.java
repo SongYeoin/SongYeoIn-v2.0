@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,16 +21,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syi.project.config.WebSocketConfig;
 import com.syi.project.model.chat.ChatMessageDTO;
-import com.syi.project.model.chat.ChatRoomVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.chat.ChatRoomService;
 import com.syi.project.service.chat.MessageService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @ServerEndpoint(value = "/ws", configurator = WebSocketConfig.class)
-@Log4j2
+@Slf4j
 public class ChatController {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -77,29 +75,19 @@ public class ChatController {
 				log.error("로그인 상태가 아님");
 				return;
 			}
-			
-			String chatRoomNo = chatMessage.getChatRoomNo();
-			ChatRoomVO room = chatRoomService.getAdminNoAndMemberNoByChatRoomNo(chatRoomNo);
-			
-			if(loginMember.getMemberRole()=="ROLE_ADMIN") {
-				//관리자라면
-				chatMessage.setReceiverNo(room.getMemberNo()+"");
-			}else {
-				chatMessage.setReceiverNo(room.getAdminNo()+"");
-				
-			}
+
 
 			// 메시지 MongoDB에 저장
-			chatMessage.setMemberNo(loginMember.getMemberNo() + "");
+			chatMessage.setMemberNo(loginMember.getMemberNo());
 			System.out.println("멤버넘버 설정 : " + chatMessage.getMemberNo());
 			chatMessage.setMemberName(loginMember.getMemberName());
 			System.out.println("멤버이름 설정 : " + chatMessage.getMemberName());
 
-			//현재날짜를 문자열로 표시해서 저장함
-			Instant instantNow = Instant.now();//기본적으로 UTC 기준임
+			// 현재날짜를 문자열로 표시해서 저장함
+			Instant instantNow = Instant.now();// 기본적으로 UTC 기준임
 			chatMessage.setRegDateTime(instantNow.toString());
-			
-			//읽지 않음 표시
+
+			// 읽지 않음 표시
 			chatMessage.setRead(false);
 
 			System.out.println("최종 chatMessage : " + chatMessage);
@@ -115,13 +103,12 @@ public class ChatController {
 				// 추가적인 디버깅 정보 출력
 				System.err.println("NullPointerException at createMessage: " + e.getMessage());
 			}
-			
-			
-			//날짜 변환 후 내보내기
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)").withZone(ZoneId.of("Asia/Seoul"));
+
+			// 날짜 변환 후 내보내기
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)")
+					.withZone(ZoneId.of("Asia/Seoul"));
 			chatMessage.setRegDateTime(formatter.format(instantNow));
-			
-			
+
 			String updatedJson = objectMapper.writeValueAsString(chatMessage);
 			System.out.println("updatedJson : " + updatedJson);
 
@@ -148,7 +135,6 @@ public class ChatController {
 		}
 
 	}
-
 
 	@OnClose
 	public void onClose(Session session) {

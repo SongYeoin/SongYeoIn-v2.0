@@ -131,17 +131,6 @@ a.custom{
 				<div class="d-flex align-items-start">
 				<div class="w-100 h-100  p-3 border --bs-light-border-subtle rounded-3">
 				
-					<!-- <select class="form-select" aria-label="Default select example">
-					  <option selected>Open this select menu</option>
-					  <option value="1">One</option>
-					  <option value="2">Two</option>
-					  <option value="3">Three</option>
-					</select>
-					
-					<form class="d-flex align-items-center" role="search">
-				        <input class="form-control" type="search" placeholder="학생 이름을 검색해주세요." aria-label="Search">
-				        <button class="my-3  ms-2 btn btn-outline-dark text-nowrap" type="submit">검색</button>
-				     </form> -->
 					 <button id="openModalBtn">채팅방 생성</button>
 					 <!--모달구조  -->
 					 <div id="myModal" class="modal">
@@ -175,8 +164,7 @@ a.custom{
 							                <td>
 							                    <c:choose>
 												    <c:when test="${enroll.syclass.adminNo != previousAdminNo && !fn:contains(countOneSet, enroll.syclass.adminNo)}">
-												        <input type="radio" name="adminNo" value="${enroll.syclass.adminNo}" data-admin-name="${enroll.syclass.managerName}"/>
-												        <input type="hidden" id="chatRoomName" name="chatRoomName">
+												        <input type="radio" name="adminNo" value="${enroll.syclass.adminNo}" />
 												        <c:set var="previousAdminNo" value="${enroll.syclass.adminNo}"/>
 												    </c:when>
 												    <c:otherwise>
@@ -201,7 +189,7 @@ a.custom{
 							<c:forEach items="${chatRoomInfos}"  var="room">
 								<li class="p-2 border-bottom bg-body-tertiary"
 								data-chat-room-no="${room.chatRoomNo}"
-								onclick="selectChatRoom('${room.chatRoomNo}')"
+								onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this)"
 								 ><a class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
 											<img
@@ -217,7 +205,7 @@ a.custom{
 										<div class="pt-1">
 											<p class="small text-muted mb-1">
 											<c:out value="${room.regDateTime}"/></p>
-											<span class="badge bg-danger float-end">1</span>
+											<span id="cntMessages" class="badge bg-danger float-end"><c:out value="${room.unReadCount}"/></span>
 										</div>
 								</a></li>
 							</c:forEach>
@@ -302,15 +290,33 @@ document.addEventListener('DOMContentLoaded', function() {
             row.style.backgroundColor = '#f0f0f0'; // 옅은 회색
         }
     });
+    
+    var result = '${result}';
+    if (result === '0') {			//이미 채팅방이 존재함
+        alert("이미 채팅방이 존재합니다.");
+    } else if (result === '1') {	// 잘 만들어짐
+        alert("채팅방이 생성되었습니다.");
+    }
+    
+    /* 온 채팅의 개수가 0이면 숫자 span이 보이지 않게 하기  */
+    const cntMessagesElements = document.querySelectorAll('#cntMessages');
+    
+    cntMessagesElements.forEach(function(spanElement) {
+        if (spanElement.innerText === "0") {
+            // 값이 0이면 요소를 숨깁니다.
+            spanElement.style.display = 'none';
+        }
+    });
+
 });
 
 function setChatRoomName() {
     var form = document.getElementById('createRoomForm');
     var selectedRadio = form.querySelector('input[name="adminNo"]:checked');
     if (selectedRadio) {
-        var adminName = selectedRadio.getAttribute('data-admin-name');
+/*         var adminName = selectedRadio.getAttribute('data-admin-name');
         var chatRoomNameInput = form.querySelector('input[name="chatRoomName"]');
-        chatRoomNameInput.value = adminName;
+        chatRoomNameInput.value = adminName; */
     } else {
         alert('담당자를 선택해 주세요.');
         return false; // 폼 제출을 방지
@@ -339,11 +345,18 @@ const loginMemberName = "${loginMember.memberName}";
 
 
 let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
-
+let currentReceiverNo = null;
 //채팅방 클릭 시 호출되는 함수
-function selectChatRoom(chatRoomNo) {
+function selectChatRoom(chatRoomNo,receiverNo,liElement) {
+	/* 채팅방을 누르면 숫자span이 사라지게 하기 */
+    const cntMessagesElement = liElement.querySelector('#cntMessages');
+    cntMessagesElement.style.display = 'none';
+	
+	
     currentChatRoomNo = chatRoomNo;
+    currentReceiverNo = receiverNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
+    console.log('상대방의 No:' + receiverNo);
     
     $.ajax({
         url: '/member/chatroom/chats/' + currentChatRoomNo,
@@ -363,6 +376,7 @@ function selectChatRoom(chatRoomNo) {
         chatContainer.empty(); // 기존 내용을 제거
         
         console.log(messages);
+        console.log("로그인한 사람의 NO : "+loginMemberNo);
         
         var chatBox = document.getElementById("chatBox");
         chatBox.style.visibility = "visible";
@@ -372,8 +386,8 @@ function selectChatRoom(chatRoomNo) {
         
         $.each(messages, function(index, message) {
         	
-        	if(message.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
-        		
+        	if(message.memberNo === Number(loginMemberNo)){//나-오른쪽에 와야 햐는 사람
+
         		var messageItem = $('<li>', { class: 'd-flex justify-content-end mb-6'})
         	    .append($('<div>', { class: 'card w-100' })
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
@@ -447,9 +461,15 @@ ws.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
 
     console.log(messageData);
+   	console.log("메시지 보낸 사람의 NO:" + messageData.memberNo);
+   	console.log(typeof messageData.memberNo); // 자료형 확인-int
+   	console.log("로그인한 사람의 NO : " + loginMemberNo);
+   	console.log(typeof loginMemberNo); // 자료형 확인-String
+    console.log("두 사람의 No가 같은지 확인 " + (messageData.memberNo === Number(loginMemberNo)));
+   	
     
     
-    if(messageData.memberNo === loginMemberNo){//나-오른쪽에 와야 햐는 사람
+   	if(messageData.memberNo === Number(loginMemberNo)){//나-오른쪽에 와야 햐는 사람
     	console.log("오른쪽에 오는 사람");
 		const message = document.createElement('li');
 	    message.classList.add('d-flex', 'justify-content-end', 'mb-6');
@@ -556,7 +576,8 @@ sendButton.addEventListener('click', () => {
             chatRoomNo: currentChatRoomNo,  
             memberNo:  loginMemberNo,  
             memberName: loginMemberName,  
-            message: messageContent
+            message: messageContent,
+            receiverNo: currentReceiverNo
         };
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송

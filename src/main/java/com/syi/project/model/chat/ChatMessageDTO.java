@@ -15,16 +15,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMessageDTO {
 	@Field(name = "chatRoomNo")
-	private String chatRoomNo; // 메시지가 속한 채팅방 넘버
+	private int chatRoomNo; // 메시지가 속한 채팅방 넘버
 
 	@Field(name = "memberNo")
-	private String memberNo;// 메시지 보낸 사람
+	private int memberNo;// 메시지 보낸 사람
 
 	@Field(name = "memberName")
 	private String memberName; // 메시지 보낸 사람 이름
 	
 	@Field(name = "receiverNo")
-	private String receiverNo;// 메시지 받은 사람
+	private int receiverNo;// 메시지 받은 사람
 
 	@Field(name = "message")
 	private String message; // 메시지

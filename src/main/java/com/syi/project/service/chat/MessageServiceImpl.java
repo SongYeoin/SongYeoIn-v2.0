@@ -2,7 +2,6 @@ package com.syi.project.service.chat;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.mongodb.client.result.UpdateResult;
 import com.syi.project.mapper.chat.MessageRepository;
 import com.syi.project.model.chat.ChatMessageDTO;
-import com.syi.project.model.chat.ChatRoomInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,16 +51,17 @@ public class MessageServiceImpl implements MessageService {
 
 	// 채팅방 누르면 나오는 메시지 리스트
 	@Override
-	public List<ChatMessageDTO> getMessagesByChatRoomNo(String chatRoomNo) {
+	public List<ChatMessageDTO> getMessagesByChatRoomNo(int chatRoomNo) {
 		return messageRepository.findByChatRoomNo(chatRoomNo);
 	}
 
 	// 안 읽은 메시지 개수 세기 : 받은 사람의 읽지 않은 메시지의 개수를 셈
 	@Override
-	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(String chatRoomNo,  String receiverNo) {
+	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(int chatRoomNo,  int receiverNo) {
+		log.info("chatRoomNo : "+ chatRoomNo + "receiverNo : " +receiverNo);
 		Query query = new Query();
         query.addCriteria(Criteria.where("chatRoomNo").is(chatRoomNo));
-        query.addCriteria(Criteria.where("receiverId").is(receiverNo));
+        query.addCriteria(Criteria.where("receiverNo").is(receiverNo));
         query.addCriteria(Criteria.where("isRead").is(false));
 		
 		long count = mongoTemplate.count(query,ChatMessageDTO.class);
@@ -71,26 +70,12 @@ public class MessageServiceImpl implements MessageService {
 		return count;
 	}
 
-	/*
-	 * // 읽지 않은 메시지 개수를 세는 메서드 public long countUnreadMessages(String chatRoomNo,
-	 * String receiverId) { return
-	 * chatMessageRepository.countByChatRoomNoAndReceiverIdAndIsRead(chatRoomNo,
-	 * receiverId, false); }
-	 * 
-	 * // 메시지를 읽음 상태로 업데이트하는 메서드 public void markMessagesAsRead(String chatRoomNo,
-	 * String receiverId) { List<ChatMessageDTO> messages =
-	 * chatMessageRepository.findByChatRoomNoAndReceiverIdAndIsRead(chatRoomNo,
-	 * receiverId, false); for (ChatMessageDTO message : messages) {
-	 * message.setIsRead(true); chatMessageRepository.save(message); } }
-	 */
-	
-	
 	
 	@Override
-	public void updateIsReadtoTrue(String chatRoomNo, String receiverNo) {
+	public void updateIsReadtoTrue(int chatRoomNo,int receiverNo) {
 		Query query = new Query();
         query.addCriteria(Criteria.where("chatRoomNo").is(chatRoomNo));
-        query.addCriteria(Criteria.where("receiverId").is(receiverNo));
+        query.addCriteria(Criteria.where("receiverNo").is(receiverNo));
         query.addCriteria(Criteria.where("isRead").is(false));
 
         Update update = new Update();
@@ -106,20 +91,27 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public ChatMessageDTO getLatestMessagesByChatRoom(String chatRoomNo) {
+	public ChatMessageDTO getLatestMessagesByChatRoom(int chatRoomNo) {
 		log.info("chatRoomNo : " + chatRoomNo);
 
 		Query query = new Query();
 		query.addCriteria(Criteria.where("chatRoomNo").is(chatRoomNo)); // 채팅방 번호로 필터링
-		query.fields().include("message").include("regDateTime").include("receiverNo");// 필요한 필드만 지정
+		query.fields().include("message").include("regDateTime");// 필요한 필드만 지정
 		query.with(Sort.by(Sort.Order.desc("regDateTime"))); // 시간 역순으로 정렬
 		query.limit(1); // 첫 번째 문서만 가져오기
 
 		log.info("query는 " + query.toString());
 
-		ChatMessageDTO result = mongoTemplate.findOne(query, ChatMessageDTO.class);
-
-		log.info("result = " + result);
+		ChatMessageDTO result = new ChatMessageDTO();
+		try {
+			result = mongoTemplate.findOne(query, ChatMessageDTO.class);
+			
+			log.info("result = " + result);
+			
+		}catch(NullPointerException e) {
+			log.info("마지막 메시지가 없음(메시지를 한 적이 없음)");
+			e.getStackTrace();
+		}
 
 		return result;
 	}
