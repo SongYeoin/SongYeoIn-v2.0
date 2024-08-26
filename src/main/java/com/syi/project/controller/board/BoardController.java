@@ -49,6 +49,7 @@ public class BoardController {
 
 	@GetMapping("/detail")
 	public String detailBoard(int boardNo, Model model, HeartVO heart, HttpSession session) {
+		long start = System.currentTimeMillis();
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
@@ -61,6 +62,10 @@ public class BoardController {
 		model.addAttribute("board", board);
 		model.addAttribute("commentList", commentList);
 		model.addAttribute("heartCount", heartCount);
+		
+		long end = System.currentTimeMillis();
+		double timeInSeconds = (end - start) / 1000.0;  
+	    System.out.println(">>> 조회 소요 시간 : " + timeInSeconds + " 초");
 		return "member/board/detail";
 	}
 

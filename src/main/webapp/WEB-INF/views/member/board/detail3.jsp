@@ -225,44 +225,130 @@ button:hover {
             </div>
             
             <!-- 댓글 리스트 -->
-            <c:forEach var="comment" items="${commentList}">
-                <div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                	<c:if test="${comment.commentParentNo != null}">
-                		<i class="bi bi-arrow-return-right"></i>
-                	</c:if>
-                    <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
-                    
-                    <!-- 댓글 버튼 -->
-			        <div class="comment-button-container">
-				        <button class="reply-btn" onclick="showReplyForm(${comment.commentNo})">답글</button>
+         	<c:forEach var="comment" items="${commentList}">
+            	<div id="comment-${comment.commentNo}" class="comment">
+                	<p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
+                 	<p id="comment-content-${comment.commentNo}">${comment.commentContent}</p>
+         
+                 	<!-- 댓글 버튼 -->
+                 	<div class="comment-button-container">
+                    	<button class="reply-btn" onclick="showReplyForm(${comment.commentNo})">답글</button>
                     	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
-			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
+                        	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+                        	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
                     	</c:if>
-			        </div>
-			        
-			        <!-- 댓글 수정 폼 -->
-			        <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
-			        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
-	                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                    <div class="comment-button-container">
-	                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-	                    </div>
-	                </form>
-	                
-			        <!-- 답글 작성 폼 -->
-			        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
-			            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-			                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-			                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
-			                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
-			                <button type="submit">등록</button>
-			            </form>
-			        </div>
-				</div>
-			</c:forEach>
+                	</div>
+         
+                 	<!-- 답글 작성 폼 -->
+                 	<div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
+                    	<form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+                       		<input type="hidden" name="boardNo" value="${board.boardNo}" />
+                        	<input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
+                        	<textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
+                        	<button type="submit">등록</button>
+                    	</form>
+                	</div>
+         
+                 	<!-- 댓글 수정 폼 -->
+                 	<form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
+                    	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
+                     	<textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+                     	<div class="comment-button-container">
+                         	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+                         	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+                     	</div>
+                 	</form>
+         
+                 
+                 	<!-- 대댓글 리스트 (재귀 호출) -->
+                 	<div id="replies-${comment.commentNo}" class="replies">
+                    	<c:forEach var="reply" items="${comment.replyList}">
+                        	<div id="comment-${reply.commentNo}" class="comment" style="margin-left: 20px;">
+                            	<p><strong>${reply.member.memberNickname}</strong> ${reply.commentRegDate}</p>
+                            	<p id="comment-content-${reply.commentNo}">${reply.commentContent}</p>
+         
+                             	<!-- 대댓글 버튼 -->
+                             	<div class="comment-button-container">
+                                	<button class="reply-btn" onclick="showReplyForm(${reply.commentNo})">답글</button>
+                                	<c:if test="${sessionScope.loginMember.memberNo eq reply.commentMemberNo}">
+                                    	<button id="updateCommentBtn-${reply.commentNo}" onclick="editComment(${reply.commentNo})">수정</button>
+                                     	<button id="deleteCommentBtn-${reply.commentNo}" onclick="deleteComment(${reply.commentNo})">삭제</button>
+                                	</c:if>
+                             	</div>
+         
+                             	<!-- 대댓글 수정 폼 -->
+                             	<form id="edit-form-${reply.commentNo}" class="edit-form" style="display:none;">
+                                	<input type="hidden" name="commentNo" value="${reply.commentNo}" />
+                                 	<textarea name="commentContent" rows="4">${reply.commentContent}</textarea>
+                                 	<div class="comment-button-container">
+                                    	<button type="button" onclick="submitEdit(${reply.commentNo})">수정</button>
+                                    	<button type="button" onclick="cancelEdit(${reply.commentNo})">취소</button>
+                                 	</div>
+                             	</form>
+         
+                             	<!-- 대댓글 답글 작성 폼 -->
+                             	<div id="reply-form-${reply.commentNo}" class="reply-form" style="display:none;">
+                                	<form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+                                    	<input type="hidden" name="boardNo" value="${board.boardNo}" />
+                                    	<input type="hidden" name="parentCommentNo" value="${reply.commentNo}" />
+                                     	<textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
+                                     	<button type="submit">등록</button>
+                                 	</form>
+                             	</div>
+         
+                             	<!-- 대댓글 재귀 호출 -->
+                             	<c:if test="${not empty reply.replyList}">
+                                	<div id="replies-${reply.commentNo}" class="replies">
+                                    	<c:forEach var="nestedReply" items="${reply.replyList}">
+                                        	<div id="comment-${nestedReply.commentNo}" class="comment" style="margin-left: 20px;">
+                                            	<p><strong>${nestedReply.member.memberNickname}</strong> ${nestedReply.commentRegDate}</p>
+                                            	<p id="comment-content-${nestedReply.commentNo}">${nestedReply.commentContent}</p>
+         
+                                            	<!-- 대댓글 버튼 -->
+                                             	<div class="comment-button-container">
+                                                	<button class="reply-btn" onclick="showReplyForm(${nestedReply.commentNo})">답글</button>
+                                                	<c:if test="${sessionScope.loginMember.memberNo eq nestedReply.commentMemberNo}">
+                                                    	<button id="updateCommentBtn-${nestedReply.commentNo}" onclick="editComment(${nestedReply.commentNo})">수정</button>
+                                                     	<button id="deleteCommentBtn-${nestedReply.commentNo}" onclick="deleteComment(${nestedReply.commentNo})">삭제</button>
+                                                 	</c:if>
+                                             	</div>
+         
+                                             	<!-- 대댓글 수정 폼 -->
+                                             	<form id="edit-form-${nestedReply.commentNo}" class="edit-form" style="display:none;">
+                                                	<input type="hidden" name="commentNo" value="${nestedReply.commentNo}" />
+                                                 	<textarea name="commentContent" rows="4">${nestedReply.commentContent}</textarea>
+                                                 	<div class="comment-button-container">
+                                                    	<button type="button" onclick="submitEdit(${nestedReply.commentNo})">수정</button>
+                                                    	<button type="button" onclick="cancelEdit(${nestedReply.commentNo})">취소</button>
+                                                 	</div>
+                                             	</form>
+         
+                                             	<!-- 대댓글 답글 작성 폼 -->
+                                             	<div id="reply-form-${nestedReply.commentNo}" class="reply-form" style="display:none;">
+                                                	<form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+                                                    	<input type="hidden" name="boardNo" value="${board.boardNo}" />
+                                                     	<input type="hidden" name="parentCommentNo" value="${nestedReply.commentNo}" />
+                                                     	<textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
+                                                     	<button type="submit">등록</button>
+                                                 	</form>
+                                             	</div>
+         
+                                             	<!-- 대댓글 재귀 호출 -->
+                                             	<c:if test="${not empty nestedReply.replyList}">
+                                                	<div id="replies-${nestedReply.commentNo}" class="replies">
+                                                    	<c:forEach var="nestedNestedReply" items="${nestedReply.replyList}">
+                                                    	</c:forEach>
+                                                 	</div>
+                                             	</c:if>
+                                        	</div>
+                                    	</c:forEach>
+                                	</div>
+                            	</c:if>
+                        	</div>
+                    	</c:forEach>
+                	</div>
+            	</div>
+         	</c:forEach>
 
 
 			<!-- 게시글 버튼 -->

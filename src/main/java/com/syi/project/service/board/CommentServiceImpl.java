@@ -25,7 +25,14 @@ public class CommentServiceImpl implements CommentService {
 	public int insertComment(CommentsVO comment) {
 		return commentMapper.insertComment(comment);
 	}
+	
+	// 댓글 조회
+	@Override
+	public List<CommentsVO> selectCommentList(int boardNo) {
+		return commentMapper.selectCommentList(boardNo);
+	}
 
+	/*
 	// 댓글 조회
 	@Override
 	public List<CommentsVO> selectCommentList(int boardNo) {
@@ -70,6 +77,7 @@ public class CommentServiceImpl implements CommentService {
 			}
 		}
 	}
+	*/
 
 	// 댓글 총 갯수
 	@Override

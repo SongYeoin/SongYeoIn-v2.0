@@ -89,6 +89,22 @@
 	
 	<!-- 댓글 조회 -->
 	<select id="selectCommentList" resultMap="CommentResultMap">
+		SELECT LEVEL AS COMMENT_LEVEL,
+		       C.*,
+		       M.MEMBER_NICKNAME
+		FROM COMMENTS C
+		JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
+		WHERE C.COMMENT_BOARD_NO = #{boardNo}
+			AND C.COMMENT_STATUS = 'Y'
+		START WITH C.COMMENT_PARENT_NO IS NULL
+		CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
+		ORDER SIBLINGS BY C.COMMENT_REG_DATE
+	</select>
+	
+	
+	<!-- 댓글 조회 -->
+	<!--  
+	<select id="selectCommentList" resultMap="CommentResultMap">
 		SELECT C.*, M.*
 	    FROM COMMENTS C
 	    LEFT JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
@@ -96,6 +112,7 @@
 	        AND C.COMMENT_STATUS = 'Y'
 	    ORDER BY COMMENT_REG_DATE DESC
 	</select>
+	-->
 	
 	<!-- 댓글 총 갯수 -->
 	<select id="selectCommentTotal" parameterType="_int" resultType="_int">
