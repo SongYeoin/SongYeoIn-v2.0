@@ -177,60 +177,60 @@ a.button:hover {
         </div>
     </main>
     <script>
-        /* 등록 버튼 */
-        $("#enrollBtn").click(function() {
-            /* 검사 통과 유무 변수 */
-            let titleCheck = false; // 일지 제목
-            let writeDateCheck = false; // 일지 작성일자
-            let fileCheck = false; // 일지 첨부파일
+    /* 등록 버튼 */
+    $("#enrollBtn").click(function() {
+        /* 검사 통과 유무 변수 */
+        let titleCheck = false; // 일지 제목
+        let writeDateCheck = false; // 일지 작성일자
+        let fileCheck = false; // 일지 첨부파일
 
-            /* 입력값 변수 */
-            let journalTitle = $('input[name=journalTitle]').val(); // 일지 제목
-            let writeDate = $('input[name=journalWriteDate]').val(); // 일지 작성일자
-            let file = $('input[name=file]')[0].files; // 일지 첨부파일
+        /* 입력값 변수 */
+        let journalTitle = $('input[name=journalTitle]').val(); // 일지 제목
+        let writeDate = $('input[name=journalWriteDate]').val(); // 일지 작성일자
+        let file = $('input[name=file]')[0].files; // 일지 첨부파일
 
-            /* 공란 경고 span 태그 */
-            let wJournalTitle = $('#warn_journalTitle');
-            let wWriteDate = $('#warn_date');
-            let wFile = $('#warn_file');
+        /* 공란 경고 span 태그 */
+        let wJournalTitle = $('#warn_journalTitle');
+        let wWriteDate = $('#warn_date');
+        let wFile = $('#warn_file');
 
-            /* 일지 제목 공란 체크 */
-            if (journalTitle === '') {
-                wJournalTitle.css('display', 'block');
-                titleCheck = false;
-            } else {
-                wJournalTitle.css('display', 'none');
-                titleCheck = true;
-            }
+        /* 일지 제목 공란 체크 */
+        if (journalTitle === '') {
+            wJournalTitle.css('display', 'block');
+            titleCheck = false;
+        } else {
+            wJournalTitle.css('display', 'none');
+            titleCheck = true;
+        }
 
-            /* 일지 작성일자 공란 체크 */
-            if (writeDate === '') {
-                wWriteDate.css('display', 'block');
-                writeDateCheck = false;
-            } else {
-                wWriteDate.css('display', 'none');
-                writeDateCheck = true;
-            }
+        /* 일지 작성일자 공란 체크 */
+        if (writeDate === '') {
+            wWriteDate.css('display', 'block');
+            writeDateCheck = false;
+        } else {
+            wWriteDate.css('display', 'none');
+            writeDateCheck = true;
+        }
 
-            /* 첨부파일 공란 체크 */
-            if (file.length === 0) {
-                wFile.css('display', 'block');
-                fileCheck = false;
-            } else {
-                wFile.css('display', 'none');
-                fileCheck = true;
-            }
+        /* 첨부파일 공란 체크 */
+        if (file.length === 0) {
+            wFile.css('display', 'block');
+            fileCheck = false;
+        } else {
+            wFile.css('display', 'none');
+            fileCheck = true;
+        }
 
-            /* 최종 검사 */
-            if (titleCheck && writeDateCheck && fileCheck) {
-                $("#modifyForm").submit();
-            }
-        });
+        /* 최종 검사 */
+        if (titleCheck && writeDateCheck && fileCheck) {
+            $("#modifyForm").submit();
+        }
+    });
 
-        /* 취소 버튼 */
-        $("#cancelBtn").click(function() {
-            location.href = "/journal/journalList";
-        });
+    /* 취소 버튼 */
+    $("#cancelBtn").click(function() {
+        location.href = "/journal/journalList";
+    });
     </script>
     <!-- 푸터 연결 -->
     <%@ include file="../common/footer.jsp"%>

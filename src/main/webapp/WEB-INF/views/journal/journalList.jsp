@@ -380,15 +380,15 @@ td.checkStatus.N {
                 <h2>현재 선택된 반: ${syclass.className}</h2>
             </div>
             <div class="student-select">
-                <select id="studentSelect" onchange="changeStudent(this.value)">
-                    <option value="">모든 학생</option>
-                    <c:forEach var="enroll" items="${enrollList}">
-                        <option value="${enroll.memberNo}" <c:if test="${enroll.memberNo == selectedMemberNo}">selected</c:if>>
-                            ${enroll.memberNo}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
+        <select id="studentSelect" onchange="changeStudent(this.value)">
+            <option value="">학생 선택</option>
+            <c:forEach var="member" items="${memberList}">
+                <option value="${member.memberNo}" <c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
+                    ${member.member.memberName}
+                </option>
+            </c:forEach>
+        </select>
+    </div>
         </c:when>
         <c:otherwise>
             <div class="select-box">
@@ -417,38 +417,25 @@ td.checkStatus.N {
 			<div class="header">
 				<h2>교육일지 제출 목록</h2>
 				<div class="search_area">
-					<form id="searchForm" method="get"
-						action="${pageContext.request.contextPath}/journal/journalList">
-						<input type="text" id="keyword" name="keyword"
-							value="${param.keyword}" placeholder="제목으로 검색">
-						<%-- <c:if
-							test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-							<select id="memberName" name="memberName">
-								<option value="">전체</option>
-								<c:forEach var="memberList" items="${memberList}">
-									<option value="${member.memberId}"
-										<c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
-								</c:forEach>
-							</select>
-						</c:if> --%>
-						<select id="year" name="year">
-							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
-							<c:forEach var="i" begin="2020" end="2025">
-								<option value="${i}"
-									<c:if test="${param.year == i}">selected</c:if>>${i}</option>
-							</c:forEach>
-						</select> <select id="month" name="month">
-							<option value=""
-								<c:if test="${empty param.month}">selected</c:if>>월</option>
-							<c:forEach var="i" begin="1" end="12">
-								<option value="${i}"
-									<c:if test="${param.month == i}">selected</c:if>>${i}</option>
-							</c:forEach>
-						</select> <input type="hidden" name="classNo" value="${param.classNo}" />
-						<button type="submit">조회</button>
-					</form>
-
-				</div>
+    <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
+        <input type="text" id="keyword" name="keyword" value="${keyword}" placeholder="제목으로 검색">
+        <select id="year" name="year">
+            <option value="" <c:if test="${empty year}">selected</c:if>>년도</option>
+            <c:forEach var="i" begin="2020" end="2025">
+                <option value="${i}" <c:if test="${year == i}">selected</c:if>>${i}</option>
+            </c:forEach>
+        </select>
+        <select id="month" name="month">
+            <option value="" <c:if test="${empty month}">selected</c:if>>월</option>
+            <c:forEach var="i" begin="1" end="12">
+                <option value="${i}" <c:if test="${month == i}">selected</c:if>>${i}</option>
+            </c:forEach>
+        </select>
+        <input type="hidden" name="classNo" value="${selectedClassNo}" />
+        <input type="hidden" name="memberNo" value="${selectedMemberNo}" />
+        <button type="submit">조회</button>
+    </form>
+</div>
 				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
 					<div class="icons">
 						<a href="/journal/journalEnroll"><i class="fas fa-square-plus"></i></a>
@@ -543,8 +530,44 @@ td.checkStatus.N {
 	<script>
 
 	function changeStudent(memberNo) {
-	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?memberNo=' + memberNo;
+	    var classNo = ${selectedClassNo};
+	    var currentUrl = new URL(window.location.href);
+	    currentUrl.searchParams.set('classNo', classNo);
+	    if (memberNo) {
+	        currentUrl.searchParams.set('memberNo', memberNo);
+	    } else {
+	        currentUrl.searchParams.delete('memberNo');
+	    }
+	    window.location.href = currentUrl.toString();
 	}
+
+	// 페이지 로드 시 실행
+	document.addEventListener('DOMContentLoaded', function() {
+	    var studentSelect = document.getElementById('studentSelect');
+	    if (studentSelect.value === "") {
+	        // 모든 학생이 선택된 상태에서 페이지가 로드되면 memberNo 파라미터 제거
+	        var currentUrl = new URL(window.location.href);
+	        currentUrl.searchParams.delete('memberNo');
+	        history.replaceState(null, '', currentUrl.toString());
+	    }
+	});
+
+	// 페이징 링크에 memberNo 파라미터 추가
+	document.querySelectorAll('.pageInfo a').forEach(function(link) {
+	    var url = new URL(link.href);
+	    url.searchParams.set('memberNo', '${selectedMemberNo}');
+	    link.href = url.toString();
+	});
+
+	// 상세보기 링크에 memberNo 파라미터 추가
+	document.querySelectorAll('table tbody tr').forEach(function(row) {
+	    row.addEventListener('click', function(e) {
+	        e.preventDefault();
+	        var journalNo = this.getAttribute('data-journal-no');
+	        var url = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo + '&memberNo=${selectedMemberNo}';
+	        window.location.href = url;
+	    });
+	});
 
 	function changeClass(classNo) {
 	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo;

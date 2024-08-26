@@ -53,9 +53,9 @@
 	</resultMap>
 
     <!-- 교육 일정 등록 (수정됨: 반 정보 추가) -->
-    <insert id="scheduleCreate" parameterType="com.syi.project.model.journal.EduScheduleVO">
-        INSERT INTO EDU_SCHEDULE (SCHEDULE_DATE, SCHEDULE_TITLE, SCHEDULE_DESCRIPTION, SCHEDULE_INSTRUCTOR, CLASS_NO)
-        VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor}, #{syclass.classNo})
+    <insert id="scheduleCreate" parameterType="com.syi.project.model.journal.EduScheduleVO" useGeneratedKeys="true" keyProperty="scheduleNo">
+        INSERT INTO EDU_SCHEDULE (SCHEDULE_DATE, SCHEDULE_TITLE, SCHEDULE_DESCRIPTION, SCHEDULE_INSTRUCTOR, CLASS_NO, MEMBER_NO)
+        VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor}, #{syclass.classNo}, #{memberNo})
     </insert>
 
 	<!-- 사용자의 수강 중인 반 목록 조회 -->

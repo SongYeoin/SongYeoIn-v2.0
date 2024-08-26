@@ -181,9 +181,9 @@ public class JournalController {
 	        }
 	        classNo = syclass.getClassNo();
 	        
-	        // 수강 중인 수강생 정보 조회
-	        List<EnrollVO> enrollList = enrollService.selectEnrollListByClassNo(classNo);
-	        model.addAttribute("enrollList", enrollList);
+	     // 수강 중인 수강생 정보 조회 (이름 포함)
+	        List<EnrollVO> memberList = enrollService.selectMemberList(classNo);
+	        model.addAttribute("memberList", memberList);
 	    } else {
 	        // 일반 사용자의 경우
 	        if (classNo == null) {
@@ -231,6 +231,11 @@ public class JournalController {
 	    model.addAttribute("selectedClassNo", classNo);
 	    model.addAttribute("selectedMemberNo", selectedMemberNo);
 	    model.addAttribute("isAdmin", isAdmin);
+	    
+	 // 검색 조건을 모델에 추가
+	    model.addAttribute("keyword", cri.getKeyword());
+	    model.addAttribute("year", cri.getYear());
+	    model.addAttribute("month", cri.getMonth());
 
 	    return "journal/journalList";
 	}

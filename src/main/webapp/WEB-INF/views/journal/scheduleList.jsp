@@ -376,19 +376,21 @@ td.checkStatus.N {
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
-			<h1>교육 일정</h1>
-			<div class="select-box">
-				<!-- 반 선택 드롭다운 -->
-				<select id="classSelect" name="classNo"
-					onchange="changeClass(this.value)">
-					<c:forEach var="classItem" items="${classList}">
-						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-							${classItem.className}</option>
-					</c:forEach>
-				</select>
-			</div>
-		</div>
+    <h1>교육 일정</h1>
+    <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+        <div class="select-box">
+            <!-- 반 선택 드롭다운 -->
+            <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
+                <c:forEach var="classItem" items="${classList}">
+                    <option value="${classItem.classNo}"
+                        <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+                        ${classItem.className}
+                    </option>
+                </c:forEach>
+            </select>
+        </div>
+    </c:if>
+</div>
 
 		<!-- 캘린더 출력 영역 -->
 		<div id='calendar'></div>

@@ -12,7 +12,7 @@ import com.syi.project.model.syclass.SyclassVO;
 public interface EduScheduleService {
 	
 	// 일정 등록
-	void scheduleCreate(EduScheduleVO schedule);
+	void scheduleCreate(EduScheduleVO schedule) throws Exception;
 
 	// 사용자의 수강 중인 반 목록 조회
     List<SyclassVO> getUserClasses(@Param("memberNo") int memberNo);

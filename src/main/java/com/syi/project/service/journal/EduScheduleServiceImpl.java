@@ -23,8 +23,22 @@ public class EduScheduleServiceImpl implements EduScheduleService{
 
 	// 일정 등록
 	@Override
-	public void scheduleCreate(EduScheduleVO schedule) {
-		eduScheduleMapper.scheduleCreate(schedule);
+	public void scheduleCreate(EduScheduleVO schedule) throws Exception {
+		
+		try {
+            logger.info("교육일정 등록 시작");
+            logger.info("등록할 일정 정보: {}", schedule.toString());
+            
+            eduScheduleMapper.scheduleCreate(schedule);
+            
+            // 일정 번호가 제대로 생성되었는지 확인
+            logger.info("교육일정 등록 완료. 생성된 일정 번호: {}", schedule.getScheduleNo());
+        } catch (Exception e) {
+            logger.error("교육일정 등록 중 오류 발생", e);
+            throw e;
+        }
+    
+    
 	}
 
 	// 사용자의 수강 중인 반 조회

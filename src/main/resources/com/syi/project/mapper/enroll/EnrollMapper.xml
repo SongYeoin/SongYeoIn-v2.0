@@ -65,12 +65,17 @@
   	WHERE MEMBER_NO = #{ memberNo }
   </select>
   
-  <!-- 특정 반의 수강 중인 모든 수강생 정보 조회 -->
-  <select id="selectEnrollListByClassNo" resultMap="enrollResultMap">
-    SELECT e.*, m.*
+ <!-- 특정 반의 수강 중인 모든 수강생 정보 조회 -->
+  <select id="selectMemberList" resultMap="enrollResultMap">
+    SELECT 
+      e.ENROLL_NO, e.MEMBER_NO, e.CLASS_NO,
+      m.MEMBER_NAME, m.MEMBER_ID,
+      s.CLASS_NAME
     FROM ENROLL e
     LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
+    LEFT JOIN CLASS s ON e.CLASS_NO = s.CLASS_NO
     WHERE e.CLASS_NO = #{classNo}
+    ORDER BY m.MEMBER_NAME ASC
   </select>
   
   </mapper>
