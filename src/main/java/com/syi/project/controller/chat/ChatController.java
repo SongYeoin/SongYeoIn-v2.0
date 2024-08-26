@@ -93,11 +93,12 @@ public class ChatController {
 
 			System.out.println("최종 chatMessage : " + chatMessage);
 
+			ChatMessageDTO resultMessage = new ChatMessageDTO();
 			/// 문제지점=>webconfig 수정하고 springContext 만들었음
 			try {
 				System.out.println("messageService: " + messageService); // null일 수 있음
 
-				ChatMessageDTO resultMessage = messageService.createMessage(chatMessage);
+				resultMessage = messageService.createMessage(chatMessage);
 				System.out.println("resultMessage: " + resultMessage);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
@@ -114,7 +115,7 @@ public class ChatController {
 			System.out.println("updatedJson : " + updatedJson);
 
 			// 구독한 사람들에게 메시지 보내주기(broadcast)
-			broadcast(updatedJson);
+			broadcast(updatedJson, resultMessage.getChatRoomNo(), resultMessage.getReceiverNo());
 
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -126,12 +127,15 @@ public class ChatController {
 
 	}
 
-	private void broadcast(String message) throws IOException {
-		log.info("현재 채팅방의 들어와 있는 사람의 수 : ---------> " + sessions.size());
+	private void broadcast(String message, int chatRoomNo, int receiverNo) throws IOException {
+		log.info("현재 채팅방의 들어와 있는 사람의 수 : " + sessions.size());
 
 		for (Session session : sessions.values()) {
 			if (session.isOpen()) {
 				session.getBasicRemote().sendText(message);
+			}
+			if(sessions.size()==2) {
+				messageService.updateIsReadtoTrue(chatRoomNo, receiverNo);
 			}
 		}
 
@@ -140,6 +144,8 @@ public class ChatController {
 	@OnClose
 	public void onClose(Session session) {
 		log.info("Connection closed: " + session.getId());
+		sessions.remove(session.getId());// 웹소켓이 닫히면 Map에서 제거
+		log.info("and removed from the map");
 		// WebSocket 연결이 닫힐 때 수행할 작업
 	}
 

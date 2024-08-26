@@ -44,10 +44,6 @@ public class ChatMemberController {
 	private final ChatRoomService chatService;
 	private final MessageService messageService;
 	private int unreadRoomCount;
-	
-	public int getUnreadRoomCount() {
-        return unreadRoomCount;
-    }
 
 	@GetMapping("/main")
 	public void memberChatListGET(HttpServletRequest request, Model model) {
@@ -59,9 +55,9 @@ public class ChatMemberController {
 		try {
 			roomList = chatService.getChatRoomList(null, loginMember);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		// 실제 보여지는 채팅방 목록 정보
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
 
@@ -85,8 +81,7 @@ public class ChatMemberController {
 			} catch (NullPointerException e) {
 				e.getStackTrace();
 			}
-			
-			
+
 			// *안 읽은 메시지 개수 총 몇개인지*
 			try {
 				unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
@@ -135,6 +130,7 @@ public class ChatMemberController {
 					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
 
 		}
+		session.setAttribute("unreadRoomCount", unreadRoomCount);
 
 		Set<Integer> countOneSet = new HashSet<Integer>();
 
@@ -187,6 +183,21 @@ public class ChatMemberController {
 			messageTime = formatter.format(instant);
 
 			message.setRegDateTime(messageTime);
+		}
+
+		// 메시지의 유무(unreadRoomCount)
+		try {
+			List<ChatRoomVO> roomList = chatService.getChatRoomList(null, loginMember);
+			int unreadRoomCount = 0;
+			for (ChatRoomVO chatRoom : roomList) {
+				Long unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(
+						chatRoom.getChatRoomNo(), loginMember.getMemberNo());
+				if (unReadCount > 0)
+					unreadRoomCount++;
+			}
+			session.setAttribute("unreadRoomCount", unreadRoomCount);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return messageList;

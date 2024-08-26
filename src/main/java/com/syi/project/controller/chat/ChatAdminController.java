@@ -47,11 +47,7 @@ public class ChatAdminController {
 	private final ChatRoomService chatService;
 	private final MessageService messageService;
 	private int unreadRoomCount;
-	
-	public int getUnreadRoomCount() {
-        return unreadRoomCount;
-    }
-	
+
 	@GetMapping("/main")
 	public void adminChatListGET(HttpServletRequest request, Model model) {
 		HttpSession session = request.getSession();
@@ -68,7 +64,7 @@ public class ChatAdminController {
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
 
 		// 채팅방 별로 안 읽은 메시지의 개수가 0이상 인 것을 카운트 한다.
-		unreadRoomCount  = 0;
+		unreadRoomCount = 0;
 		Long unReadCount = 0L;
 		for (ChatRoomVO chatRoom : roomList) {
 			String chatRoomName = chatRoom.getMember().getMemberName();
@@ -89,7 +85,8 @@ public class ChatAdminController {
 			// *안 읽은 메시지 개수 총 몇개인지*
 			try {
 				unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
-				if(unReadCount>0) unreadRoomCount ++;
+				if (unReadCount > 0)
+					unreadRoomCount++;
 				log.info("읽지 않은 메시지의 개수 : " + unReadCount);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -133,7 +130,8 @@ public class ChatAdminController {
 					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
 
 		}
-		
+		session.setAttribute("unreadRoomCount", unreadRoomCount);
+
 		Set<Integer> countOneSet = new HashSet<Integer>();
 
 		// 담당 과목 조회
@@ -202,7 +200,7 @@ public class ChatAdminController {
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
 
 		// 채팅방 별로 안 읽은 메시지의 개수가 0이상 인 것을 카운트 한다.
-		unreadRoomCount  = 0;
+		unreadRoomCount = 0;
 		Long unReadCount = 0L;
 		for (ChatRoomVO chatRoom : filterChatRoomList) {
 			String chatRoomName = chatRoom.getMember().getMemberName();
@@ -220,7 +218,8 @@ public class ChatAdminController {
 			}
 			// *안 읽은 메시지 개수 총 몇개인지*
 			unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
-			if(unReadCount>0) unreadRoomCount ++;
+			if (unReadCount > 0)
+				unreadRoomCount++;
 			log.info("읽지 않은 메시지의 개수 : " + unReadCount);
 
 			String messageContent = null;
@@ -261,6 +260,7 @@ public class ChatAdminController {
 					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
 
 		}
+		session.setAttribute("unreadRoomCount", unreadRoomCount);
 
 		log.info(chatRoomInfos.toString());
 
@@ -299,6 +299,22 @@ public class ChatAdminController {
 			messageTime = formatter.format(instant);
 
 			message.setRegDateTime(messageTime);
+		}
+		
+		// 메시지의 유무(unreadRoomCount)
+		try {
+			List<ChatRoomVO> roomList = chatService.getChatRoomList(null, loginMember);
+			int unreadRoomCount = 0;
+			for (ChatRoomVO chatRoom : roomList) {
+				Long unReadCount = 
+						messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoom.getChatRoomNo(),
+								loginMember.getMemberNo());
+				if (unReadCount > 0)
+					unreadRoomCount++;
+			}
+			session.setAttribute("unreadRoomCount", unreadRoomCount);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return messageList;
