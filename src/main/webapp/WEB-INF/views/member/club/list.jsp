@@ -387,7 +387,7 @@ function sendClassChange() {
 				<h2>강의실 신청 목록</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
-						<input type="text" placeholder="Search..." id="search">
+						<%-- <input type="text" placeholder="Search..." id="search">
 
 						<label for="status">상태:</label>
 						<select id="status" name="status">
@@ -396,6 +396,27 @@ function sendClassChange() {
 							<option value="N" ${param.status == 'N' ? 'selected' : ''}>미승인</option>
 						</select>
 
+
+
+
+						<input type="text" placeholder="작성자 검색..." name="author" id="author" value="${param.author}">
+
+                        <input type="text" placeholder="참여인 검색..." name="participant" id="participant" value="${param.participant}">
+
+                        <select name="approvalStatus" id="approvalStatus">
+                            <option value="">모든 상태</option>
+                            <option value="approved" <c:if test="${param.approvalStatus == 'approved'}">selected</c:if>>승인됨</option>
+                            <option value="pending" <c:if test="${param.approvalStatus == 'pending'}">selected</c:if>>대기 중</option>
+                            <option value="rejected" <c:if test="${param.approvalStatus == 'rejected'}">selected</c:if>>거부됨</option>
+                        </select> --%>
+                        
+                        
+                        <select name="type">
+                        	<option value="W" <c:out value="${pageMaker.cri.type eq 'W'? 'selected':''}"/>>작성자</option>
+                        	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여</option>
+                        	<option value="C" <c:out value="${pageMaker.cri.type eq 'C'? 'selected':''}"/>>승인상태</option>
+                        </select>
+                        <input type="text" name="keyword" value="${pageMaker.cri.keyword }">
 						<button type="submit">조회</button>
 					</form>
 				</div>

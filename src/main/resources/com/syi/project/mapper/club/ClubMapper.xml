@@ -146,8 +146,8 @@ where club_No = #{clubNo}
   
   
   <!-- 게시물 목록(페이징) -->
-  <select id="getListPaging" resultType="com.syi.project.model.club.ClubVO">
-  <![CDATA[
+  <select id="getListPaging" resultMap="clubResultMap">
+  <!-- <![CDATA[
   	select 
   	a.club_no,
       a.club_study_date,
@@ -179,6 +179,44 @@ where club_No = #{clubNo}
   <![CDATA[		
   		)
   	where rn > (#{pageNum}-1) * #{amount}	  
+  ]]> -->
+  
+  <![CDATA[
+    SELECT 
+      a.club_no,
+      a.club_study_date,
+      a.club_reg_date,
+      a.club_check_status,
+      a.club_check_cmt,
+      b.member_no,
+      b.enroll_no,
+      c.member_name 
+    FROM (
+      SELECT 
+        a.club_no,
+        a.club_study_date,
+        a.club_reg_date,
+        a.club_check_status,
+        a.club_check_cmt,
+        b.member_no,
+        b.enroll_no,
+        c.member_name,
+        ROW_NUMBER() OVER (ORDER BY a.club_reg_date DESC, a.club_study_date DESC) AS rn
+      FROM 
+        club a 
+        JOIN enroll b ON a.enroll_no = b.enroll_no
+        JOIN member c ON b.member_no = c.member_no
+      WHERE 
+        c.member_status = 'Y'
+    ]]>
+      <if test="keyword != null">
+        <include refid="criteria"></include>
+      </if>
+      <![CDATA[
+    ) a
+    WHERE 
+      rn > (#{pageNum} - 1) * #{amount}
+      AND rn <= #{pageNum} * #{amount}
   ]]>
   </select>
   
@@ -219,7 +257,7 @@ where club_No = #{clubNo}
   
   
   <!-- 게시물 총 갯수 -->
- <!--  <select id="getTotal" resultType="int">
+  <select id="getTotal" resultType="int">
   	select count(*) from lbi_board
   	
   	<if test="keyword != null">
@@ -227,7 +265,7 @@ where club_No = #{clubNo}
   		where bno > 0 <include refid="criteria"></include>
   	</if>
   </select>
-   -->
+  
   <!-- 검색 조건문 -->
   <sql id="criteria">
   <trim prefix="AND (" suffix=")" prefixOverrides="OR">
@@ -237,14 +275,12 @@ where club_No = #{clubNo}
   <when test="type == 'W'.toString()">
   	writer like '%'||#{keyword}||'%'
   </when>
-  <when test="type == 'H'.toString()">
+  <when test="type == 'J'.toString()">
   	checkStatus like '%'||#{keyword}||'%'
   </when>
   <when test="type == 'C'.toString()">
   	content like '%'||#{keyword}||'%'
   </when>
-
-  
   </choose>
   </trim>
   </foreach>

@@ -75,33 +75,42 @@ public class ClubMapperTests {
 //	}
 	
 	//수정
+//	@Test
+//	public void testModify() {
+//		
+//		 // 날짜 문자열
+//        String dateString = "2024-08-05";
+//
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date sqlDate = null;
+//        try {
+//        	
+//        	//문자열 java.util.Date로 변환
+//        	java.util.Date utilDate = dateFormat.parse(dateString);
+//        	
+//        	//java.util.Date를 java.sql.Date로 변환
+//        	sqlDate = new java.sql.Date(utilDate.getTime());
+//        	
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        
+//		ClubVO club = new ClubVO();
+//		club.setClubNo(1);
+//		club.setJoin("김영희, 홍길동");
+//		club.setStudyDate(sqlDate);
+//		club.setContent("test");
+//		
+//		int result = mapper.modify(club);
+//		log.info("result : "+result);
+//	}
+	
+	//게시판 목록(페이징 적용)
 	@Test
-	public void testModify() {
-		
-		 // 날짜 문자열
-        String dateString = "2024-08-05";
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date sqlDate = null;
-        try {
-        	
-        	//문자열 java.util.Date로 변환
-        	java.util.Date utilDate = dateFormat.parse(dateString);
-        	
-        	//java.util.Date를 java.sql.Date로 변환
-        	sqlDate = new java.sql.Date(utilDate.getTime());
-        	
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        
-		ClubVO club = new ClubVO();
-		club.setClubNo(1);
-		club.setJoin("김영희, 홍길동");
-		club.setStudyDate(sqlDate);
-		club.setContent("test");
-		
-		int result = mapper.modify(club);
-		log.info("result : "+result);
+	public void testGetListPaging() {
+		Criteria cri = new Criteria();
+		List<ClubVO> list = mapper.getListPaging(cri);
+		System.out.println(list);
+		/* list.forEach(board -> log.info("" + board)); */
 	}
 }
