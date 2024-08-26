@@ -182,7 +182,7 @@ where club_No = #{clubNo}
   ]]> -->
   
   <![CDATA[
-    SELECT 
+      SELECT 
       a.club_no,
       a.club_study_date,
       a.club_reg_date,
@@ -190,24 +190,26 @@ where club_No = #{clubNo}
       a.club_check_cmt,
       b.member_no,
       b.enroll_no,
-      c.member_name 
+      c.member_name,
+      a.file_name
     FROM (
-      SELECT 
-        a.club_no,
-        a.club_study_date,
-        a.club_reg_date,
-        a.club_check_status,
-        a.club_check_cmt,
-        b.member_no,
-        b.enroll_no,
-        c.member_name,
+        SELECT 
+      a.club_no,
+      a.club_study_date,
+      a.club_reg_date,
+      a.club_check_status,
+      a.club_check_cmt,
+      b.member_no,
+      b.enroll_no,
+      c.member_name,
+      a.file_name,
         ROW_NUMBER() OVER (ORDER BY a.club_reg_date DESC, a.club_study_date DESC) AS rn
       FROM 
         club a 
         JOIN enroll b ON a.enroll_no = b.enroll_no
         JOIN member c ON b.member_no = c.member_no
       WHERE 
-        c.member_status = 'Y'
+        c.member_status = 'Y' and b.class_no = #{classNo}
     ]]>
       <if test="keyword != null">
         <include refid="criteria"></include>
@@ -219,7 +221,7 @@ where club_No = #{clubNo}
       AND rn <= #{pageNum} * #{amount}
   ]]>
   </select>
-  
+
   <!-- <select id="getListPaging" resultMap="clubResultMap">
   <![CDATA[
     SELECT 
