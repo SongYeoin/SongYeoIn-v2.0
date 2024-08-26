@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.net.URLEncoder;
 
@@ -120,7 +119,7 @@ public class AttendanceController {
 		}
 	}
 	
-	/* 출석 전체 조회 페이지로 이동 */
+	/* 출석 전체 조회 페이지로 이동_수강생 */
 	@GetMapping("/attendance/attendanceList")
 	public void attendanceListGET(HttpServletRequest request, Integer classNo, Model model) {
 		

@@ -183,5 +183,6 @@
 		SET MEMBER_STATUS = 'N'
 		WHERE MEMBER_NO = #{ memberNo }
 	</update>
+	
   
   </mapper>
