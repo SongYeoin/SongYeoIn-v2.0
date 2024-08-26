@@ -134,24 +134,24 @@ button:hover {
 	cursor: pointer;
 }
 
-.comment-form-container {
+.comment-form-container, .reply-form {
     display: flex; 
     align-items: flex-start; 
     gap: 10px; 
     margin: 10px 0;
 }
 
-.comment-form-container form {
+.comment-form-container form, .reply-form form {
     display: flex; 
     flex: 1; 
 }
 
-.comment-form-container textarea {
+.comment-form-container textarea, .reply-form textarea {
     flex: 1; 
     margin-right: 10px; 
 }
 
-.comment-form-container button {
+.comment-form-container button, .reply-form button {
     align-self: flex-start; 
 }
 
@@ -238,7 +238,7 @@ button:hover {
 				        <button class="reply-btn" onclick="showReplyForm(${comment.commentNo})">답글</button>
                     	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
 			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo})">삭제</button>
+			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
                     	</c:if>
 			        </div>
 			        
@@ -372,7 +372,7 @@ button:hover {
         });
     });
     
- 	// 댓글 수정 폼을 표시
+ 	// 댓글 수정 버튼 클릭 시
     function editComment(commentNo) {
     	$('#updateCommentBtn-' + commentNo).hide();
         $('#deleteCommentBtn-' + commentNo).hide();
@@ -380,7 +380,7 @@ button:hover {
         $('#edit-form-' + commentNo).show();
     }
 
-    // 댓글 수정 폼을 취소
+    // 댓글 수정 취소 버튼 클릭 시
     function cancelEdit(commentNo) {
     	$('#edit-form-' + commentNo).hide();
         $('#comment-content-' + commentNo).show();
@@ -414,12 +414,14 @@ button:hover {
     }
 
     // 댓글 삭제
-    function deleteComment(commentNo) {
+    function deleteComment(commentNo, boardNo) {
         if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             $.ajax({
                 url: "${pageContext.request.contextPath}/member/board/comment/delete",
                 type: "POST",
-                data: { commentNo: commentNo },
+                data: { commentNo: commentNo,
+                		boardNo: boardNo
+                	},
                 success: function(response) {
                     if (response === 'success') {
                         alert("댓글이 삭제되었습니다.");

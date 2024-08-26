@@ -19,13 +19,6 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private CommentMapper commentMapper;
 
-	// 댓글 생성
-	@Transactional
-	@Override
-	public int insertComment(CommentsVO comment) {
-		return commentMapper.insertComment(comment);
-	}
-	
 	// 댓글 조회
 	@Override
 	public List<CommentsVO> selectCommentList(int boardNo) {
@@ -84,12 +77,32 @@ public class CommentServiceImpl implements CommentService {
 	public int selectCommentTotal(int boardNo) {
 		return commentMapper.selectCommentTotal(boardNo);
 	}
-
+	
+	// 댓글 수 증가
+	@Override
+	public void increaseComment(int boardNo) {
+		commentMapper.increaseComment(boardNo);
+	}
+	
+	// 댓글 생성
+	@Transactional
+	@Override
+	public int insertComment(CommentsVO comment) {
+		return commentMapper.insertComment(comment);
+	}
+	
 	// 댓글 수정
 	@Transactional
 	@Override
 	public int updateComment(CommentsVO comment) {
 		return commentMapper.updateComment(comment);
+	}
+	
+	// 댓글 수 감소
+	@Override
+	public void decreaseComment(int boardNo) {
+		commentMapper.decreaseComment(boardNo);
+
 	}
 
 	// 댓글 삭제
@@ -98,5 +111,7 @@ public class CommentServiceImpl implements CommentService {
 	public int deleteComment(int commentId) {
 		return commentMapper.deleteComment(commentId);
 	}
+	
+	
 
 }

@@ -71,22 +71,6 @@
 	</resultMap>
 
 
-	<!-- 댓글 생성 -->
-	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
-		INSERT INTO COMMENTS (
-        	COMMENT_BOARD_NO,
-	        COMMENT_MEMBER_NO,
-	        COMMENT_CONTENT
-	        <if test="commentParentNo != null">, COMMENT_PARENT_NO</if>
-	    	)
-    	VALUES (
-	        #{commentBoardNo},
-	        #{commentMemberNo},
-	        #{commentContent}
-	        <if test="commentParentNo != null">, #{commentParentNo}</if>
-	    	)
-	</insert>
-	
 	<!-- 댓글 조회 -->
 	<select id="selectCommentList" resultMap="CommentResultMap">
 		SELECT LEVEL AS COMMENT_LEVEL,
@@ -95,7 +79,7 @@
 		FROM COMMENTS C
 		JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
 		WHERE C.COMMENT_BOARD_NO = #{boardNo}
-			AND C.COMMENT_STATUS = 'Y'
+			<!-- AND C.COMMENT_STATUS = 'Y' -->
 		START WITH C.COMMENT_PARENT_NO IS NULL
 		CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
 		ORDER SIBLINGS BY C.COMMENT_REG_DATE
@@ -122,6 +106,29 @@
     		AND COMMENT_STATUS = 'Y'
 	</select>
 	
+	<!-- 댓글 생성 -->
+	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
+		INSERT INTO COMMENTS (
+        	COMMENT_BOARD_NO,
+	        COMMENT_MEMBER_NO,
+	        COMMENT_CONTENT
+	        <if test="commentParentNo != null">, COMMENT_PARENT_NO</if>
+	    	)
+    	VALUES (
+	        #{commentBoardNo},
+	        #{commentMemberNo},
+	        #{commentContent}
+	        <if test="commentParentNo != null">, #{commentParentNo}</if>
+	    	)
+	</insert>
+	
+	<!-- 댓글 수 증가 -->
+	<update id="increaseComment">
+    	UPDATE BOARD
+    	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT + 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
+	
 	<!-- 댓글 수정 -->
 	<update id="updateComment" parameterType="com.syi.project.model.board.CommentsVO">
 		UPDATE COMMENTS
@@ -135,7 +142,13 @@
 	<delete id="deleteComment" parameterType="_int">
 		DELETE FROM COMMENTS WHERE COMMENT_NO = #{ commentNo }
 	</delete>
-
+	
+	<!-- 댓글 수 감소 -->
+    <update id="decreaseComment">
+    	UPDATE BOARD
+    	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT - 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
 
 </mapper>
   

@@ -15,9 +15,15 @@ public interface CommentMapper {
 	// 댓글 총 갯수
 	int selectCommentTotal(int boardNo);
 	
+	// 댓글 수 증가
+	void increaseComment(int boardNo);
+	
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
 	
 	// 댓글 삭제
 	int deleteComment(int commentId);
+	
+	// 댓글수 감소
+	void decreaseComment(int boardNo);
 }

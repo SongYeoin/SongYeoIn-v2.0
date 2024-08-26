@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,13 +39,8 @@ public class CommentController {
 		comment.setCommentMemberNo(memberNo);
 		comment.setCommentParentNo(parentCommentNo);
 		
-		if (parentCommentNo != null) {
-			log.info(">>> 대댓글 생성 {}", comment);
-		} else {
-			log.info(">>> 댓글 생성 {}", comment);
-		}
-		
 		commentService.insertComment(comment);
+		commentService.increaseComment(boardNo);
 		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
 	}
 
@@ -59,8 +55,9 @@ public class CommentController {
 	// 댓글 삭제
 	@PostMapping("/delete")
 	@ResponseBody
-	public String deleteComment(@RequestParam("commentNo") int commentNo) {
+	public String deleteComment(@RequestParam("commentNo") int commentNo, @RequestParam("boardNo") int boardNo) {
 		int result = commentService.deleteComment(commentNo);
+		commentService.decreaseComment(boardNo);
 		return result > 0 ? "success" : "fail";
 	}
 
