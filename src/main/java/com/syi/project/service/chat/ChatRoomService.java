@@ -10,13 +10,13 @@ import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
 
 public interface ChatRoomService {
+	List<ChatRoomVO> getChatRoomList(Criteria cri, MemberVO loginMember);
 	int createChatRoom(ChatRoomVO chatroom);
-	List<EnrollVO> selectClassMemberList(int adminNo);//관리자 조회
-	List<EnrollVO> selectEnrollList(int chatRoomMemberNo);
+	List<EnrollVO> getClassMemberList(int adminNo);//관리자 조회
+	List<EnrollVO> getEnrollList(int chatRoomMemberNo);
 	int updateChatRoomStatus(int chatRoomNo);
-	int selectCountOneRoomList(ChatRoomVO chatroom);
-	List<SyclassVO> selectAdminClassList(int adminNo);
-	List<ChatRoomVO> selectChatRoomList(Criteria cri, MemberVO loginMember);
+	int getCountOneRoomList(ChatRoomVO chatroom);
+	List<SyclassVO> getAdminClassList(int adminNo);
 	ChatRoomVO getAdminNoAndMemberNoByChatRoomNo(int chatRoomNo);
 	
 }

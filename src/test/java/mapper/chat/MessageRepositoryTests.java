@@ -30,9 +30,13 @@ public class MessageRepositoryTests {
 	 * 
 	 * messageService.createMessage(message); }
 	 */
+	/*
+	 * @Test public void createMessage() { log.info("마지막 메시지와 시간" +
+	 * messageService.getLatestMessagesByChatRoom(43)); }
+	 */	
 	@Test
-	public void createMessage() {
-		log.info("마지막 메시지와 시간" + messageService.getLatestMessagesByChatRoom(43));
+	public void countUnreadMessages() {
+		log.info("마지막 메시지와 시간" + messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(91,4));
 	}
 
 	/*

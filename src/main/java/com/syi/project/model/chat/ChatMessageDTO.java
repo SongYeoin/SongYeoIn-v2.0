@@ -1,5 +1,6 @@
 package com.syi.project.model.chat;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -14,6 +15,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
+	
+	@Id
+    private String id;
+	
 	@Field(name = "chatRoomNo")
 	private int chatRoomNo; // 메시지가 속한 채팅방 넘버
 

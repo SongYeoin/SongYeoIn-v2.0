@@ -39,15 +39,10 @@ public class MessageServiceImpl implements MessageService {
 		return messageRepository.findAll();
 	}
 
-	@Override
-	public ChatMessageDTO getMessageOne(String id) {
-		return messageRepository.findById(id).orElse(null);
-	}
-
-	@Override
-	public void deleteMessageById(String id) {
-		messageRepository.deleteById(id);
-	}
+	/*
+	 * @Override public void deleteMessageById(String id) {
+	 * messageRepository.deleteById(id); }
+	 */
 
 	// 채팅방 누르면 나오는 메시지 리스트
 	@Override
@@ -57,14 +52,17 @@ public class MessageServiceImpl implements MessageService {
 
 	// 안 읽은 메시지 개수 세기 : 받은 사람의 읽지 않은 메시지의 개수를 셈
 	@Override
-	public long getUnReadMessageCountByChatRoomNoAndReceiverNo(int chatRoomNo,  int receiverNo) {
+	public Long getUnReadMessageCountByChatRoomNoAndReceiverNo(int chatRoomNo,  int receiverNo) {
 		log.info("chatRoomNo : "+ chatRoomNo + "receiverNo : " +receiverNo);
-		Query query = new Query();
-        query.addCriteria(Criteria.where("chatRoomNo").is(chatRoomNo));
-        query.addCriteria(Criteria.where("receiverNo").is(receiverNo));
-        query.addCriteria(Criteria.where("isRead").is(false));
 		
-		long count = mongoTemplate.count(query,ChatMessageDTO.class);
+		  Query query = new Query();
+		  query.addCriteria(Criteria.where("chatRoomNo").is(chatRoomNo));
+		  query.addCriteria(Criteria.where("receiverNo").is(receiverNo));
+		  query.addCriteria(Criteria.where("isRead").is(false));
+		  
+		  long count = mongoTemplate.count(query,ChatMessageDTO.class);
+		 
+		//Long count = messageRepository.countUnreadMessages(chatRoomNo, receiverNo);
 		log.info("읽지 않은 메시지의 개수 : "+count);
 		
 		return count;

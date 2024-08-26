@@ -80,11 +80,25 @@ header {
         <div class="btns">
 		<c:choose>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
-				<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/member/chatroom/main'"></i>
+				<c:choose>
+					<c:when  test="${sessionScope.unreadRoomCount gt 0 }">
+						<i class="bi bi-chat-fill fs-3 chat-move" style="color:red" onclick="location.href='${pageContext.servletContext.contextPath}/member/chatroom/main'"></i>
+					</c:when>
+					<c:otherwise>
+						<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/member/chatroom/main'"></i>
+					</c:otherwise>
+				</c:choose>
 				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/member/mypage'"></i>
 			</c:when>
 			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
-				<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/admin/chatroom/main'"></i>
+				<c:choose>
+					<c:when  test="${sessionScope.unreadRoomCount gt 0 }">
+						<i class="bi bi-chat-fill fs-3 chat-move" style="color:red" onclick="location.href='${pageContext.servletContext.contextPath}/admin/chatroom/main'"></i>
+					</c:when>
+					<c:otherwise>
+						<i class="bi bi-chat fs-3 chat-move" onclick="location.href='${pageContext.servletContext.contextPath}/admin/chatroom/main'"></i>
+					</c:otherwise>
+				</c:choose>
 				<i class="bi bi-person fs-3" onclick="location.href='${pageContext.servletContext.contextPath}/admin/mypage'"></i>
 			</c:when>
 		</c:choose>

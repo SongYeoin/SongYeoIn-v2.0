@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.EndpointConfig;
@@ -76,7 +77,7 @@ public class ChatController {
 				return;
 			}
 
-
+			chatMessage.setId(UUID.randomUUID().toString());
 			// 메시지 MongoDB에 저장
 			chatMessage.setMemberNo(loginMember.getMemberNo());
 			System.out.println("멤버넘버 설정 : " + chatMessage.getMemberNo());

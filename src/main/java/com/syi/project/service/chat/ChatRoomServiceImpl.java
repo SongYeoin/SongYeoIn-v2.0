@@ -40,17 +40,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public List<EnrollVO> selectEnrollList(int chatRoomMemberNo) {
+	public List<EnrollVO> getEnrollList(int chatRoomMemberNo) {
 		return chatRoomMapper.selectEnrollList(chatRoomMemberNo);
 	}
 
 	@Override
-	public List<ChatRoomVO> selectChatRoomList(Criteria cri,MemberVO loginMember) {
+	public List<ChatRoomVO> getChatRoomList(Criteria cri,MemberVO loginMember) {
 		return chatRoomMapper.selectChatRoomList(cri,loginMember);
 	}
 
 	@Override
-	public List<EnrollVO> selectClassMemberList(int adminNo) {
+	public List<EnrollVO> getClassMemberList(int adminNo) {
 		return chatRoomMapper.selectClassMemberList(adminNo);
 	}
 
@@ -60,12 +60,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public int selectCountOneRoomList(ChatRoomVO chatroom) {
+	public int getCountOneRoomList(ChatRoomVO chatroom) {
 		return chatRoomMapper.selectCountOneRoomList(chatroom);
 	}
 
 	@Override
-	public List<SyclassVO> selectAdminClassList(int adminNo) {
+	public List<SyclassVO> getAdminClassList(int adminNo) {
 		return chatRoomMapper.selectAdminClassList(adminNo);
 	}
 

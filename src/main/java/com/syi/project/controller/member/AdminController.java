@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.syi.project.controller.chat.ChatAdminController;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
@@ -32,6 +33,7 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
+	private ChatAdminController chatAdminController;
 
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
@@ -87,6 +89,17 @@ public class AdminController {
 		loginMember.setMemberPwd("");
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMember);
+
+		// 메시지의 유무(unreadRoomCount)
+		try {
+			int unreadRoomCount = chatAdminController.getUnreadRoomCount();
+			if (unreadRoomCount > 0) {
+				session.setAttribute("unreadRoomCount", unreadRoomCount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return "redirect:/admin/main";
 	}
 
