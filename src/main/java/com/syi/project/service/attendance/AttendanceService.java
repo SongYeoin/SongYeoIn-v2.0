@@ -1,6 +1,7 @@
 package com.syi.project.service.attendance;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,13 @@ public class AttendanceService {
 	/* 클래스번호와 수강생번호로 전체 출석 조회하기 */
 	public List<AttendanceVO> getAttendanceByClassAndMember(Integer classNo, Integer memberNo) {
 		return attendanceMapper.getAttendanceByClassAndMember(classNo, memberNo);
+	}
+	
+	/* 미출석 -> 결석 처리하기 */
+	public void updateAbsentStatus(LocalDate date) {
+		// 특정 날짜의 출석 정보가 없는 학생들을 조회
+		
+		// 결석 상태로 출석을 생성
 	}
 
 }
