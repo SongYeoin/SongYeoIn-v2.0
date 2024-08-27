@@ -102,19 +102,48 @@ public class CommentServiceImpl implements CommentService {
 	@Transactional
 	@Override
 	public String deleteComment(int commentNo, int boardNo) {
-		int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
-		if(childCommentCount > 0) {
-			int result = commentMapper.updateCommentStatus(commentNo);
-			if(result > 0) {
-				commentMapper.decreaseComment(boardNo);
+		try {
+	        int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
+	        
+	        if (childCommentCount > 0) {
+	            int result = commentMapper.updateCommentStatus(commentNo);
+	            if (result > 0) {
+	                commentMapper.decreaseComment(boardNo);
+	            }
+				/* checkAndDeleteParentComments(commentNo); */
+	            return result > 0 ? "deleted" : "fail";
+	        } else {
+	        	int parentNo = commentMapper.selectParentNo(commentNo);
+	            int result = commentMapper.deleteComment(commentNo);
+	            if (result > 0) {
+	                commentMapper.decreaseComment(boardNo);
+	            }
+	            checkAndDeleteParentComments(parentNo);
+	            return result > 0 ? "success" : "fail";
+	        }
+	    } catch (Exception e) {
+	        throw new RuntimeException("댓글 삭제 실패", e);
+	    }
+	}
+	
+	// 부모 댓글 재귀적으로 처리
+	private void checkAndDeleteParentComments(int commentNo) {
+		CommentsVO parentComment = commentMapper.selectParentComment(commentNo);
+		
+		while (parentComment != null) {
+			int parentCommentNo = parentComment.getCommentNo();
+			String status = commentMapper.selectCommentStatus(parentComment.getCommentNo());
+			int childCount = commentMapper.selectChildrenCommentTotal(parentCommentNo);
+			
+			if("N".equals(status) && childCount == 0) {
+				int result = commentMapper.deleteComment(parentCommentNo);
+				if(result > 0) {
+					commentMapper.decreaseComment(parentCommentNo);
+				}
+				parentComment = commentMapper.selectParentComment(parentCommentNo);
+			} else {
+				break;
 			}
-			return result > 0 ? "deleted" : "fail";
-		} else {
-			int result = commentMapper.deleteComment(commentNo);
-			if (result > 0) {
-				commentMapper.decreaseComment(result);
-			}
-			return result > 0 ? "success" : "fail";
 		}
 	}
 	

@@ -32,4 +32,14 @@ public interface CommentMapper {
 	
 	// 댓글수 감소
 	void decreaseComment(int boardNo);
+	
+	// 부모 번호 조회
+	int selectParentNo(int commentNo);
+
+	// 부모 댓글 조회
+	CommentsVO selectParentComment(int commentNo);
+
+	// 댓글 상태 조회
+	String selectCommentStatus(int commentNo);
+	
 }

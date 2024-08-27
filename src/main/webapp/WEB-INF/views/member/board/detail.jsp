@@ -444,7 +444,8 @@ button:hover {
                 success: function(response) {
                     if (response === 'success') {
                         alert("댓글이 삭제되었습니다.");
-                        $('#comment-' + commentNo).remove();
+                        location.reload(); 
+                        /* $('#comment-' + commentNo).remove(); */
                     } else if (response === 'deleted') {
                     	$('#comment-' + commentNo).html('<p>사용자에 의해 삭제된 댓글입니다.</p>');
                     } else {

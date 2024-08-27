@@ -163,6 +163,27 @@
     	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT - 1
     	WHERE BOARD_NO = #{ boardNo }
     </update>
+    
+    <!-- 부모 번호 조회 -->
+    <select id="selectParentNo" parameterType="_int" resultType="_int">
+    	SELECT COMMENT_PARENT_NO
+        FROM COMMENTS
+        WHERE COMMENT_NO = #{ commentNo }
+    </select>
+    
+    <!-- 부모 댓글 조회 -->
+    <select id="selectParentComment" parameterType="_int" resultMap="CommentResultMap">
+    	SELECT *
+        FROM COMMENTS
+        WHERE COMMENT_NO = #{ commentNo }
+    </select>
+    
+    <!-- 댓글 상태 조회 -->
+    <select id="selectCommentStatus" parameterType="_int" resultType="String">
+    	SELECT COMMENT_STATUS
+        FROM COMMENTS
+        WHERE COMMENT_NO = #{ commentNo }
+    </select>
 
 </mapper>
   
