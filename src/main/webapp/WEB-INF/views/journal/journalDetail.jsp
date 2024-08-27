@@ -17,49 +17,47 @@
 }
 
 html, body {
-    height: 1080px;
+	height: 1080px;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    /* min-height: 100vh; */
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	/* min-height: 100vh; */
 }
 
 main {
-    flex: 1;
-    margin-left: 250px;
-    margin-top: 160px;
-    overflow-y: auto;
-    height: 100%;
+	flex: 1;
+	margin-left: 250px;
+	margin-top: 160px;
+	overflow-y: auto;
+	height: 100%;
 }
 
 .classroom-header {
-    background-color: #f1f1f1;
-    padding: 10px 20px;
-    border-bottom: 2px solid #ccc;
-    text-align: left;
-    padding-top: 91px;
-    position: fixed;
-    width: 100%;
-    z-index: 999;
-    display: flex;
-    align-items: center;
+	background-color: #f1f1f1;
+	padding: 10px 20px;
+	border-bottom: 2px solid #ccc;
+	text-align: left;
+	padding-top: 91px;
+	position: fixed;
+	width: 100%;
+	z-index: 999;
+	display: flex;
+	align-items: center;
 }
 
 .classroom-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    /* margin-bottom: 10px; */
-    
-    margin-left: 10px;
+	font-size: 20px;
+	font-weight: bold;
+	/* margin-bottom: 10px; */
+	margin-left: 10px;
 }
 
 .classroom-header .details {
-    font-size: 12px;
-    
-    margin-left: 10px;
+	font-size: 12px;
+	margin-left: 10px;
 }
 
 .box {
@@ -125,19 +123,19 @@ footer {
 }
 
 .buttons a, .buttons button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    margin-left: 10px;
-    display: inline-block;  /* inline-block으로 변경하여 버튼들을 한 줄에 표시 */
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	padding: 10px 15px;
+	border-radius: 5px;
+	text-decoration: none;
+	cursor: pointer;
+	margin-left: 10px;
+	display: inline-block; /* inline-block으로 변경하여 버튼들을 한 줄에 표시 */
 }
 
 .buttons a:hover, .buttons button:hover {
-    background-color: #0056b3;
+	background-color: #0056b3;
 }
 </style>
 </head>
@@ -192,34 +190,38 @@ footer {
 				</c:if>
 			</div>
 			<div class="buttons">
-    <a href="javascript:void(0);" onclick="goToList()">목록</a>
-    <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-        <a href="${pageContext.request.contextPath}/journal/journalModify?journalNo=${journalDetail.journalNo}">수정</a>
-        <form action="${pageContext.request.contextPath}/journal/journalDelete" method="post" style="display: inline;">
-            <input type="hidden" name="journalNo" value="${journalDetail.journalNo}" />
-            <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
-        </form>
-    </c:if>
-</div>
+				<a href="javascript:void(0);" onclick="goToList()">목록</a>
+				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+					<a
+						href="${pageContext.request.contextPath}/journal/journalModify?journalNo=${journalDetail.journalNo}">수정</a>
+					<form
+						action="${pageContext.request.contextPath}/journal/journalDelete"
+						method="post" style="display: inline;">
+						<input type="hidden" name="journalNo"
+							value="${journalDetail.journalNo}" />
+						<button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+					</form>
+				</c:if>
+			</div>
 		</div>
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 
-<script>
-function goToList() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var memberNo = urlParams.get('memberNo');
-    var listUrl = "${pageContext.request.contextPath}/journal/journalList";
-    
-    if (memberNo) {
-        listUrl += "?memberNo=" + memberNo;
-    }
-    
-    window.location.href = listUrl;
-}
-</script>
+	<script>
+		function goToList() {
+			var urlParams = new URLSearchParams(window.location.search);
+			var memberNo = urlParams.get('memberNo');
+			var listUrl = "${pageContext.request.contextPath}/journal/journalList";
+
+			if (memberNo) {
+				listUrl += "?memberNo=" + memberNo;
+			}
+
+			window.location.href = listUrl;
+		}
+	</script>
 
 </body>
 </html>

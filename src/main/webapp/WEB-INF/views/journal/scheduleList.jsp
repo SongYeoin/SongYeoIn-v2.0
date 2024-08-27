@@ -376,21 +376,21 @@ td.checkStatus.N {
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
-    <h1>교육 일정</h1>
-    <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-        <div class="select-box">
-            <!-- 반 선택 드롭다운 -->
-            <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
-                <c:forEach var="classItem" items="${classList}">
-                    <option value="${classItem.classNo}"
-                        <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-                        ${classItem.className}
-                    </option>
-                </c:forEach>
-            </select>
-        </div>
-    </c:if>
-</div>
+			<h1>교육 일정</h1>
+			<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+				<div class="select-box">
+					<!-- 반 선택 드롭다운 -->
+					<select id="classSelect" name="classNo"
+						onchange="changeClass(this.value)">
+						<c:forEach var="classItem" items="${classList}">
+							<option value="${classItem.classNo}"
+								<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+								${classItem.className}</option>
+						</c:forEach>
+					</select>
+				</div>
+			</c:if>
+		</div>
 
 		<!-- 캘린더 출력 영역 -->
 		<div id='calendar'></div>
@@ -400,7 +400,8 @@ td.checkStatus.N {
 			<div class="header">
 				<h2>교육일정 목록</h2>
 				<div class="search_area">
-					<form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/scheduleList">
+					<form id="searchForm" method="get"
+						action="${pageContext.request.contextPath}/journal/scheduleList">
 						<input type="hidden" name="classNo" value="${selectedClassNo}">
 
 

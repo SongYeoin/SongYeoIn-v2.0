@@ -28,5 +28,5 @@ public interface JournalService {
 	public int journalDelete(int journalNo) throws Exception;
 
 	/* 캘린더 전체 일지 조회용*/
-    public List<JournalVO> journalAllList(int classNo);
+    public List<JournalVO> journalAllList(int classNo, int memberNo);
 }

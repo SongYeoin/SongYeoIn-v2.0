@@ -31,5 +31,5 @@ public interface JournalMapper {
 	public int journalDelete(int journalNo);
 	
 	// 캘린더 전체 일지 조회
-    public List<JournalVO> journalAllList(int classNo);
+    public List<JournalVO> journalAllList(@Param("classNo") int classNo, @Param("memberNo") int memberNo);
 }

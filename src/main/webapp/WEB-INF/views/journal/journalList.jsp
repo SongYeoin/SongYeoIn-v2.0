@@ -371,40 +371,40 @@ td.checkStatus.N {
 
 	<main>
 
-<!-- 제목과 클래스 선택 박스 -->
-<div class="title-container">
-    <h1>교육 일지</h1>
-    <c:choose>
-        <c:when test="${isAdmin}">
-            <div class="class-info">
-                <h2>현재 선택된 반: ${syclass.className}</h2>
-            </div>
-            <div class="student-select">
-        <select id="studentSelect" onchange="changeStudent(this.value)">
-            <option value="">학생 선택</option>
-            <c:forEach var="member" items="${memberList}">
-                <option value="${member.memberNo}" <c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
-                    ${member.member.memberName}
-                </option>
-            </c:forEach>
-        </select>
-    </div>
-        </c:when>
-        <c:otherwise>
-            <div class="select-box">
-                <select id="classSelect" name="classNo" onchange="changeClass(this.value)">
-                    <c:forEach var="classItem" items="${classList}">
-                        <option value="${classItem.classNo}"
-                            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-                            ${classItem.className}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-        </c:otherwise>
-    </c:choose>
-</div>
-		
+		<!-- 제목과 클래스 선택 박스 -->
+		<div class="title-container">
+			<h1>교육 일지</h1>
+			<c:choose>
+				<c:when test="${isAdmin}">
+					<div class="class-info">
+						<h2>현재 선택된 반: ${syclass.className}</h2>
+					</div>
+					<div class="student-select">
+						<select id="studentSelect" onchange="changeStudent(this.value)">
+							<option value="">학생 선택</option>
+							<c:forEach var="member" items="${memberList}">
+								<option value="${member.memberNo}"
+									<c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
+									${member.member.memberName}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="select-box">
+						<select id="classSelect" name="classNo"
+							onchange="changeClass(this.value)">
+							<c:forEach var="classItem" items="${classList}">
+								<option value="${classItem.classNo}"
+									<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+									${classItem.className}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</c:otherwise>
+			</c:choose>
+		</div>
+
 
 		<!-- 캘린더 출력 영역 -->
 		<!-- 사용자 역할일 때만 캘린더 표시 -->
@@ -417,25 +417,24 @@ td.checkStatus.N {
 			<div class="header">
 				<h2>교육일지 제출 목록</h2>
 				<div class="search_area">
-    <form id="searchForm" method="get" action="${pageContext.request.contextPath}/journal/journalList">
-        <input type="text" id="keyword" name="keyword" value="${keyword}" placeholder="제목으로 검색">
-        <select id="year" name="year">
-            <option value="" <c:if test="${empty year}">selected</c:if>>년도</option>
-            <c:forEach var="i" begin="2020" end="2025">
-                <option value="${i}" <c:if test="${year == i}">selected</c:if>>${i}</option>
-            </c:forEach>
-        </select>
-        <select id="month" name="month">
-            <option value="" <c:if test="${empty month}">selected</c:if>>월</option>
-            <c:forEach var="i" begin="1" end="12">
-                <option value="${i}" <c:if test="${month == i}">selected</c:if>>${i}</option>
-            </c:forEach>
-        </select>
-        <input type="hidden" name="classNo" value="${selectedClassNo}" />
-        <input type="hidden" name="memberNo" value="${selectedMemberNo}" />
-        <button type="submit">조회</button>
-    </form>
-</div>
+					<form id="searchForm" method="get"
+						action="${pageContext.request.contextPath}/journal/journalList">
+						<input type="text" id="keyword" name="keyword" value="${keyword}"
+							placeholder="제목으로 검색"> <select id="year" name="year">
+							<option value="" <c:if test="${empty year}">selected</c:if>>년도</option>
+							<c:forEach var="i" begin="2020" end="2025">
+								<option value="${i}" <c:if test="${year == i}">selected</c:if>>${i}</option>
+							</c:forEach>
+						</select> <select id="month" name="month">
+							<option value="" <c:if test="${empty month}">selected</c:if>>월</option>
+							<c:forEach var="i" begin="1" end="12">
+								<option value="${i}" <c:if test="${month == i}">selected</c:if>>${i}</option>
+							</c:forEach>
+						</select> <input type="hidden" name="classNo" value="${selectedClassNo}" />
+						<input type="hidden" name="memberNo" value="${selectedMemberNo}" />
+						<button type="submit">조회</button>
+					</form>
+				</div>
 				<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
 					<div class="icons">
 						<a href="/journal/journalEnroll"><i class="fas fa-square-plus"></i></a>
@@ -510,22 +509,30 @@ td.checkStatus.N {
 				</div>
 			</div>
 		</div>
+		<!-- 숨겨진 div에 일지 데이터 저장 -->
+		<div id="journalAllListData" style="display: none;">
+			<c:forEach var="journal" items="${journalAllList}" varStatus="status">
+				<div class="journal-data" data-title="${journal.journalTitle}"
+					data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
+					data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
+				</div>
+			</c:forEach>
+		</div>
 	</main>
 
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 
-<!-- Hidden div 추가 -->
-<div id="journalAllListData" style="display: none;">
-    <c:forEach var="journal" items="${journalAllList}" varStatus="status">
-        <div class="journal-data"
-             data-title="${journal.journalTitle}"
-             data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
-             data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
-        </div>
-    </c:forEach>
-</div>
+	<!-- Hidden div 추가 -->
+	<div id="journalAllListData" style="display: none;">
+		<c:forEach var="journal" items="${journalAllList}" varStatus="status">
+			<div class="journal-data" data-title="${journal.journalTitle}"
+				data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
+				data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
+			</div>
+		</c:forEach>
+	</div>
 
 	<script>
 
@@ -573,84 +580,61 @@ td.checkStatus.N {
 	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo;
 	}
 	
-	$(document).ready(function() {
-	    var calendar;
-
-	    function initializeCalendar() {
-	        var calendarEl = document.getElementById('calendar');
-	        calendar = new FullCalendar.Calendar(calendarEl, {
-	            initialView: 'dayGridMonth',
-	            events: getCalendarEvents()
-	        });
-	        calendar.render();
-	    }
-
-	    function getCalendarEvents() {
-	        var events = [];
-	        $('#journalAllListData .journal-data').each(function() {
-	            var event = {
-	                title: $(this).data('title'),
-	                start: $(this).data('start'),
-	                url: $(this).data('url')
-	            };
-	            events.push(event);
-	        });
-	        console.log('Calendar events:', events);  // 디버깅: 이벤트 로그 출력
-	        return events;
-	    }
-
-	    function updateCalendar(classNo) {
-	        $.ajax({
-	            url: '${pageContext.request.contextPath}/journal/journalList',
-	            data: { classNo: classNo },
-	            success: function(response) {
-	                var $response = $(response);
-	                var newJournalAllList = $response.find('#journalAllListData').html();
-	                $('#journalAllListData').html(newJournalAllList);
-	                
-	                console.log('Updated journalAllListData:', $('#journalAllListData').html());  // 디버깅: 업데이트된 데이터 로그 출력
-
-	                if (calendar) {
-	                    calendar.removeAllEvents();
-	                    var newEvents = getCalendarEvents();
-	                    calendar.addEventSource(newEvents);
-	                    calendar.refetchEvents();  // 이벤트 다시 불러오기
-	                }
-
-	                // 리스트 업데이트
-	                $('.table_wrap').html($response.find('.table_wrap').html());
-	                
-	                // 페이지네이션 업데이트
-	                $('.pageInfo_wrap').html($response.find('.pageInfo_wrap').html());
-	            }
-	        });
-	    }
-
-	    // 클래스 변경 시 호출되는 함수
-	    window.changeClass = function(classNo) {
-	        console.log('Changing class to:', classNo);  // 디버깅: 클래스 변경 로그 출력
-	        updateCalendar(classNo);
-	    }
-
-	    // 페이지 로드 시 캘린더 초기화
-	    initializeCalendar();
-
-	    // 테이블 행 클릭 이벤트
-	    $(document).on('click', 'table tbody tr', function() {
-	        var journalNo = $(this).data('journal-no');
-	        if (journalNo) {
-	            window.location.href = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo;
-	        }
-	    });
-
-	    console.log('Initial journalAllListData:', $('#journalAllListData').html());  // 디버깅: 초기 데이터 로그 출력
-	});
-	
 	function changeMember(memberNo) {
 	    var classNo = document.getElementById('classSelect').value;
 	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo + '&memberNo=' + memberNo;
 	}
 
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	        initialView: 'dayGridMonth',
+	        events: getCalendarEvents()
+	    });
+	    calendar.render();
+
+	 // 클래스 변경 시 캘린더 이벤트 업데이트
+	    $('#classSelect').change(function() {
+	        updateCalendarEvents();
+	    });
+
+	    function getCalendarEvents() {
+	        return [
+	            <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+	            {
+	                title: "${journal.journalTitle}",
+	                start: "${journal.journalWriteDate}",
+	                url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
+	            }<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ];
+	    }
+	    
+	    function updateCalendarEvents() {
+	        var selectedClassNo = $('#classSelect').val();
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/journal/getJournalForClass',
+	            data: { classNo: selectedClassNo },
+	            success: function(data) {
+	                calendar.removeAllEvents();
+	                calendar.addEventSource(data);
+	            }
+	        });
+	    }
+	});
+	
+	// 페이지 로드 시 캘린더 초기화
+	document.addEventListener('DOMContentLoaded', function() {
+	    updateCalendar(${selectedClassNo});
+	});
+	
+	// 클래스 변경 시 호출되는 함수
+	function sendClassChange() {
+	    var selectedClassNo = $('#classSelect').val();
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + selectedClassNo;
+	}
+	    	
 </script>
 
 </body>
