@@ -296,7 +296,7 @@ a:hover {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 <script>
- function sendClassChange() {
+ /* function sendClassChange() {
     var classNo = $('#classSelect').val();
     if (!classNo) {
         console.error("classNo 값이 누락되었습니다.");
@@ -358,7 +358,80 @@ a:hover {
         var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
         return year + '/' + month + '/' + day;
     }
+} */
+
+function sendClassChange() {
+    const classNo = $('#classSelect').val();
+    if (!classNo) {
+        console.error("classNo 값이 누락되었습니다.");
+        return;
+    }
+    loadPageData(classNo, 1); // 기본적으로 첫 페이지 로드
 }
+
+function loadPageData(classNo, pageNum) {
+    $.ajax({
+        url: '/member/club/list/getByClass',
+        type: 'GET',
+        dataType: 'json',
+        data: { classNo: classNo, pageNum: pageNum },
+        success: function(response) {
+            updateTable(response.list);
+            updatePagination(response.pageInfo);
+        },
+        error: function() {
+            alert('데이터를 가져오는 데 실패했습니다.');
+        }
+    });
+}
+
+function updateTable(data) {
+    var tableBody = $('#tableContainer table tbody');
+    tableBody.empty();
+    data.forEach(function(item) {
+        var studyDate = new Date(item.studyDate);
+        var regDate = new Date(item.regDate);
+        var formattedStudyDate = formatDate(studyDate);
+        var formattedRegDate = formatDate(regDate);
+        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
+                    '<td>' + item.clubNo + '</td>' +
+                    '<td>' + item.enroll.member.memberName + '</td>' +
+                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
+                    '<td>' + (item.checkCmt || '') + '</td>' +
+                    '<td>' + formattedStudyDate + '</td>' +
+                    '<td>' + formattedRegDate + '</td>' +
+                    '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+                  '</tr>';
+        tableBody.append(row);   
+    });
+    
+  //첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
+    $('.file-download').on('click', function(event) {
+        event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
+    });
+}
+
+function updatePagination(pageInfo) {
+    var pageUl = $('#pageInfo');
+    pageUl.empty();
+    if (pageInfo.prev) {
+        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">Previous</a></li>');
+    }
+    for (var num = pageInfo.pageStart; num <= pageInfo.pageEnd; num++) {
+        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.currentPage == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
+    }
+    if (pageInfo.next) {
+        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">Next</a></li>');
+    }
+}
+
+function formatDate(date) {
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var day = ('0' + date.getDate()).slice(-2);
+    return year + '/' + month + '/' + day;
+}
+
 </script>
 
 </head>
@@ -615,13 +688,20 @@ a:hover {
 				alert("삭제가 완료되었습니다");
 			}
 		}
-	
+		
 		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
         sendClassChange();
 		
      	// 반 선택 시 동작
         $('#classSelect').change(sendClassChange);
         
+     // 페이지 번호 클릭 시 데이터 로드
+        $(document).on('click', '.pageInfo_btn a', function(e) {
+            e.preventDefault();
+            const pageNum = $(this).attr('href');
+            const classNo = $('#classSelect').val();
+            loadPageData(classNo, pageNum);
+        });
 	}); 
        
 	

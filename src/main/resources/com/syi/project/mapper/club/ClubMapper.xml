@@ -196,9 +196,9 @@ where club_No = #{clubNo}
   	from club A
   	JOIN ENROLL B ON A.ENROLL_NO = B.ENROLL_NO
     JOIN MEMBER C ON B.MEMBER_NO = C.MEMBER_NO
-  	
+  	where C.MEMBER_STATUS = 'Y' AND B.CLASS_NO = #{classNo}
   	<if test="cri.keyword != null">
-  		where A.club_no > 0 and C.MEMBER_STATUS = 'Y' AND B.CLASS_NO = #{classNo}<include refid="criteria"></include>
+  		and A.club_no > 0 <include refid="criteria"></include>
   	</if>
   </select>
   

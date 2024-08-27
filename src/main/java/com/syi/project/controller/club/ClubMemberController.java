@@ -14,7 +14,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
@@ -107,17 +110,38 @@ public class ClubMemberController {
 		
 	}
 	
+//	@GetMapping("/club/list/getByClass")
+//	@ResponseBody
+//	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
+//		if (classNo == null) {
+//	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
+//	        return new ArrayList<>();
+//	    }
+//		
+//		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
+//	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
+//
+//	}
+	
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
-	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
-		if (classNo == null) {
-	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
-	        return new ArrayList<>();
+	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
+	                                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+	                                                 Criteria cri) {
+	    if (classNo == null) {
+	        return Collections.emptyMap();
 	    }
-		
-		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
-	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
+	    cri.setPageNum(pageNum);
+	    
+	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
+	    int total = cservice.getTotal(cri, classNo);
 
+	    PageDTO pageMake = new PageDTO(cri, total);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("list", clubs);
+	    response.put("pageInfo", pageMake);
+	    return response;
 	}
 	
 	//등록페이지
