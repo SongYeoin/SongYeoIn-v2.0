@@ -160,7 +160,7 @@ public class AdminAttendanceController {
 
 	
 	/* 최종 출석 상태를 계산하는 메서드 */
-	private String calculateFinalAttendanceStatus(List<String> statuses) {
+	public String calculateFinalAttendanceStatus(List<String> statuses) {
 		System.out.println("calculateFinalAttendanceStatus 에서 확인한 statuses : " + statuses);
 	    boolean hasLateness = false; // 지각 여부
 	    boolean allAbsent = true; // 모든 교시가 결석인지 확인

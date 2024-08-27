@@ -31,6 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.syi.project.model.attendance.AttendanceVO;
 import com.syi.project.model.member.MemberVO;
@@ -56,6 +57,9 @@ public class AttendanceController {
 	
 	@Autowired
 	ScheduleService scheduleService;
+	
+	@Autowired
+	AdminAttendanceController adminAttendanceController;
 	
 	/* 출석 등록 페이지로 이동 */
 	@GetMapping("/attendance/enroll")
@@ -250,6 +254,55 @@ public class AttendanceController {
 
 		model.addAttribute("dateMap", dateMap);
 
+	}
+	
+	/* 출석 상세 조회 페이지로 이동 (수강생) */
+	@GetMapping("/attendance/attendanceDetail")
+	public void attendanceDetailGET(HttpServletRequest request, Model model, @RequestParam("classNo") int classNo) {
+		SyclassVO syclass = syclassService.getClassDetail(classNo);
+		
+		model.addAttribute("syclass", syclass);
+	    
+	    // 수강생 정보 불러오기
+		HttpSession session = request.getSession();
+	    MemberVO student = (MemberVO) session.getAttribute("loginMember");
+	    model.addAttribute("student",student);
+	    
+	    // 해당 반 시간표의 요일 정보 추출 : dayOfWeekList
+	    List<String> dayOfWeekList = adminAttendanceController.getDayOfWeekList(syclass); 
+	    model.addAttribute("dayOfWeekList", dayOfWeekList);
+	    
+	    // 해당 과목의 개강일 ~ 종강일 사이 날짜 불러오기
+	    List<LocalDate> attendanceDates = adminAttendanceController.getAttendanceDates(syclass, dayOfWeekList);
+	    model.addAttribute("attendanceDates", attendanceDates);
+	    
+	    // 각 날짜 별 요일에 해당하는 시간표의 교시 정보 불러오기
+	    ScheduleVO schedule = scheduleService.getSchedule(classNo);
+	    int scheduleNo = schedule.getScheduleNo();
+	    List<PeriodVO> periods = scheduleService.getPeriods(scheduleNo);
+	    model.addAttribute("periods",periods);
+	    
+	    // 해당 날짜의 각 교시 별 출석, 메모 불러오기
+	    Map<String, List<AttendanceVO>> studentAttendanceMap = adminAttendanceController.getAttendanceMap(classNo, student.getMemberNo());
+	    model.addAttribute("studentAttendanceMap",studentAttendanceMap);
+	    
+	    // 최종 출석 판단하기
+	    Map<String, String> finalAttendanceMap = new HashMap<>();
+	    
+	    for (Map.Entry<String, List<AttendanceVO>> entry : studentAttendanceMap.entrySet()) {
+	        String key = entry.getKey(); 
+	        List<AttendanceVO> attendances = entry.getValue(); 
+
+	        // 각 교시의 출석 상태만 추출
+	        List<String> statuses = attendances.stream().map(AttendanceVO::getAttendanceStatus).collect(Collectors.toList());
+
+	        // 최종 출석 상태 계산
+	        String finalStatus = adminAttendanceController.calculateFinalAttendanceStatus(statuses);
+	        // 최종 출석 상태를 맵에 저장
+	        finalAttendanceMap.put(key, finalStatus);
+	    }
+	    
+	    model.addAttribute("finalAttendanceMap",finalAttendanceMap);
 	}
 	
 	/* 출석 등록 */

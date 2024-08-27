@@ -168,7 +168,9 @@ td:first-child {
 							        </c:choose>
 							        <br/>
         								<span style="font-size: 0.8em; color: #666;">
-					                    <c:out value="${dateMap[key]}" />
+					                    <a href="/member/attendance/attendanceDetail?classNo=${param.classNo}" style="text-decoration: none; color: inherit;">
+									        <c:out value="${dateMap[key]}" />
+									    </a>
 					                </span>
 							    </td>
 							</c:forEach>
