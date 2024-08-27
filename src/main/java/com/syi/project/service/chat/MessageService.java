@@ -1,10 +1,10 @@
 package com.syi.project.service.chat;
 
 import java.util.List;
-import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import com.syi.project.model.chat.ChatMessageDTO;
-import com.syi.project.model.chat.ChatRoomInfo;
 
 public interface MessageService {
 	
@@ -16,6 +16,11 @@ public interface MessageService {
 	public void updateIsReadtoTrue(int chatRoomNo, int receiverNo);
 	public ChatMessageDTO getLatestMessagesByChatRoom(int chatRoomNo);
 	public Long getUnReadMessageCountByChatRoomNoAndReceiverNo(int chatRoomNo, int receiverNo);
+	public Integer getUnReadRoomCount(HttpSession session);
+	
+	//날짜 데이터 전환하는 작업
+	public String getMessageTimeFormat(String messageTime);
+	public List<ChatMessageDTO> getRegDateTimeFormatFromMessageList(List<ChatMessageDTO> messageList);
 	
 
 }

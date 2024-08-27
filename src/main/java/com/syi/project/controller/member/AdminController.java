@@ -22,6 +22,7 @@ import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
+import com.syi.project.service.chat.MessageService;
 import com.syi.project.service.member.AdminService;
 
 @Controller
@@ -35,6 +36,9 @@ public class AdminController {
 
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
+	
+	@Autowired
+	private MessageService messageService;
 
 	// 관리자 메인페이지, 관리자 수강생 조회 페이지
 	@GetMapping(value = { "main", "member/list" })
@@ -87,6 +91,9 @@ public class AdminController {
 		loginMember.setMemberPwd("");
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMember);
+		
+		// 메시지 수 유무
+		messageService.getUnReadRoomCount(session);
 		return "redirect:/admin/main";
 	}
 

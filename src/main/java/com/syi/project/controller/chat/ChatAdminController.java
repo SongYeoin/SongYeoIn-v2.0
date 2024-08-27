@@ -1,12 +1,6 @@
 package com.syi.project.controller.chat;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +40,6 @@ public class ChatAdminController {
 
 	private final ChatRoomService chatService;
 	private final MessageService messageService;
-	private int unreadRoomCount;
 
 	@GetMapping("/main")
 	public void adminChatListGET(HttpServletRequest request, Model model) {
@@ -64,7 +57,6 @@ public class ChatAdminController {
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
 
 		// 채팅방 별로 안 읽은 메시지의 개수가 0이상 인 것을 카운트 한다.
-		unreadRoomCount = 0;
 		Long unReadCount = 0L;
 		for (ChatRoomVO chatRoom : roomList) {
 			String chatRoomName = chatRoom.getMember().getMemberName();
@@ -85,8 +77,6 @@ public class ChatAdminController {
 			// *안 읽은 메시지 개수 총 몇개인지*
 			try {
 				unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
-				if (unReadCount > 0)
-					unreadRoomCount++;
 				log.info("읽지 않은 메시지의 개수 : " + unReadCount);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -96,30 +86,7 @@ public class ChatAdminController {
 			String messageTime = null;
 			if (chatMessage != null) {
 				messageContent = chatMessage.getMessage();
-				messageTime = chatMessage.getRegDateTime();
-
-				// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
-				Instant instant = Instant.parse(messageTime);
-
-				// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
-				DateTimeFormatter formatter;
-
-				Instant now = Instant.now();// 현재 날짜시간
-				Duration duration = Duration.between(instant, now);// 현재와 메시지 보낸 시간과의 차이
-
-				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일
-				// 로 표시
-				if (duration.toDays() < 1) {// 하루가 안 지났다면
-					formatter = DateTimeFormatter.ofPattern("a hh:mm").withZone(ZoneId.of("Asia/Seoul"));
-					messageTime = formatter.format(instant);
-
-				} else if (duration.toDays() >= 1 && duration.toDays() < 2) {// 하루와 이틀 사이
-					messageTime = "어제";
-				} else {
-					formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
-					messageTime = formatter.format(instant);
-				}
-
+				messageTime = messageService.getMessageTimeFormat(chatMessage.getRegDateTime());
 			}
 			// 채팅방 정보를 전달할 때의 receiverNo는 메시지를 보낼때 데이터를 저장할 receiverNo니까
 			// 내가 보내는 메시지는 상대방 번호여야 한다. 그러므로 여기서 receiverNo를 상대방으로 바꿔준다.
@@ -130,29 +97,14 @@ public class ChatAdminController {
 					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
 
 		}
-		session.setAttribute("unreadRoomCount", unreadRoomCount);
-
-		Set<Integer> countOneSet = new HashSet<Integer>();
+		// 세션에 헤더 표시를 위해 세션 덮어씌우는 작업
+		messageService.getUnReadRoomCount(session);
 
 		// 담당 과목 조회
 		if ("ROLE_ADMIN".equals(loginMember.getMemberRole())) {// 관리자일 때
-			List<EnrollVO> classMemberList = new ArrayList<EnrollVO>();
-			try {
-				classMemberList = chatService.getClassMemberList(loginMember.getMemberNo());
-				for (EnrollVO classVO : classMemberList) {
-					log.info(classVO.toString());
-					ChatRoomVO chatroom = new ChatRoomVO();
-					chatroom.setAdminNo(loginMember.getMemberNo());
-					chatroom.setMemberNo(classVO.getMemberNo());
-					int count = chatService.getCountOneRoomList(chatroom);
-					if (count > 0) {// 채팅방이 있다면
-						countOneSet.add(classVO.getMemberNo());
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			List<EnrollVO> classMemberList = chatService.getClassMemberList(loginMember.getMemberNo());
+			Set<Integer> countOneSet = chatService.getCountOneChatRoomSetAdmin(classMemberList,
+					loginMember.getMemberNo());
 			log.info("채팅방이 존재하는 모임 : " + countOneSet);
 
 			List<SyclassVO> adminClassList = new ArrayList<SyclassVO>();
@@ -185,7 +137,6 @@ public class ChatAdminController {
 
 		log.info("ajax로 search 메소드 진입------------------------------");
 
-		// 로그인한 멤버 번호와 멤버 역할, 필터링 조건 memberName, classNo를 가지고 가야함
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 
@@ -200,7 +151,6 @@ public class ChatAdminController {
 		List<ChatRoomInfo> chatRoomInfos = new ArrayList<>();
 
 		// 채팅방 별로 안 읽은 메시지의 개수가 0이상 인 것을 카운트 한다.
-		unreadRoomCount = 0;
 		Long unReadCount = 0L;
 		for (ChatRoomVO chatRoom : filterChatRoomList) {
 			String chatRoomName = chatRoom.getMember().getMemberName();
@@ -216,54 +166,30 @@ public class ChatAdminController {
 			} catch (NullPointerException e) {
 				e.getStackTrace();
 			}
+
 			// *안 읽은 메시지 개수 총 몇개인지*
-			unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
-			if (unReadCount > 0)
-				unreadRoomCount++;
-			log.info("읽지 않은 메시지의 개수 : " + unReadCount);
+			try {
+				unReadCount = messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoomNo, receiverNo);
+				log.info("읽지 않은 메시지의 개수 : " + unReadCount);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			String messageContent = null;
 			String messageTime = null;
 			if (chatMessage != null) {
 				messageContent = chatMessage.getMessage();
-				messageTime = chatMessage.getRegDateTime();
-
-				// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
-				Instant instant = Instant.parse(messageTime);
-
-				// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
-				DateTimeFormatter formatter;
-
-				Instant now = Instant.now();// 현재 날짜시간
-				Duration duration = Duration.between(instant, now);// 현재와 메시지 보낸 시간과의 차이
-
-				// 메시지 보낸 시간이 현재보다 하루가 안 지났으면 오후 00:00 로 표시,하루가 지나면 '어제'라고 표시, 하루보다 더 지났으면 년-월-일
-				// 로 표시
-				if (duration.toDays() < 1) {// 하루가 안 지났다면
-					formatter = DateTimeFormatter.ofPattern("a hh:mm").withZone(ZoneId.of("Asia/Seoul"));
-					messageTime = formatter.format(instant);
-
-				} else if (duration.toDays() >= 1 && duration.toDays() < 2) {// 하루와 이틀 사이
-					messageTime = "어제";
-				} else {
-					formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
-					messageTime = formatter.format(instant);
-				}
-
+				messageTime = messageService.getMessageTimeFormat(chatMessage.getRegDateTime());
 			}
+			
 			// 채팅방 정보를 전달할 때의 receiverNo는 메시지를 보낼때 데이터를 저장할 receiverNo니까
 			// 내가 보내는 메시지는 상대방 번호여야 한다. 그러므로 여기서 receiverNo를 상대방으로 바꿔준다.
 			receiverNo = chatRoom.getMemberNo();// 관리자니까 학생넘버로
-
-			// 채팅방 정보와 최근 메시지 정보를 객체로 생성
 			chatRoomInfos.add(
 					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
 
 		}
-		session.setAttribute("unreadRoomCount", unreadRoomCount);
-
 		log.info(chatRoomInfos.toString());
-
 		return chatRoomInfos;
 
 	}
@@ -275,8 +201,6 @@ public class ChatAdminController {
 			throws JsonProcessingException {
 		log.info("ajax 호출 메소드 : 하나의 채팅방을 누름");
 
-		// messageInput div에 포커스가 되있다면 IsRead true로
-
 		// 상대방이 나한테 보낸 걸 (recevierNo가 나인걸)isRead를 true로 바꿔야함
 		HttpSession session = request.getSession();
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
@@ -286,36 +210,9 @@ public class ChatAdminController {
 		List<ChatMessageDTO> messageList = messageService.getMessagesByChatRoomNo(chatRoomNo);
 		log.info(messageList.toString());
 
-		for (ChatMessageDTO message : messageList) {
-			String messageTime = message.getRegDateTime();
+		messageList = messageService.getRegDateTimeFormatFromMessageList(messageList);
 
-			// 시간 데이터 문자열(UTC)을 instant 형식으로 변환
-			Instant instant = Instant.parse(messageTime);
-
-			// 지역과 포맷형식을 오후 08:10 이와 같게 바꿈
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)")
-					.withZone(ZoneId.of("Asia/Seoul"));
-
-			messageTime = formatter.format(instant);
-
-			message.setRegDateTime(messageTime);
-		}
-		
-		// 메시지의 유무(unreadRoomCount)
-		try {
-			List<ChatRoomVO> roomList = chatService.getChatRoomList(null, loginMember);
-			int unreadRoomCount = 0;
-			for (ChatRoomVO chatRoom : roomList) {
-				Long unReadCount = 
-						messageService.getUnReadMessageCountByChatRoomNoAndReceiverNo(chatRoom.getChatRoomNo(),
-								loginMember.getMemberNo());
-				if (unReadCount > 0)
-					unreadRoomCount++;
-			}
-			session.setAttribute("unreadRoomCount", unreadRoomCount);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		messageService.getUnReadRoomCount(session);
 
 		return messageList;
 	}

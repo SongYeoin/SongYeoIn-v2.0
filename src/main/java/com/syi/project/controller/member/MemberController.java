@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.member.MemberVO;
+import com.syi.project.service.chat.MessageService;
 import com.syi.project.service.member.MemberService;
 
 @Controller
@@ -31,6 +32,9 @@ public class MemberController {
 
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
+	
+	@Autowired
+	private MessageService messageService;
 
 	// 수강생 로그인 페이지 이동
 	@GetMapping("login")
@@ -108,22 +112,22 @@ public class MemberController {
 		requestMember.setMemberPwd(encodePwd);
 
 		int result = memberService.insertMember(requestMember);
-		if(result != 0) {
-	        rttr.addFlashAttribute("enroll_result", "success");
+		if (result != 0) {
+			rttr.addFlashAttribute("enroll_result", "success");
 			return "redirect:/member/login";
 		} else {
-	        rttr.addFlashAttribute("enroll_result", "fail");
+			rttr.addFlashAttribute("enroll_result", "fail");
 			return "redirect:/member/join";
 		}
 	}
-	
+
 	// 수강생 로그인
 	@PostMapping("login")
 	public String loginPost(HttpServletRequest request, MemberVO requestMember, RedirectAttributes rttr)
 			throws Exception {
-		
+
 		MemberVO loginMember = memberService.selectLoginMember(requestMember);
-		
+
 		// 사용자 존재하지 않음
 		if (loginMember == null) {
 			rttr.addFlashAttribute("result", 1);
@@ -146,9 +150,12 @@ public class MemberController {
 		loginMember.setMemberPwd("");
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMember);
+
+		// 메시지 수 유무
+		messageService.getUnReadRoomCount(session);
 		return "redirect:/member/main";
 	}
-	
+
 	// 비밀번호 체크
 	@PostMapping("check-pwd")
 	@ResponseBody
@@ -156,7 +163,7 @@ public class MemberController {
 		System.out.println("비밀번호 체크 : " + requestMember);
 
 		String storedPwd = memberService.selectPwd(requestMember);
-		
+
 		if (pwdEncoder.matches(requestMember.getMemberPwd(), storedPwd)) {
 			return "pass";
 		} else {
@@ -168,20 +175,20 @@ public class MemberController {
 	@PostMapping("mypage")
 	public String mypageMember(MemberVO updateMember, RedirectAttributes rttr, HttpSession session) throws Exception {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-		
+
 		// 비밀번호 암호화 및 기본값 설정
-		if(updateMember.getMemberPwd() != null && !updateMember.getMemberPwd().isEmpty()) {
+		if (updateMember.getMemberPwd() != null && !updateMember.getMemberPwd().isEmpty()) {
 			String rawPwd = updateMember.getMemberPwd();
 			String encodePwd = pwdEncoder.encode(rawPwd);
 			updateMember.setMemberPwd(encodePwd);
 		} else {
 			updateMember.setMemberPwd(memberService.selectPwd(loginMember));
 		}
-		
+
 		// 업데이트 진행
 		updateMember.setMemberNo(loginMember.getMemberNo());
 		int result = memberService.updateMember(updateMember);
-		if(result != 0) {
+		if (result != 0) {
 			loginMember = memberService.selectLoginMember(updateMember);
 			rttr.addFlashAttribute("update_result", "success");
 			session.setAttribute("loginMember", loginMember);
@@ -205,7 +212,7 @@ public class MemberController {
 	public String deleteMember(HttpSession session, RedirectAttributes rttr) {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		int result = memberService.deleteMember(loginMember);
-		if(result != 0) {
+		if (result != 0) {
 			session.invalidate();
 			rttr.addFlashAttribute("delete_result", "success");
 			return "redirect:/";
@@ -214,4 +221,5 @@ public class MemberController {
 			return "redirect:/member/mypage";
 		}
 	}
+	
 }

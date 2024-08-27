@@ -2,6 +2,7 @@ package com.syi.project.service.chat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
@@ -18,5 +19,7 @@ public interface ChatRoomService {
 	int getCountOneRoomList(ChatRoomVO chatroom);
 	List<SyclassVO> getAdminClassList(int adminNo);
 	ChatRoomVO getAdminNoAndMemberNoByChatRoomNo(int chatRoomNo);
+	Set<Integer> getCountOneChatRoomSet(List<EnrollVO> enrollList, int memberNo);
+	Set<Integer> getCountOneChatRoomSetAdmin(List<EnrollVO> classMemberList, int memberNo);
 	
 }

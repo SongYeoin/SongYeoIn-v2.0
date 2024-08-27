@@ -69,13 +69,25 @@ header {
         <div class="menu-button">
             &#9776;
         </div>
-        <div class="logo">
-            <span class="highlight">S</span>ongpa <span class="highlight">W</span>oman
-        </div>
+        <c:choose>
+			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
+		        <div class="logo" onclick="location.href='${pageContext.servletContext.contextPath}/member/chatroom/main'">
+	            	<span class="highlight">S</span>ongpa <span class="highlight">W</span>oman
+		        </div>
+			</c:when>
+			<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
+	            <div class="logo" onclick="location.href='${pageContext.servletContext.contextPath}/admin/chatroom/main'">
+	            	<span class="highlight">S</span>ongpa <span class="highlight">W</span>oman
+		        </div>
+			</c:when>
+		</c:choose>
         </div>
         <div class="header-right">
+	        <div class="profile">
+	        	<i class="bi bi-person-circles"></i>
+	        </div>
         <div class="member">
-        <c:if test="${ !empty sessionScope.loginMember }"><c:out value="${ sessionScope.loginMember.memberName }"/> 님</c:if>
+	        <c:if test="${ !empty sessionScope.loginMember }"><c:out value="${ sessionScope.loginMember.memberName }"/> 님</c:if>
         </div>
         <div class="btns">
 		<c:choose>
