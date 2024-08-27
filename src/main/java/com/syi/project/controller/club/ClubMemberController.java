@@ -43,6 +43,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
+import com.syi.project.model.PageDTO;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
@@ -67,9 +68,9 @@ public class ClubMemberController {
 	@Value("${file.upload.path}")
 	private String fileUploadPath;   
 
-	//리스트
+	//리스트(페이징)
 	@GetMapping("/club/list")
-	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
+	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, Criteria cri, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
 		
 		// 로그인한 멤버 정보 가져오기
@@ -85,16 +86,22 @@ public class ClubMemberController {
 	    }
 		
 	    System.out.println("classNo after service call: " + classNo);
-	    
-		List<ClubVO> list =  cservice.getList(classNo);
+	   
+		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
 		System.out.println(classNo);
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
+		
+		int total = cservice.getTotal(cri, classNo);
+		PageDTO pageMake = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMake);
 		
 		//수강 반 목록
 		Integer memberNo = member.getMemberNo();
 		List<SyclassVO> classList = cservice.getClassNoListByMember(memberNo);
 		model.addAttribute("classList", classList);
+		
+		//model.addAttribute("selectedClassNo", classNo); // 선택된 클래스 번호 추가
 		
 	    return "member/club/list";
 		
@@ -102,13 +109,13 @@ public class ClubMemberController {
 	
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
-	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo) {
+	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
 		if (classNo == null) {
 	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
 	        return new ArrayList<>();
 	    }
 		
-		List<ClubVO> clubs = cservice.getList(classNo);
+		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
 
 	}
@@ -279,10 +286,6 @@ public class ClubMemberController {
 		rttr.addFlashAttribute("result", "delete success");
 		return "redirect:/member/club/list";
 	}
-	
-	//리스트 페이징 적용
-	
-	
 	
 
 }

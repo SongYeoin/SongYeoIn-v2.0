@@ -109,8 +109,10 @@ public class ClubMapperTests {
 	@Test
 	public void testGetListPaging() {
 		Criteria cri = new Criteria();
-		List<ClubVO> list = mapper.getListPaging(cri);
+		Integer classNo=3;
+		
+		List<ClubVO> list = mapper.getListPaging(cri, classNo);
 		System.out.println(list);
-		/* list.forEach(board -> log.info("" + board)); */
+		list.forEach(board -> log.info("" + board));
 	}
 }

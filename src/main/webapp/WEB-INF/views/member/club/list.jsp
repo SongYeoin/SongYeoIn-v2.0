@@ -296,7 +296,7 @@ a:hover {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 <script>
-function sendClassChange() {
+ function sendClassChange() {
     var classNo = $('#classSelect').val();
     if (!classNo) {
         console.error("classNo 값이 누락되었습니다.");
@@ -371,7 +371,7 @@ function sendClassChange() {
 	<%@ include file="../aside.jsp"%>
 	<%-- selectedClassNo --%>
 	<main>
-		<div class="title-container">
+	<div class="title-container">
 		<h1>동아리</h1>
 		<div class="select-box">
 			<select id="classSelect" name="classSelect" onchange="sendClassChange()">
@@ -381,6 +381,20 @@ function sendClassChange() {
 			</select>
 		</div>
 </div>
+		<%-- <div class="title-container">
+            <h1>동아리</h1>
+            <div class="select-box">
+                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
+                    <c:forEach var="classItem" items="${classList}">
+                        <option value="${classItem.classNo}" 
+                            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+                            ${classItem.className}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div> --%>
+
 		<!-- Main content -->
 		<div class="container">
 			<div class="header">
@@ -394,21 +408,7 @@ function sendClassChange() {
 							<option value="">전체</option>
 							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>승인</option>
 							<option value="N" ${param.status == 'N' ? 'selected' : ''}>미승인</option>
-						</select>
-
-
-
-
-						<input type="text" placeholder="작성자 검색..." name="author" id="author" value="${param.author}">
-
-                        <input type="text" placeholder="참여인 검색..." name="participant" id="participant" value="${param.participant}">
-
-                        <select name="approvalStatus" id="approvalStatus">
-                            <option value="">모든 상태</option>
-                            <option value="approved" <c:if test="${param.approvalStatus == 'approved'}">selected</c:if>>승인됨</option>
-                            <option value="pending" <c:if test="${param.approvalStatus == 'pending'}">selected</c:if>>대기 중</option>
-                            <option value="rejected" <c:if test="${param.approvalStatus == 'rejected'}">selected</c:if>>거부됨</option>
-                        </select> --%>
+						</select>--%>
                         
                         
                         <select name="type">
@@ -417,7 +417,7 @@ function sendClassChange() {
                         	<option value="C" <c:out value="${pageMaker.cri.type eq 'C'? 'selected':''}"/>>승인상태</option>
                         </select>
                         <input type="text" name="keyword" value="${pageMaker.cri.keyword }">
-						<button type="submit">조회</button>
+						<button>조회</button>
 					</form>
 				</div>
 				<div class="icons">
@@ -442,10 +442,95 @@ function sendClassChange() {
 					</thead>
 					<tbody>
                 <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
+                <%-- <c:forEach items="${list}" var="item">
+                            <tr onclick="location.href='/member/club/get?clubNo=${item.clubNo}'">
+                                <td><c:out value="${item.clubNo}"/></td>
+                                <td><c:out value="${list.enroll.member.memberName}"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.clubCheckStatus == 'W'}">대기</c:when>
+                                        <c:when test="${item.clubCheckStatus == 'Y'}">승인</c:when>
+                                        <c:when test="${item.clubCheckStatus == 'N'}">미승인</c:when>
+                                        <c:otherwise>알 수 없음</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td><c:out value="${item.clubCheckCmt}"/></td>
+                                <td><fmt:formatDate pattern="yyyy/MM/dd" value="${item.clubStudyDate}"/></td>
+                                <td><fmt:formatDate pattern="yyyy/MM/dd" value="${item.clubRegDate}"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.fileName != null}">
+                                            <a href="/member/club/downloadFile?fileName=${item.fileName}" download="${item.fileName}" title="${item.fileName}" onclick="event.stopPropagation();">
+                                                <i class="bi bi-paperclip"></i>
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:out value=""/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach> --%>
+                
+                
+                
             		</tbody>
 			
 			</table>
+			<div class="pageInfo_wrap">
+				<div class="pageInfo_area">
+					<ul id="pageInfo" class="pageInfo">
+					
+					<!-- 이전페이지 버튼 -->
+					<c:if test="${pageMaker.prev }">
+						<li class="pageInfo_btn previous"><a href="${pageMaker.pageStart-1 }">Previous</a></li>
+					</c:if>
+					
+					<!-- 각 번호 페이지 버튼 -->
+					<c:forEach var="num" begin="${pageMaker.pageStart }" end="${pageMaker.pageEnd }">
+						<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a href="${num }">${num }</a></li>
+					</c:forEach>
+					
+					<!-- 다음페이지 버튼 -->
+					<c:if test="${pageMaker.next }">
+						<li class="pageInfo_btn next"><a href="${pageMaker.pageEnd+1 }">Next</a></li>
+					</c:if>
+					
+					</ul>
+				</div>
+			</div>
+			<%-- <div class="pageInfo_wrap">
+                    <div class="pageInfo_area">
+                        <ul id="pageInfo" class="pageInfo">
+                            <!-- 이전페이지 버튼 -->
+                            <c:if test="${pageMaker.prev}">
+                                <li class="pageInfo_btn previous">
+                                    <a href="?pageNum=${pageMaker.pageStart-1}&amp;classNo=${selectedClassNo}">Previous</a>
+                                </li>
+                            </c:if>
+                            <!-- 각 번호 페이지 버튼 -->
+                            <c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
+                                <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+                                    <a href="?pageNum=${num}&amp;classNo=${selectedClassNo}">${num}</a>
+                                </li>
+                            </c:forEach>
+                            <!-- 다음페이지 버튼 -->
+                            <c:if test="${pageMaker.next}">
+                                <li class="pageInfo_btn next">
+                                    <a href="?pageNum=${pageMaker.pageEnd+1}&amp;classNo=${selectedClassNo}">Next</a>
+                                </li>
+                            </c:if>
+                        </ul>
+                    </div>
+                </div> --%>
+			
 
+			<form id="moveForm" method="get">
+				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
+				<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
+				<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
+				<input type="hidden" name="type" value="${pageMaker.cri.type }">
+			</form>
 
 
 
@@ -538,26 +623,15 @@ function sendClassChange() {
         $('#classSelect').change(sendClassChange);
         
 	}); 
-        
+       
 	
 	
-		//페이지 이동 폼 처리
-		let moveForm = $("#moveForm");
-
-		$(".move").on("click", function(e) {
-					e.preventDefault();
-
-					moveForm.append("<input type='hidden' name='bno' value='"
-							+ $(this).attr("href") + "'>");
-					moveForm.attr("action", "/board/get");
-					moveForm.submit();
-				});
-
+	
 		//페이지 정보 변경 처리
 		$(".pageInfo a").on("click", function(e) {
 			e.preventDefault();
 			moveForm.find("input[name='pageNum']").val($(this).attr("href"));
-			moveForm.attr("action", "/board/list");
+			moveForm.attr("action", "/member/club/list");
 			moveForm.submit();
 		});
 
@@ -565,7 +639,7 @@ function sendClassChange() {
 		$(".search_area button").on("click", function(e) {
 			e.preventDefault();
 
-			//let val = $("input[name='keyword']").val();
+			
 			let type = $(".search_area select").val();
 			let keyword = $(".search_area input[name='keyword']").val();
 
@@ -585,6 +659,12 @@ function sendClassChange() {
 			moveForm.submit();
 		});
 	
+		
+		/* function sendClassChange() {
+            let classNo = $("#classSelect").val();
+            let pageNum = '<c:out value="${pageMaker.cri.pageNum}"/>';
+            location.href = "/member/club/list?classNo=" + classNo + "&pageNum=" + pageNum;
+        } */
         
 	</script>
 

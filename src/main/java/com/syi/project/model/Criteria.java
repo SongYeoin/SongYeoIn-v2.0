@@ -13,7 +13,7 @@ public class Criteria {
 
 	/* 검색 타입 */
 	private String type;
-
+	
 	/* 검색 키워드 */
 	private String keyword;
 	
@@ -38,11 +38,6 @@ public class Criteria {
 	/* Criteria 기본 생성자 */
 	public Criteria() {
 		this(1, 10);
-	}
-
-	/* 검색 타입 데이터 배열 변환 */
-	public String[] getTypeArr() {
-		return type == null ? new String[] {} : type.split("");
 	}
 
 	public int getPageNum() {
