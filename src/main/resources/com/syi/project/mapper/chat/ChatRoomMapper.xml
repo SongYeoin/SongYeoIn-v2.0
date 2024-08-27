@@ -36,11 +36,12 @@
 		<result property="memberPwd" column="MEMBER_PWD"/>
 		<result property="memberName" column="MEMBER_NAME"/>
 		<result property="memberRole" column="MEMBER_ROLE"/>
+		<result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
 	</resultMap>
 	
   	
   	<select id="selectChatRoomList" resultMap="chatRoomResultMap">
-  		SELECT CH.CHATROOM_NO,CH.CHATROOM_ADMIN_NO,CH.CHATROOM_MEMBER_NO,M.MEMBER_NAME
+  		SELECT CH.CHATROOM_NO,CH.CHATROOM_ADMIN_NO,CH.CHATROOM_MEMBER_NO,M.MEMBER_NAME, M.MEMBER_PROFILE_URL
   		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
   			<if test="cri != null">
 	  			FROM CLASS C
