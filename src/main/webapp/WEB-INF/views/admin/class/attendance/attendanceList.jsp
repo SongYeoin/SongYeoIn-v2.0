@@ -91,12 +91,22 @@ th, td {
 th {
     background-color: #f4f4f4;
     font-weight: bold;
+    position: sticky; /* 헤더 고정 */
+    top: 0;
+    z-index: 2;
 }
 
 td {
     font-size: 1em;
     color: #333;
     white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+td:first-child {
+    position: sticky; /* 첫 번째 열 고정 */
+    left: 0;
+    background-color: white; /* 고정된 열의 배경색 */
+    z-index: 1; /* 헤더보다 낮은 z-index */
 }
 
 /* 날짜 스타일 */
@@ -154,7 +164,11 @@ footer {
                 <tbody>
                     <c:forEach var="student" items="${studentList}" varStatus="status">
                         <tr>
-                            <td style="white-space: nowrap;">${student.memberName}</td> <!-- 이름 줄바꿈 방지 -->
+                            <td style="white-space: nowrap;">
+                            <a href="/admin/class/attendance/attendanceDetail?memberNo=${student.memberNo}">
+						        ${student.memberName}
+						    </a>
+                            </td> <!-- 이름 줄바꿈 방지 및 열 고정 -->
                             <c:forEach var="date" items="${attendanceDates}">
                                 <c:set var="key" value="${student.memberNo}-${date}"/>
                                 <td>
