@@ -79,7 +79,6 @@
 		FROM COMMENTS C
 		JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
 		WHERE C.COMMENT_BOARD_NO = #{boardNo}
-			<!-- AND C.COMMENT_STATUS = 'Y' -->
 		START WITH C.COMMENT_PARENT_NO IS NULL
 		CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
 		ORDER SIBLINGS BY C.COMMENT_REG_DATE
@@ -135,6 +134,21 @@
 		SET
 			COMMENT_CONTENT = #{ commentContent },
 			COMMENT_MODIFY_DATE = SYSDATE
+		WHERE COMMENT_NO = #{ commentNo }
+	</update>
+	
+	<!-- 자식 댓글 조회 -->
+	<select id="selectChildrenCommentTotal" parameterType="_int" resultType="_int">
+		SELECT COUNT(*)
+		FROM COMMENTS
+		WHERE COMMENT_PARENT_NO = #{ commentNo }
+	</select>
+	
+	<!-- 댓글 삭제 상태로 변경 -->
+	<update id="updateCommentStatus" parameterType="_int">
+		UPDATE COMMENTS
+		SET
+			COMMENT_STATUS = 'N'
 		WHERE COMMENT_NO = #{ commentNo }
 	</update>
 	

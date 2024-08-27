@@ -98,20 +98,24 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.updateComment(comment);
 	}
 	
-	// 댓글 수 감소
-	@Override
-	public void decreaseComment(int boardNo) {
-		commentMapper.decreaseComment(boardNo);
-
-	}
-
 	// 댓글 삭제
 	@Transactional
 	@Override
-	public int deleteComment(int commentId) {
-		return commentMapper.deleteComment(commentId);
+	public String deleteComment(int commentNo, int boardNo) {
+		int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
+		if(childCommentCount > 0) {
+			int result = commentMapper.updateCommentStatus(commentNo);
+			if(result > 0) {
+				commentMapper.decreaseComment(boardNo);
+			}
+			return result > 0 ? "deleted" : "fail";
+		} else {
+			int result = commentMapper.deleteComment(commentNo);
+			if (result > 0) {
+				commentMapper.decreaseComment(result);
+			}
+			return result > 0 ? "success" : "fail";
+		}
 	}
 	
-	
-
 }

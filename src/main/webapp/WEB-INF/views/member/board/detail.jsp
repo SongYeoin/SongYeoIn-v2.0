@@ -226,6 +226,14 @@ button:hover {
             
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
+            	<c:choose>
+            	<c:when test="${comment.commentStatus eq 'N'}">
+            	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
+                <p>사용자에 의해 삭제된 댓글입니다.</p>
+	            </div>
+	        	</c:when>
+	        	
+	        	<c:otherwise>
                 <div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
                 	<c:if test="${comment.commentParentNo != null}">
                 		<i class="bi bi-arrow-return-right"></i>
@@ -235,7 +243,7 @@ button:hover {
                     
                     <!-- 댓글 버튼 -->
 			        <div class="comment-button-container">
-				        <button class="reply-btn" onclick="showReplyForm(${comment.commentNo})">답글</button>
+				        <button id="replyBtn-${comment.commentNo}" class="replyBtn" onclick="showReplyForm(${comment.commentNo})">답글</button>
                     	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
 			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
 			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
@@ -262,6 +270,8 @@ button:hover {
 			            </form>
 			        </div>
 				</div>
+				</c:otherwise>
+    		</c:choose>
 			</c:forEach>
 
 
@@ -273,7 +283,6 @@ button:hover {
                     <button id="deleteBtn" onclick="deleteboard(${board.boardNo})">삭제</button>
                 </c:if>
             </div>
-            
         </div>
     </main>
 
@@ -348,7 +357,15 @@ button:hover {
 
  	// 답글 작성 폼 표시
     function showReplyForm(commentNo) {
-        $('#reply-form-' + commentNo).toggle(); // 답글 폼을 토글 표시
+        $('#reply-form-' + commentNo).toggle(); 
+        
+        if($('#reply-form-' + commentNo).is(':visible')) {
+        	$('#updateCommentBtn-' + commentNo).hide();
+            $('#deleteCommentBtn-' + commentNo).hide();
+        } else {
+        	$('#updateCommentBtn-' + commentNo).show();
+            $('#deleteCommentBtn-' + commentNo).show();
+        }
     }
     
  	// 댓글 추가
@@ -374,6 +391,7 @@ button:hover {
     
  	// 댓글 수정 버튼 클릭 시
     function editComment(commentNo) {
+    	$('#replyBtn-' + commentNo).hide();
     	$('#updateCommentBtn-' + commentNo).hide();
         $('#deleteCommentBtn-' + commentNo).hide();
         $('#comment-content-' + commentNo).hide();
@@ -383,6 +401,7 @@ button:hover {
     // 댓글 수정 취소 버튼 클릭 시
     function cancelEdit(commentNo) {
     	$('#edit-form-' + commentNo).hide();
+    	$('#replyBtn-' + commentNo).show();
         $('#comment-content-' + commentNo).show();
         $('#updateCommentBtn-' + commentNo).show();
         $('#deleteCommentBtn-' + commentNo).show();
@@ -426,6 +445,8 @@ button:hover {
                     if (response === 'success') {
                         alert("댓글이 삭제되었습니다.");
                         $('#comment-' + commentNo).remove();
+                    } else if (response === 'deleted') {
+                    	$('#comment-' + commentNo).html('<p>사용자에 의해 삭제된 댓글입니다.</p>');
                     } else {
                         alert("댓글 삭제에 실패했습니다.");
                     }

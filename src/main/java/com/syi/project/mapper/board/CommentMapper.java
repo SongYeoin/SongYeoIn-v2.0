@@ -21,8 +21,14 @@ public interface CommentMapper {
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
 	
+	// 자식 댓글 조회
+	int selectChildrenCommentTotal(int commentNo);
+	
+	// 댓글 삭제 상태로 변경
+	int updateCommentStatus(int commentNo);
+	
 	// 댓글 삭제
-	int deleteComment(int commentId);
+	int deleteComment(int commentNo);
 	
 	// 댓글수 감소
 	void decreaseComment(int boardNo);

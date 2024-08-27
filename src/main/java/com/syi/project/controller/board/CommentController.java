@@ -56,9 +56,8 @@ public class CommentController {
 	@PostMapping("/delete")
 	@ResponseBody
 	public String deleteComment(@RequestParam("commentNo") int commentNo, @RequestParam("boardNo") int boardNo) {
-		int result = commentService.deleteComment(commentNo);
-		commentService.decreaseComment(boardNo);
-		return result > 0 ? "success" : "fail";
+		String result = commentService.deleteComment(commentNo, boardNo);
+		return result;
 	}
 
 }

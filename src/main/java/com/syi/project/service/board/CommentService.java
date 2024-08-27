@@ -18,14 +18,11 @@ public interface CommentService {
 
 	// 댓글 생성
 	int insertComment(CommentsVO comment);
-	
+
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
 	
-	// 댓글 수 감소
-	void decreaseComment(int boardNo);
-
 	// 댓글 삭제
-	int deleteComment(int commentId);
+	String deleteComment(int commetNo, int boardNo);
 
 }
