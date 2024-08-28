@@ -50,7 +50,7 @@ a.custom{
 /* styles.css */
 
 /* 모달 창을 숨깁니다. */
-.chat-modal {
+.modal {
 	display: none; /* 숨김 */
     position: fixed; /* 고정 위치 */
     z-index: 1; /* 위쪽에 표시 */
@@ -62,7 +62,7 @@ a.custom{
 }
 
 /* 모달 내용 스타일 */
-.chat-modal-content {
+.modal-content {
     background-color: #fefefe;
     padding: 20px;
     border: 1px solid #888;
@@ -134,7 +134,7 @@ a.custom{
 					 <button id="openModalBtn">채팅방 생성</button>
 					 <!--모달구조  -->
 					 <div id="myModal" class="modal">
-					 	<div class="chat-modal-content">
+					 	<div class="modal-content">
 					 		<span class="close">닫기</span>
 					 		<h5>담당자를 선택해주세요</h5>
 							 <form action="${pageContext.servletContext.contextPath}/member/chatroom/createroom" method="post" id="createRoomForm" onsubmit="return setChatRoomName();">
@@ -189,15 +189,15 @@ a.custom{
 							<c:forEach items="${chatRoomInfos}"  var="room">
 								<li class="p-2 border-bottom bg-body-tertiary"
 								data-chat-room-no="${room.chatRoomNo}"
-								onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this)"
+								onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this,'${room.memberProfileUrl }')"
 								 ><a class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
 												<c:choose>
-								            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
-										                <img src="${sessionScope.loginMember.memberProfileUrl}" 
+								            		<c:when test="${not empty room.memberProfileUrl }">
+										                <img src="${room.memberProfileUrl}" 
 										                alt="Profile Image" 
 										                class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-										                width="60">
+										                width="60" height="60">
 								            		</c:when>
 								            		<c:otherwise>
 								            			<i class="bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong"></i>
@@ -275,10 +275,14 @@ span.onclick = function() {
 
 //모달 밖을 클릭하면 모달을 닫아줍니다.
 window.onclick = function(event) {
- if (event.target == myModal) {
-	 myModal.style.display = "none";
- }
-}
+    if (event.target === profileModal) {
+    	profileModal.style.display = 'none';
+    }
+    
+    if (event.target == myModal) {
+   	 myModal.style.display = "none";
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     // 모든 tr 요소를 선택합니다.
@@ -347,17 +351,18 @@ document.addEventListener('DOMContentLoaded', function () {
 // 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
 const loginMemberNo = "${loginMember.memberNo}";
 const loginMemberName = "${loginMember.memberName}";
-
-
+const loginMemberProfileUrl = "${loginMember.memberProfileUrl}"
+	
 let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
 let currentReceiverNo = null;
+let currentmemberProfileUrl = null;
 //채팅방 클릭 시 호출되는 함수
-function selectChatRoom(chatRoomNo,receiverNo,liElement) {
+function selectChatRoom(chatRoomNo,receiverNo,liElement,memberProfileUrl) {
 	/* 채팅방을 누르면 숫자span이 사라지게 하기 */
     const cntMessagesElement = liElement.querySelector('#cntMessages');
     cntMessagesElement.style.display = 'none';
-	
-	
+    currentmemberProfileUrl = memberProfileUrl;
+    
     currentChatRoomNo = chatRoomNo;
     currentReceiverNo = receiverNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
@@ -404,17 +409,54 @@ function selectChatRoom(chatRoomNo,receiverNo,liElement) {
         	        .append($('<div>', { class: 'card-body' })
         	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
         	        )
-        	    )
-        	    .append($('<img>', {
-        	        src: '${sessionScope.loginMember.memberProfileUrl}', // 다른 사람 이미지 URL
-        	        alt='Profile Image',
-        	        class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
-        	        width: '60'
-        	    }));
-
+        	    );
+        	    if (loginMemberProfileUrl) { // URL이 유효한 경우
+        	        messageItem.append($('<img>', {
+        	            src: loginMemberProfileUrl, // 다른 사람 이미지 URL
+        	            alt: 'Profile Image',
+        	            class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
+        	            width: '60',
+        	            height: '60'
+        	        }));
+        	    } else { // URL이 null이거나 빈 값인 경우
+        	        messageItem.append($('<i>', {
+        	            class: 'bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong'
+        	        }));
+        	    }
         		
         	}else {/* 남-왼쪽에 와야 하는 사람  */
-        		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6'})
+        		// li 요소 생성
+        		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6' });
+
+        		// 프로필 이미지 또는 아이콘 추가
+        		if (currentmemberProfileUrl) { // URL이 유효한 경우
+        		    messageItem.append($('<img>', {
+        		        src: currentmemberProfileUrl, // 다른 사람 이미지 URL
+        		        alt: 'avatar',
+        		        class: 'rounded-circle d-flex align-self-start me-3 shadow-1-strong', // 왼쪽 여백
+        		        width: '60',
+        		        height: '60'
+        		    }));
+        		} else { // URL이 null이거나 빈 값인 경우
+        		    messageItem.append($('<i>', {
+        		        class: 'bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong'
+        		    }));
+        		}
+
+        		
+        		messageItem.append($('<div>', { class: 'card w-100'})
+        	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
+        	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
+        	            .append($('<p>', { class: 'text-muted small mb-0' })
+        	                .append($('<i>', { class: 'far fa-clock' }).text(message.regDateTime)) // 타임스탬프
+        	            )
+        	        )
+        	        .append($('<div>', { class: 'card-body' })
+        	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
+        	        )
+        	    );
+        	
+/*         		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6'})
         	    .append($('<img>', {
         	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
         	        alt: 'avatar',
@@ -432,7 +474,7 @@ function selectChatRoom(chatRoomNo,receiverNo,liElement) {
         	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
         	        )
         	    );
-
+ */
 
         	}
         	

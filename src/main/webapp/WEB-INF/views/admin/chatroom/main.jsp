@@ -195,16 +195,16 @@ a.custom{
 								<c:forEach items="${chatRoomInfos}"  var="room">
 										<li class="p-2 border-bottom bg-body-tertiary" 
 										data-chat-room-no="${room.chatRoomNo}"
-										onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this)"
+										onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this,'${room.memberProfileUrl }')"
 										 ><a
 											class="custom d-flex justify-content-between">
 												<div class="d-flex flex-row">
 													<c:choose>
-								            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
-										                <img src="${sessionScope.loginMember.memberProfileUrl}" 
+								            		<c:when test="${not empty room.memberProfileUrl }">
+										                <img src="${room.memberProfileUrl}" 
 										                alt="Profile Image" 
 										                class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-										                width="60">
+										                width="60" height="60">
 								            		</c:when>
 								            		<c:otherwise>
 								            			<i class="bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong"></i>
@@ -289,10 +289,14 @@ modal.style.display = "none";
 
 //모달 밖을 클릭하면 모달을 닫아줍니다.
 window.onclick = function(event) {
-if (event.target == modal) {
-   modal.style.display = "none";
-}
-}
+    if (event.target === profileModal) {
+    	profileModal.style.display = 'none';
+    }
+    
+    if (event.target == myModal) {
+   	 myModal.style.display = "none";
+    }
+};
 
 
 /*모달 창 내에서 라디오 버튼이 없는 줄은 비활성화 처럼 보이게 회색 처리  */
@@ -408,47 +412,61 @@ function selectSearchCondition(){
 	    // 새로운 리스트 추가
 	    $.each(chatRoomInfos, function(index, room) {
 				
-		        listItem = 
-		        	$('<li>', {
-		                class: 'p-2 border-bottom bg-body-tertiary',
-		                'data-chat-room-no': room.chatRoomNo
-		            }).append(
-		                $('<a>', {
-		                    class: 'custom d-flex justify-content-between',
-		                    click: function() {
-		                        selectChatRoom(room.chatRoomNo);
-		                    }
-		                }).append(
-		                    $('<div>', { class: 'd-flex flex-row' }).append(
-		                        $('<img>', {
-		                            src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp',
-		                            alt: 'avatar',
-		                            class: 'rounded-circle d-flex align-self-center me-3 shadow-1-strong',
-		                            width: 60
-		                        })
-		                    ).append(
-		                        $('<div>', { class: 'pt-1' }).append(
-		                            $('<p>', { class: 'fw-bold mb-0' }).text(room.chatRoomName)
-		                        ).append(
-		                            $('<p>', {
-		                                class: 'd-inline-block text-truncate small text-muted',
-		                                style: 'max-width: 150px;'
-		                            }).text(room.message)
-		                        )
-		                    )
-		                ).append(
-		                    $('<div>', { class: 'pt-1' }).append(
-		                        $('<p>', { class: 'small text-muted mb-1' }).text(room.regDateTime) 
-		                    ).append(
-		                        $('<span>', { class: 'badge bg-danger float-end' }).text(room.unReadCount) 
-		                    )
-		                )
-		            );
+	    	listItem = $('<li>', {
+	    	    class: 'p-2 border-bottom bg-body-tertiary',
+	    	    'data-chat-room-no': room.chatRoomNo
+	    	}).append(
+	    	    $('<a>', {
+	    	        class: 'custom d-flex justify-content-between',
+	    	        click: function() {
+	    	            selectChatRoom(room.chatRoomNo);
+	    	        }
+	    	    }).append(
+	    	        $('<div>', { class: 'd-flex flex-row' }).append(
+	    	            // 이미지나 아이콘 추가
+	    	            room.memberProfileUrl ? 
+	    	            $('<img>', {
+	    	                src: room.memberProfileUrl, // 프로필 이미지 URL
+	    	                alt: 'avatar',
+	    	                class: 'rounded-circle d-flex align-self-center me-3 shadow-1-strong',
+	    	                width: 60,
+	    	                height: 60
+	    	            }) :
+	    	            $('<i>', {
+	    	                class: 'bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong'
+	    	            })
+	    	        ).append(
+	    	            $('<div>', { class: 'pt-1' }).append(
+	    	                $('<p>', { class: 'fw-bold mb-0' }).text(room.chatRoomName)
+	    	            ).append(
+	    	                $('<p>', {
+	    	                    class: 'd-inline-block text-truncate small text-muted',
+	    	                    style: 'max-width: 150px;'
+	    	                }).text(room.message)
+	    	            )
+	    	        )
+	    	    ).append(
+	    	        $('<div>', { class: 'pt-1' }).append(
+	    	            $('<p>', { class: 'small text-muted mb-1' }).text(room.regDateTime) 
+	    	        ).append(
+	    	            $('<span>', { class: 'badge bg-danger float-end', id:'cntMessages' }).text(room.unReadCount) 
+	    	        )
+	    	    )
+	    	);
 		        // 리스트에 추가
 		        listContainer.append(listItem);
 				
 				
 			});
+	    
+	    const cntMessagesElements = document.querySelectorAll('#cntMessages');
+	    
+	    cntMessagesElements.forEach(function(spanElement) {
+	        if (spanElement.innerText === "0") {
+	            // 값이 0이면 요소를 숨깁니다.
+	            spanElement.style.display = 'none';
+	        }
+	    });
 	}
 }
  
@@ -472,16 +490,18 @@ document.addEventListener('DOMContentLoaded', function () {
 // 로그인한 사용자 정보 (서버에서 JSP에 전달된 경우)
 const loginMemberNo = "${loginMember.memberNo}";
 const loginMemberName = "${loginMember.memberName}";
-
+const loginMemberProfileUrl = "${loginMember.memberProfileUrl}"
 
 let currentChatRoomNo = null; // 현재 선택된 채팅방의 chatRoomNo
 let currentReceiverNo = null;
+let currentmemberProfileUrl = null;
 //채팅방 클릭 시 호출되는 함수
-function selectChatRoom(chatRoomNo,receiverNo,liElement) {
+function selectChatRoom(chatRoomNo,receiverNo,liElement,memberProfileUrl) {
 	/* 채팅방을 누르면 숫자span이 사라지게 하기 */
     const cntMessagesElement = liElement.querySelector('#cntMessages');
     cntMessagesElement.style.display = 'none';
-	
+    currentmemberProfileUrl = memberProfileUrl;
+    
     currentChatRoomNo = chatRoomNo;
     currentReceiverNo = receiverNo;
     console.log('Selected Chat Room No:', currentChatRoomNo);
@@ -527,24 +547,42 @@ function selectChatRoom(chatRoomNo,receiverNo,liElement) {
         	        .append($('<div>', { class: 'card-body' })
         	            .append($('<p>', { class: 'mb-0' }).text(message.message)) // 메시지 내용
         	        )
-        	    )
-        	    .append($('<img>', {
-        	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
-        	        alt: 'avatar',
-        	        class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
-        	        width: '60'
-        	    }));
-
+        	    );
+        	    if (loginMemberProfileUrl) { // URL이 유효한 경우
+        	        messageItem.append($('<img>', {
+        	            src: loginMemberProfileUrl,
+        	            alt: 'Profile Image',
+        	            class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
+        	            width: '60',
+        	            height: '60'
+        	        }));
+        	    } else { // URL이 null이거나 빈 값인 경우
+        	        messageItem.append($('<i>', {
+        	            class: 'bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong'
+        	        }));
+        	    }
         		
         	}else {/* 남-왼쪽에 와야 하는 사람  */
-        		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6'})
-        	    .append($('<img>', {
-        	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
-        	        alt: 'avatar',
-        	        class: 'rounded-circle d-flex align-self-start me-3 shadow-1-strong', // 왼쪽 여백
-        	        width: '60'
-        	    }))
-        	    .append($('<div>', { class: 'card w-100'})
+        		// li 요소 생성
+        		var messageItem = $('<li>', { class: 'd-flex justify-content-start mb-6' });
+
+        		// 프로필 이미지 또는 아이콘 추가
+        		if (currentmemberProfileUrl) { // URL이 유효한 경우
+        		    messageItem.append($('<img>', {
+        		        src: currentmemberProfileUrl, // 다른 사람 이미지 URL
+        		        alt: 'avatar',
+        		        class: 'rounded-circle d-flex align-self-start me-3 shadow-1-strong', // 왼쪽 여백
+        		        width: '60',
+        		        height: '60'
+        		    }));
+        		} else { // URL이 null이거나 빈 값인 경우
+        		    messageItem.append($('<i>', {
+        		        class: 'bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong'
+        		    }));
+        		}
+
+        		
+        		messageItem.append($('<div>', { class: 'card w-100'})
         	        .append($('<div>', { class: 'card-header d-flex justify-content-between p-3' })
         	            .append($('<p>', { class: 'fw-bold mb-0' }).text(message.memberName)) // 송신자 이름
         	            .append($('<p>', { class: 'text-muted small mb-0' })

@@ -65,7 +65,7 @@ header {
 }
 /* 모달창  */
 /* Modal Background */
-.modal {
+.profileModal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -79,51 +79,67 @@ header {
 }
 
 /* Modal Content */
-.modal-content {
+.modal-content-header {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 100%;
+    height: 50%;
     max-width: 500px;
     text-align: center;
     border-radius: 8px;
 }
 
 /* Close Button */
-.close {
+.header-close {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+.header-close:hover,
+.header-close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
+.profile-image {
+    width: 100%; /* 원하는 크기로 설정 */
+    height: 100%; /* 원하는 크기로 설정 */
+    background-color: #f0f0f0; /* 배경색 설정 */
+    gap: 30px;
+}
+
+/* 자식 요소들 크기 맞춤 */
+.profile-image img,
+.profile-image i {
+    max-width: 100px; /* 부모의 크기를 초과하지 않도록 */
+    max-height: 100px; /* 부모의 크기를 초과하지 않도록 */
+    border-radius: 50%;
+    object-fit: cover; /* 이미지가 자리를 꽉 채우도록 */
+}
 
 /* Profile Image */
-.profile-image img {
+/* .profile-image img {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-}
+} */
 
 /* Profile Actions */
 .profile-actions button {
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 7px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    margin: 10px 5px;
+    font-size: 15px;
+    margin: 5px;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -171,21 +187,21 @@ header {
         
         
         <!--모달창  -->
-        <div id="profileModal" class="modal">
-	        <div class="modal-content">
-	            <span id="closeModalBtn" class="close">&times;</span>
+        <div id="profileModal" class="profileModal">
+	        <div class="modal-content-header">
+	            <span id="closeModalBtn" class="header-close">&times;</span>
 	            <div class="profile-image">
 	            	<c:choose>
 	            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
 			                <img src="${sessionScope.loginMember.memberProfileUrl}" alt="Profile Image" id="profileImg">
 	            		</c:when>
 	            		<c:otherwise>
-	            			<i class="bi bi-person-circle fs-2"></i>
+	            			<i class="bi bi-person-circle fs-2" id="profileIcon"></i>
 	            		</c:otherwise>
 	            	</c:choose>
 	            	<form action="${pageContext.servletContext.contextPath}/member/profile/upload" method="post" enctype="multipart/form-data">
-		            	<label for="profileImage">프로필 이미지를 선택하세요 (JPG, PNG 형식만 가능):</label>
-		            	<input type="file" id="profileImage" name="file" accept="image/*" required>
+		            	<label for="profileImage" style="color:black;">프로필 이미지를 선택하세요 (JPG, PNG 형식만 가능)</label>
+		            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
 						<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
 			            <div class="profile-actions">
 			                <button id="editProfileBtn" type="submit">프로필 수정</button>
@@ -258,21 +274,65 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 // Open modal
 showProfileDetail.onclick = function() {
 	profileModal.style.display = 'block';
-}
+};
 
 // Close modal
 closeModalBtn.onclick = function() {
 	profileModal.style.display = 'none';
-}
+};
 
 // Close modal when clicking outside the modal content
 window.onclick = function(event) {
     if (event.target === profileModal) {
     	profileModal.style.display = 'none';
     }
-}
+    
+    if (event.target == myModal) {
+   	 myModal.style.display = "none";
+    }
+};
 
-document.getElementById('profileImage').addEventListener('change', function(event) {
+//파일 입력 요소 및 이미지 요소 가져오기
+const profileImageInput = document.getElementById('profileImage');
+const profileImg = document.getElementById('profileImg');
+const profileIcon = document.getElementById('profileIcon');
+
+// 파일 선택 시 이벤트 핸들러
+profileImageInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    // 파일이 선택된 경우
+    if (file) {
+        const reader = new FileReader();
+        
+        // 파일을 읽었을 때 실행되는 이벤트 핸들러
+        reader.onload = function(e) {
+            // 이미지 URL 생성
+            const imageUrl = e.target.result;
+
+            // 아이콘이 있으면 삭제
+            if (profileIcon) {
+                profileIcon.remove();
+            }
+
+            // 이미지 요소가 없으면 생성하고 추가
+            if (!profileImg) {
+                const newImg = document.createElement('img');
+                newImg.id = 'profileImg';
+                newImg.alt = 'Profile Image';
+                document.querySelector('.profile-image').prepend(newImg);
+            }
+
+            // 이미지 요소에 이미지 URL 설정
+            document.getElementById('profileImg').src = imageUrl;
+        };
+
+        // 파일을 데이터 URL로 읽기
+        reader.readAsDataURL(file);
+    }
+});
+
+/* document.getElementById('profileImage').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -283,7 +343,7 @@ document.getElementById('profileImage').addEventListener('change', function(even
         // Read the image file as a data URL
         reader.readAsDataURL(file);
     }
-});
+}); */
 </script>
 </body>
 </html>
