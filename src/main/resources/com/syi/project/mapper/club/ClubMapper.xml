@@ -214,9 +214,19 @@ where club_No = #{clubNo}
   <when test="cri.type == 'J'.toString()">
   	AND A.CLUB_JOIN like '%'||#{cri.keyword}||'%'
   </when>
-  <when test="cri.type == 'C'.toString()">
+  <!-- <when test="cri.type == 'C'.toString()">
   	AND A.CLUB_CHECK_STATUS like '%'||#{cri.keyword}||'%'
-  </when>
+  </when> -->
+  <when test="cri.type == 'C'.toString()">
+      <!-- 여기서 검색어를 '대기', '승인', '미승인'으로 변환하는 로직 추가 -->
+      AND A.CLUB_CHECK_STATUS = 
+        <choose>
+          <when test="cri.keyword == '대기'"> 'W' </when>
+          <when test="cri.keyword == '승인'"> 'Y' </when>
+          <when test="cri.keyword == '미승인'"> 'N' </when>
+          <otherwise> '' </otherwise>
+        </choose>
+    </when>
   </choose>
 
   

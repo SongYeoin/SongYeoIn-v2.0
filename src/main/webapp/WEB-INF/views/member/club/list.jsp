@@ -416,13 +416,23 @@ function loadPageData(classNo, pageNum) {
 	 const type = $("select[name='type']").val();
 	 const keyword = $("input[name='keyword']").val();
 	 
-	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
+	// 승인 상태 변환
+	    const statusMapping = {
+	        '대기': 'W',
+	        '승인': 'Y',
+	        '미승인': 'N'
+	    };
+	
+	    const actualKeyword = type === 'C' ? (statusMapping[keyword] || '') : keyword;
+	    
+	 //console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
+	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword: actualKeyword });
 	 
     $.ajax({
         url: '/member/club/list/getByClass',
         type: 'GET',
         dataType: 'json',
-        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
+        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: actualKeyword },
         success: function(response) {
         	console.log('Response:', response); // 응답 데이터 확인
             updateTable(response.list);
@@ -448,10 +458,18 @@ function updateTable(data) {
         var formattedStudyDate = formatDate(studyDate);
         var formattedRegDate = formatDate(regDate);
      
+     // 승인 상태 변환
+        var checkStatusText = {
+            'W': '대기',
+            'Y': '승인',
+            'N': '미승인'
+        }[item.checkStatus] || '미승인';
+     
         var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
                     '<td>' + item.rn + '</td>' +
                     '<td>' + item.enroll.member.memberName + '</td>' +
-                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
+                    //'<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
+                    '<td>' + checkStatusText + '</td>' +
                     '<td>' + (item.checkCmt || '') + '</td>' +
                     '<td>' + formattedStudyDate + '</td>' +
                     '<td>' + formattedRegDate + '</td>' +
@@ -792,6 +810,7 @@ $('#classSelect').change(function() {
             const classNo = $('#classSelect').val();
             loadPageData(classNo, pageNum);
         });
+     	
 	}); 
        
 	
@@ -828,13 +847,6 @@ $('#classSelect').change(function() {
 			moveForm.find("input[name='pageNum']").val(1);
 			moveForm.submit();
 		}); */
-	
-		
-		/* function sendClassChange() {
-            let classNo = $("#classSelect").val();
-            let pageNum = '<c:out value="${pageMaker.cri.pageNum}"/>';
-            location.href = "/member/club/list?classNo=" + classNo + "&pageNum=" + pageNum;
-        } */
         
 	</script>
 
