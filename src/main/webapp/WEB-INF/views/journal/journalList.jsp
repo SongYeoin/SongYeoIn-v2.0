@@ -380,14 +380,18 @@ td.checkStatus.N {
 						<h2>현재 선택된 반: ${syclass.className}</h2>
 					</div>
 					<div class="student-select">
-						<select id="studentSelect" onchange="changeStudent(this.value)">
-							<option value="">학생 선택</option>
-							<c:forEach var="member" items="${memberList}">
-								<option value="${member.memberNo}"
-									<c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
-									${member.member.memberName}</option>
-							</c:forEach>
-						</select>
+						<c:if test="${not empty memberList}">
+							<c:set var="sortedMemberList" value="${memberList}" />
+							<c:set var="defaultMember" value="${sortedMemberList[0]}" />
+
+							<select id="studentSelect" onchange="changeStudent(this.value)">
+								<c:forEach var="member" items="${sortedMemberList}">
+									<option value="${member.memberNo}"
+										<c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
+										${member.member.memberName}</option>
+								</c:forEach>
+							</select>
+						</c:if>
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -536,26 +540,31 @@ td.checkStatus.N {
 
 	<script>
 
+	// 수강생 변경 함수
 	function changeStudent(memberNo) {
 	    var classNo = ${selectedClassNo};
-	    var currentUrl = new URL(window.location.href);
-	    currentUrl.searchParams.set('classNo', classNo);
-	    if (memberNo) {
-	        currentUrl.searchParams.set('memberNo', memberNo);
-	    } else {
-	        currentUrl.searchParams.delete('memberNo');
-	    }
-	    window.location.href = currentUrl.toString();
+	    var url = new URL('${pageContext.request.contextPath}/journal/journalList', window.location.origin);
+	    url.searchParams.set('classNo', classNo);
+	    url.searchParams.set('memberNo', memberNo);
+	    // 검색어와 필터링 옵션 초기화
+	    url.searchParams.delete('keyword');
+	    url.searchParams.delete('year');
+	    url.searchParams.delete('month');
+	    window.location.href = url.toString();
 	}
 
 	// 페이지 로드 시 실행
 	document.addEventListener('DOMContentLoaded', function() {
-	    var studentSelect = document.getElementById('studentSelect');
-	    if (studentSelect.value === "") {
-	        // 모든 학생이 선택된 상태에서 페이지가 로드되면 memberNo 파라미터 제거
-	        var currentUrl = new URL(window.location.href);
-	        currentUrl.searchParams.delete('memberNo');
-	        history.replaceState(null, '', currentUrl.toString());
+		var studentSelect = document.getElementById('studentSelect');
+	    if (studentSelect) {
+	        // 페이지 로드 시 선택된 학생이 없으면 첫 번째 학생 선택
+	        if (!studentSelect.value) {
+	            var firstOption = studentSelect.options[0];
+	            if (firstOption) {
+	                studentSelect.value = firstOption.value;
+	                changeStudent(firstOption.value);
+	            }
+	        }
 	    }
 	});
 
