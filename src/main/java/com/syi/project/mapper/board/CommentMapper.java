@@ -11,28 +11,28 @@ public interface CommentMapper {
 
 	// 댓글 조회
 	List<CommentsVO> selectCommentList(int boardNo);
-	
+
 	// 댓글 총 갯수
 	int selectCommentTotal(int boardNo);
-	
+
 	// 댓글 수 증가
 	void increaseComment(int boardNo);
-	
+
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
-	
+
 	// 자식 댓글 조회
 	int selectChildrenCommentTotal(int commentNo);
-	
+
 	// 댓글 삭제 상태로 변경
 	int updateCommentStatus(int commentNo);
-	
+
 	// 댓글 삭제
 	int deleteComment(int commentNo);
-	
+
 	// 댓글수 감소
 	void decreaseComment(int boardNo);
-	
+
 	// 부모 번호 조회
 	int selectParentNo(int commentNo);
 
@@ -41,5 +41,5 @@ public interface CommentMapper {
 
 	// 댓글 상태 조회
 	String selectCommentStatus(int commentNo);
-	
+
 }

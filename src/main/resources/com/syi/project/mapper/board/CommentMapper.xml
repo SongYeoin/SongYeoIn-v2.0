@@ -142,6 +142,7 @@
 		SELECT COUNT(*)
 		FROM COMMENTS
 		WHERE COMMENT_PARENT_NO = #{ commentNo }
+			AND COMMENT_STATUS = 'Y'
 	</select>
 	
 	<!-- 댓글 삭제 상태로 변경 -->
@@ -158,7 +159,7 @@
 	</delete>
 	
 	<!-- 댓글 수 감소 -->
-    <update id="decreaseComment">
+	<update id="decreaseComment">
     	UPDATE BOARD
     	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT - 1
     	WHERE BOARD_NO = #{ boardNo }

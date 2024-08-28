@@ -98,46 +98,50 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.updateComment(comment);
 	}
 	
+	
 	// 댓글 삭제
+	// 자식 댓글이 존재하지 않을 때 댓글 삭제되지 않는 오류
+	// 부모 댓글 재귀가 제대로 되지 않음
 	@Transactional
 	@Override
 	public String deleteComment(int commentNo, int boardNo) {
 		try {
-	        int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
-	        
-	        if (childCommentCount > 0) {
-	            int result = commentMapper.updateCommentStatus(commentNo);
-	            if (result > 0) {
-	                commentMapper.decreaseComment(boardNo);
-	            }
-				/* checkAndDeleteParentComments(commentNo); */
-	            return result > 0 ? "deleted" : "fail";
-	        } else {
-	        	int parentNo = commentMapper.selectParentNo(commentNo);
-	            int result = commentMapper.deleteComment(commentNo);
-	            if (result > 0) {
-	                commentMapper.decreaseComment(boardNo);
-	            }
-	            checkAndDeleteParentComments(parentNo);
-	            return result > 0 ? "success" : "fail";
-	        }
-	    } catch (Exception e) {
-	        throw new RuntimeException("댓글 삭제 실패", e);
-	    }
+			int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
+
+			if (childCommentCount > 0) {
+				// 자식 댓글 있는 경우 논리적 삭제
+				int result = commentMapper.updateCommentStatus(commentNo);
+				if (result > 0) {
+					commentMapper.decreaseComment(boardNo);
+				}
+				return result > 0 ? "deleted" : "fail";
+			} else {
+				// 자식 댓글 없는 경우 물리적 삭제
+				int parentNo = commentMapper.selectParentNo(commentNo);
+				int result = commentMapper.deleteComment(commentNo);
+				if (result > 0) {
+					commentMapper.decreaseComment(boardNo);
+				}
+				checkAndDeleteParentComments(parentNo);
+				return result > 0 ? "success" : "fail";
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("댓글 삭제 실패", e);
+		}
 	}
-	
+
 	// 부모 댓글 재귀적으로 처리
 	private void checkAndDeleteParentComments(int commentNo) {
 		CommentsVO parentComment = commentMapper.selectParentComment(commentNo);
-		
+
 		while (parentComment != null) {
 			int parentCommentNo = parentComment.getCommentNo();
 			String status = commentMapper.selectCommentStatus(parentComment.getCommentNo());
 			int childCount = commentMapper.selectChildrenCommentTotal(parentCommentNo);
-			
-			if("N".equals(status) && childCount == 0) {
+
+			if ("N".equals(status) && childCount == 0) {
 				int result = commentMapper.deleteComment(parentCommentNo);
-				if(result > 0) {
+				if (result > 0) {
 					commentMapper.decreaseComment(parentCommentNo);
 				}
 				parentComment = commentMapper.selectParentComment(parentCommentNo);
@@ -146,5 +150,4 @@ public class CommentServiceImpl implements CommentService {
 			}
 		}
 	}
-	
 }
