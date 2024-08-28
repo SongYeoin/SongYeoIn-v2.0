@@ -199,11 +199,17 @@ a.custom{
 										 ><a
 											class="custom d-flex justify-content-between">
 												<div class="d-flex flex-row">
-													<img
-														src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
-														alt="avatar"
-														class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-														width="60">
+													<c:choose>
+								            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
+										                <img src="${sessionScope.loginMember.memberProfileUrl}" 
+										                alt="Profile Image" 
+										                class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+										                width="60">
+								            		</c:when>
+								            		<c:otherwise>
+								            			<i class="bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong"></i>
+								            		</c:otherwise>
+								            	</c:choose>
 													<div class="pt-1">
 														<p class="fw-bold mb-0"><c:out value="${room.chatRoomName}"/></p>
 														<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${room.message}"/></p>

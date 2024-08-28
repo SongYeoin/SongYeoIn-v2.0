@@ -93,8 +93,9 @@ public class ChatAdminController {
 			receiverNo = chatRoom.getMemberNo();// 관리자니까 학생넘버로
 
 			// 채팅방 정보와 최근 메시지 정보를 객체로 생성
+			String memberProfileUrl = chatRoom.getMember().getMemberProfileUrl();
 			chatRoomInfos.add(
-					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
+					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime,memberProfileUrl));
 
 		}
 		// 세션에 헤더 표시를 위해 세션 덮어씌우는 작업
@@ -185,8 +186,9 @@ public class ChatAdminController {
 			// 채팅방 정보를 전달할 때의 receiverNo는 메시지를 보낼때 데이터를 저장할 receiverNo니까
 			// 내가 보내는 메시지는 상대방 번호여야 한다. 그러므로 여기서 receiverNo를 상대방으로 바꿔준다.
 			receiverNo = chatRoom.getMemberNo();// 관리자니까 학생넘버로
+			String memberProfileUrl = chatRoom.getMember().getMemberProfileUrl();
 			chatRoomInfos.add(
-					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
+					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime,memberProfileUrl));
 
 		}
 		log.info(chatRoomInfos.toString());

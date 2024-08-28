@@ -50,8 +50,8 @@ a.custom{
 /* styles.css */
 
 /* 모달 창을 숨깁니다. */
-.modal {
-    display: none; /* 숨김 */
+.chat-modal {
+	display: none; /* 숨김 */
     position: fixed; /* 고정 위치 */
     z-index: 1; /* 위쪽에 표시 */
     overflow: auto; /* 스크롤 가능 */
@@ -62,7 +62,7 @@ a.custom{
 }
 
 /* 모달 내용 스타일 */
-.modal-content {
+.chat-modal-content {
     background-color: #fefefe;
     padding: 20px;
     border: 1px solid #888;
@@ -134,7 +134,7 @@ a.custom{
 					 <button id="openModalBtn">채팅방 생성</button>
 					 <!--모달구조  -->
 					 <div id="myModal" class="modal">
-					 	<div class="modal-content">
+					 	<div class="chat-modal-content">
 					 		<span class="close">닫기</span>
 					 		<h5>담당자를 선택해주세요</h5>
 							 <form action="${pageContext.servletContext.contextPath}/member/chatroom/createroom" method="post" id="createRoomForm" onsubmit="return setChatRoomName();">
@@ -192,11 +192,17 @@ a.custom{
 								onclick="selectChatRoom('${room.chatRoomNo}','${room.receiverNo}',this)"
 								 ><a class="custom d-flex justify-content-between">
 										<div class="d-flex flex-row">
-											<img
-												src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
-												alt="avatar"
-												class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
-												width="60">
+												<c:choose>
+								            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
+										                <img src="${sessionScope.loginMember.memberProfileUrl}" 
+										                alt="Profile Image" 
+										                class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+										                width="60">
+								            		</c:when>
+								            		<c:otherwise>
+								            			<i class="bi bi-person-circle fs-1 rounded-circle d-flex align-self-center me-3 shadow-1-strong"></i>
+								            		</c:otherwise>
+								            	</c:choose>
 											<div class="pt-1">
 												<p class="fw-bold mb-0"><c:out value="${room.chatRoomName}"/></p>
 												<p class="d-inline-block text-truncate small text-muted" style="max-width: 150px;"><c:out value="${room.message}"/></p>
@@ -251,27 +257,26 @@ a.custom{
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"
 ></script>	
 <script>
-//script.js
 
 //모달과 버튼을 변수에 저장합니다.
-var modal = document.getElementById("myModal");
+var myModal = document.getElementById("myModal");
 var btn = document.getElementById("openModalBtn");
 var span = document.getElementsByClassName("close")[0];
 
 //버튼을 클릭하면 모달을 열어줍니다.
 btn.onclick = function() {
- modal.style.display = "block";
+	myModal.style.display = "block";
 }
 
 //<span> (닫기 버튼)을 클릭하면 모달을 닫아줍니다.
 span.onclick = function() {
- modal.style.display = "none";
+	myModal.style.display = "none";
 }
 
 //모달 밖을 클릭하면 모달을 닫아줍니다.
 window.onclick = function(event) {
- if (event.target == modal) {
-     modal.style.display = "none";
+ if (event.target == myModal) {
+	 myModal.style.display = "none";
  }
 }
 
@@ -401,8 +406,8 @@ function selectChatRoom(chatRoomNo,receiverNo,liElement) {
         	        )
         	    )
         	    .append($('<img>', {
-        	        src: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp', // 다른 사람 이미지 URL
-        	        alt: 'avatar',
+        	        src: '${sessionScope.loginMember.memberProfileUrl}', // 다른 사람 이미지 URL
+        	        alt='Profile Image',
         	        class: 'rounded-circle d-flex align-self-start ms-3 shadow-1-strong', // 왼쪽 여백
         	        width: '60'
         	    }));

@@ -92,8 +92,10 @@ public class ChatMemberController {
 			// 채팅방 정보를 전달할 때의 receiverNo는 메시지를 보낼때 데이터를 저장할 receiverNo니까
 			// 내가 보내는 메시지는 상대방 번호여야 한다. 그러므로 여기서 receiverNo를 상대방으로 바꿔준다.
 			receiverNo = chatRoom.getAdminNo();// 학생이면 관리자
+			
+			String memberProfileUrl = chatRoom.getMember().getMemberProfileUrl();
 			chatRoomInfos.add(
-					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime));
+					new ChatRoomInfo(chatRoomNo, chatRoomName, receiverNo, unReadCount, messageContent, messageTime,memberProfileUrl));
 
 		}
 

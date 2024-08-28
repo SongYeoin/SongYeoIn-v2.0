@@ -28,6 +28,8 @@ public class ChatRoomInfo {
 	@Field(name = "regDateTime")
 	private String regDateTime;
 	
+	private String memberProfileUrl;
+	
 
 	
 }
