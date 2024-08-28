@@ -224,7 +224,7 @@ th, td {
 	padding: 0;
 }
 
-.pageInfo {
+/*  .pageInfo {
 	list-style: none;
 	display: inline-block;
 	margin: 50px 0 0 100px;
@@ -255,6 +255,41 @@ a:hover {
 
 .active {
 	background-color: #cdd5ec;
+} */
+
+.pageInfo_area {
+    text-align: center; /* 중앙 정렬 */
+    margin-top: 50px;
+}
+
+.pageInfo {
+    list-style: none;
+    display: inline-block; /* inline-block을 사용하여 중앙 정렬 */
+    padding: 0;
+    margin: 0;
+}
+
+.pageInfo li {
+    display: inline; /* inline으로 설정하여 목록 항목을 나란히 배치 */
+    font-size: 20px;
+    margin: 0 9px;  /* 양쪽 여백을 조정 */
+    padding: 7px;
+    font-weight: 500;
+}
+
+a:link, a:visited, a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.pageInfo .active {
+    background-color: #cdd5ec !important;
+    font-weight: bold !important; /* 강조된 페이지의 텍스트를 굵게 표시 */
+}
+
+.pageInfo_btn.previous a, .pageInfo_btn.next a {
+    font-weight: bold; /* 이전 및 다음 버튼 텍스트 굵게 표시 */
+    color: black; /* 버튼 텍스트 색상 */
 }
 
 /* Adjusted select box style */
@@ -366,16 +401,30 @@ function sendClassChange() {
         console.error("classNo 값이 누락되었습니다.");
         return;
     }
-    loadPageData(classNo, 1); // 기본적으로 첫 페이지 로드
+    const pageNum = 1; // 기본적으로 첫 페이지 로드
+    
+    const searchForm = $('#searchForm');
+
+    // 검색 조건 초기화
+    searchForm.find("select[name='type']").val('');
+    searchForm.find("input[name='keyword']").val('');
+    
+    loadPageData(classNo, pageNum); 
 }
 
 function loadPageData(classNo, pageNum) {
+	 const type = $("select[name='type']").val();
+	 const keyword = $("input[name='keyword']").val();
+	 
+	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
+	 
     $.ajax({
         url: '/member/club/list/getByClass',
         type: 'GET',
         dataType: 'json',
-        data: { classNo: classNo, pageNum: pageNum },
+        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
         success: function(response) {
+        	console.log('Response:', response); // 응답 데이터 확인
             updateTable(response.list);
             updatePagination(response.pageInfo);
         },
@@ -386,15 +435,21 @@ function loadPageData(classNo, pageNum) {
 }
 
 function updateTable(data) {
+	console.log('테이블 데이터:', data); // 데이터 확인
     var tableBody = $('#tableContainer table tbody');
     tableBody.empty();
+    if (!data || data.length === 0) {
+        tableBody.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+        return;
+    }
     data.forEach(function(item) {
         var studyDate = new Date(item.studyDate);
         var regDate = new Date(item.regDate);
         var formattedStudyDate = formatDate(studyDate);
         var formattedRegDate = formatDate(regDate);
+     
         var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
-                    '<td>' + item.clubNo + '</td>' +
+                    '<td>' + item.rn + '</td>' +
                     '<td>' + item.enroll.member.memberName + '</td>' +
                     '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
                     '<td>' + (item.checkCmt || '') + '</td>' +
@@ -550,7 +605,7 @@ function formatDate(date) {
             		</tbody>
 			
 			</table>
-			<div class="pageInfo_wrap">
+			
 				<div class="pageInfo_area">
 					<ul id="pageInfo" class="pageInfo">
 					
@@ -571,7 +626,7 @@ function formatDate(date) {
 					
 					</ul>
 				</div>
-			</div>
+		
 			<%-- <div class="pageInfo_wrap">
                     <div class="pageInfo_area">
                         <ul id="pageInfo" class="pageInfo">
@@ -693,9 +748,44 @@ function formatDate(date) {
         sendClassChange();
 		
      	// 반 선택 시 동작
-        $('#classSelect').change(sendClassChange);
+        //$('#classSelect').change(sendClassChange);
+$('#classSelect').change(function() {
+    sendClassChange();
+});
+
+        const moveForm = $('#moveForm');
         
-     // 페이지 번호 클릭 시 데이터 로드
+        $('.search_area button').on('click', function(e) {
+            e.preventDefault();
+            
+            //검색조건확인
+            //let type = $(".search_area select").val();
+            let type = $(".search_area select[name='type']").val();
+			let keyword = $(".search_area input[name='keyword']").val();
+						
+			if (!type) {
+				alert("검색 종류를 선택하세요");
+				return false;
+			}
+			
+			if (!keyword) {
+	            alert("키워드를 입력하세요");
+	            return false;
+	        }
+			
+			// 폼 필드 업데이트
+	        $('#searchForm').find("input[name='type']").val(type);
+	        $('#searchForm').find("input[name='keyword']").val(keyword);
+	        $('#searchForm').find("input[name='pageNum']").val(1);
+	        
+	        // 폼 제출 (검색)
+	        //moveForm.submit();
+	        
+            const classNo = $('#classSelect').val();
+            loadPageData(classNo, 1); // 검색 후 첫 페이지 로드
+        });
+        
+     	// 페이지 번호 클릭 시 데이터 로드
         $(document).on('click', '.pageInfo_btn a', function(e) {
             e.preventDefault();
             const pageNum = $(this).attr('href');
@@ -708,15 +798,15 @@ function formatDate(date) {
 	
 	
 		//페이지 정보 변경 처리
-		$(".pageInfo a").on("click", function(e) {
+	/* 	$(".pageInfo a").on("click", function(e) {
 			e.preventDefault();
 			moveForm.find("input[name='pageNum']").val($(this).attr("href"));
 			moveForm.attr("action", "/member/club/list");
 			moveForm.submit();
-		});
+		}); */
 
 		//검색처리
-		$(".search_area button").on("click", function(e) {
+		/* $(".search_area button").on("click", function(e) {
 			e.preventDefault();
 
 			
@@ -737,7 +827,7 @@ function formatDate(date) {
 			moveForm.find("input[name='keyword']").val(keyword);
 			moveForm.find("input[name='pageNum']").val(1);
 			moveForm.submit();
-		});
+		}); */
 	
 		
 		/* function sendClassChange() {

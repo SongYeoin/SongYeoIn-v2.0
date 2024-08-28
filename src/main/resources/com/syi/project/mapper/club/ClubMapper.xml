@@ -13,6 +13,7 @@
     <result property="checkStatus" column="CLUB_CHECK_STATUS"/>
     <result property="checkCmt" column="CLUB_CHECK_CMT"/>
     <result property="fileName" column="FILE_NAME"/>
+    <result property="rn" column="RN"/>  <!-- RN 컬럼을 매핑 -->
     <association property="enroll" resultMap="enrollResultMap"/>
   </resultMap>
   
@@ -149,6 +150,7 @@ where club_No = #{clubNo}
   <select id="getListPaging" resultMap="clubResultMap">
   <![CDATA[
       SELECT 
+      A.RN,
       A.CLUB_NO,
       A.CLUB_STUDY_DATE,
       A.CLUB_REG_DATE,

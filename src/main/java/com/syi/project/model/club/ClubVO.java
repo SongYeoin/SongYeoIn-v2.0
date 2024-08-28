@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class ClubVO {
 	
+	private int rn; // RN 필드 추가
 	private int clubNo;	//동아리코드번호
 	private String content;	//동아리신청내용
 	private String join;	//참가자명단

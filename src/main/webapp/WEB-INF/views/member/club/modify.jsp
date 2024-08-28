@@ -101,8 +101,8 @@ textarea {
 			
 			<c:if test="${pageInfo.checkStatus == 'W' }">
 			<div class="input_wrap">
-				<label>번호</label> <input name="clubNo" readonly="readonly"
-					value='<c:out value="${pageInfo.clubNo }"/>'>
+				<label>번호</label> <input name="rn" readonly="readonly"
+					value='<c:out value="${pageInfo.rn }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -146,8 +146,8 @@ textarea {
 			
 			<c:if test="${pageInfo.checkStatus == 'Y' }">
 			<div class="input_wrap">
-				<label>번호</label> <input name="clubNo" readonly="readonly"
-					value='<c:out value="${pageInfo.clubNo }"/>'>
+				<label>번호</label> <input name="rn" readonly="readonly"
+					value='<c:out value="${pageInfo.rn }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"

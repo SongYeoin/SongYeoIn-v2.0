@@ -98,8 +98,8 @@ textarea {
 		<div>
 			<h1>조회 페이지</h1>
 			<div class="input_wrap">
-				<label>번호</label> <input name="clubNo" readonly="readonly"
-					value='<c:out value="${pageInfo.clubNo }"/>'>
+				<label>번호</label> <input name="rn" readonly="readonly"
+					value='<c:out value="${pageInfo.rn }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -175,9 +175,10 @@ textarea {
 		let form = $("#infoForm");
 
 		$("#list_btn").on("click", function(e) {
-			form.find("#clubNo").remove();
+			/* form.find("#clubNo").remove();
 			form.attr("action", "/member/club/list");
-			form.submit();
+			form.submit(); */
+			window.history.back();
 		});
 
 		$("#modify_btn").on("click", function(e) {

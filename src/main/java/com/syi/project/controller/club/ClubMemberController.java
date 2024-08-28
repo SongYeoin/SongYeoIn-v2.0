@@ -127,11 +127,15 @@ public class ClubMemberController {
 	@ResponseBody
 	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
 	                                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+	                                                 @RequestParam(value = "type", required = false) String type,
+	                                                 @RequestParam(value = "keyword", required = false) String keyword,
 	                                                 Criteria cri) {
 	    if (classNo == null) {
 	        return Collections.emptyMap();
 	    }
 	    cri.setPageNum(pageNum);
+	    cri.setType(type);
+	    cri.setKeyword(keyword);
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);
