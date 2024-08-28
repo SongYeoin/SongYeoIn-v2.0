@@ -62,66 +62,83 @@ main {
 	margin-left: 10px;
 }
 
-.container {
-	max-width: 600px;
-	margin: 0 auto;
-	background: #fff;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* 추가 및 수정된 스타일 */
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-	margin-bottom: 20px;
-	font-size: 24px;
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
 }
 
-form label {
-	display: block;
-	margin: 10px 0 5px;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-form input[type="text"], form input[type="date"], form select {
-	width: 100%;
-	padding: 10px;
-	margin-bottom: 15px;
-	border-radius: 4px;
-	border: 1px solid #ddd;
-	font-size: 16px;
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
 }
 
-form input[type="submit"] {
-	width: 100%;
-	padding: 10px;
-	background-color: #007bff;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-size: 16px;
-	cursor: pointer;
+.form-group input[type="text"],
+.form-group input[type="date"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-form input[type="submit"]:hover {
-	background-color: #0056b3;
+.warn-message {
+    display: none;
+    color: #d9534f;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-.back-link {
-	display: block;
-	margin-top: 20px;
-	font-size: 16px;
-	text-decoration: none;
-	color: #007bff;
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
 }
 
-.back-link:hover {
-	text-decoration: underline;
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
 }
 
-/* 경고 메시지 스타일 */
-.warning {
-	color: red;
-	font-size: 0.875em;
-	display: none; /* 기본적으로 숨김 */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
 }
 </style>
 </head>
@@ -143,65 +160,65 @@ form input[type="submit"]:hover {
 
 	<!-- Main Content -->
 	<main>
-		<div class="container">
-			<h1>새 교육일정 등록</h1>
-			<form id="scheduleForm"
-				action="${pageContext.request.contextPath}/journal/scheduleCreate"
-				method="post">
-				<label for="scheduleTitle">단원명:</label> <input type="text"
-					name="scheduleTitle" id="scheduleTitle" required /> <span
-					id="warn_scheduleTitle" class="warning">단원명을 입력해주세요.</span> <label
-					for="scheduleDate">일자:</label> <input type="date"
-					name="scheduleDate" id="scheduleDate" required /> <span
-					id="warn_scheduleDate" class="warning">일자를 입력해주세요.</span> <label
-					for="scheduleDescription">학습주제:</label> <input type="text"
-					name="scheduleDescription" id="scheduleDescription" /> <label
-					for="scheduleInstructor">강사:</label> <input type="text"
-					name="scheduleInstructor" id="scheduleInstructor" /> <input
-					type="submit" value="등록하기" />
-			</form>
-			<a href="${pageContext.request.contextPath}/journal/scheduleList"
-				class="back-link">목록</a>
-		</div>
-	</main>
+    <div class="form-container">
+        <h1 class="form-title">새 교육일정 등록</h1>
+        <form id="scheduleForm" action="${pageContext.request.contextPath}/journal/scheduleCreate" method="post">
+            <div class="form-group">
+                <label for="scheduleTitle">단원명</label>
+                <input type="text" name="scheduleTitle" id="scheduleTitle" required />
+                <span class="warn-message" id="warn_scheduleTitle">단원명을 입력해주세요.</span>
+            </div>
+            <div class="form-group">
+                <label for="scheduleDate">일자</label>
+                <input type="date" name="scheduleDate" id="scheduleDate" required />
+                <span class="warn-message" id="warn_scheduleDate">날짜를 입력해주세요.</span>
+            </div>
+            <div class="form-group">
+                <label for="scheduleDescription">학습주제</label>
+                <input type="text" name="scheduleDescription" id="scheduleDescription" />
+            </div>
+            <div class="form-group">
+                <label for="scheduleInstructor">강사</label>
+                <input type="text" name="scheduleInstructor" id="scheduleInstructor" />
+            </div>
+            <div class="button-group">
+                <a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-secondary">취소</a>
+                <button type="submit" class="btn btn-primary">등록하기</button>
+            </div>
+        </form>
+    </div>
+</main>
 	<!-- Footer -->
 	<%@ include file="../common/footer.jsp"%>
 
 	<script>
-		document.getElementById('scheduleForm')
-				.addEventListener(
-						'submit',
-						function(event) {
-							let valid = true;
-
-							// 단원명 검사
-							let scheduleTitle = document
-									.getElementById('scheduleTitle').value;
-							let titleWarning = document
-									.getElementById('warn_scheduleTitle');
-							if (scheduleTitle.trim() === '') {
-								titleWarning.style.display = 'block';
-								valid = false;
-							} else {
-								titleWarning.style.display = 'none';
-							}
-
-							// 일자 검사
-							let scheduleDate = document
-									.getElementById('scheduleDate').value;
-							let dateWarning = document
-									.getElementById('warn_scheduleDate');
-							if (scheduleDate.trim() === '') {
-								dateWarning.style.display = 'block';
-								valid = false;
-							} else {
-								dateWarning.style.display = 'none';
-							}
-
-							if (!valid) {
-								event.preventDefault(); // 폼 제출 방지
-							}
-						});
+	document.getElementById('scheduleForm').addEventListener('submit', function(event) {
+	    let valid = true;
+	
+	    // 단원명 검사
+	    let scheduleTitle = document.getElementById('scheduleTitle').value;
+	    let titleWarning = document.getElementById('warn_scheduleTitle');
+	    if (scheduleTitle.trim() === '') {
+	        titleWarning.style.display = 'block';
+	        valid = false;
+	    } else {
+	        titleWarning.style.display = 'none';
+	    }
+	
+	    // 일자 검사
+	    let scheduleDate = document.getElementById('scheduleDate').value;
+	    let dateWarning = document.getElementById('warn_scheduleDate');
+	    if (scheduleDate.trim() === '') {
+	        dateWarning.style.display = 'block';
+	        valid = false;
+	    } else {
+	        dateWarning.style.display = 'none';
+	    }
+	
+	    if (!valid) {
+	        event.preventDefault(); // 폼 제출 방지
+	    }
+	});
 	</script>
 
 </body>

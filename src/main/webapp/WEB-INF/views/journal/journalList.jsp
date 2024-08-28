@@ -35,11 +35,12 @@ body {
 
 /* main 요소의 위치와 스크롤 설정 */
 main {
-	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
-	margin-left: 250px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
-	margin-top: 160px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
-	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
-	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+    flex: 1;
+    margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
+    margin-top: 100px; /* 헤더 높이에 맞춰 조정 */
+    padding: 30px; /* 전체적인 내부 여백 추가 */
+    overflow-y: auto;
+    height: 100%;
 }
 
 .classroom-header {
@@ -69,26 +70,33 @@ main {
 
 /* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
 .title-container {
-	display: flex; /* flexbox 레이아웃 사용 */
-	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+    display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
 }
 
-/* 제목과 선택 박스 사이의 간격을 설정 */
 .title-container h1 {
-	margin-right: 20px; /* 제목 오른쪽에 20px 간격 설정 */
-	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
+    margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+    font-weight: bold;
+}
+
+.select-box {
+    position: relative;
+    display: inline-block;
+}
+
+.select-box select {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f8f8;
+    width: auto;
+    min-width: 300px;
 }
 
 /* 콘텐츠를 감싸는 컨테이너의 스타일 설정 */
 .container {
-	margin: 20px auto; /* 위아래 여백을 20px로 설정하고 좌우 중앙 정렬 */
-	background-color: #f9fafc; /* 배경색을 연한 회색으로 설정 */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자를 설정하여 입체감을 줌 */
-	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
-	border-radius: 10px; /* 모서리를 둥글게 설정 */
-	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
-	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
-	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+    margin-top: 30px; /* 타이틀 컨테이너와의 간격 */
 }
 
 /* 헤더의 스타일 설정 */
@@ -376,10 +384,7 @@ td.checkStatus.N {
 			<h1>교육 일지</h1>
 			<c:choose>
 				<c:when test="${isAdmin}">
-					<div class="class-info">
-						<h2>현재 선택된 반: ${syclass.className}</h2>
-					</div>
-					<div class="student-select">
+					<div class="select-box">
 						<c:if test="${not empty memberList}">
 							<c:set var="sortedMemberList" value="${memberList}" />
 							<c:set var="defaultMember" value="${sortedMemberList[0]}" />

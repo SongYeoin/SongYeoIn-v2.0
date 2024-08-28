@@ -41,7 +41,84 @@ main {
 	height: 100%;
 }
 
+/* 기존 CSS는 그대로 유지하고 아래 스타일을 추가합니다 */
 
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.warn-message {
+    display: none;
+    color: #d9534f;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
 </style>
 </head>
 <body>
@@ -53,39 +130,27 @@ main {
 <%@ include file="../member/aside.jsp"%>
 
 <main>
-    <div class="box">
-        <h1>교육일지 작성</h1>
+    <div class="form-container">
+        <h1 class="form-title">교육일지 작성</h1>
         <form action="/journal/journalEnroll" method="post" id="enrollForm" enctype="multipart/form-data">
-            <div class="form_section">
-                <div class="form_section_title">
-                    <label>교육일지 제목</label>
-                </div>
-                <div class="form_section_content">
-                    <input name="journalTitle" type="text" />
-                    <span id="warn_journalTitle" style="display:none;">교육일지 제목을 입력 해주세요.</span>
-                </div>
+            <div class="form-group">
+                <label for="journalTitle">교육일지 제목</label>
+                <input id="journalTitle" name="journalTitle" type="text" />
+                <span class="warn-message" id="warn_journalTitle">교육일지 제목을 입력 해주세요.</span>
             </div>
-            <div class="form_section">
-                <div class="form_section_title">
-                    <label>교육일지 작성일자</label>
-                </div>
-                <div class="form_section_content">
-                    <input type="date" id="writeDate" name="journalWriteDate" />
-                    <span id="warn_date" style="display:none;">날짜를 선택해주세요.</span>
-                </div>
+            <div class="form-group">
+                <label for="writeDate">교육일지 작성일자</label>
+                <input type="date" id="writeDate" name="journalWriteDate" />
+                <span class="warn-message" id="warn_date">날짜를 선택해주세요.</span>
             </div>
-            <div class="form_section">
-                <div class="form_section_title">
-                    <label for="file">첨부파일</label>
-                </div>
-                <div class="form_section_content">
-                    <input name="file" type="file" id="file" required />
-                    <span id="warn_file" style="display:none;">교육일지 파일을 첨부해주세요.</span>
-                </div>
+            <div class="form-group">
+                <label for="file">첨부파일</label>
+                <input name="file" type="file" id="file" required />
+                <span class="warn-message" id="warn_file">교육일지 파일을 첨부해주세요.</span>
             </div>
-            <div class="btn_section">
-                <button type="button" id="cancelBtn" class="btn">취 소</button>
-                <button type="button" id="enrollBtn" class="btn">등 록</button>
+            <div class="button-group">
+                <button type="button" id="cancelBtn" class="btn btn-secondary">취 소</button>
+                <button type="button" id="enrollBtn" class="btn btn-primary">등 록</button>
             </div>
         </form>
     </div>
