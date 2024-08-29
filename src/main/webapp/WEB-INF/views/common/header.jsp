@@ -203,7 +203,7 @@ header {
 	            	<c:choose>
 	            		<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
 			            	<form action="${pageContext.servletContext.contextPath}/member/profile/upload" method="post" enctype="multipart/form-data">
-				            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
+				            	<input type="file" id="profileImage" name="profileImage" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
 								<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
 					            <div class="profile-actions">
 					                <button id="editProfileBtn" type="submit">프로필 수정</button>
@@ -213,7 +213,7 @@ header {
 	            		</c:when>
 	            		<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
 			            	<form action="${pageContext.servletContext.contextPath}/admin/profile/upload" method="post" enctype="multipart/form-data">
-				            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
+				            	<input type="file" id="profileImage" name="profileImage" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
 								<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
 					            <div class="profile-actions">
 					                <button id="editProfileBtn" type="submit">프로필 수정</button>
