@@ -50,4 +50,6 @@ public interface AdminMapper {
 
 	// 회원탈퇴
 	int deleteMember(MemberVO loginMember);
+
+	int updateMemberProfileUrl(MemberVO updateProfileMember);
 }

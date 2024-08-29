@@ -106,4 +106,10 @@ public class AdminServiceImpl implements AdminService {
 	public int deleteMember(MemberVO loginMember) {
 		return adminMapper.deleteMember(loginMember);
 	}
+
+	@Transactional
+	@Override
+	public int updateMemberProfileUrl(MemberVO updateProfileMember) {
+		return adminMapper.updateMemberProfileUrl(updateProfileMember);
+	}
 }

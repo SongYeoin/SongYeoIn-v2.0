@@ -25,4 +25,6 @@ public interface MemberService {
 	// 회원탈퇴
 	int deleteMember(MemberVO loginMember);
 
+	public int updateMemberProfileUrl(MemberVO updateProfileMember);
+
 }
