@@ -63,10 +63,10 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 		
 	    System.out.println("classNo after service call: " + classNo);
 	    
-		List<ClubVO> list =  cservice.getList(classNo);
+		//List<ClubVO> list =  cservice.getList(classNo);
 		System.out.println(classNo);
-		System.out.println("controller : " +list);
-		model.addAttribute("list", list);
+		//System.out.println("controller : " +list);
+		//model.addAttribute("list", list);
 		
 	    return "admin/class/club/list";
 		

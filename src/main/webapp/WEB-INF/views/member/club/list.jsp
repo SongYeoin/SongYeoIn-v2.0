@@ -224,7 +224,7 @@ th, td {
 	padding: 0;
 }
 
-.pageInfo {
+/*  .pageInfo {
 	list-style: none;
 	display: inline-block;
 	margin: 50px 0 0 100px;
@@ -255,6 +255,41 @@ a:hover {
 
 .active {
 	background-color: #cdd5ec;
+} */
+
+.pageInfo_area {
+    text-align: center; /* 중앙 정렬 */
+    margin-top: 50px;
+}
+
+.pageInfo {
+    list-style: none;
+    display: inline-block; /* inline-block을 사용하여 중앙 정렬 */
+    padding: 0;
+    margin: 0;
+}
+
+.pageInfo li {
+    display: inline; /* inline으로 설정하여 목록 항목을 나란히 배치 */
+    font-size: 20px;
+    margin: 0 9px;  /* 양쪽 여백을 조정 */
+    padding: 7px;
+    font-weight: 500;
+}
+
+a:link, a:visited, a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.pageInfo .active {
+    background-color: #cdd5ec !important;
+    font-weight: bold !important; /* 강조된 페이지의 텍스트를 굵게 표시 */
+}
+
+.pageInfo_btn.previous a, .pageInfo_btn.next a {
+    font-weight: bold; /* 이전 및 다음 버튼 텍스트 굵게 표시 */
+    color: black; /* 버튼 텍스트 색상 */
 }
 
 /* Adjusted select box style */
@@ -296,7 +331,7 @@ a:hover {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 <script>
-function sendClassChange() {
+ /* function sendClassChange() {
     var classNo = $('#classSelect').val();
     if (!classNo) {
         console.error("classNo 값이 누락되었습니다.");
@@ -358,7 +393,101 @@ function sendClassChange() {
         var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
         return year + '/' + month + '/' + day;
     }
+} */
+
+function sendClassChange() {
+    const classNo = $('#classSelect').val();
+    if (!classNo) {
+        console.error("classNo 값이 누락되었습니다.");
+        return;
+    }
+    const pageNum = 1; // 기본적으로 첫 페이지 로드
+    
+    const searchForm = $('#searchForm');
+
+    // 검색 조건 초기화
+    searchForm.find("select[name='type']").val('');
+    searchForm.find("input[name='keyword']").val('');
+    
+    loadPageData(classNo, pageNum); 
 }
+
+function loadPageData(classNo, pageNum) {
+	 const type = $("select[name='type']").val();
+	 const keyword = $("input[name='keyword']").val();
+	 
+
+	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
+	 
+    $.ajax({
+        url: '/member/club/list/getByClass',
+        type: 'GET',
+        dataType: 'json',
+        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
+        success: function(response) {
+        	console.log('Response:', response); // 응답 데이터 확인
+            updateTable(response.list);
+            updatePagination(response.pageInfo);
+        },
+        error: function() {
+            alert('데이터를 가져오는 데 실패했습니다.');
+        }
+    });
+}
+
+function updateTable(data) {
+	console.log('테이블 데이터:', data); // 데이터 확인
+    var tableBody = $('#tableContainer table tbody');
+    tableBody.empty();
+    if (!data || data.length === 0) {
+        tableBody.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+        return;
+    }
+    data.forEach(function(item) {
+        var studyDate = new Date(item.studyDate);
+        var regDate = new Date(item.regDate);
+        var formattedStudyDate = formatDate(studyDate);
+        var formattedRegDate = formatDate(regDate);
+     
+        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
+                    '<td>' + item.rn + '</td>' +
+                    '<td>' + item.enroll.member.memberName + '</td>' +
+                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
+                    '<td>' + (item.checkCmt || '') + '</td>' +
+                    '<td>' + formattedStudyDate + '</td>' +
+                    '<td>' + formattedRegDate + '</td>' +
+                    '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+                  '</tr>';
+        tableBody.append(row);   
+    });
+    
+  //첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
+    $('.file-download').on('click', function(event) {
+        event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
+    });
+}
+
+function updatePagination(pageInfo) {
+    var pageUl = $('#pageInfo');
+    pageUl.empty();
+    if (pageInfo.prev) {
+        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">Previous</a></li>');
+    }
+    for (var num = pageInfo.pageStart; num <= pageInfo.pageEnd; num++) {
+        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.currentPage == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
+    }
+    if (pageInfo.next) {
+        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">Next</a></li>');
+    }
+}
+
+function formatDate(date) {
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var day = ('0' + date.getDate()).slice(-2);
+    return year + '/' + month + '/' + day;
+}
+
 </script>
 
 </head>
@@ -371,7 +500,7 @@ function sendClassChange() {
 	<%@ include file="../aside.jsp"%>
 	<%-- selectedClassNo --%>
 	<main>
-		<div class="title-container">
+	<div class="title-container">
 		<h1>동아리</h1>
 		<div class="select-box">
 			<select id="classSelect" name="classSelect" onchange="sendClassChange()">
@@ -381,27 +510,38 @@ function sendClassChange() {
 			</select>
 		</div>
 </div>
+		<%-- <div class="title-container">
+            <h1>동아리</h1>
+            <div class="select-box">
+                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
+                    <c:forEach var="classItem" items="${classList}">
+                        <option value="${classItem.classNo}" 
+                            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+                            ${classItem.className}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div> --%>
+
 		<!-- Main content -->
 		<div class="container">
 			<div class="header">
 				<h2>강의실 신청 목록</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
-						<input type="text" placeholder="Search..." id="search">
-
-						<label for="status">상태:</label>
-						<select id="status" name="status">
-							<option value="">전체</option>
-							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>승인</option>
-							<option value="N" ${param.status == 'N' ? 'selected' : ''}>미승인</option>
-						</select>
-
-						<button type="submit">조회</button>
+						<%-- <input type="text" placeholder="Search..." id="search"> --%>
+                        <select name="type">
+                        	<option value="W" <c:out value="${pageMaker.cri.type eq 'W'? 'selected':''}"/>>작성자</option>
+                        	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여자</option>
+                        	<option value="C" <c:out value="${pageMaker.cri.type eq 'C'? 'selected':''}"/>>승인상태</option>
+                        </select>
+                        <input type="text" name="keyword" value="${pageMaker.cri.keyword }">
+						<button>조회</button>
 					</form>
 				</div>
 				<div class="icons">
 					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
-<%-- 					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a> --%>
 				</div>
 			</div>
 
@@ -421,10 +561,37 @@ function sendClassChange() {
 					</thead>
 					<tbody>
                 <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
-            		</tbody>
+                	</tbody>
 			
 			</table>
+			
+				<div class="pageInfo_area">
+					<ul id="pageInfo" class="pageInfo">
+					
+					<!-- 이전페이지 버튼 -->
+					<c:if test="${pageMaker.prev }">
+						<li class="pageInfo_btn previous"><a href="${pageMaker.pageStart-1 }">Previous</a></li>
+					</c:if>
+					
+					<!-- 각 번호 페이지 버튼 -->
+					<c:forEach var="num" begin="${pageMaker.pageStart }" end="${pageMaker.pageEnd }">
+						<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a href="${num }">${num }</a></li>
+					</c:forEach>
+					
+					<!-- 다음페이지 버튼 -->
+					<c:if test="${pageMaker.next }">
+						<li class="pageInfo_btn next"><a href="${pageMaker.pageEnd+1 }">Next</a></li>
+					</c:if>
+					
+					</ul>
+				</div>
 
+			<form id="moveForm" method="get">
+				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
+				<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
+				<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
+				<input type="hidden" name="type" value="${pageMaker.cri.type }">
+			</form>
 
 
 
@@ -509,42 +676,74 @@ function sendClassChange() {
 				alert("삭제가 완료되었습니다");
 			}
 		}
-	
+		
 		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
         sendClassChange();
 		
      	// 반 선택 시 동작
-        $('#classSelect').change(sendClassChange);
+        //$('#classSelect').change(sendClassChange);
+$('#classSelect').change(function() {
+    sendClassChange();
+});
+
+        const moveForm = $('#moveForm');
         
+        $('.search_area button').on('click', function(e) {
+            e.preventDefault();
+            
+            //검색조건확인
+            //let type = $(".search_area select").val();
+            let type = $(".search_area select[name='type']").val();
+			let keyword = $(".search_area input[name='keyword']").val();
+						
+			if (!type) {
+				alert("검색 종류를 선택하세요");
+				return false;
+			}
+			
+			if (!keyword) {
+	            alert("키워드를 입력하세요");
+	            return false;
+	        }
+			
+			// 폼 필드 업데이트
+	        $('#searchForm').find("input[name='type']").val(type);
+	        $('#searchForm').find("input[name='keyword']").val(keyword);
+	        $('#searchForm').find("input[name='pageNum']").val(1);
+	        
+	        // 폼 제출 (검색)
+	        //moveForm.submit();
+	        
+            const classNo = $('#classSelect').val();
+            loadPageData(classNo, 1); // 검색 후 첫 페이지 로드
+        });
+        
+     	// 페이지 번호 클릭 시 데이터 로드
+        $(document).on('click', '.pageInfo_btn a', function(e) {
+            e.preventDefault();
+            const pageNum = $(this).attr('href');
+            const classNo = $('#classSelect').val();
+            loadPageData(classNo, pageNum);
+        });
+     	
 	}); 
-        
+       
 	
 	
-		//페이지 이동 폼 처리
-		let moveForm = $("#moveForm");
-
-		$(".move").on("click", function(e) {
-					e.preventDefault();
-
-					moveForm.append("<input type='hidden' name='bno' value='"
-							+ $(this).attr("href") + "'>");
-					moveForm.attr("action", "/board/get");
-					moveForm.submit();
-				});
-
+	
 		//페이지 정보 변경 처리
-		$(".pageInfo a").on("click", function(e) {
+	/* 	$(".pageInfo a").on("click", function(e) {
 			e.preventDefault();
 			moveForm.find("input[name='pageNum']").val($(this).attr("href"));
-			moveForm.attr("action", "/board/list");
+			moveForm.attr("action", "/member/club/list");
 			moveForm.submit();
-		});
+		}); */
 
 		//검색처리
-		$(".search_area button").on("click", function(e) {
+		/* $(".search_area button").on("click", function(e) {
 			e.preventDefault();
 
-			//let val = $("input[name='keyword']").val();
+			
 			let type = $(".search_area select").val();
 			let keyword = $(".search_area input[name='keyword']").val();
 
@@ -562,8 +761,7 @@ function sendClassChange() {
 			moveForm.find("input[name='keyword']").val(keyword);
 			moveForm.find("input[name='pageNum']").val(1);
 			moveForm.submit();
-		});
-	
+		}); */
         
 	</script>
 

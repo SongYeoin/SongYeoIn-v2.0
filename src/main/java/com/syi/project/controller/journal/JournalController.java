@@ -31,7 +31,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.journal.JournalVO;
+import com.syi.project.model.member.MemberVO;
+import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.journal.JournalService;
+import com.syi.project.service.member.AdminService;
+import com.syi.project.service.syclass.SyclassService;
 
 @Controller
 @RequestMapping("/journal")
@@ -41,6 +45,12 @@ public class JournalController {
 
 	@Autowired
 	private JournalService journalService;
+	
+	@Autowired
+	private SyclassService SyclassService;
+	
+	@Autowired
+    private AdminService adminService;
 
 	// 파일 업로드 경로를 저장할 필드
 	@Value("${file.upload.path}")
@@ -53,8 +63,17 @@ public class JournalController {
 
 	/* 일지 등록 페이지로 이동 */
 	@GetMapping("journalEnroll")
-	public String journalEnrollGET() {
+	public String journalEnrollGET(Model model) throws Exception {
 		logger.info("일지 등록 폼 페이지 접속");
+		
+		// 반 리스트 조회
+        List<SyclassVO> classList = adminService.selectClassList();
+        model.addAttribute("classList", classList);
+
+        // 수강생 리스트 조회
+        List<MemberVO> memberList = adminService.selectMemberList(new Criteria());
+        model.addAttribute("memberList", memberList);
+		
 		return "journal/journalEnroll";
 	}
 
@@ -132,42 +151,53 @@ public class JournalController {
 
 	/* 교육일지 목록 조회 페이지 */
 	@GetMapping("journalList")
-	public void journalListGET(Criteria cri, @RequestParam(required = false) String memberName, Model model) throws Exception {
+	public void journalListGET(Criteria cri, 
+			@RequestParam(required = false) Integer memberNo, 
+            @RequestParam(required = false) Integer classNo, Model model) throws Exception {
 		logger.info(">>>>>>>>>>       교육일지 목록 페이지 접속             >>>>>>>>>>");
 
-		// memberName이 null이 아니면 Criteria 객체에 추가
-	    if (memberName != null && !memberName.isEmpty()) {
-	        cri.setMemberName(memberName);
-	    }
+		// Criteria 객체에 멤버 번호와 클래스 번호 설정
+        if (memberNo != null) {
+            cri.setMemberNo(memberNo);
+        }
+        if (classNo != null) {
+            cri.setClassNo(classNo);
+        }
 		
-		// 필터 값이 포함된 Criteria 객체를 사용하여 일지 리스트 조회
-		List<JournalVO> journalList = journalService.journalList(cri);
+        // 필터 값이 포함된 Criteria 객체를 사용하여 일지 리스트 조회
+        List<JournalVO> journalList = journalService.journalList(cri);
 
-		if (!journalList.isEmpty()) {
-			model.addAttribute("journalList", journalList);
-		} else {
-			model.addAttribute("listCheck", "empty");
-		}
+        if (!journalList.isEmpty()) {
+            model.addAttribute("journalList", journalList);
+        } else {
+            model.addAttribute("listCheck", "empty");
+        }
 
 		/* 페이지 인터페이스 데이터 */
 		model.addAttribute("pageMaker", new PageDTO(cri, journalService.journalGetTotal(cri)));
 		
-		// 전체 일지 조회 캘린더용
-		List<JournalVO> journalAllList = journalService.journalAllList();
-        logger.info("---------> journalAllList : " + journalAllList);
-		model.addAttribute("journalAllList", journalAllList);
-		
+		// 전체 일지 조회 캘린더용, 클래스 번호에 따라 필터링
+	    List<JournalVO> journalAllList = journalService.journalAllList(cri.getClassNo() != null ? cri.getClassNo() : 0);
+	    logger.info("---------> journalAllList : " + journalAllList);
+	    model.addAttribute("journalAllList", journalAllList);
+
 		// 수강생 이름 필터 값을 모델에 추가
-	    model.addAttribute("memberName", memberName);
+        model.addAttribute("memberNo", memberNo);
+        model.addAttribute("classNo", classNo);
+        
+        // 클래스 리스트와 회원 리스트 조회
+        List<SyclassVO> classList = adminService.selectClassList();
+        List<MemberVO> memberList = adminService.selectMemberList(new Criteria());
+
+        model.addAttribute("classList", classList);
+        model.addAttribute("memberList", memberList);
 	}
 
 	/* 교육일지 상세 정보 페이지 */
 	@GetMapping("journalDetail")
 	public void journalDetailGET(@RequestParam("journalNo") int journalNo, Model model) throws Exception {
 		logger.info("교육일지 상세 페이지 접속 / 일지 글번호 ---> " + journalNo);
-
 		JournalVO journal = journalService.journalDetail(journalNo);
-
 		model.addAttribute("journalDetail", journal);
 	}
 
@@ -178,7 +208,6 @@ public class JournalController {
 
 		JournalVO journal = journalService.journalDetail(journalNo);
 		model.addAttribute("journal", journal);
-
 		return "journal/journalModify";
 	}
 

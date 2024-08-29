@@ -24,6 +24,7 @@
 		<result property="memberStatus" column="MEMBER_STATUS"/>
 		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
 		<result property="memberRole" column="MEMBER_ROLE"/>
+		<result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
 	</resultMap>
 
 	
@@ -66,7 +67,7 @@
 	    MEMBER_ADDRESS, 
 	    MEMBER_STREET_ADDRESS, 
 	    MEMBER_DETAIL_ADDRESS, 
-	    MEMBER_NICKNAME
+	    MEMBER_NICKNAME,
 	) VALUES (
 	    #{ memberId },
 	    #{ memberPwd },
@@ -78,7 +79,7 @@
 	    #{ memberAddress },
 	    #{ memberStreetAddress },
 	    #{ memberDetailAddress },
-	    #{ memberNickname }
+	    #{ memberNickname },
 	)
   </insert>
   
@@ -111,6 +112,20 @@
 		UPDATE
 			MEMBER
 		SET MEMBER_STATUS = 'N'
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
+	
+	<update id="updateMemberProfileUrl" parameterType="com.syi.project.model.member.MemberVO">
+		UPDATE
+			MEMBER
+		SET MEMBER_PROFILE_URL = #{memberProfileUrl}
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
+	
+	<update id="deleteMemberProfileUrl" parameterType="int">
+		UPDATE
+			MEMBER
+		SET MEMBER_PROFILE_URL = NULL
 		WHERE MEMBER_NO = #{ memberNo }
 	</update>
   
