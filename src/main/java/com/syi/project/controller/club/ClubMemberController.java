@@ -135,7 +135,7 @@ public class ClubMemberController {
 	    }
 	    cri.setPageNum(pageNum);
 	    cri.setType(type);
-	    cri.setKeyword(keyword);
+	    cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);

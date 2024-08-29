@@ -416,23 +416,14 @@ function loadPageData(classNo, pageNum) {
 	 const type = $("select[name='type']").val();
 	 const keyword = $("input[name='keyword']").val();
 	 
-	// 승인 상태 변환
-	    const statusMapping = {
-	        '대기': 'W',
-	        '승인': 'Y',
-	        '미승인': 'N'
-	    };
-	
-	    const actualKeyword = type === 'C' ? (statusMapping[keyword] || '') : keyword;
-	    
-	 //console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
-	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword: actualKeyword });
+
+	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
 	 
     $.ajax({
         url: '/member/club/list/getByClass',
         type: 'GET',
         dataType: 'json',
-        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: actualKeyword },
+        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
         success: function(response) {
         	console.log('Response:', response); // 응답 데이터 확인
             updateTable(response.list);
@@ -458,18 +449,10 @@ function updateTable(data) {
         var formattedStudyDate = formatDate(studyDate);
         var formattedRegDate = formatDate(regDate);
      
-     // 승인 상태 변환
-        var checkStatusText = {
-            'W': '대기',
-            'Y': '승인',
-            'N': '미승인'
-        }[item.checkStatus] || '미승인';
-     
         var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
                     '<td>' + item.rn + '</td>' +
                     '<td>' + item.enroll.member.memberName + '</td>' +
-                    //'<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
-                    '<td>' + checkStatusText + '</td>' +
+                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
                     '<td>' + (item.checkCmt || '') + '</td>' +
                     '<td>' + formattedStudyDate + '</td>' +
                     '<td>' + formattedRegDate + '</td>' +
@@ -547,19 +530,10 @@ function formatDate(date) {
 				<h2>강의실 신청 목록</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
-						<%-- <input type="text" placeholder="Search..." id="search">
-
-						<label for="status">상태:</label>
-						<select id="status" name="status">
-							<option value="">전체</option>
-							<option value="Y" ${param.status == 'Y' ? 'selected' : ''}>승인</option>
-							<option value="N" ${param.status == 'N' ? 'selected' : ''}>미승인</option>
-						</select>--%>
-                        
-                        
+						<%-- <input type="text" placeholder="Search..." id="search"> --%>
                         <select name="type">
                         	<option value="W" <c:out value="${pageMaker.cri.type eq 'W'? 'selected':''}"/>>작성자</option>
-                        	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여</option>
+                        	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여자</option>
                         	<option value="C" <c:out value="${pageMaker.cri.type eq 'C'? 'selected':''}"/>>승인상태</option>
                         </select>
                         <input type="text" name="keyword" value="${pageMaker.cri.keyword }">
@@ -568,7 +542,6 @@ function formatDate(date) {
 				</div>
 				<div class="icons">
 					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
-<%-- 					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a> --%>
 				</div>
 			</div>
 
@@ -588,39 +561,7 @@ function formatDate(date) {
 					</thead>
 					<tbody>
                 <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
-                <%-- <c:forEach items="${list}" var="item">
-                            <tr onclick="location.href='/member/club/get?clubNo=${item.clubNo}'">
-                                <td><c:out value="${item.clubNo}"/></td>
-                                <td><c:out value="${list.enroll.member.memberName}"/></td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${item.clubCheckStatus == 'W'}">대기</c:when>
-                                        <c:when test="${item.clubCheckStatus == 'Y'}">승인</c:when>
-                                        <c:when test="${item.clubCheckStatus == 'N'}">미승인</c:when>
-                                        <c:otherwise>알 수 없음</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td><c:out value="${item.clubCheckCmt}"/></td>
-                                <td><fmt:formatDate pattern="yyyy/MM/dd" value="${item.clubStudyDate}"/></td>
-                                <td><fmt:formatDate pattern="yyyy/MM/dd" value="${item.clubRegDate}"/></td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${item.fileName != null}">
-                                            <a href="/member/club/downloadFile?fileName=${item.fileName}" download="${item.fileName}" title="${item.fileName}" onclick="event.stopPropagation();">
-                                                <i class="bi bi-paperclip"></i>
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:out value=""/>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:forEach> --%>
-                
-                
-                
-            		</tbody>
+                	</tbody>
 			
 			</table>
 			
@@ -644,32 +585,6 @@ function formatDate(date) {
 					
 					</ul>
 				</div>
-		
-			<%-- <div class="pageInfo_wrap">
-                    <div class="pageInfo_area">
-                        <ul id="pageInfo" class="pageInfo">
-                            <!-- 이전페이지 버튼 -->
-                            <c:if test="${pageMaker.prev}">
-                                <li class="pageInfo_btn previous">
-                                    <a href="?pageNum=${pageMaker.pageStart-1}&amp;classNo=${selectedClassNo}">Previous</a>
-                                </li>
-                            </c:if>
-                            <!-- 각 번호 페이지 버튼 -->
-                            <c:forEach var="num" begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}">
-                                <li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-                                    <a href="?pageNum=${num}&amp;classNo=${selectedClassNo}">${num}</a>
-                                </li>
-                            </c:forEach>
-                            <!-- 다음페이지 버튼 -->
-                            <c:if test="${pageMaker.next}">
-                                <li class="pageInfo_btn next">
-                                    <a href="?pageNum=${pageMaker.pageEnd+1}&amp;classNo=${selectedClassNo}">Next</a>
-                                </li>
-                            </c:if>
-                        </ul>
-                    </div>
-                </div> --%>
-			
 
 			<form id="moveForm" method="get">
 				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">

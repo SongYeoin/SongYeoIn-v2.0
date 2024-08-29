@@ -109,7 +109,7 @@ textarea {
 					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여</label> <input name="join" class="large-input" id="joinInput"
+				<label>참여자</label> <input name="join" class="large-input" id="joinInput"
 					value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
@@ -154,7 +154,7 @@ textarea {
 					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여</label> <input name="join" readonly="readonly" class="large-input"
+				<label>참여자</label> <input name="join" readonly="readonly" class="large-input"
 					value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
@@ -249,7 +249,7 @@ textarea {
 		    // checkStatus가 '승인대기'인 경우에만 검증 수행
 		    if (checkStatus === '대기') {
 		        if (!joinInput || !studyDateInput) {
-		            alert('참여 또는 활동일을 입력해 주세요.');
+		            alert('참여자 또는 활동일을 입력해 주세요.');
 		            return false; // 폼 제출을 막습니다.
 		        }
 		    }else if(checkStatus === '승인'){
