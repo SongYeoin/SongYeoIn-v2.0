@@ -199,15 +199,29 @@ header {
 	            			<i class="bi bi-person-circle fs-2" id="profileIcon"></i>
 	            		</c:otherwise>
 	            	</c:choose>
-	            	<form action="${pageContext.servletContext.contextPath}/member/profile/upload" method="post" enctype="multipart/form-data">
-		            	<label for="profileImage" style="color:black;">프로필 이미지를 선택하세요 (JPG, PNG 형식만 가능)</label>
-		            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
-						<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
-			            <div class="profile-actions">
-			                <button id="editProfileBtn" type="submit">프로필 수정</button>
-			                <button id="deleteProfileBtn" type="submit">프로필 삭제</button>
-			            </div>
-	            	</form>
+	            	<label for="profileImage" style="color:black;">프로필 이미지를 선택하세요 (JPG, PNG 형식만 가능)</label>
+	            	<c:choose>
+	            		<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
+			            	<form action="${pageContext.servletContext.contextPath}/member/profile/upload" method="post" enctype="multipart/form-data">
+				            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
+								<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
+					            <div class="profile-actions">
+					                <button id="editProfileBtn" type="submit">프로필 수정</button>
+					                <button id="deleteProfileBtn" type="button">프로필 삭제</button>
+					            </div>
+			            	</form>
+	            		</c:when>
+	            		<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_ADMIN'}">
+			            	<form action="${pageContext.servletContext.contextPath}/admin/profile/upload" method="post" enctype="multipart/form-data">
+				            	<input type="file" id="profileImage" name="file" accept="image/*" required title="이미지를 업로드하세요. (JPEG, PNG 형식)" style="color:black;">
+								<input type="hidden" name="memberNo" value="${sessionScope.loginMember.memberNo}"> 	
+					            <div class="profile-actions">
+					                <button id="editProfileBtn" type="submit">프로필 수정</button>
+					                <button id="deleteProfileBtn" type="button">프로필 삭제</button>
+					            </div>
+			            	</form>
+	            		</c:when>
+	            	</c:choose>
 	            </div>
 	        </div>
 	    </div>
@@ -332,18 +346,47 @@ profileImageInput.addEventListener('change', function(event) {
     }
 });
 
-/* document.getElementById('profileImage').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Set the src attribute of the image to the file's data URL
-            document.getElementById('profileImg').src = e.target.result;
-        };
-        // Read the image file as a data URL
-        reader.readAsDataURL(file);
+document.addEventListener('DOMContentLoaded', function() {
+	
+	const memberRole = '${sessionScope.loginMember.memberRole}';
+    const servletContextPath = '${pageContext.servletContext.contextPath}';
+    const form = document.querySelector('form');
+    // 사용자 역할에 따라 프로필 삭제 버튼을 선택하고 이벤트 리스너 추가
+    const deleteProfileBtn = document.querySelector('#deleteProfileBtn');
+    if (deleteProfileBtn && form) {
+        // 삭제 버튼 클릭 이벤트 리스너 추가
+        deleteProfileBtn.addEventListener('click', function(event) {
+            // 기본 폼 제출 방지
+            event.preventDefault();
+
+            // memberRole에 따라 폼의 action을 설정
+            if (memberRole === 'ROLE_MEMBER') {
+                form.action = `${servletContextPath}/member/profile/delete`;
+            } else if (memberRole === 'ROLE_ADMIN') {
+                form.action = `${servletContextPath}/admin/profile/delete`;
+            }
+            
+            // 폼 제출
+            form.submit();
+        });
     }
-}); */
+    
+    var upload_profile_result = '${upload_profile}';
+    if (upload_profile_result === 'success') {
+        alert("프로필을 정상적으로 등록했습니다.");
+    } else if (upload_profile_result === 'fail') {
+        alert("프로필 등록에 실패했습니다.");
+    }
+    var delete_profile_result = '${delete_profile}';
+    if (delete_profile_result === 'success') {
+        alert("프로필을 정상적으로 삭제했습니다.");
+    } else if (delete_profile_result === 'fail') {
+        alert("프로필을 삭제에 실패했습니다.");
+    }
+    
+    
+});
+
 </script>
 </body>
 </html>

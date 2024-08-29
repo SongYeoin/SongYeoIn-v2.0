@@ -53,4 +53,6 @@ public interface AdminService {
 
 	int updateMemberProfileUrl(MemberVO updateProfileMember);
 
+	int deleteMemberProfileUrl(int memberNo);
+
 }

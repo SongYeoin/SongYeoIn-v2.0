@@ -27,4 +27,6 @@ public interface MemberMapper {
 
 	int updateMemberProfileUrl(MemberVO updateProfileMember);
 
+	int deleteMemberProfileUrl(int memberNo);
+
 }

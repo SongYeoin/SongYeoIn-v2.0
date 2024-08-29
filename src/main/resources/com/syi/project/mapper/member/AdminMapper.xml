@@ -191,5 +191,12 @@
 		SET MEMBER_PROFILE_URL = #{memberProfileUrl}
 		WHERE MEMBER_NO = #{ memberNo }
 	</update>
+	
+	<update id="deleteMemberProfileUrl" parameterType="int">
+		UPDATE
+			MEMBER
+		SET MEMBER_PROFILE_URL = NULL
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
   
   </mapper>

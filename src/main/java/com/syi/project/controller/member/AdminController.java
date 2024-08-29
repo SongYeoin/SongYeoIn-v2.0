@@ -358,5 +358,23 @@ public class AdminController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@PostMapping("profile/delete")
+	public String profileDeletePOST(@RequestParam("memberNo")int memberNo,HttpSession session,RedirectAttributes rttr) {
+		logger.info("프로필을 삭제하려는 memberNo는 " + memberNo);
+		int result = adminService.deleteMemberProfileUrl(memberNo);
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		if(result>0) {
+			logger.info("프로필을 정상적으로 삭제했습니다.");
+			loginMember.setMemberProfileUrl("");
+			session.setAttribute("loginMember", loginMember);
+			rttr.addFlashAttribute("delete_profile", "success");
+		}else {
+			logger.info("프로필을 삭제에 실패했습니다.");
+			rttr.addFlashAttribute("delete_profile", "fail");
+		}
+		return "redirect:/admin/main";
+	}
 
 }
