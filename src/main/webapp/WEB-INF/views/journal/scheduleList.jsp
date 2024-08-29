@@ -25,7 +25,9 @@
 
 /* html과 body 요소의 높이를 설정하여 페이지의 기본 높이를 1080px로 설정 */
 html, body {
-	height: 1080px; /* html과 body의 높이를 1080px로 설정 */
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 /* body의 기본 폰트와 레이아웃 설정 */
@@ -38,12 +40,14 @@ body {
 
 /* main 요소의 위치와 스크롤 설정 */
 main {
-	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
-	margin-left: 250px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
-	margin-top: 160px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
-	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
-	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+    flex: 1;
+    margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
+    margin-top: 100px; /* 헤더 높이에 맞춰 조정 */
+    padding: 20px; /* 전체적인 내부 여백 조정 */
+    overflow-y: auto;
+    height: 100%;
 }
+
 
 .classroom-header {
 	background-color: #f1f1f1;
@@ -82,16 +86,24 @@ main {
 	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
 }
 
+.select-box {
+    position: relative;
+    display: inline-block;
+}
+
+.select-box select {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f8f8;
+    width: auto;
+    min-width: 300px;
+}
+
 /* 콘텐츠를 감싸는 컨테이너의 스타일 설정 */
 .container {
-	margin: 20px auto; /* 위아래 여백을 20px로 설정하고 좌우 중앙 정렬 */
-	background-color: #f9fafc; /* 배경색을 연한 회색으로 설정 */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자를 설정하여 입체감을 줌 */
-	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
-	border-radius: 10px; /* 모서리를 둥글게 설정 */
-	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
-	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
-	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+    margin-top: 30px; /* 타이틀 컨테이너와의 간격 */
 }
 
 /* 헤더의 스타일 설정 */
@@ -292,54 +304,109 @@ td.checkStatus.N {
 
 /* Custom FullCalendar Styles */
 #calendar {
-	max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
-	margin: 0 auto; /* 캘린더를 중앙에 배치 */
-	height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
-	min-height: 500px; /* 캘린더의 최소 높이 설정 */
-	overflow: hidden; /* 스크롤 제거 */
-	border-radius: 5px; /* 모서리를 둥글게 설정 */
+    max-width: 1000px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-/* Custom FullCalendar Styles */
-.fc {
-	font-family: Arial, sans-serif;
+.fc-header-toolbar {
+    margin-bottom: 1.5em !important;
+}
+
+.fc-toolbar-title {
+    font-size: 1.5em !important;
+    font-weight: bold;
+    color: #333;
+}
+
+.fc-button-primary {
+    background-color: #191919 !important;
+    border-color: #A6A6A6 !important;
+}
+
+.fc-button-primary:hover {
+    background-color: #191919 !important;
+    border-color: #191919 !important;
+}
+
+.fc-day-today {
+    background-color: #e8f4fd !important;
 }
 
 .fc-daygrid-day-number {
-	color: #333; /* 날짜 숫자 색상 */
+    color: #212121;
+    font-weight: bold;
+    padding: 5px;
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 요일 색상 변경 */
+.fc-col-header-cell-cushion {
+    color: #212121; /* 기본 색상 */
+    font-weight: bold;
+    text-decoration: none; /* 요일의 밑줄 제거 */
+}
+
+/* 일요일 색상 */
+.fc-day-sun .fc-col-header-cell-cushion {
+    color: #FF0000; 
+}
+
+/* 토요일 색상 */
+.fc-day-sat .fc-col-header-cell-cushion {
+    color: #0054FF; 
 }
 
 .fc-daygrid-day-top {
-	background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
-	border-bottom: 1px solid #ddd;
+    padding: 5px;
 }
 
 .fc-daygrid-day {
-	border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
-	background-color: #ffffff; /* 날짜 셀 배경 색상 */
-	border-radius: 8px; /* 둥글게 처리 */
+    transition: background-color 0.3s ease;
 }
 
-.fc-daygrid-day.fc-day-today {
-	background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
+/* 일정 표기되는 색상 */
+.fc-event {
+    border: none;
+    background-color: #F2CB61;
+    color: white;
+    border-radius: 3px;
+    font-size: 0.85em;
+    padding: 2px 5px;
 }
 
-.fc-daygrid-day.fc-day-past {
-	background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
+.fc-event:hover {
+    background-color: #747474;
 }
 
-.fc-daygrid-day.fc-day-future {
-	background-color: #ffffff; /* 미래 날짜 배경 색상 */
+.fc-day-other .fc-daygrid-day-top {
+    opacity: 0.3;
 }
 
-.fc-button {
-	background-color: #6c757d; /* 버튼 배경 색상 */
-	color: #ffffff;
-	border-radius: 4px;
+.fc th {
+    padding: 10px 0;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #666;
 }
 
-.fc-button:hover {
-	background-color: #5a6268; /* 버튼 호버 색상 */
+.fc-view-harness {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.fc-scrollgrid {
+    border: none !important;
+}
+
+.fc-col-header-cell {
+    background-color: #f8f8f8;
 }
 </style>
 
@@ -356,39 +423,40 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사용자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		<%@ include file="../member/aside.jsp"%>
-	</c:if>
-	<!-- 관리자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-
-		<div class="classroom-header">
-			<i class="bi bi-house-fill"
-				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-			<div class="title">${syclass.className}</div>
-			<div class="details">담당자: ${syclass.managerName} | 강사명:
-				${syclass.teacherName}</div>
-		</div>
-
-		<!-- 사이드바 연결 -->
-		<%@ include file="../admin/class/aside.jsp"%>
-	</c:if>
+	<c:choose>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+			<%@ include file="../member/aside.jsp"%>
+		</c:when>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+			<div class="classroom-header">
+				<i class="bi bi-house-fill"
+					onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+				<div class="title">${syclass.className}</div>
+				<div class="details">담당자: ${syclass.managerName} | 강사명:
+					${syclass.teacherName}</div>
+			</div>
+			<%@ include file="../admin/class/aside.jsp"%>
+		</c:when>
+	</c:choose>
 
 	<main>
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
 			<h1>교육 일정</h1>
-			<div class="select-box">
-				<select id="classSelect" name="classSelect"
-					onchange="sendClassChange()">
-					<c:forEach var="classItem" items="${classList}">
-						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-					</c:forEach>
-				</select>
-			</div>
+			<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+				<div class="select-box">
+					<!-- 반 선택 드롭다운 -->
+					<select id="classSelect" name="classNo"
+						onchange="changeClass(this.value)">
+						<c:forEach var="classItem" items="${classList}">
+							<option value="${classItem.classNo}"
+								<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+								${classItem.className}</option>
+						</c:forEach>
+					</select>
+				</div>
+			</c:if>
 		</div>
 
 		<!-- 캘린더 출력 영역 -->
@@ -401,6 +469,8 @@ td.checkStatus.N {
 				<div class="search_area">
 					<form id="searchForm" method="get"
 						action="${pageContext.request.contextPath}/journal/scheduleList">
+						<input type="hidden" name="classNo" value="${selectedClassNo}">
+
 
 						<select id="category" name="category">
 							<option value="all"
@@ -452,24 +522,25 @@ td.checkStatus.N {
 					</thead>
 
 					<tbody>
-						<c:forEach items="${schedules}" var="schedule" varStatus="i">
-							<tr data-schedule-no="${schedule.scheduleNo}">
+						<c:forEach items="${scheduleList}" var="schedule" varStatus="i">
+							<tr
+								onclick="window.location.href='${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}&page=${pageMaker.cri.pageNum}'">
 								<td>${pageMaker.total - (pageMaker.cri.pageNum - 1) * pageMaker.cri.amount -  i.index}</td>
 								<td class="hidden scheduleNo"><c:out
 										value="${schedule.scheduleNo}" /></td>
 								<td><c:out value="${schedule.scheduleDate}" /></td>
-								<td><a
-									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-										<c:out value="${schedule.scheduleTitle}" />
-								</a></td>
-								<td><a
-									href="${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}">
-										<c:out value="${schedule.scheduleDescription}" />
-								</a></td>
+								<td><c:out value="${schedule.scheduleTitle}" /></td>
+								<td><c:out value="${schedule.scheduleDescription}" /></td>
 								<td><c:out value="${schedule.scheduleInstructor}" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>
+					<!-- 디버깅을 위한 코드 추가 -->
+					<c:if test="${empty scheduleList}">
+						<tr>
+							<td colspan="6">등록된 교육일정이 없습니다.</td>
+						</tr>
+					</c:if>
 				</table>
 
 				<div class="pageInfo_wrap">
@@ -484,12 +555,12 @@ td.checkStatus.N {
 							</c:if>
 
 							<!-- 각 번호 페이지 버튼 -->
+							<!-- 페이징 부분 수정 -->
 							<c:forEach var="num" begin="${pageMaker.pageStart}"
 								end="${pageMaker.pageEnd}">
 								<li
 									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
-									<a
-									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">${num}</a>
+									<a href="javascript:void(0);" onclick="changePage(${num})">${num}</a>
 								</li>
 							</c:forEach>
 
@@ -514,30 +585,68 @@ td.checkStatus.N {
 		src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 	<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // FullCalendar 초기화
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: [
-                <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
-                {
-                    title: "${schedule.scheduleTitle}",
-                    start: "${schedule.scheduleDate}",
-                    url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
-                }<c:if test="${!status.last}">,</c:if>
-                </c:forEach>
-            ],
-            eventClick: function(info) {
-                if (info.event.url) {
-                    window.location.href = info.event.url;
-                }
-            }
-        });
-        calendar.render();
-        
-        console.log("Calendar events: ", calendar.getEvents());
-    });
+	function changeClass(classNo) {
+	    window.location.href = '${pageContext.request.contextPath}/journal/scheduleList?classNo=' + classNo;
+	}
+
+	function changePage(pageNum) {
+	    var form = document.getElementById('searchForm');
+	    var pageInput = document.createElement('input');
+	    pageInput.type = 'hidden';
+	    pageInput.name = 'pageNum';
+	    pageInput.value = pageNum;
+	    form.appendChild(pageInput);
+	    form.submit();
+	}
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	        initialView: 'dayGridMonth',
+	        events: getCalendarEvents()
+	    });
+	    calendar.render();
+
+	    // 클래스 변경 시 캘린더 이벤트 업데이트
+	    $('#classSelect').change(function() {
+	        updateCalendarEvents();
+	    });
+
+	    function getCalendarEvents() {
+	        return [
+	            <c:forEach var="schedule" items="${scheduleAllList}" varStatus="status">
+	            {
+	                title: "${schedule.scheduleTitle}",
+	                start: "${schedule.scheduleDate}",
+	                url: "${pageContext.request.contextPath}/journal/scheduleDetail?scheduleNo=${schedule.scheduleNo}"
+	            }<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ];
+	    }
+
+	    function updateCalendarEvents() {
+	        var selectedClassNo = $('#classSelect').val();
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/journal/getScheduleForClass',
+	            data: { classNo: selectedClassNo },
+	            success: function(data) {
+	                calendar.removeAllEvents();
+	                calendar.addEventSource(data);
+	            }
+	        });
+	    }
+	});
+	
+	// 페이지 로드 시 캘린더 초기화
+	document.addEventListener('DOMContentLoaded', function() {
+	    updateCalendar(${selectedClassNo});
+	});
+	
+	// 클래스 변경 시 호출되는 함수
+	function sendClassChange() {
+	    var selectedClassNo = $('#classSelect').val();
+	    window.location.href = '${pageContext.request.contextPath}/journal/scheduleList?classNo=' + selectedClassNo;
+	}
 
     $(document).ready(function() {
         // 테이블 행 클릭 시 상세 페이지로 이동

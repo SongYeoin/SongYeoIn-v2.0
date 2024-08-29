@@ -60,73 +60,84 @@ main {
     
     margin-left: 10px;
 }
-.container {
-	margin-left: 270px; /* Sidebar width + padding */
-	padding-top: 80px; /* Space for header */
-	padding-bottom: 60px; /* Space for footer */
-}
 
+/* 추가 및 수정된 스타일 */
 .form-container {
-	max-width: 600px;
-	margin: 0 auto;
-	padding: 20px;
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-container h1 {
-	margin-bottom: 20px;
-	font-size: 24px;
-	color: #333;
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
 }
 
 .form-group {
-	margin-bottom: 15px;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
-	display: block;
-	margin-bottom: 5px;
-	font-weight: bold;
-	color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
 }
 
-.form-group input {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
+.form-group input[type="text"],
+.form-group input[type="date"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-.form-group input[type="submit"] {
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	cursor: pointer;
-	font-size: 16px;
+.warn-message {
+    display: none;
+    color: #d9534f;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-.form-group input[type="submit"]:hover {
-	background-color: #0056b3;
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
 }
 
-.form-container a {
-	display: inline-block;
-	margin-top: 10px;
-	color: #007bff;
-	text-decoration: none;
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.form-container a:hover {
-	text-decoration: underline;
+.btn-primary {
+    background-color: #007bff;
+    color: white;
 }
 
-/* 경고 메시지 스타일 */
-.warning {
-	color: red;
-	font-size: 0.875em;
-	display: none; /* 기본적으로 숨김 */
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
 }
 </style>
 </head>
@@ -147,53 +158,39 @@ main {
 	<%@ include file="../admin/class/aside.jsp"%>
 
 	<main>
-		<div class="container">
-			<div class="form-container">
-				<h1>교육 일정 수정하기</h1>
-				<!-- 일정 업데이트 폼 -->
-				<form id="scheduleForm"
-					action="${pageContext.request.contextPath}/journal/scheduleUpdate"
-					method="post">
-					<input type="hidden" name="scheduleNo"
-						value="${schedule.scheduleNo}" />
-
-					<div class="form-group">
-						<label for="scheduleTitle">단원명:</label> <input type="text"
-							name="scheduleTitle" id="scheduleTitle"
-							value="${schedule.scheduleTitle}" required /> <span
-							id="warn_scheduleTitle" class="warning">단원명을 입력해주세요.</span>
-					</div>
-
-					<div class="form-group">
-						<label for="scheduleDate">일자:</label> <input type="date"
-							name="scheduleDate" id="scheduleDate"
-							value="${schedule.scheduleDate}" required /> <span
-							id="warn_scheduleDate" class="warning">일자를 입력해주세요.</span>
-					</div>
-
-					<div class="form-group">
-						<label for="scheduleDescription">학습주제:</label> <input type="text"
-							name="scheduleDescription" id="scheduleDescription"
-							value="${schedule.scheduleDescription}" />
-					</div>
-
-					<div class="form-group">
-						<label for="scheduleInstructor">강사:</label> <input type="text"
-							name="scheduleInstructor" id="scheduleInstructor"
-							value="${schedule.scheduleInstructor}" />
-					</div>
-
-					<div class="form-group">
-						<input type="submit" value="교육 일정 수정하기" />
-					</div>
-
-					<a href="${pageContext.request.contextPath}/journal/scheduleList">목록</a>
-				</form>
-			</div>
-		</div>
-
-		<!-- 푸터 연결 -->
-		<%@ include file="../common/footer.jsp"%>
+	    <div class="form-container">
+	        <h1 class="form-title">교육 일정 수정하기</h1>
+	        <form id="scheduleForm" action="${pageContext.request.contextPath}/journal/scheduleUpdate" method="post">
+	            <input type="hidden" name="scheduleNo" value="${schedule.scheduleNo}" />
+	            <input type="hidden" name="classNo" value="${schedule.classNo}" />
+	            <div class="form-group">
+	                <label>현재 선택된 반:</label>
+	                <span>${syclass.className}</span>
+	            </div>
+	            <div class="form-group">
+	                <label for="scheduleTitle">단원명</label>
+	                <input type="text" id="scheduleTitle" name="scheduleTitle" value="${schedule.scheduleTitle}" required />
+	                <span class="warn-message" id="warn_scheduleTitle">단원명을 입력해주세요.</span>
+	            </div>
+	            <div class="form-group">
+	                <label for="scheduleDate">일자</label>
+	                <input type="date" id="scheduleDate" name="scheduleDate" value="${schedule.scheduleDate}" required />
+	                <span class="warn-message" id="warn_scheduleDate">일자를 입력해주세요.</span>
+	            </div>
+	            <div class="form-group">
+	                <label for="scheduleDescription">학습주제</label>
+	                <input type="text" id="scheduleDescription" name="scheduleDescription" value="${schedule.scheduleDescription}" />
+	            </div>
+	            <div class="form-group">
+	                <label for="scheduleInstructor">강사</label>
+	                <input type="text" id="scheduleInstructor" name="scheduleInstructor" value="${schedule.scheduleInstructor}" />
+	            </div>
+	            <div class="button-group">
+	                <a href="${pageContext.request.contextPath}/journal/scheduleList" class="btn btn-secondary">취소</a>
+	                <button type="submit" class="btn btn-primary">수정하기</button>
+	            </div>
+	        </form>
+	    </div>
 	</main>
 
 	<script>
@@ -232,6 +229,7 @@ main {
 							}
 						});
 	</script>
-
+	<!-- 푸터 연결 -->
+	<%@ include file="../common/footer.jsp"%>
 </body>
 </html>

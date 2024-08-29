@@ -35,11 +35,12 @@ body {
 
 /* main 요소의 위치와 스크롤 설정 */
 main {
-	flex: 1; /* main 요소가 flexbox 컨테이너에서 가능한 모든 공간을 차지하도록 설정 */
-	margin-left: 250px; /* 왼쪽 여백을 300px로 설정 (사이드바 공간 확보) */
-	margin-top: 160px; /* 상단 여백을 110px로 설정 (헤더 공간 확보) */
-	overflow-y: auto; /* 세로 스크롤을 가능하게 설정 */
-	height: 100%; /* 높이를 100%로 설정하여 부모 요소의 높이를 차지하도록 설정 */
+    flex: 1;
+    margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
+    margin-top: 100px; /* 헤더 높이에 맞춰 조정 */
+    padding: 30px; /* 전체적인 내부 여백 추가 */
+    overflow-y: auto;
+    height: 100%;
 }
 
 .classroom-header {
@@ -69,26 +70,33 @@ main {
 
 /* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
 .title-container {
-	display: flex; /* flexbox 레이아웃 사용 */
-	align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+    display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
 }
 
-/* 제목과 선택 박스 사이의 간격을 설정 */
 .title-container h1 {
-	margin-right: 20px; /* 제목 오른쪽에 20px 간격 설정 */
-	font-weight: bold; /* 제목을 굵은 글씨로 설정 */
+    margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+    font-weight: bold;
+}
+
+.select-box {
+    position: relative;
+    display: inline-block;
+}
+
+.select-box select {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f8f8;
+    width: auto;
+    min-width: 300px;
 }
 
 /* 콘텐츠를 감싸는 컨테이너의 스타일 설정 */
 .container {
-	margin: 20px auto; /* 위아래 여백을 20px로 설정하고 좌우 중앙 정렬 */
-	background-color: #f9fafc; /* 배경색을 연한 회색으로 설정 */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자를 설정하여 입체감을 줌 */
-	max-width: 1200px; /* 최대 너비를 1200px로 설정 */
-	border-radius: 10px; /* 모서리를 둥글게 설정 */
-	padding-bottom: 20px; /* 하단 여백을 20px로 설정 */
-	padding-left: 0 !important; /* 왼쪽 여백을 0으로 설정하고, 우선순위를 높임 */
-	padding-right: 0 !important; /* 오른쪽 여백을 0으로 설정하고, 우선순위를 높임 */
+    margin-top: 30px; /* 타이틀 컨테이너와의 간격 */
 }
 
 /* 헤더의 스타일 설정 */
@@ -353,39 +361,59 @@ td.checkStatus.N {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사용자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
-		<%@ include file="../member/aside.jsp"%>
-	</c:if>
-	<!-- 관리자 역할일 때 사이드바 -->
-	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-
-		<div class="classroom-header">
-			<i class="bi bi-house-fill"
-				onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
-			<div class="title">${syclass.className}</div>
-			<div class="details">담당자: ${syclass.managerName} | 강사명:
-				${syclass.teacherName}</div>
-		</div>
-
-		<!-- 사이드바 연결 -->
-		<%@ include file="../admin/class/aside.jsp"%>
-	</c:if>
+	<c:choose>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+			<%@ include file="../member/aside.jsp"%>
+		</c:when>
+		<c:when test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+			<div class="classroom-header">
+				<i class="bi bi-house-fill"
+					onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/getClassList'"></i>
+				<div class="title">${syclass.className}</div>
+				<div class="details">담당자: ${syclass.managerName} | 강사명:
+					${syclass.teacherName}</div>
+			</div>
+			<%@ include file="../admin/class/aside.jsp"%>
+		</c:when>
+	</c:choose>
 
 	<main>
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
 			<h1>교육 일지</h1>
-			<div class="select-box">
-				<select id="classSelect" name="classSelect" onchange="loadMembers()">
-					<c:forEach var="classItem" items="${classList}">
-						<option value="${classItem.classNo}"
-							<c:if test="${classItem.classNo == param.classNo}">selected</c:if>>${classItem.className}</option>
-					</c:forEach>
-				</select>
-			</div>
+			<c:choose>
+				<c:when test="${isAdmin}">
+					<div class="select-box">
+						<c:if test="${not empty memberList}">
+							<c:set var="sortedMemberList" value="${memberList}" />
+							<c:set var="defaultMember" value="${sortedMemberList[0]}" />
+
+							<select id="studentSelect" onchange="changeStudent(this.value)">
+								<c:forEach var="member" items="${sortedMemberList}">
+									<option value="${member.memberNo}"
+										<c:if test="${member.memberNo == selectedMemberNo}">selected</c:if>>
+										${member.member.memberName}</option>
+								</c:forEach>
+							</select>
+						</c:if>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="select-box">
+						<select id="classSelect" name="classNo"
+							onchange="changeClass(this.value)">
+							<c:forEach var="classItem" items="${classList}">
+								<option value="${classItem.classNo}"
+									<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
+									${classItem.className}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</c:otherwise>
+			</c:choose>
 		</div>
+
 
 		<!-- 캘린더 출력 영역 -->
 		<!-- 사용자 역할일 때만 캘린더 표시 -->
@@ -400,36 +428,19 @@ td.checkStatus.N {
 				<div class="search_area">
 					<form id="searchForm" method="get"
 						action="${pageContext.request.contextPath}/journal/journalList">
-						<input type="text" id="keyword" name="keyword"
-							value="${param.keyword}" placeholder="제목으로 검색">
-
-						<!-- 수강생 선택 박스 -->
-						<c:if
-							test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-							<select id="memberName" name="memberName">
-								<option value="">전체</option>
-								<c:forEach var="memberList" items="${memberList}">
-									<option value="${member.memberId}"
-										<c:if test="${member.memberId == param.memberName}">selected</c:if>>${member.memberName}</option>
-								</c:forEach>
-							</select>
-						</c:if>
-
-						<select id="year" name="year">
-							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
+						<input type="text" id="keyword" name="keyword" value="${keyword}"
+							placeholder="제목으로 검색"> <select id="year" name="year">
+							<option value="" <c:if test="${empty year}">selected</c:if>>년도</option>
 							<c:forEach var="i" begin="2020" end="2025">
-								<option value="${i}"
-									<c:if test="${param.year == i}">selected</c:if>>${i}</option>
+								<option value="${i}" <c:if test="${year == i}">selected</c:if>>${i}</option>
 							</c:forEach>
 						</select> <select id="month" name="month">
-							<option value=""
-								<c:if test="${empty param.month}">selected</c:if>>월</option>
+							<option value="" <c:if test="${empty month}">selected</c:if>>월</option>
 							<c:forEach var="i" begin="1" end="12">
-								<option value="${i}"
-									<c:if test="${param.month == i}">selected</c:if>>${i}</option>
+								<option value="${i}" <c:if test="${month == i}">selected</c:if>>${i}</option>
 							</c:forEach>
-						</select>
-
+						</select> <input type="hidden" name="classNo" value="${selectedClassNo}" />
+						<input type="hidden" name="memberNo" value="${selectedMemberNo}" />
 						<button type="submit">조회</button>
 					</form>
 				</div>
@@ -484,34 +495,37 @@ td.checkStatus.N {
 					<div class="pageInfo_area">
 						<ul id="pageInfo" class="pageInfo">
 
-							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
 								<li class="pageInfo_btn previous"><a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">이전</a>
-								</li>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">이전</a></li>
 							</c:if>
-
-							<!-- 각 번호 페이지 버튼 -->
 							<c:forEach var="num" begin="${pageMaker.pageStart}"
 								end="${pageMaker.pageEnd}">
 								<li
 									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
 									<a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">${num}</a>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${num}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">${num}</a>
 								</li>
 							</c:forEach>
-
-							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
 								<li class="pageInfo_btn next"><a
-									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}">다음</a>
-								</li>
+									href="${pageContext.request.contextPath}/journal/journalList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&year=${param.year}&month=${param.month}&classNo=${param.classNo}">다음</a></li>
 							</c:if>
+
 						</ul>
 					</div>
 					<p class="totalCount">총 ${pageMaker.total}건</p>
 				</div>
 			</div>
+		</div>
+		<!-- 숨겨진 div에 일지 데이터 저장 -->
+		<div id="journalAllListData" style="display: none;">
+			<c:forEach var="journal" items="${journalAllList}" varStatus="status">
+				<div class="journal-data" data-title="${journal.journalTitle}"
+					data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
+					data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
+				</div>
+			</c:forEach>
 		</div>
 	</main>
 
@@ -519,105 +533,123 @@ td.checkStatus.N {
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
 
+	<!-- Hidden div 추가 -->
+	<div id="journalAllListData" style="display: none;">
+		<c:forEach var="journal" items="${journalAllList}" varStatus="status">
+			<div class="journal-data" data-title="${journal.journalTitle}"
+				data-start="<fmt:formatDate pattern='yyyy-MM-dd' value='${journal.journalWriteDate}'/>"
+				data-url="${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}&classNo=${selectedClassNo}">
+			</div>
+		</c:forEach>
+	</div>
+
 	<script>
-$(document).ready(function() {
-    // 테이블 행 클릭 시 상세 페이지로 이동
-    $('table tbody tr').click(function() {
-        var journalNo = $(this).data('journal-no');
-        if (journalNo) {
-            window.location.href = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo;
-        }
-    });
 
-    // FullCalendar 초기화
-    $('#calendar').fullCalendar({
-        initialView: 'dayGridMonth',
-        events: [
-            <c:forEach var="journal" items="${journalAllList}" varStatus="status">
-            {
-                title: "${journal.journalTitle}",
-                start: "${journal.journalWriteDate}",
-                url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
-            }<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ],
-        eventClick: function(info) {
-            if (info.event.url) {
-                window.location.href = info.event.url;
-            }
-        }
-    });
+	// 수강생 변경 함수
+	function changeStudent(memberNo) {
+	    var classNo = ${selectedClassNo};
+	    var url = new URL('${pageContext.request.contextPath}/journal/journalList', window.location.origin);
+	    url.searchParams.set('classNo', classNo);
+	    url.searchParams.set('memberNo', memberNo);
+	    // 검색어와 필터링 옵션 초기화
+	    url.searchParams.delete('keyword');
+	    url.searchParams.delete('year');
+	    url.searchParams.delete('month');
+	    window.location.href = url.toString();
+	}
 
-    // 수강생 목록 로드 함수
-    function loadMembers() {
-        var classNo = $('#classSelect').val();
-        var url = '${pageContext.request.contextPath}/journal/loadMembers?classNo=' + classNo;
+	// 페이지 로드 시 실행
+	document.addEventListener('DOMContentLoaded', function() {
+		var studentSelect = document.getElementById('studentSelect');
+	    if (studentSelect) {
+	        // 페이지 로드 시 선택된 학생이 없으면 첫 번째 학생 선택
+	        if (!studentSelect.value) {
+	            var firstOption = studentSelect.options[0];
+	            if (firstOption) {
+	                studentSelect.value = firstOption.value;
+	                changeStudent(firstOption.value);
+	            }
+	        }
+	    }
+	});
 
-        $.get(url, function(data) {
-            var memberSelect = $('#memberName');
-            memberSelect.empty();
-            memberSelect.append('<option value="">전체</option>');
-            
-            $.each(data.memberList, function(index, member) {
-                memberSelect.append('<option value="' + member.memberId + '">' + member.memberName + '</option>');
-            });
-        });
-    }
+	// 페이징 링크에 memberNo 파라미터 추가
+	document.querySelectorAll('.pageInfo a').forEach(function(link) {
+	    var url = new URL(link.href);
+	    url.searchParams.set('memberNo', '${selectedMemberNo}');
+	    link.href = url.toString();
+	});
 
-    // 함수 바깥으로 빼는 것을 잊지 마세요
-    window.loadMembers = loadMembers;
-});
+	// 상세보기 링크에 memberNo 파라미터 추가
+	document.querySelectorAll('table tbody tr').forEach(function(row) {
+	    row.addEventListener('click', function(e) {
+	        e.preventDefault();
+	        var journalNo = this.getAttribute('data-journal-no');
+	        var url = '${pageContext.request.contextPath}/journal/journalDetail?journalNo=' + journalNo + '&memberNo=${selectedMemberNo}';
+	        window.location.href = url;
+	    });
+	});
+
+	function changeClass(classNo) {
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo;
+	}
+	
+	function changeMember(memberNo) {
+	    var classNo = document.getElementById('classSelect').value;
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + classNo + '&memberNo=' + memberNo;
+	}
+
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	        initialView: 'dayGridMonth',
+	        events: getCalendarEvents()
+	    });
+	    calendar.render();
+
+	 // 클래스 변경 시 캘린더 이벤트 업데이트
+	    $('#classSelect').change(function() {
+	        updateCalendarEvents();
+	    });
+
+	    function getCalendarEvents() {
+	        return [
+	            <c:forEach var="journal" items="${journalAllList}" varStatus="status">
+	            {
+	                title: "${journal.journalTitle}",
+	                start: "${journal.journalWriteDate}",
+	                url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
+	            }<c:if test="${!status.last}">,</c:if>
+	            </c:forEach>
+	        ];
+	    }
+	    
+	    function updateCalendarEvents() {
+	        var selectedClassNo = $('#classSelect').val();
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/journal/getJournalForClass',
+	            data: { classNo: selectedClassNo },
+	            success: function(data) {
+	                calendar.removeAllEvents();
+	                calendar.addEventSource(data);
+	            }
+	        });
+	    }
+	});
+	
+	// 페이지 로드 시 캘린더 초기화
+	document.addEventListener('DOMContentLoaded', function() {
+	    updateCalendar(${selectedClassNo});
+	});
+	
+	// 클래스 변경 시 호출되는 함수
+	function sendClassChange() {
+	    var selectedClassNo = $('#classSelect').val();
+	    window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + selectedClassNo;
+	}
+	    	
 </script>
 
-
-
-	<%-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: [
-                <c:forEach var="journal" items="${journalAllList}" varStatus="status">
-                {
-                    title: "${journal.journalTitle}",
-                    start: "${journal.journalWriteDate}",
-                    url: "${pageContext.request.contextPath}/journal/journalDetail?journalNo=${journal.journalNo}"
-                }<c:if test="${!status.last}">,</c:if>
-                </c:forEach>
-            ],
-            eventClick: function(info) {
-                if (info.event.url) {
-                    window.location.href = info.event.url;
-                }
-            }
-        });
-        calendar.render();
-        
-        console.log("Calendar events: ", calendar.getEvents());
-    });
-    
-    function loadMembers() {
-        var classNo = document.getElementById("classSelect").value;
-        var memberSelect = document.getElementById("memberName");
-
-        // 모든 수강생을 제거하고 "전체" 옵션만 추가
-        memberSelect.innerHTML = '<option value="">전체</option>';
-
-        // 선택한 반에 따른 수강생 목록을 가져옵니다.
-        var options = '';
-        <% for (Member member : memberList) { %>
-            if ('${member.getClassNo()}' === classNo) {
-                options += '<option value="${member.getMemberId()}">${member.getMemberName()}</option>';
-            }
-        <% } %>
-        
-        memberSelect.innerHTML += options;
-    }
-    
-    function sendClassChange() {
-        var selectedClass = document.getElementById("classSelect").value;
-        window.location.href = '${pageContext.request.contextPath}/journal/journalList?classNo=' + selectedClass;
-    }
-	</script> --%>
 </body>
 </html>

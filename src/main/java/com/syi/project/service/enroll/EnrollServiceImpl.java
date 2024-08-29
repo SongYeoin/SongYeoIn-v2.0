@@ -26,5 +26,10 @@ public class EnrollServiceImpl implements EnrollService {
 	public int selectClassNo(int memberNo) {
 		return enrollMapper.selectClassNo(memberNo);
 	}
-	
+
+	// 특정 클래스의 수강 중인 수강생 조회
+	@Override
+	public List<EnrollVO> selectMemberList(int classNo) {
+		return enrollMapper.selectMemberList(classNo);
+	}
 }
