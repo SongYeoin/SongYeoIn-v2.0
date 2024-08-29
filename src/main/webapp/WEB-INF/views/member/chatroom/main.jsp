@@ -133,7 +133,7 @@ a.custom{
 				
 					 <button id="openModalBtn">채팅방 생성</button>
 					 <!--모달구조  -->
-					 <div id="myModal" class="modal">
+					 <div id="chatModal" class="modal">
 					 	<div class="modal-content">
 					 		<span class="close">닫기</span>
 					 		<h5>담당자를 선택해주세요</h5>
@@ -259,18 +259,18 @@ a.custom{
 <script>
 
 //모달과 버튼을 변수에 저장합니다.
-var myModal = document.getElementById("myModal");
+var chatModal = document.getElementById("chatModal");
 var btn = document.getElementById("openModalBtn");
 var span = document.getElementsByClassName("close")[0];
 
 //버튼을 클릭하면 모달을 열어줍니다.
 btn.onclick = function() {
-	myModal.style.display = "block";
+	chatModal.style.display = "block";
 }
 
 //<span> (닫기 버튼)을 클릭하면 모달을 닫아줍니다.
 span.onclick = function() {
-	myModal.style.display = "none";
+	chatModal.style.display = "none";
 }
 
 //모달 밖을 클릭하면 모달을 닫아줍니다.
@@ -279,8 +279,8 @@ window.onclick = function(event) {
     	profileModal.style.display = 'none';
     }
     
-    if (event.target == myModal) {
-   	 myModal.style.display = "none";
+    if (event.target == chatModal) {
+   	 chatModal.style.display = "none";
     }
 };
 

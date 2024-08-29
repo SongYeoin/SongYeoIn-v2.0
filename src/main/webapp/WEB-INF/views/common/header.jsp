@@ -282,6 +282,7 @@ header {
     </header>
     
 <script type="text/javascript">
+var chatModal = document.getElementById("chatModal");/*채팅방*/
 const profileModal = document.getElementById('profileModal');
 const showProfileDetail = document.getElementById('showProfileDetail');
 const closeModalBtn = document.getElementById('closeModalBtn');
@@ -301,8 +302,8 @@ window.onclick = function(event) {
     	profileModal.style.display = 'none';
     }
     
-    if (event.target == myModal) {
-   	 myModal.style.display = "none";
+    if (event.target == chatModal) {
+   	 chatModal.style.display = "none";
     }
 };
 
