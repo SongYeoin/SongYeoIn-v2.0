@@ -33,7 +33,6 @@ body {
 	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
 }
 
-/* main 요소의 위치와 스크롤 설정 */
 main {
     flex: 1;
     margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
@@ -41,6 +40,11 @@ main {
     padding: 30px; /* 전체적인 내부 여백 추가 */
     overflow-y: auto;
     height: 100%;
+}
+
+/* 관리자용 main 스타일 추가 */
+main.admin {
+    margin-top: 150px; /* 관리자용 상단 여백 */
 }
 
 .classroom-header {
@@ -377,7 +381,7 @@ td.checkStatus.N {
 		</c:when>
 	</c:choose>
 
-	<main>
+	<main class="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' ? 'admin' : ''}">
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
