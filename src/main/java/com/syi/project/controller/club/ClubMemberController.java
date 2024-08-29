@@ -135,7 +135,14 @@ public class ClubMemberController {
 	    }
 	    cri.setPageNum(pageNum);
 	    cri.setType(type);
-	    cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
+	    //cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
+	    
+	 // 승인 상태 키워드 변환
+	    if ("C".equals(type)) {
+	        cri.setKeyword("대기".equals(keyword) ? "W" : ("승인".equals(keyword) ? "Y" : ("미승인".equals(keyword) ? "N" : "")));
+	    } else {
+	        cri.setKeyword(keyword);
+	    }
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);

@@ -101,7 +101,7 @@
  </insert> -->
  <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 22)
+    VALUES (#{join}, #{studyDate}, #{content}, 1)
   </insert>
   
   <!-- 조회 -->

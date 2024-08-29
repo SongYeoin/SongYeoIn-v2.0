@@ -417,6 +417,11 @@ function loadPageData(classNo, pageNum) {
 	 const keyword = $("input[name='keyword']").val();
 	 
 
+	// 승인 상태 키워드 변환
+	    if (type === 'C') {
+	        keyword = keyword === '대기' ? 'W' : (keyword === '승인' ? 'Y' : (keyword === '미승인' ? 'N' : ''));
+	    }
+	
 	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
 	 
     $.ajax({
@@ -426,8 +431,14 @@ function loadPageData(classNo, pageNum) {
         data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
         success: function(response) {
         	console.log('Response:', response); // 응답 데이터 확인
-            updateTable(response.list);
-            updatePagination(response.pageInfo);
+            //updateTable(response.list);
+            //updatePagination(response.pageInfo);
+        	 if (!response.list || response.list.length === 0) {
+                 $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+             } else {
+                 updateTable(response.list);
+             }
+             updatePagination(response.pageInfo);
         },
         error: function() {
             alert('데이터를 가져오는 데 실패했습니다.');
