@@ -1,10 +1,11 @@
 package com.syi.project.controller.chat;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.EndpointConfig;
@@ -22,24 +23,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syi.project.config.WebSocketConfig;
 import com.syi.project.model.chat.ChatMessageDTO;
 import com.syi.project.model.member.MemberVO;
+import com.syi.project.service.chat.ChatRoomService;
 import com.syi.project.service.chat.MessageService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @ServerEndpoint(value = "/ws", configurator = WebSocketConfig.class)
-@Log4j2
+@Slf4j
 public class ChatController {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
-	/*
-	 * public ChatController() {
-	 * this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-	 * false); // ISO-8601 형식으로 날짜 직렬화 }
-	 */
-
 	private MessageService messageService;
+	private ChatRoomService chatRoomService;
 
 	// 현재 채팅방에 속한 사람들을 알기 위한 Set
 	// 구독한 사람들(session)이니까 메시지를 모두 보내줘야 한다.
@@ -80,34 +77,28 @@ public class ChatController {
 				return;
 			}
 
+			chatMessage.setId(UUID.randomUUID().toString());
 			// 메시지 MongoDB에 저장
-			chatMessage.setMemberNo(loginMember.getMemberNo() + "");
+			chatMessage.setMemberNo(loginMember.getMemberNo());
 			System.out.println("멤버넘버 설정 : " + chatMessage.getMemberNo());
 			chatMessage.setMemberName(loginMember.getMemberName());
 			System.out.println("멤버이름 설정 : " + chatMessage.getMemberName());
-			/*
-			 * chatMessage.setType(MessageType.TALK); System.out.println("타입 설정 : " +
-			 * chatMessage.getType());
-			 */
 
-			// 현재 날짜와 시간을 가져옵니다.
-			LocalDateTime now = LocalDateTime.now();
+			// 현재날짜를 문자열로 표시해서 저장함
+			Instant instantNow = Instant.now();// 기본적으로 UTC 기준임
+			chatMessage.setRegDateTime(instantNow.toString());
 
-			// 원하는 포맷으로 DateTimeFormatter를 생성합니다.
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초(SSS)");
-
-			// 포맷을 사용하여 현재 날짜와 시간을 문자열로 변환합니다.
-			String formattedDateTime = now.format(formatter);
-			chatMessage.setRegDateTime(formattedDateTime);
-			System.out.println("현재시간 설정 : " + chatMessage.getRegDateTime());
+			// 읽지 않음 표시
+			chatMessage.setRead(false);
 
 			System.out.println("최종 chatMessage : " + chatMessage);
 
+			ChatMessageDTO resultMessage = new ChatMessageDTO();
 			/// 문제지점=>webconfig 수정하고 springContext 만들었음
 			try {
 				System.out.println("messageService: " + messageService); // null일 수 있음
 
-				ChatMessageDTO resultMessage = messageService.createMessage(chatMessage);
+				resultMessage = messageService.createMessage(chatMessage);
 				System.out.println("resultMessage: " + resultMessage);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
@@ -115,11 +106,16 @@ public class ChatController {
 				System.err.println("NullPointerException at createMessage: " + e.getMessage());
 			}
 
+			// 날짜 변환 후 내보내기
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm(yyyy-MM-dd)")
+					.withZone(ZoneId.of("Asia/Seoul"));
+			chatMessage.setRegDateTime(formatter.format(instantNow));
+
 			String updatedJson = objectMapper.writeValueAsString(chatMessage);
 			System.out.println("updatedJson : " + updatedJson);
 
 			// 구독한 사람들에게 메시지 보내주기(broadcast)
-			broadcast(updatedJson);
+			broadcast(updatedJson, resultMessage.getChatRoomNo(), resultMessage.getReceiverNo());
 
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -129,54 +125,27 @@ public class ChatController {
 			System.err.println("Exception occurred: " + e.getMessage());
 		}
 
-		// -----이미 채팅방이 개설되었다는 전제하에 코드가 작성됨----
-		// 채팅방 정보를 불러옴
-		/*
-		 * ChatRoomVO room =
-		 * chatService.SelectChatRoomByNo(chatMessage.getChatRoomNo()); if (room ==
-		 * null) { log.error("채팅방을 찾을 수 없음"); return; }
-		 */
-
 	}
 
-	private void broadcast(String message) throws IOException {
-		/*
-		 * sessions.values().parallelStream() .filter(Session::isOpen) // 세션이 열린 상태인지 확인
-		 * .forEach(session -> { try { session.getBasicRemote().sendText(message); }
-		 * catch (IOException e) { e.printStackTrace(); // 예외 처리 } });
-		 */
+	private void broadcast(String message, int chatRoomNo, int receiverNo) throws IOException {
+		log.info("현재 채팅방의 들어와 있는 사람의 수 : " + sessions.size());
 
 		for (Session session : sessions.values()) {
 			if (session.isOpen()) {
 				session.getBasicRemote().sendText(message);
 			}
+			if(sessions.size()==2) {
+				messageService.updateIsReadtoTrue(chatRoomNo, receiverNo);
+			}
 		}
 
 	}
 
-	/*
-	 * private void sendToEachSocket(Set<Session> sessions, String message) {
-	 * sessions.parallelStream().forEach(roomSession -> { try {
-	 * roomSession.getBasicRemote().sendText(message); } catch (IOException e) {
-	 * log.error("메시지 보내기 실패", e); } }); }
-	 */
-	/*
-	 * room.addSession(session); // 데이터베이스에 채팅방 업데이트
-	 * chatService.updateChatRoomSessions(room);
-	 * 
-	 * //Set<WebSocketSession> sessions = room.getChatRoomUserSessions(); //방에 있는 현재
-	 * 사용자 한명이 WebsocketSession if
-	 * (chatMessage.getType().equals(ChatMessageDTO.MessageType.ENTER)) { //사용자가 방에
-	 * 입장하면 Enter chatMessage.setMessage(loginMember.getMemberName() +
-	 * "님이 입장했습니다."); sendToEachSocket(room.getChatRoomUserSessions(),new
-	 * TextMessage(objectMapper.writeValueAsString(chatMessage)) ); }else {
-	 * sendToEachSocket(room.getChatRoomUserSessions(),new TextMessage(message) );
-	 * //입장 아닐 때는 클라이언트로부터 온 메세지 그대로 전달. }
-	 */
-
 	@OnClose
 	public void onClose(Session session) {
 		log.info("Connection closed: " + session.getId());
+		sessions.remove(session.getId());// 웹소켓이 닫히면 Map에서 제거
+		log.info("and removed from the map");
 		// WebSocket 연결이 닫힐 때 수행할 작업
 	}
 

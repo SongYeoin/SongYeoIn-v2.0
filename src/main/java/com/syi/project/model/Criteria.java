@@ -26,7 +26,10 @@ public class Criteria {
     /* 카테고리 */
     private String category;
     
-    /* 수강생 이름 */
+    private Integer classNo; // 반 번호
+    
+    private Integer memberNo; // 수강생 번호
+    
     private String memberName;
     
 	/* Criteria 생성자 */
