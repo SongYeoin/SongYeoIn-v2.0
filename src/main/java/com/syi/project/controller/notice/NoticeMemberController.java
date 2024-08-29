@@ -58,7 +58,8 @@ public class NoticeMemberController {
 
 		// classNo가 null 이거나 유효하지 않을 떄
 		int syclassNo = (classNo != null && classNo > 0) ? classNo : enrollService.selectClassNo(memberNo);
-		// 전체 공지 조회
+		
+		// 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
 		model.addAttribute("noticeList", noticeList);
 
@@ -92,7 +93,6 @@ public class NoticeMemberController {
 
 	@GetMapping("/download")
 	public ResponseEntity<Resource> downloadAttachment(@RequestParam("fileNo") int fileNo) {
-		// 파일 정보 조회
 		NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
 		String filePath = file.getFilePath();
 		Path path = Paths.get("C:\\upload\\temp" + filePath);
@@ -102,7 +102,6 @@ public class NoticeMemberController {
 			return ResponseEntity.notFound().build();
 		}
 
-		// 원본 파일 이름과 인코딩된 파일 이름을 설정
 		String originalFilename = file.getFileOriginalName();
 		String encodedFilename = UriUtils.encodePathSegment(originalFilename, StandardCharsets.UTF_8);
 

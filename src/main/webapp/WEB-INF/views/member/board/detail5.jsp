@@ -226,14 +226,6 @@ button:hover {
             
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
-            	<c:choose>
-            	<c:when test="${comment.commentStatus eq 'N'}">
-            	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                <p>사용자에 의해 삭제된 댓글입니다.</p>
-	            </div>
-	        	</c:when>
-	        	
-	        	<c:otherwise>
                 <div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
                 	<c:if test="${comment.commentParentNo != null}">
                 		<i class="bi bi-arrow-return-right"></i>
@@ -270,8 +262,6 @@ button:hover {
 			            </form>
 			        </div>
 				</div>
-				</c:otherwise>
-    		</c:choose>
 			</c:forEach>
 
 
@@ -444,10 +434,7 @@ button:hover {
                 success: function(response) {
                     if (response === 'success') {
                         alert("댓글이 삭제되었습니다.");
-                        location.reload(); 
-                        /* $('#comment-' + commentNo).remove(); */
-                    } else if (response === 'deleted') {
-                    	$('#comment-' + commentNo).html('<p>사용자에 의해 삭제된 댓글입니다.</p>');
+                        $('#comment-' + commentNo).remove();
                     } else {
                         alert("댓글 삭제에 실패했습니다.");
                     }
