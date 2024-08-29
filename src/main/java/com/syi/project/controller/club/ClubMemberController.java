@@ -188,16 +188,28 @@ public class ClubMemberController {
 //	}
 	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(ClubVO club, RedirectAttributes rttr) {
+	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) int classNo, RedirectAttributes rttr) {
 		log.info("ClubVO : "+club);
 		
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
+		MemberVO member = (MemberVO)session.getAttribute("loginMember");
 		
-		cservice.enroll(club);
-		
+		// ClubVO에 memberNo 설정
+	    //club.setEnroll(new EnrollVO());  // 새 EnrollVO 인스턴스를 생성하여 할당
+	    //club.getEnroll().setMemberNo(member.getMemberNo());  // 세션에서 가져온 로그인 사용자 ID
+	    //club.getEnroll().setClassNo(classNo);  // 폼에서 전송된 classNo
+        
+	    // ClubVO에 EnrollVO 설정
+	    EnrollVO enroll = new EnrollVO();
+	    enroll.setMemberNo(member.getMemberNo()); // 로그인한 사용자의 memberNo 설정
+	    enroll.setClassNo(classNo); // 전달된 classNo 설정
+	    
+	    club.setEnroll(enroll); // ClubVO에 EnrollVO 설정
+	    
+	    cservice.enroll(club);
+	    
 		rttr.addFlashAttribute("result", "enroll success");
-		
-		return "redirect:/member/club/list";
+		System.out.println("classNo : "+classNo);
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 	//조회 HttpSession session

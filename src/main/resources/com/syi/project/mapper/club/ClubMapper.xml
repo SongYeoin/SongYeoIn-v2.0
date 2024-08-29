@@ -94,15 +94,15 @@
   </select> -->
   
   <!-- 등록 -->
-<!--  <insert id="enroll">
+ <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
     VALUES (#{join}, #{studyDate}, #{content}, 
     		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
- </insert> -->
- <insert id="enroll">
+ </insert>
+<!--  <insert id="enroll">
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
     VALUES (#{join}, #{studyDate}, #{content}, 1)
-  </insert>
+  </insert> -->
   
   <!-- 조회 -->
   <select id="getPage" resultMap="clubResultMap">

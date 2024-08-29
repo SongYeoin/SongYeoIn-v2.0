@@ -76,7 +76,7 @@ main {
 			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
-		<%-- <input type="hidden" name="classNo" value="${param.classNo }"> --%>
+		<input type="hidden" name="classNo" value="${param.classNo }">
 		<div class="input_wrap">
 			<label>참여자</label> <input type="text" name="join" id="joinInput">
 		</div>
@@ -112,7 +112,12 @@ main {
 		}
 		
 		function cancelForm() {
-			window.location.href = '/member/club/list'; // 목록 페이지로 이동
+			//window.location.href = '/member/club/list'; // 목록 페이지로 이동
+			
+			//var classNo = document.querySelector("input[name='classNo']").value;
+            //window.location.href = '/member/club/list?classNo=' + classNo; // 목록 페이지로 이동하며 classNo를 유지합니다.
+			window.history.back();
+      
 		}
 	</script>
 </body>
