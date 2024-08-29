@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class BoardVO {
+	
 	private int boardNo;
 	private String boardTitle;
 	private String boardContent;
@@ -21,4 +22,5 @@ public class BoardVO {
 	private int boardMemberNo;
 	private MemberVO member;
 	private List<CommentsVO> commentsList;
+	
 }

@@ -97,6 +97,7 @@
 	</select>
 	-->
 	
+	
 	<!-- 댓글 총 갯수 -->
 	<select id="selectCommentTotal" parameterType="_int" resultType="_int">
 		SELECT COUNT(*)
@@ -166,6 +167,7 @@
     	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT - 1
     	WHERE BOARD_NO = #{ boardNo }
     </update>
+
 
 </mapper>
   

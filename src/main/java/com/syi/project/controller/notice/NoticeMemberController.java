@@ -1,5 +1,6 @@
 package com.syi.project.controller.notice;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +48,10 @@ public class NoticeMemberController {
 
 	@Autowired
 	private EnrollService enrollService;
+	
+	// 파일 업로드 경로를 저장할 필드
+	@Value("C:/upload/temp")
+	private String fileUploadPath;
 
 	// 공지사항 조회
 	@GetMapping("list")
@@ -94,14 +100,18 @@ public class NoticeMemberController {
 	@GetMapping("/download")
 	public ResponseEntity<Resource> downloadAttachment(@RequestParam("fileNo") int fileNo) {
 		NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+		
 		String filePath = file.getFilePath();
-		Path path = Paths.get("C:\\upload\\temp" + filePath);
+		Path path = Paths.get(filePath);
 		Resource resource = new FileSystemResource(path);
+		
+		logger.info("파일 경로: " + filePath);
 
 		if (!resource.exists()) {
 			return ResponseEntity.notFound().build();
 		}
 
+		// 원본 파일 이름과 인코딩된 파일 이름을 설정
 		String originalFilename = file.getFileOriginalName();
 		String encodedFilename = UriUtils.encodePathSegment(originalFilename, StandardCharsets.UTF_8);
 

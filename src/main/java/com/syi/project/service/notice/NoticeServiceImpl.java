@@ -74,6 +74,7 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 	
 	// 공지사항 수정
+	@Transactional
 	@Override
 	public int updateNotice(NoticeVO notice) {
 		return noticeMapper.updateNotice(notice);
@@ -94,13 +95,10 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	// 파일 삭제
+	@Transactional
 	@Override
 	public int deleteNotcieFile(int fileNo) {
 		return noticeMapper.deleteNoticeFile(fileNo);
 	}
-
 	
-
-	
-
 }
