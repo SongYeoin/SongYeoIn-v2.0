@@ -362,6 +362,7 @@ function selectChatRoom(chatRoomNo,receiverNo,liElement,memberProfileUrl) {
     const cntMessagesElement = liElement.querySelector('#cntMessages');
     cntMessagesElement.style.display = 'none';
     currentmemberProfileUrl = memberProfileUrl;
+    console.log('상대방의 프로필:' + currentmemberProfileUrl);
     
     currentChatRoomNo = chatRoomNo;
     currentReceiverNo = receiverNo;
@@ -537,11 +538,21 @@ ws.onmessage = (event) => {
 	    timestamp.innerHTML = `<i class="far fa-clock"></i>`;
 	    timestamp.textContent = messageData.regDateTime;
 	    
-	    const avatar = document.createElement('img');
-	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
-	    avatar.alt = "avatar";
-	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
-	    avatar.width = 60;
+	    let profile;
+
+	    if (loginMemberProfileUrl) {
+	        // URL이 null이 아닌 경우 <img> 요소를 생성
+	        profile = document.createElement('img');
+	        profile.src = loginMemberProfileUrl;
+	        profile.alt = "avatar";
+	        profile.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	        profile.width = 60;
+	        profile.height = 60;
+	    } else {
+	        // URL이 null인 경우 <i> 요소를 생성
+	        profile = document.createElement('i');
+	        profile.classList.add('bi', 'bi-person-circle', 'fs-1', 'rounded-circle', 'd-flex', 'align-self-center', 'me-3', 'shadow-1-strong');
+	    }
 
 	    cardHeader.appendChild(senderName);
 	    cardHeader.appendChild(timestamp);
@@ -558,7 +569,7 @@ ws.onmessage = (event) => {
 	    messageCard.appendChild(cardBody);
 
 	    message.appendChild(messageCard);
-	    message.appendChild(avatar);
+	    message.appendChild(profile);
 	    chat.appendChild(message);
 
 		
@@ -567,11 +578,21 @@ ws.onmessage = (event) => {
 		const message = document.createElement('li');
 	    message.classList.add('d-flex', 'justify-content-start', 'mb-6');
 
-	    const avatar = document.createElement('img');
-	    avatar.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp";
-	    avatar.alt = "avatar";
-	    avatar.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
-	    avatar.width = 60;
+	    let profile;
+
+	    if (messageData.memberProfileUrl) {
+	        // URL이 null이 아닌 경우 <img> 요소를 생성
+	        profile = document.createElement('img');
+	        profile.src = messageData.memberProfileUrl;
+	        profile.alt = "avatar";
+	        profile.classList.add('rounded-circle', 'd-flex', 'align-self-start', 'me-3', 'shadow-1-strong');
+	        profile.width = 60;
+	        profile.height = 60;
+	    } else {
+	        // URL이 null인 경우 <i> 요소를 생성
+	        profile = document.createElement('i');
+	        profile.classList.add('bi', 'bi-person-circle', 'fs-1', 'rounded-circle', 'd-flex', 'align-self-center', 'me-3', 'shadow-1-strong');
+	    }
 
 	    const messageCard = document.createElement('div');
 	    messageCard.classList.add('card', 'w-100');
@@ -602,7 +623,7 @@ ws.onmessage = (event) => {
 	    messageCard.appendChild(cardHeader);
 	    messageCard.appendChild(cardBody);
 
-	    message.appendChild(avatar);
+	    message.appendChild(profile);
 	    message.appendChild(messageCard);
 	    chat.appendChild(message);
 
@@ -624,7 +645,8 @@ sendButton.addEventListener('click', () => {
             memberNo:  loginMemberNo,  
             memberName: loginMemberName,  
             message: messageContent,
-            receiverNo: currentReceiverNo
+            receiverNo: currentReceiverNo,
+            memberProfileUrl: loginMemberProfileUrl
         };
 
         // JSON 형식으로 메시지 데이터를 문자열로 변환하여 서버로 전송

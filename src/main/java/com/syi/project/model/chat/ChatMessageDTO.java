@@ -39,5 +39,8 @@ public class ChatMessageDTO {
 	
 	@Field(name="isRead")
 	private boolean isRead;//상대방이 읽었나
+	
+	@Field(name="memberProfileUrl")
+	private String memberProfileUrl;
 
 }
