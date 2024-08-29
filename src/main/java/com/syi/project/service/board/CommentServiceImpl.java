@@ -78,17 +78,21 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.selectCommentTotal(boardNo);
 	}
 	
-	// 댓글 수 증가
-	@Override
-	public void increaseComment(int boardNo) {
-		commentMapper.increaseComment(boardNo);
-	}
-	
 	// 댓글 생성
 	@Transactional
 	@Override
 	public int insertComment(CommentsVO comment) {
-		return commentMapper.insertComment(comment);
+		int result = commentMapper.insertComment(comment);
+		if(result > 0) {
+			increaseComment(comment.getCommentBoardNo());
+		}
+		return result;
+	}
+	
+	// 댓글 수 증가
+	@Override
+	public void increaseComment(int boardNo) {
+		commentMapper.increaseComment(boardNo);
 	}
 	
 	// 댓글 수정
@@ -100,54 +104,65 @@ public class CommentServiceImpl implements CommentService {
 	
 	
 	// 댓글 삭제
-	// 자식 댓글이 존재하지 않을 때 댓글 삭제되지 않는 오류
-	// 부모 댓글 재귀가 제대로 되지 않음
 	@Transactional
 	@Override
 	public String deleteComment(int commentNo, int boardNo) {
-		try {
-			int childCommentCount = commentMapper.selectChildrenCommentTotal(commentNo);
+		CommentsVO comment = commentMapper.getCommentByNo(commentNo);
 
-			if (childCommentCount > 0) {
-				// 자식 댓글 있는 경우 논리적 삭제
-				int result = commentMapper.updateCommentStatus(commentNo);
-				if (result > 0) {
-					commentMapper.decreaseComment(boardNo);
-				}
-				return result > 0 ? "deleted" : "fail";
-			} else {
-				// 자식 댓글 없는 경우 물리적 삭제
-				int parentNo = commentMapper.selectParentNo(commentNo);
-				int result = commentMapper.deleteComment(commentNo);
-				if (result > 0) {
-					commentMapper.decreaseComment(boardNo);
-				}
-				checkAndDeleteParentComments(parentNo);
-				return result > 0 ? "success" : "fail";
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("댓글 삭제 실패", e);
-		}
-	}
+        if (comment == null) {
+            return "fail";
+        }
+
+        List<CommentsVO> replies = commentMapper.getRepliesBycommentNo(commentNo);
+
+        if (!replies.isEmpty()) {
+            // 자식 댓글이 존재하는 경우 논리적 삭제
+            int updateResult = commentMapper.updateCommentStatus(commentNo);
+            if (updateResult > 0) {
+                decreaseComment(boardNo); 
+                return "deleted";
+            } else {
+                return "fail";
+            }
+        } else {
+            // 자식 댓글이 존재하지 않으면 물리적 삭제
+            int deleteResult = commentMapper.deleteComment(commentNo);
+            if (deleteResult > 0) {
+            	decreaseComment(boardNo);
+
+                // 부모 댓글도 삭제할지 검사
+                Integer parentCommentNo = comment.getCommentParentNo();
+                return deleteParentIfNecessary(parentCommentNo);
+            } else {
+            	return "fail";
+            }
+        }
+    }
 
 	// 부모 댓글 재귀적으로 처리
-	private void checkAndDeleteParentComments(int commentNo) {
-		CommentsVO parentComment = commentMapper.selectParentComment(commentNo);
+    private String deleteParentIfNecessary(Integer parentcommentNo) {
+        if (parentcommentNo == null) {
+            return "success";
+        }
 
-		while (parentComment != null) {
-			int parentCommentNo = parentComment.getCommentNo();
-			String status = commentMapper.selectCommentStatus(parentComment.getCommentNo());
-			int childCount = commentMapper.selectChildrenCommentTotal(parentCommentNo);
+        CommentsVO parentComment = commentMapper.getCommentByNo(parentcommentNo);
 
-			if ("N".equals(status) && childCount == 0) {
-				int result = commentMapper.deleteComment(parentCommentNo);
-				if (result > 0) {
-					commentMapper.decreaseComment(parentCommentNo);
-				}
-				parentComment = commentMapper.selectParentComment(parentCommentNo);
-			} else {
-				break;
-			}
-		}
+        if (parentComment != null && "N".equals(parentComment.getCommentStatus())) {
+            List<CommentsVO> siblingReplies = commentMapper.getRepliesBycommentNo(parentcommentNo);
+
+            if (siblingReplies.isEmpty()) {
+                commentMapper.deleteComment(parentcommentNo);
+                return deleteParentIfNecessary(parentComment.getCommentParentNo());
+            }
+        }
+
+        return "success";
+    }
+
+    // 댓글 수 감소
+	@Override
+	public void decreaseComment(int boardNo) {
+		commentMapper.decreaseComment(boardNo);
 	}
+   
 }

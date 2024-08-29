@@ -9,7 +9,7 @@ public interface CommentMapper {
 	// 댓글 생성
 	int insertComment(CommentsVO comment);
 
-	// 댓글 조회
+	// 댓글 전체 조회
 	List<CommentsVO> selectCommentList(int boardNo);
 
 	// 댓글 총 갯수
@@ -20,26 +20,20 @@ public interface CommentMapper {
 
 	// 댓글 수정
 	int updateComment(CommentsVO comment);
+	
+	// 댓글 조회
+	CommentsVO getCommentByNo(int commentNo);
 
 	// 자식 댓글 조회
-	int selectChildrenCommentTotal(int commentNo);
+	List<CommentsVO> getRepliesBycommentNo(int commentNo);
 
-	// 댓글 삭제 상태로 변경
+	// 댓글 논리적 삭제
 	int updateCommentStatus(int commentNo);
 
-	// 댓글 삭제
+	// 댓글 물리적 삭제
 	int deleteComment(int commentNo);
 
 	// 댓글수 감소
 	void decreaseComment(int boardNo);
-
-	// 부모 번호 조회
-	int selectParentNo(int commentNo);
-
-	// 부모 댓글 조회
-	CommentsVO selectParentComment(int commentNo);
-
-	// 댓글 상태 조회
-	String selectCommentStatus(int commentNo);
 
 }

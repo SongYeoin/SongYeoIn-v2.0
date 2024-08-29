@@ -40,7 +40,6 @@ public class CommentController {
 		comment.setCommentParentNo(parentCommentNo);
 		
 		commentService.insertComment(comment);
-		commentService.increaseComment(boardNo);
 		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
 	}
 
