@@ -52,4 +52,6 @@ public interface AdminMapper {
 	int deleteMember(MemberVO loginMember);
 
 	int updateMemberProfileUrl(MemberVO updateProfileMember);
+
+	int deleteMemberProfileUrl(int memberNo);
 }

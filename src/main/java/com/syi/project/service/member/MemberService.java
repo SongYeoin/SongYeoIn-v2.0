@@ -27,4 +27,6 @@ public interface MemberService {
 
 	public int updateMemberProfileUrl(MemberVO updateProfileMember);
 
+	public int deleteMemberProfileUrl(int memberNo);
+
 }
