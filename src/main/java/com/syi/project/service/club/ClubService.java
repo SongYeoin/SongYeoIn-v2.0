@@ -12,8 +12,8 @@ import com.syi.project.model.syclass.SyclassVO;
 
 public interface ClubService {
 
-	//동아리 리스트
-	public List<ClubVO> getList(int classNo);
+	//동아리 리스트(페이징)
+	public List<ClubVO> getListPaging(Criteria cri, int classNo);
 	
 	//동아리 등록
 	//public void enroll(int classNo, String join, Date studyDate, String content, int memberNo);
@@ -35,4 +35,7 @@ public interface ClubService {
 
 	//수강 반 목록
 	public List<SyclassVO> getClassNoListByMember(Integer memberNo);
+
+	//동아리 신청 총 갯수
+	public int getTotal(Criteria cri, int classNo);
 }

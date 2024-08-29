@@ -19,11 +19,11 @@ public class ClubServiceImpl implements ClubService{
 	@Autowired
 	private ClubMapper mapper;
 	
-	//리스트
+	//리스트(페이징)
 	@Override
-	public List<ClubVO> getList(int classNo) {
-		System.out.println("service: " + mapper.getList(classNo));
-		return mapper.getList(classNo);
+	public List<ClubVO> getListPaging(Criteria cri, int classNo) {
+		System.out.println("service: " + mapper.getListPaging(cri, classNo));
+		return mapper.getListPaging(cri, classNo);
 	}
 
 	//등록
@@ -73,6 +73,13 @@ public class ClubServiceImpl implements ClubService{
 	@Override
 	public List<SyclassVO> getClassNoListByMember(Integer memberNo) {
 		return mapper.getClassNoListByMember(memberNo);
+	}
+	
+	//동아리 신청 총 갯수
+	@Override
+	public int getTotal(Criteria cri, int classNo) {
+		
+		return mapper.getTotal(cri, classNo);
 	}
 	
 	

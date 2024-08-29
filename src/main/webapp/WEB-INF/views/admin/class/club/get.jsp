@@ -146,7 +146,7 @@ textarea {
 					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여</label> <input name="join" readonly="readonly" class="large-input"
+				<label>참여자</label> <input name="join" readonly="readonly" class="large-input"
 					value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">

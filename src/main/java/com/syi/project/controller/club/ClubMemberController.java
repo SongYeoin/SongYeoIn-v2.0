@@ -14,7 +14,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
@@ -43,6 +46,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
+import com.syi.project.model.PageDTO;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
@@ -67,9 +71,9 @@ public class ClubMemberController {
 	@Value("${file.upload.path}")
 	private String fileUploadPath;   
 
-	//리스트
+	//리스트(페이징)
 	@GetMapping("/club/list")
-	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
+	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, Criteria cri, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
 		
 		// 로그인한 멤버 정보 가져오기
@@ -85,32 +89,63 @@ public class ClubMemberController {
 	    }
 		
 	    System.out.println("classNo after service call: " + classNo);
-	    
-		List<ClubVO> list =  cservice.getList(classNo);
+	   
+		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
 		System.out.println(classNo);
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
+		
+		int total = cservice.getTotal(cri, classNo);
+		PageDTO pageMake = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMake);
 		
 		//수강 반 목록
 		Integer memberNo = member.getMemberNo();
 		List<SyclassVO> classList = cservice.getClassNoListByMember(memberNo);
 		model.addAttribute("classList", classList);
 		
+		//model.addAttribute("selectedClassNo", classNo); // 선택된 클래스 번호 추가
+		
 	    return "member/club/list";
 		
 	}
 	
+//	@GetMapping("/club/list/getByClass")
+//	@ResponseBody
+//	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
+//		if (classNo == null) {
+//	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
+//	        return new ArrayList<>();
+//	    }
+//		
+//		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
+//	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
+//
+//	}
+	
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
-	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo) {
-		if (classNo == null) {
-	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
-	        return new ArrayList<>();
+	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
+	                                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+	                                                 @RequestParam(value = "type", required = false) String type,
+	                                                 @RequestParam(value = "keyword", required = false) String keyword,
+	                                                 Criteria cri) {
+	    if (classNo == null) {
+	        return Collections.emptyMap();
 	    }
-		
-		List<ClubVO> clubs = cservice.getList(classNo);
-	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
+	    cri.setPageNum(pageNum);
+	    cri.setType(type);
+	    cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
+	    
+	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
+	    int total = cservice.getTotal(cri, classNo);
 
+	    PageDTO pageMake = new PageDTO(cri, total);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("list", clubs);
+	    response.put("pageInfo", pageMake);
+	    return response;
 	}
 	
 	//등록페이지
@@ -279,10 +314,6 @@ public class ClubMemberController {
 		rttr.addFlashAttribute("result", "delete success");
 		return "redirect:/member/club/list";
 	}
-	
-	//리스트 페이징 적용
-	
-	
 	
 
 }
