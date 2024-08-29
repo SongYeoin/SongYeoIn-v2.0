@@ -693,9 +693,9 @@ function formatDate(date) {
 		
      	// 반 선택 시 동작
         //$('#classSelect').change(sendClassChange);
-$('#classSelect').change(function() {
-    sendClassChange();
-});
+		$('#classSelect').change(function() {
+		    sendClassChange();
+		});
 
         const moveForm = $('#moveForm');
         
