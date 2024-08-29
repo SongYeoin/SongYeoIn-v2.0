@@ -1,6 +1,11 @@
 package com.syi.project.controller.member;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -8,21 +13,34 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
+import com.syi.project.service.chat.MessageService;
 import com.syi.project.service.member.AdminService;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @Controller
 @RequestMapping(value = "/admin")
@@ -35,6 +53,13 @@ public class AdminController {
 
 	@Autowired
 	private BCryptPasswordEncoder pwdEncoder;
+
+	@Autowired
+	private MessageService messageService;
+
+	// 파일 업로드 경로를 저장할 필드
+	@Value("C:/upload/temp")
+	private String fileUploadPath;
 
 	// 관리자 메인페이지, 관리자 수강생 조회 페이지
 	@GetMapping(value = { "main", "member/list" })
@@ -87,6 +112,9 @@ public class AdminController {
 		loginMember.setMemberPwd("");
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMember);
+
+		// 메시지 수 유무
+		messageService.getUnReadRoomCount(session);
 		return "redirect:/admin/main";
 	}
 
@@ -238,6 +266,115 @@ public class AdminController {
 			rttr.addFlashAttribute("delete_result", "fail");
 			return "redirect:/admin/mypage";
 		}
+	}
+
+	// 프로필 등록
+	@PostMapping("profile/upload")
+	public String uploadProfilePOST(MemberVO updateProfileMember, HttpSession session,
+			@RequestParam("file") MultipartFile file, @RequestParam("memberNo") int memberNo, RedirectAttributes rttr)
+			throws IOException {
+		// 프로필 저장하기- memberNo만 매핑되서 넘어옴
+
+		logger.info("fileUploadPath :{} " + fileUploadPath);// upload/temp
+
+		if (!file.isEmpty()) {
+			// 사용자별 디렉토리 생성
+			Path userDir = Paths.get(fileUploadPath, "member", Integer.toString(memberNo));
+			if (!Files.exists(userDir)) {
+				Files.createDirectories(userDir);
+				logger.info("Created directory: {}", userDir.toString());
+			}
+
+			// 파일 이름 변경
+			String originalFileName = file.getOriginalFilename();
+			String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+			String uniqueFileName = UUID.randomUUID().toString() + extension;
+
+			Path filePath = userDir.resolve(uniqueFileName);
+			logger.info("filePath: {}" + filePath);
+			Files.copy(file.getInputStream(), filePath);
+			logger.info("File saved to: {}", filePath.toString());
+
+			// 썸네일 파일 이름 및 경로
+	        String thumbnailFileName = "thumb_" + uniqueFileName;
+	        Path thumbnailPath = userDir.resolve(thumbnailFileName);
+	        logger.info("thumbnailPath: {}" + thumbnailPath);
+
+	        // 썸네일 생성
+	        try {
+				Thumbnails.of(file.getInputStream())
+				        .size(150, 150) // 썸네일 크기
+				        .toFile(thumbnailPath.toFile());
+				logger.info("Thumbnails saved to: {}", thumbnailPath.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// 파일 URL 생성
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/member/profile/")
+					.path(Integer.toString(memberNo)).path("/").path(thumbnailFileName).toUriString();
+			logger.info("Generated file download URI: {}", fileDownloadUri);
+
+
+			// 파일 URL 저장
+			updateProfileMember.setMemberProfileUrl(fileDownloadUri);
+			int result = adminService.updateMemberProfileUrl(updateProfileMember);
+
+			if (result > 0) {
+				rttr.addFlashAttribute("upload_profile", "success");
+
+				MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+				loginMember.setMemberProfileUrl(fileDownloadUri);
+				session.setAttribute("loginMember", loginMember);
+
+			} else {
+				rttr.addFlashAttribute("upload_profile", "fail");
+			}
+
+		}
+		return "redirect:/admin/main";
+
+	}
+
+	@GetMapping("profile/{memberNo}/{fileName:.+}")
+	public ResponseEntity<Resource> serveFile(@PathVariable String memberNo, @PathVariable String fileName) {
+
+		Path fileStorageLocation = Paths.get("C:/upload/temp/member");
+
+		try {
+			Path file = fileStorageLocation.resolve(Paths.get(memberNo, fileName)).normalize();
+			Resource resource = new UrlResource(file.toUri());
+
+			if (resource.exists() || resource.isReadable()) {
+				String contentType = Files.probeContentType(file); // MIME 타입 자동 감지
+				if (contentType == null) {
+					contentType = "application/octet-stream";
+				}
+				return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, contentType).body(resource);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@PostMapping("profile/delete")
+	public String profileDeletePOST(@RequestParam("memberNo")int memberNo,HttpSession session,RedirectAttributes rttr) {
+		logger.info("프로필을 삭제하려는 memberNo는 " + memberNo);
+		int result = adminService.deleteMemberProfileUrl(memberNo);
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		if(result>0) {
+			logger.info("프로필을 정상적으로 삭제했습니다.");
+			loginMember.setMemberProfileUrl("");
+			session.setAttribute("loginMember", loginMember);
+			rttr.addFlashAttribute("delete_profile", "success");
+		}else {
+			logger.info("프로필을 삭제에 실패했습니다.");
+			rttr.addFlashAttribute("delete_profile", "fail");
+		}
+		return "redirect:/admin/main";
 	}
 
 }

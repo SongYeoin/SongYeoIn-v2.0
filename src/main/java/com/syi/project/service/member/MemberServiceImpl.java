@@ -57,4 +57,16 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteMember(MemberVO loginMember) {
 		return memberMapper.deleteMember(loginMember);
 	}
+
+	@Transactional
+	@Override
+	public int updateMemberProfileUrl(MemberVO updateProfileMember) {
+		return memberMapper.updateMemberProfileUrl(updateProfileMember);
+	}
+
+	@Override
+	public int deleteMemberProfileUrl(int memberNo) {
+		return memberMapper.deleteMemberProfileUrl(memberNo);
+	}
+	
 }

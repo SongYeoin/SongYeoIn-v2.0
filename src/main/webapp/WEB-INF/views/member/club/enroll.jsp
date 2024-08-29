@@ -105,7 +105,7 @@ main {
 		    var studyDateInput = document.getElementById('studyDateInput').value;
 
 		    if (!joinInput || !studyDateInput) {
-		        alert('참여 또는 활동일을 입력해 주세요.');
+		        alert('참여자 또는 활동일을 입력해 주세요.');
 		        return false; // 폼 제출을 막습니다.
 		    }
 		    return true; // 폼 제출을 허용합니다.
