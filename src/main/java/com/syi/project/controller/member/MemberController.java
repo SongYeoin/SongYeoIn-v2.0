@@ -244,7 +244,7 @@ public class MemberController {
 	// 프로필 등록
 	@PostMapping("profile/upload")
 	public String uploadProfilePOST(MemberVO updateProfileMember, HttpSession session,
-			@RequestParam("file") MultipartFile file, @RequestParam("memberNo") int memberNo, RedirectAttributes rttr)
+			@RequestParam("profileImage") MultipartFile file, @RequestParam("memberNo") int memberNo, RedirectAttributes rttr)
 			throws IOException {
 		// 프로필 저장하기- memberNo만 매핑되서 넘어옴
 
