@@ -98,11 +98,13 @@ textarea {
 		<div>
 			<h1>수정 페이지</h1>
 			<form id="modifyForm" action="/member/club/modify" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="classNo" value="${param.classNo}">
+			<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'> 
 			
 			<c:if test="${pageInfo.checkStatus == 'W' }">
 			<div class="input_wrap">
 				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${pageInfo.rn }"/>'>
+					value='<c:out value="${rownum }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -147,7 +149,7 @@ textarea {
 			<c:if test="${pageInfo.checkStatus == 'Y' }">
 			<div class="input_wrap">
 				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${pageInfo.rn }"/>'>
+					value='<c:out value="${rownum }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -193,12 +195,7 @@ textarea {
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="list_btn">취소</a>
 			</div>
-			<form id="infoForm" action="/member/club/modify" method="get">
-				<input type="hidden" id="clubNo" name="clubNo"
-					value='<c:out value="${pageInfo.clubNo }"/>'> <input
-					type="hidden" name="keyword" value="${cri.keyword}"> <input
-					type="hidden" name="type" value="${cri.type}">
-			</form>
+			
 
 
 		</div>
@@ -216,11 +213,13 @@ textarea {
 
 		$("#list_btn").on("click", function(e) {
 			e.preventDefault();
-			form.find("#clubNo").remove();
+		    /* form.find("#clubNo").remove();
 			form.attr("action", "/member/club/list");
-			form.submit();
+			form.submit(); */
+			window.location.href = "/member/club/list?classNo=" + encodeURIComponent('<c:out value="${param.classNo}"/>');
+		
 		});
-
+	
 		$("#modify_btn").on("click", function(e) {
 			e.preventDefault();
 			

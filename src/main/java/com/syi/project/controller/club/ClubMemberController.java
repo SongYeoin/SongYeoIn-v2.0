@@ -91,7 +91,7 @@ public class ClubMemberController {
 	    System.out.println("classNo after service call: " + classNo);
 	   
 		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
-		System.out.println(classNo);
+		System.out.println("classNo : " + classNo);
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
 		
@@ -135,29 +135,32 @@ public class ClubMemberController {
 	    }
 	    cri.setPageNum(pageNum);
 	    cri.setType(type);
+	    cri.setKeyword(keyword);
 	    //cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
 	    
 	 // 승인 상태 키워드 변환
-	    if ("C".equals(type)) {
-	        cri.setKeyword("대기".equals(keyword) ? "W" : ("승인".equals(keyword) ? "Y" : ("미승인".equals(keyword) ? "N" : "")));
-	    } else {
-	        cri.setKeyword(keyword);
-	    }
+//	    if ("C".equals(type)) {
+//	        cri.setKeyword(keyword.equals("대기") ? "W" : (keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N" : "")));
+//	    } else {
+//	        cri.setKeyword(keyword);
+//	    }
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);
 
 	    PageDTO pageMake = new PageDTO(cri, total);
-
+	    System.out.println(classNo);
+	    
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("list", clubs);
 	    response.put("pageInfo", pageMake);
+	    response.put("classNo", classNo);
 	    return response;
 	}
 	
 	//등록페이지
 	@GetMapping("/club/enroll")
-	public void clubEnrollGET() {
+	public void clubEnrollGET(@RequestParam(value = "classNo", required = false) Integer classNo) {
 		log.info("등록 페이지 진입");
 	}
 	
@@ -214,24 +217,27 @@ public class ClubMemberController {
 	
 	//조회 HttpSession session
 	@GetMapping("/club/get")
-	public void clubGetPageGET(int clubNo, Model model) {
+	public void clubGetPageGET(int clubNo, Model model, int rn) {
 		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
 		//model.addAttribute("member", member);
 		
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
+		model.addAttribute("rownum", rn);
 		
 		// 선택 할 반 정보 프론트로 보내기
 		List<SyclassVO> classList = syclassService.getClassList();
 		model.addAttribute("classList", classList);
+
 	}
 	
 	//수정페이지 이동
 	@GetMapping("/club/modify")
-	public void clubModifyGET(int clubNo, Model model) {
+	public void clubModifyGET(int clubNo, Model model, int rn) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		System.out.println("modifypage : " +cservice.getPage(clubNo));
 		
+		model.addAttribute("rownum", rn);
 		
 		//현재 날짜 추가
 		LocalDate today = LocalDate.now();
@@ -244,7 +250,7 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam(value = "classNo", required = false) int classNo, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
 		
 		// 파일 업로드 처리
@@ -285,12 +291,12 @@ public class ClubMemberController {
 	            throw new Exception("파일 업로드 실패: " + fileName, e);
 	        }
 	    }
-
+	    
 	    cservice.modify(club);
 	    System.out.println("modify : " +cservice.modify(club));
 		rttr.addFlashAttribute("result", "modify success");
 		
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 	/* 첨부파일 다운로드 */

@@ -541,7 +541,14 @@ function formatDate(date) {
 				<h2>강의실 신청 목록</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
-						<%-- <input type="text" placeholder="Search..." id="search"> --%>
+
+						
+						<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
+						<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
+						<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
+						<input type="hidden" name="type" value="${pageMaker.cri.type }">
+						<input type="hidden" name="classNo" value="${classNo}">
+				
                         <select name="type">
                         	<option value="W" <c:out value="${pageMaker.cri.type eq 'W'? 'selected':''}"/>>작성자</option>
                         	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여자</option>
@@ -552,7 +559,7 @@ function formatDate(date) {
 					</form>
 				</div>
 				<div class="icons">
-					<a href="/member/club/enroll?classNo=${param.classNo}"><i class="fas fa-square-plus"></i></a>
+					<a href="/member/club/enroll?classNo=${param.classNo }"><i class="fas fa-square-plus"></i></a>
 				</div>
 			</div>
 
@@ -597,13 +604,13 @@ function formatDate(date) {
 					</ul>
 				</div>
 
-			<form id="moveForm" method="get">
+	<%-- 		<form id="moveForm" method="get">
 				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
 				<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
 				<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
 				<input type="hidden" name="type" value="${pageMaker.cri.type }">
 				<input type="hidden" name="classNo" value="${param.classNo}">
-			</form>
+			</form> --%>
 
 
 
@@ -670,6 +677,12 @@ function formatDate(date) {
 
 	<script>
 	$(document).ready(function(){
+
+/* 		let currentClassNo = '<c:out value="${param.classNo}"/>';
+
+	    // 페이지가 로드될 때 초기 classNo 설정
+	    $('#classSelect').val(currentClassNo);
+	     */
 		
 		function sendClassChange() {
 		    const classNo = $('#classSelect').val();
@@ -687,14 +700,14 @@ function formatDate(date) {
 		    
 		    loadPageData(classNo, pageNum); 
 		}
-
+    
 		function loadPageData(classNo, pageNum, type, keyword) {
 			 //const type = $("select[name='type']").val();
 			 //const keyword = $("input[name='keyword']").val();
 			 
 
 			// 승인 상태 키워드 변환
-			    if (type === 'C') {
+			     if (type === 'C') {
 			        keyword = keyword === '대기' ? 'W' : (keyword === '승인' ? 'Y' : (keyword === '미승인' ? 'N' : ''));
 			    }
 			
@@ -707,12 +720,15 @@ function formatDate(date) {
 		        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
 		        success: function(response) {
 		        	console.log('Response:', response); // 응답 데이터 확인
-		            //updateTable(response.list);
-		            //updatePagination(response.pageInfo);
 		        	 if (!response.list || response.list.length === 0) {
 		                 $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
 		             } else {
-		                 updateTable(response.list);
+		                 updateTable(response.list, response.classNo);
+		                 
+		              // 비동기 요청으로 인해 classNo가 변경되면 페이지의 classNo도 업데이트
+		                    //currentClassNo = response.classNo;
+		                    //$('#classSelect').val(currentClassNo);
+		                    
 		             }
 		             updatePagination(response.pageInfo);
 		        },
@@ -722,7 +738,7 @@ function formatDate(date) {
 		    });
 		}
 
-		function updateTable(data) {
+		function updateTable(data, classNo) {
 			console.log('테이블 데이터:', data); // 데이터 확인
 		    var tableBody = $('#tableContainer table tbody');
 		    tableBody.empty();
@@ -736,7 +752,7 @@ function formatDate(date) {
 		        var formattedStudyDate = formatDate(studyDate);
 		        var formattedRegDate = formatDate(regDate);
 		     
-		        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
+		        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '&rn=' + item.rn + '&classNo=' + classNo + '\'">' +
 		                    '<td>' + item.rn + '</td>' +
 		                    '<td>' + item.enroll.member.memberName + '</td>' +
 		                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
@@ -799,6 +815,7 @@ function formatDate(date) {
 		
 		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
         //sendClassChange();
+		//const classNo = '${param.classNo}';
 		const classNo = '<c:out value="${param.classNo}"/>';
         if (classNo) {
             $('#classSelect').val(classNo);
@@ -813,8 +830,8 @@ function formatDate(date) {
 		$('#classSelect').change(function() {
 		    sendClassChange();
 		});
-
-        const moveForm = $('#moveForm');
+        
+        //const moveForm = $('#moveForm');
         
         $('.search_area button').on('click', function(e) {
             e.preventDefault();
@@ -829,10 +846,10 @@ function formatDate(date) {
 				return false;
 			}
 			
-			if (!keyword) {
+			/* if (!keyword) {
 	            alert("키워드를 입력하세요");
 	            return false;
-	        }
+	        } */
 			
 			// 폼 필드 업데이트
 	        $('#searchForm').find("input[name='type']").val(type);

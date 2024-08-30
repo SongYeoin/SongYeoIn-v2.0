@@ -114,9 +114,10 @@ main {
 		function cancelForm() {
 			//window.location.href = '/member/club/list'; // 목록 페이지로 이동
 			
-			//var classNo = document.querySelector("input[name='classNo']").value;
-            //window.location.href = '/member/club/list?classNo=' + classNo; // 목록 페이지로 이동하며 classNo를 유지합니다.
-			window.history.back();
+			var classNo = document.querySelector("input[name='classNo']").value;
+            window.location.href = '/member/club/list?classNo=' + encodeURIComponent(classNo); // 목록 페이지로 이동하며 classNo를 유지합니다.
+			
+            //window.history.back();
       
 		}
 	</script>

@@ -99,7 +99,7 @@ textarea {
 			<h1>조회 페이지</h1>
 			<div class="input_wrap">
 				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${pageInfo.rn }"/>'>
+					value='<c:out value="${rownum }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -160,6 +160,9 @@ textarea {
 					value='<c:out value="${pageInfo.clubNo }"/>'> <input
 					type="hidden" name="keyword" value="${cri.keyword}"> <input
 					type="hidden" name="type" value="${cri.type}">
+					<input type="hidden" id="rn" name="rn"
+					value='<c:out value="${rownum }"/>'>
+					<input type="hidden" name="classNo" value="${param.classNo}">
 			</form>
 
 
@@ -182,11 +185,13 @@ textarea {
 		});
 
 		$("#modify_btn").on("click", function(e) {
+			 //e.preventDefault();
 			form.attr("action", "/member/club/modify");
 			form.submit();
 		});
 		
 		$("#delete_btn").on("click", function(e){
+			 //e.preventDefault();
 			form.attr("action", "/member/club/delete");
 			form.attr("method", "post");
 			form.submit();
