@@ -2,13 +2,15 @@ package com.syi.project.service.board;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.syi.project.model.Criteria;
 import com.syi.project.model.board.CommentsVO;
-import com.syi.project.model.board.HeartVO;
 
 public interface CommentService {
 
 	// 댓글 조회
-	List<CommentsVO> selectCommentList(int boardNo);
+	List<CommentsVO> selectCommentList(int boardNo, Criteria cri);
 
 	// 댓글 총 갯수
 	int selectCommentTotal(int boardNo);

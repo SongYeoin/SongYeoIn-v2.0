@@ -147,6 +147,43 @@ button:hover {
     gap: 10px;
 }
 
+.pageMaker_wrap {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.pageMaker_wrap a {
+    color: black;
+}
+
+.pageMaker {
+    list-style: none;
+    display: inline-block;
+}
+
+.pageMaker_btn {
+    float: left;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    margin-left: 20px;
+}
+
+.next, .prev {
+    border: 1px solid #ccc;
+    padding: 0 10px;
+}
+
+.next a, .prev a {
+    color: #ccc;
+}
+
+.active { /* 현재 페이지 버튼 */
+    border: 2px solid black;
+    font-weight: 400;
+}
+
 </style>
 </head>
 <body>
@@ -258,6 +295,31 @@ button:hover {
     			</c:choose>
 			</c:forEach>
 
+			<!-- 페이지 이동 인터페이스 영역 -->
+			<div class="pageMaker_wrap">
+				<ul class="pageMaker">
+					<!-- 이전 버튼 -->
+					<c:if test="${pageMaker.prev}">
+						<li class="pageMaker_btn prev"><a href="?boardNo=${board.boardNo}&pageNum=${pageMaker.pageStart - 1}">이전</a></li>
+					</c:if>
+
+					<!-- 페이지 번호 -->
+					<c:forEach begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}" var="num">
+						<li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="?boardNo=${board.boardNo}&pageNum=${num}">${num}</a></li>
+					</c:forEach>
+
+					<!-- 다음 버튼 -->
+					<c:if test="${pageMaker.next}">
+						<li class="pageMaker_btn next"><a href="?boardNo=${board.boardNo}&pageNum=${pageMaker.pageEnd + 1}">다음</a></li>
+					</c:if>
+				</ul>
+			</div>
+			
+			<form id="moveForm" action="${pageContext.servletContext.contextPath}/member/board/detail" method="get">
+				<input type="hidden" name="boardNo" value="${board.boardNo}">
+				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+				<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+			</form>
 
 			<!-- 게시글 버튼 -->
             <div class="button-container">
@@ -278,6 +340,14 @@ button:hover {
     if(message) {
         alert(message);
     }
+    
+  	//페이지 이동 버튼
+    $(".pageMaker_btn a").on("click", function(e){
+        e.preventDefault();
+        let pageNum = $(this).attr("href").split("pageNum=")[1];
+        $("#moveForm input[name='pageNum']").val(pageNum);
+        $("#moveForm").submit();
+    });
     
  	// 목록 버튼
     $("#listBtn").click(function() {

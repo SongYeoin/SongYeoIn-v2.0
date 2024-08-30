@@ -1,16 +1,13 @@
 package com.syi.project.service.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.syi.project.mapper.board.CommentMapper;
+import com.syi.project.model.Criteria;
 import com.syi.project.model.board.CommentsVO;
 
 @Service
@@ -21,8 +18,8 @@ public class CommentServiceImpl implements CommentService {
 
 	// 댓글 조회
 	@Override
-	public List<CommentsVO> selectCommentList(int boardNo) {
-		return commentMapper.selectCommentList(boardNo);
+	public List<CommentsVO> selectCommentList(int boardNo, Criteria cri) {
+		return commentMapper.selectCommentList(boardNo, cri);
 	}
 
 	/*
@@ -71,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
 		}
 	}
 	*/
-
+	
 	// 댓글 총 갯수
 	@Override
 	public int selectCommentTotal(int boardNo) {
@@ -164,5 +161,5 @@ public class CommentServiceImpl implements CommentService {
 	public void decreaseComment(int boardNo) {
 		commentMapper.decreaseComment(boardNo);
 	}
-   
+
 }

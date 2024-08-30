@@ -48,12 +48,12 @@ public class BoardController {
 	}
 
 	@GetMapping("/detail")
-	public String detailBoard(int boardNo, Model model, HeartVO heart, HttpSession session) {
+	public String detailBoard(int boardNo, Criteria cri, HeartVO heart, Model model, HttpSession session) {
 		long start = System.currentTimeMillis();
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
-		List<CommentsVO> commentList = commentService.selectCommentList(boardNo);
+		List<CommentsVO> commentList = commentService.selectCommentList(boardNo, cri);
 		
 		heart.setHeartBoardNo(boardNo);
 		heart.setHeartMemberNo(member.getMemberNo());
@@ -64,7 +64,12 @@ public class BoardController {
 		model.addAttribute("heartCount", heartCount);
 		
 		long end = System.currentTimeMillis();
-		double timeInSeconds = (end - start) / 1000.0;  
+		double timeInSeconds = (end - start) / 1000.0;
+		
+		int total = commentService.selectCommentTotal(boardNo);
+		PageDTO pageMaker = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMaker);
+		
 	    System.out.println(">>> 조회 소요 시간 : " + timeInSeconds + " 초");
 		return "member/board/detail";
 	}
