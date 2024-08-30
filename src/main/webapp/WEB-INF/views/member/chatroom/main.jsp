@@ -148,24 +148,24 @@ a.custom{
 							
 							
 							        <!-- 리스트 항목을 반복해서 출력 -->
-							        <c:forEach items="${enrollList}" var="enroll" varStatus="status">
+							        <c:forEach items="${enrollList}" var="cEnroll" varStatus="status">
 							        <!-- 이전에 출력된 adminNo 값을 저장할 변수 -->
 							        <c:set var="previousAdminNo" value="${enrollList[status.index - 1].syclass.adminNo}"/>
 							            <tr>
 							                <!-- 담당자명 출력 -->
 							                <td>
-							                    <c:out value="${enroll.syclass.managerName}"/>
+							                    <c:out value="${cEnroll.syclass.managerName}"/>
 							                </td>
 							                <!-- 수강과목명 출력 -->
 							                <td>
-							                    <c:out value="${enroll.syclass.className}"/>
+							                    <c:out value="${cEnroll.syclass.className}"/>
 							                </td>
 							                <!-- 라디오 버튼 -->
 							                <td>
 							                    <c:choose>
-												    <c:when test="${enroll.syclass.adminNo != previousAdminNo && !fn:contains(countOneSet, enroll.syclass.adminNo)}">
-												        <input type="radio" name="adminNo" value="${enroll.syclass.adminNo}" />
-												        <c:set var="previousAdminNo" value="${enroll.syclass.adminNo}"/>
+												    <c:when test="${cEnroll.syclass.adminNo != previousAdminNo && !fn:contains(countOneSet, cEnroll.syclass.adminNo)}">
+												        <input type="radio" name="adminNo" value="${cEnroll.syclass.adminNo}" />
+												        <c:set var="previousAdminNo" value="${cEnroll.syclass.adminNo}"/>
 												    </c:when>
 												    <c:otherwise>
 												    </c:otherwise>
