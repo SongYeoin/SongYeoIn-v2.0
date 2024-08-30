@@ -10,6 +10,7 @@ import lombok.Data;
 
 @Data
 public class NoticeVO {
+	
 	private int noticeNo;
 	private String noticeTitle;
 	private String noticeContent;
@@ -22,4 +23,5 @@ public class NoticeVO {
 	private SyclassVO syclass;
 	private MemberVO member;
 	private List<NoticeFileVO> fileList;
+	
 }

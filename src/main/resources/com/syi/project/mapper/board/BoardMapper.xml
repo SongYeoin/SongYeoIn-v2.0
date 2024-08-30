@@ -185,4 +185,7 @@
     	SET BOARD_HEART_COUNT = BOARD_HEART_COUNT - 1
     	WHERE BOARD_NO = #{ boardNo }
     </update>
+    
+    
   </mapper>
+  

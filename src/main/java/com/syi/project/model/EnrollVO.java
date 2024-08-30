@@ -13,4 +13,5 @@ public class EnrollVO {
 	private int memberNo;
 	private SyclassVO syclass;
 	private MemberVO member;
+	
 }
