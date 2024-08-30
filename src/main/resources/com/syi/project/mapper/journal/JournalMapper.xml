@@ -82,7 +82,7 @@
 
 		<!-- 제목 검색 조건 -->
 		<if test="cri.keyword != null and cri.keyword != ''">
-			AND JOURNAL_TITLE LIKE '%' || #{cri.keyword} || '%'
+		    AND LOWER(JOURNAL_TITLE) LIKE LOWER('%' || #{cri.keyword} || '%')
 		</if>
 
 		<!-- 작성일자 필터링 조건 -->
@@ -120,7 +120,7 @@
 
 		<!-- 제목 검색 조건 -->
 		<if test="cri.keyword != null and cri.keyword != ''">
-			AND JOURNAL_TITLE LIKE '%' || #{cri.keyword} || '%'
+		    AND LOWER(JOURNAL_TITLE) LIKE LOWER('%' || #{cri.keyword} || '%')
 		</if>
 
 		<!-- 작성일자 필터링 조건 -->

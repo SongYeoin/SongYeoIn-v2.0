@@ -25,29 +25,32 @@
 
 /* html과 body 요소의 높이를 설정하여 페이지의 기본 높이를 1080px로 설정 */
 html, body {
-    height: 100%;
+    height: auto; /* 고정 높이 제거 */
     margin: 0;
     padding: 0;
 }
-
 /* body의 기본 폰트와 레이아웃 설정 */
 body {
-	font-family: Arial, sans-serif;
-	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
-	display: flex; /* flexbox 레이아웃 사용 */
-	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+    overflow-y: auto; /* 전체 페이지에 대한 스크롤 추가 */
 }
 
-/* main 요소의 위치와 스크롤 설정 */
 main {
     flex: 1;
     margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
     margin-top: 100px; /* 헤더 높이에 맞춰 조정 */
-    padding: 20px; /* 전체적인 내부 여백 조정 */
-    overflow-y: auto;
-    height: 100%;
+    padding: 30px; /* 전체적인 내부 여백 추가 */
+    /* overflow-y: auto; 이 줄을 제거 */
+    /* height: 100%; 이 줄을 제거 */
 }
 
+/* 관리자용 main 스타일 추가 */
+main.admin {
+    margin-top: 150px; /* 관리자용 상단 여백 */
+}
 
 .classroom-header {
 	background-color: #f1f1f1;
@@ -439,7 +442,7 @@ td.checkStatus.N {
 		</c:when>
 	</c:choose>
 
-	<main>
+	<main class="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' ? 'admin' : ''}">
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">
@@ -447,8 +450,7 @@ td.checkStatus.N {
 			<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
 				<div class="select-box">
 					<!-- 반 선택 드롭다운 -->
-					<select id="classSelect" name="classNo"
-						onchange="changeClass(this.value)">
+					<select id="classSelect" name="classNo" onchange="changeClass(this.value)">
 						<c:forEach var="classItem" items="${classList}">
 							<option value="${classItem.classNo}"
 								<c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
@@ -477,17 +479,20 @@ td.checkStatus.N {
 								<c:if test="${param.category == 'all'}">selected</c:if>>전체</option>
 							<option value="title"
 								<c:if test="${param.category == 'title'}">selected</c:if>>단원명</option>
+							<option value="description"
+								<c:if test="${param.category == 'description'}">selected</c:if>>학습주제</option>
 							<option value="instructor"
 								<c:if test="${param.category == 'instructor'}">selected</c:if>>강사</option>
-						</select> <input type="text" id="keyword" name="keyword"
-							value="${param.keyword}" placeholder="검색"> <select
+						</select> 
+						<input type="text" id="keyword" name="keyword" value="${param.keyword}" placeholder="검색"> <select
 							id="year" name="year">
 							<option value="" <c:if test="${empty param.year}">selected</c:if>>년도</option>
 							<c:forEach var="i" begin="2020" end="2025">
 								<option value="${i}"
 									<c:if test="${param.year == i}">selected</c:if>>${i}</option>
 							</c:forEach>
-						</select> <select id="month" name="month">
+						</select> 
+						<select id="month" name="month">
 							<option value=""
 								<c:if test="${empty param.month}">selected</c:if>>월</option>
 							<c:forEach var="i" begin="1" end="12">
@@ -549,8 +554,7 @@ td.checkStatus.N {
 
 							<!-- 이전페이지 버튼 -->
 							<c:if test="${pageMaker.prev}">
-								<li class="pageInfo_btn previous"><a
-									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">이전</a>
+								<li class="pageInfo_btn previous"><a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.cri.pageNum - 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">이전</a>
 								</li>
 							</c:if>
 
@@ -558,16 +562,14 @@ td.checkStatus.N {
 							<!-- 페이징 부분 수정 -->
 							<c:forEach var="num" begin="${pageMaker.pageStart}"
 								end="${pageMaker.pageEnd}">
-								<li
-									class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
+								<li class="pageInfo_btn ${pageMaker.cri.pageNum == num ? 'active' : ''}">
 									<a href="javascript:void(0);" onclick="changePage(${num})">${num}</a>
 								</li>
 							</c:forEach>
 
 							<!-- 다음페이지 버튼 -->
 							<c:if test="${pageMaker.next}">
-								<li class="pageInfo_btn next"><a
-									href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">다음</a>
+								<li class="pageInfo_btn next"><a href="${pageContext.request.contextPath}/journal/scheduleList?pageNum=${pageMaker.pageEnd + 1}&amount=${pageMaker.cri.amount}&keyword=${param.keyword}&category=${pageMaker.cri.category}&year=${param.year}&month=${param.month}">다음</a>
 								</li>
 							</c:if>
 						</ul>
@@ -576,6 +578,8 @@ td.checkStatus.N {
 				</div>
 			</div>
 		</div>
+		
+		
 	</main>
 
 	<!-- 푸터 연결 -->

@@ -98,20 +98,18 @@
             AND (es.class_no = #{classNo} OR es.class_no IS NULL)
     ]]>
 		<if test="cri.category == 'title'">
-			AND UPPER(es.schedule_title) LIKE UPPER('%' ||
-			#{cri.keyword} || '%')
+			AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+		</if>
+		<if test="cri.category == 'description'">
+			AND UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
 		</if>
 		<if test="cri.category == 'instructor'">
-			AND UPPER(es.schedule_instructor) LIKE UPPER('%' ||
-			#{cri.keyword} ||
-			'%')
+			AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
 		</if>
 		<if test="cri.category == 'all'">
-			AND (UPPER(es.schedule_title) LIKE UPPER('%' ||
-			#{cri.keyword} || '%')
-			OR UPPER(es.schedule_instructor) LIKE UPPER('%'
-			|| #{cri.keyword} ||
-			'%'))
+			AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+			OR UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
+			OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
 		</if>
 		<if test="cri.year != null and cri.year != ''">
 			AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}
@@ -134,20 +132,18 @@
 		AND (es.class_no =
 		#{classNo} OR es.class_no IS NULL)
 		<if test="cri.category == 'title'">
-			AND UPPER(es.schedule_title) LIKE UPPER('%' ||
-			#{cri.keyword} || '%')
+			AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+		</if>
+		<if test="cri.category == 'description'">
+			AND UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
 		</if>
 		<if test="cri.category == 'instructor'">
-			AND UPPER(es.schedule_instructor) LIKE UPPER('%' ||
-			#{cri.keyword} ||
-			'%')
+			AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
 		</if>
 		<if test="cri.category == 'all'">
-			AND (UPPER(es.schedule_title) LIKE UPPER('%' ||
-			#{cri.keyword} || '%')
-			OR UPPER(es.schedule_instructor) LIKE UPPER('%'
-			|| #{cri.keyword} ||
-			'%'))
+			AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+			OR UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
+			OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
 		</if>
 		<if test="cri.year != null and cri.year != ''">
 			AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}

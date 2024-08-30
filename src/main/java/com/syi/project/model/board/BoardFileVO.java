@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class BoardFileVO {
+	
 	private int fileNo;
 	private String fileOriginalName;
 	private String fileSavedName;
@@ -14,4 +15,5 @@ public class BoardFileVO {
 	private String filePath;
 	private Date fileRegDate;
 	private int fileBoardNo;
+	
 }
