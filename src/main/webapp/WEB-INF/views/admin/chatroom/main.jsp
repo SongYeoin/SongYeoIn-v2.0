@@ -127,8 +127,8 @@ a.custom{
 				
 					<select id="classSelect" class="form-select" aria-label="Default select example" onchange="updateHiddenInput()">
 					  <option value='' disabled selected>반을 선택해주세요</option>
-					  <c:forEach items="${adminClassList}" var="class">
-					  	<option value="${class.classNo }"><c:out value="${class.className}"></c:out></option>
+					  <c:forEach items="${adminClassList}" var="classs">
+					  	<option value="${classs.classNo }"><c:out value="${classs.className}"></c:out></option>
 					  </c:forEach>
 					</select>
 					
