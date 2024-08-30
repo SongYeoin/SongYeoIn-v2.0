@@ -22,25 +22,31 @@
 
 /* html과 body 요소의 높이를 설정하여 페이지의 기본 높이를 1080px로 설정 */
 html, body {
-	height: 1080px; /* html과 body의 높이를 1080px로 설정 */
+    height: auto; /* 고정 높이 제거 */
+    margin: 0;
+    padding: 0;
 }
-
 /* body의 기본 폰트와 레이아웃 설정 */
 body {
-	font-family: Arial, sans-serif;
-	/* 기본 폰트를 Arial로 설정하고, 대체 폰트로 sans-serif 사용 */
-	display: flex; /* flexbox 레이아웃 사용 */
-	flex-direction: column; /* 자식 요소들을 수직으로 배치 */
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+    overflow-y: auto; /* 전체 페이지에 대한 스크롤 추가 */
 }
 
-/* main 요소의 위치와 스크롤 설정 */
 main {
     flex: 1;
     margin-left: 250px; /* 사이드바 너비에 맞춰 조정 */
     margin-top: 100px; /* 헤더 높이에 맞춰 조정 */
     padding: 30px; /* 전체적인 내부 여백 추가 */
-    overflow-y: auto;
-    height: 100%;
+    /* overflow-y: auto; 이 줄을 제거 */
+    /* height: 100%; 이 줄을 제거 */
+}
+
+/* 관리자용 main 스타일 추가 */
+main.admin {
+    margin-top: 150px; /* 관리자용 상단 여백 */
 }
 
 .classroom-header {
@@ -297,54 +303,109 @@ td.checkStatus.N {
 
 /* Custom FullCalendar Styles */
 #calendar {
-	max-width: 80%; /* 캘린더의 최대 너비를 80%로 설정 */
-	margin: 0 auto; /* 캘린더를 중앙에 배치 */
-	height: auto; /* 자동 높이 설정으로 모든 날짜가 보이게 함 */
-	min-height: 500px; /* 캘린더의 최소 높이 설정 */
-	overflow: hidden; /* 스크롤 제거 */
-	border-radius: 5px; /* 모서리를 둥글게 설정 */
+    max-width: 1000px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-/* Custom FullCalendar Styles */
-.fc {
-	font-family: Arial, sans-serif;
+.fc-header-toolbar {
+    margin-bottom: 1.5em !important;
+}
+
+.fc-toolbar-title {
+    font-size: 1.5em !important;
+    font-weight: bold;
+    color: #333;
+}
+
+.fc-button-primary {
+    background-color: #191919 !important;
+    border-color: #A6A6A6 !important;
+}
+
+.fc-button-primary:hover {
+    background-color: #191919 !important;
+    border-color: #191919 !important;
+}
+
+.fc-day-today {
+    background-color: #e8f4fd !important;
 }
 
 .fc-daygrid-day-number {
-	color: #333; /* 날짜 숫자 색상 */
+    color: #212121;
+    font-weight: bold;
+    padding: 5px;
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 요일 색상 변경 */
+.fc-col-header-cell-cushion {
+    color: #212121; /* 기본 색상 */
+    font-weight: bold;
+    text-decoration: none; /* 요일의 밑줄 제거 */
+}
+
+/* 일요일 색상 */
+.fc-day-sun .fc-col-header-cell-cushion {
+    color: #FF0000; 
+}
+
+/* 토요일 색상 */
+.fc-day-sat .fc-col-header-cell-cushion {
+    color: #0054FF; 
 }
 
 .fc-daygrid-day-top {
-	background-color: #e0e0e0; /* 날짜 헤더 배경 색상 */
-	border-bottom: 1px solid #ddd;
+    padding: 5px;
 }
 
 .fc-daygrid-day {
-	border: 1px solid #ddd; /* 날짜 셀 테두리 색상 */
-	background-color: #ffffff; /* 날짜 셀 배경 색상 */
-	border-radius: 8px; /* 둥글게 처리 */
+    transition: background-color 0.3s ease;
 }
 
-.fc-daygrid-day.fc-day-today {
-	background-color: #f0f0f0; /* 오늘 날짜 배경 색상 */
+/* 일정 표기되는 색상 */
+.fc-event {
+    border: none;
+    background-color: #B1DB4E;
+    color: white;
+    border-radius: 3px;
+    font-size: 0.85em;
+    padding: 2px 5px;
 }
 
-.fc-daygrid-day.fc-day-past {
-	background-color: #f5f5f5; /* 과거 날짜 배경 색상 */
+.fc-event:hover {
+    background-color: #747474;
 }
 
-.fc-daygrid-day.fc-day-future {
-	background-color: #ffffff; /* 미래 날짜 배경 색상 */
+.fc-day-other .fc-daygrid-day-top {
+    opacity: 0.3;
 }
 
-.fc-button {
-	background-color: #6c757d; /* 버튼 배경 색상 */
-	color: #ffffff;
-	border-radius: 4px;
+.fc th {
+    padding: 10px 0;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #666;
 }
 
-.fc-button:hover {
-	background-color: #5a6268; /* 버튼 호버 색상 */
+.fc-view-harness {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.fc-scrollgrid {
+    border: none !important;
+}
+
+.fc-col-header-cell {
+    background-color: #f8f8f8;
 }
 </style>
 
@@ -377,7 +438,7 @@ td.checkStatus.N {
 		</c:when>
 	</c:choose>
 
-	<main>
+	<main class="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN' ? 'admin' : ''}">
 
 		<!-- 제목과 클래스 선택 박스 -->
 		<div class="title-container">

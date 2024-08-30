@@ -41,12 +41,11 @@ public class EduScheduleController {
 	@Autowired
 	private EnrollService enrollService;
 
-	// 일정 리스트 조회
+	// 일정 리스트 조회 - 페이지 접속
     @GetMapping("scheduleList")
     public String scheduleList(Criteria cri, Model model, HttpSession session,
                                @RequestParam(value = "classNo", required = false) Integer classNo) {
         
-        // 로그인 확인
         MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
         if (loginMember == null) {
             return "redirect:/member/login";
@@ -54,95 +53,105 @@ public class EduScheduleController {
 
         boolean isAdmin = "ROLE_ADMIN".equals(loginMember.getMemberRole());
 
-        // 클래스 번호 설정
         if (isAdmin) {
-            SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
-            if (syclass != null) {
-                classNo = syclass.getClassNo();
-            } else if (classNo == null) {
-                return "redirect:/admin/class/getClassList";
-            }
+            return adminScheduleList(cri, model, session, classNo);
         } else {
-            if (classNo == null) {
-                classNo = (Integer) session.getAttribute("selectedClassNo");
-                if (classNo == null) {
-                    classNo = enrollService.selectClassNo(loginMember.getMemberNo());
-                    if (classNo == null || classNo == 0) {
-                        return "redirect:/noClass";
-                    }
-                }
-            }
-            
-            // 사용자의 수강 중인 반 목록 조회
-            List<EnrollVO> classList = enrollService.selectEnrollList(loginMember.getMemberNo());
-            model.addAttribute("classList", classList);
+            return memberScheduleList(cri, model, session, classNo, loginMember.getMemberNo());
         }
+    }
+
+    // 일정 리스트 조회 - 관리자
+    private String adminScheduleList(Criteria cri, Model model, HttpSession session, Integer classNo) {
+        
+    	SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
+        classNo = syclass.getClassNo();
 
         session.setAttribute("selectedClassNo", classNo);
 
-        logger.info("scheduleList 호출: classNo={}, cri={}", classNo, cri);
-
-        // 일정 목록 조회
         List<EduScheduleVO> scheduleList = eduScheduleService.scheduleList(cri, classNo);
-        logger.info("조회된 일정 목록: {}", scheduleList);
-        model.addAttribute("scheduleList", scheduleList);
-
-        // 페이징 처리
         int total = eduScheduleService.scheduleGetTotal(cri, classNo);
-        model.addAttribute("pageMaker", new PageDTO(cri, total));
 
-        // 전체 일정 목록 조회 (캘린더용)
-        List<EduScheduleVO> scheduleAllList = eduScheduleService.scheduleAllList(classNo);
-        model.addAttribute("scheduleAllList", scheduleAllList);
-
-        model.addAttribute("selectedClassNo", classNo);
-        model.addAttribute("isAdmin", isAdmin);
+        commonModelAttributes(model, cri, scheduleList, total, classNo, true);
 
         return "journal/scheduleList";
     }
 
-	// 캘린더용 일정 데이터 조회
-    @GetMapping("getScheduleForClass")
-    @ResponseBody
-    public List<Map<String, Object>> getScheduleForClass(@RequestParam("classNo") int classNo) {
-        List<EduScheduleVO> schedules = eduScheduleService.scheduleAllList(classNo);
-        List<Map<String, Object>> events = new ArrayList<>();
-        for (EduScheduleVO schedule : schedules) {
-            Map<String, Object> event = new HashMap<>();
-            event.put("title", schedule.getScheduleTitle());
-            event.put("start", schedule.getScheduleDate());
-            event.put("url", "/journal/scheduleDetail?scheduleNo=" + schedule.getScheduleNo());
-            events.add(event);
+    // 일정 리스트 조회 - 수강생
+    private String memberScheduleList(Criteria cri, Model model, HttpSession session, Integer classNo, int memberNo) {
+        if (classNo == null) {
+            classNo = (Integer) session.getAttribute("selectedClassNo");
+            if (classNo == null) {
+                classNo = enrollService.selectClassNo(memberNo);
+            }
         }
-        return events;
+        
+        List<EnrollVO> classList = enrollService.selectEnrollList(memberNo);
+        model.addAttribute("classList", classList);
+
+        session.setAttribute("selectedClassNo", classNo);
+
+        List<EduScheduleVO> scheduleList = eduScheduleService.scheduleList(cri, classNo);
+        int total = eduScheduleService.scheduleGetTotal(cri, classNo);
+
+        commonModelAttributes(model, cri, scheduleList, total, classNo, false);
+
+        return "journal/scheduleList";
     }
 
-    // 일정 상세 조회
-    @GetMapping("scheduleDetail")
-    public String scheduleDetail(@RequestParam("scheduleNo") int scheduleNo, Model model, HttpSession session) {
-        MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
-        if (loginMember == null) {
-            return "redirect:/login";
-        }
-
-        boolean isAdmin = "ROLE_ADMIN".equals(loginMember.getMemberRole());
-        EduScheduleVO schedule = eduScheduleService.scheduleDetail(scheduleNo);
-        model.addAttribute("scheduleDetail", schedule);
+    // 교육일정 조회 - 공통 모델 속성 설정
+    private void commonModelAttributes(Model model, Criteria cri, List<EduScheduleVO> scheduleList,
+                                       int total, int classNo, boolean isAdmin) {
+        model.addAttribute("scheduleList", scheduleList);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("scheduleAllList", eduScheduleService.scheduleAllList(classNo));
+        model.addAttribute("selectedClassNo", classNo);
         model.addAttribute("isAdmin", isAdmin);
-
-        return "journal/scheduleDetail";
     }
+
+	// 캘린더용 일정 데이터 조회
+	@GetMapping("getScheduleForClass")
+	@ResponseBody
+	public List<Map<String, Object>> getScheduleForClass(@RequestParam("classNo") int classNo) {
+		List<EduScheduleVO> schedules = eduScheduleService.scheduleAllList(classNo);
+		List<Map<String, Object>> events = new ArrayList<>();
+		for (EduScheduleVO schedule : schedules) {
+			Map<String, Object> event = new HashMap<>();
+			event.put("title", schedule.getScheduleTitle());
+			event.put("start", schedule.getScheduleDate());
+			event.put("url", "/journal/scheduleDetail?scheduleNo=" + schedule.getScheduleNo());
+			events.add(event);
+		}
+		return events;
+	}
+
+	// 일정 상세 조회
+	@GetMapping("scheduleDetail")
+	public String scheduleDetail(@RequestParam("scheduleNo") int scheduleNo, Model model, HttpSession session) {
+		
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			return "redirect:/member/login";
+		}
+
+		boolean isAdmin = "ROLE_ADMIN".equals(loginMember.getMemberRole());
+		EduScheduleVO schedule = eduScheduleService.scheduleDetail(scheduleNo);
+		model.addAttribute("scheduleDetail", schedule);
+		model.addAttribute("isAdmin", isAdmin);
+
+		return "journal/scheduleDetail";
+	}
 
 	// 일정 등록
 	@GetMapping("admin/scheduleCreate")
-	public String showCreateScheduleForm(Model model, HttpSession session) {
+	public String showCreateScheduleForm(Model model, HttpSession session, RedirectAttributes rttr) {
 
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-			return "redirect:/login";
+			return "redirect:/member/login";
 		}
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		if (syclass == null) {
+			rttr.addFlashAttribute("error", "클래스 정보를 찾을 수 없습니다.");
 			return "redirect:/admin/class/getClassList";
 		}
 		model.addAttribute("syclass", syclass);
@@ -156,13 +165,11 @@ public class EduScheduleController {
 
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-			logger.warn("권한 없는 사용자의 접근 시도");
 			return "redirect:/member/login";
 		}
 
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		if (syclass == null) {
-			logger.error("세션에 syclass 정보가 없습니다.");
 			rttr.addFlashAttribute("error", "클래스 정보를 찾을 수 없습니다.");
 			return "redirect:/journal/scheduleList";
 		}
@@ -207,27 +214,24 @@ public class EduScheduleController {
 
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-			return "redirect:/login";
+			return "redirect:/member/login";
 		}
 
 		eduScheduleService.scheduleUpdate(schedule);
-
-		EduScheduleVO updatedSchedule = eduScheduleService.scheduleDetail(schedule.getScheduleNo());
 
 		return "redirect:/journal/scheduleList";
 	}
 
 	// 일정 삭제
 	@PostMapping("admin/scheduleDelete")
-	public String scheduleDelete(@RequestParam("scheduleNo") int scheduleNo, HttpSession session,
-			RedirectAttributes rttr) {
+	public String scheduleDelete(@RequestParam("scheduleNo") int scheduleNo, HttpSession session) {
 
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
 		if (member == null || !"ROLE_ADMIN".equals(member.getMemberRole())) {
-			return "redirect:/login";
+			return "redirect:/member/login";
 		}
+		
 		eduScheduleService.scheduleDelete(scheduleNo);
-		rttr.addFlashAttribute("message", "일정이 성공적으로 삭제되었습니다.");
 		return "redirect:/journal/scheduleList";
 	}
 }
