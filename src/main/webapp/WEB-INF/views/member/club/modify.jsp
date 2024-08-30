@@ -195,16 +195,12 @@ textarea {
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="list_btn">취소</a>
 			</div>
-			
-
-
 		</div>
 
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
-
 
 	<script>
 	$(document).ready(function() {
@@ -213,11 +209,7 @@ textarea {
 
 		$("#list_btn").on("click", function(e) {
 			e.preventDefault();
-		    /* form.find("#clubNo").remove();
-			form.attr("action", "/member/club/list");
-			form.submit(); */
 			window.location.href = "/member/club/list?classNo=" + encodeURIComponent('<c:out value="${param.classNo}"/>');
-		
 		});
 	
 		$("#modify_btn").on("click", function(e) {
@@ -229,21 +221,13 @@ textarea {
 		});
 		
 		function validateForm() {
-		    /* var checkStatus = document.getElementById('checkStatusInput').value;
-		    var joinInput = document.getElementById('joinInput').value;
-		    var studyDateInput = document.getElementById('studyDateInput').value;
-		    var fileInput = document.getElementById('fileInput').files.length;
-		     */
-		     
 		     let checkStatus = $("#checkStatusInput").val();
 	         let joinInput = $("#joinInput").val();
 	         let studyDateInput = $("#studyDateInput").val();
 	         let fileInputElement = $("#fileInput").get(0);
 	         let fileInput = fileInputElement ? fileInputElement.files.length : 0;
-		    //let fileInput = $("#fileInput").files.length;
 	         
 		    console.log(checkStatus);
-		    
 		    
 		    // checkStatus가 '승인대기'인 경우에만 검증 수행
 		    if (checkStatus === '대기') {

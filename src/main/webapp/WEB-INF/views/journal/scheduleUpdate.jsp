@@ -61,6 +61,11 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 추가 및 수정된 스타일 */
 .form-container {
     max-width: 600px;

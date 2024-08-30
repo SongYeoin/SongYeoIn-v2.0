@@ -98,7 +98,6 @@ main {
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
-	
 	<script>
 		function validateForm() {
 		    var joinInput = document.getElementById('joinInput').value;
@@ -111,14 +110,9 @@ main {
 		    return true; // 폼 제출을 허용합니다.
 		}
 		
-		function cancelForm() {
-			//window.location.href = '/member/club/list'; // 목록 페이지로 이동
-			
+		function cancelForm() {			
 			var classNo = document.querySelector("input[name='classNo']").value;
-            window.location.href = '/member/club/list?classNo=' + encodeURIComponent(classNo); // 목록 페이지로 이동하며 classNo를 유지합니다.
-			
-            //window.history.back();
-      
+            window.location.href = '/member/club/list?classNo=' + encodeURIComponent(classNo); // 목록 페이지로 이동하며 classNo를 유지합니다.      
 		}
 	</script>
 </body>

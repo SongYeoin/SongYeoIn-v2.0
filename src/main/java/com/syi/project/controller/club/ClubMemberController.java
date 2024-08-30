@@ -104,25 +104,10 @@ public class ClubMemberController {
 		List<SyclassVO> classList = cservice.getClassNoListByMember(memberNo);
 		model.addAttribute("classList", classList);
 		
-		//model.addAttribute("selectedClassNo", classNo); // 선택된 클래스 번호 추가
-		
 	    return "member/club/list";
 		
 	}
-	
-//	@GetMapping("/club/list/getByClass")
-//	@ResponseBody
-//	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
-//		if (classNo == null) {
-//	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
-//	        return new ArrayList<>();
-//	    }
-//		
-//		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
-//	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
-//
-//	}
-	
+		
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
 	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
@@ -135,15 +120,13 @@ public class ClubMemberController {
 	    }
 	    cri.setPageNum(pageNum);
 	    cri.setType(type);
-	    cri.setKeyword(keyword);
-	    //cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
 	    
-	 // 승인 상태 키워드 변환
-//	    if ("C".equals(type)) {
-//	        cri.setKeyword(keyword.equals("대기") ? "W" : (keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N" : "")));
-//	    } else {
-//	        cri.setKeyword(keyword);
-//	    }
+	    // 승인 상태 키워드 변환	    
+	    if ("C".equals(type)) {
+	        cri.setKeyword("대기".equals(keyword) ? "W" : "승인".equals(keyword) ? "Y" : "미승인".equals(keyword) ? "N" : "");
+	    } else {
+	        cri.setKeyword(keyword);
+	    }
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);
@@ -162,33 +145,9 @@ public class ClubMemberController {
 	@GetMapping("/club/enroll")
 	public void clubEnrollGET(@RequestParam(value = "classNo", required = false) Integer classNo) {
 		log.info("등록 페이지 진입");
+		
+		System.out.println("enroll get classNo : " + classNo);
 	}
-	
-//	@PostMapping("/club/enroll")
-//	public String clubEnrollPOST(@RequestParam(value = "classNo", required = false) Integer classNo, 
-//            @RequestParam("join") String join, 
-//            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") java.util.Date studyDate, 
-//            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException{
-//		
-//		MemberVO member = (MemberVO)session.getAttribute("loginMember");
-//		int memberNo = member.getMemberNo();
-//		
-//		if(classNo == null) {
-//			System.out.println("classNo null");
-//			classNo = cservice.getDefaultClassNoByMember(memberNo);
-//		}
-//		
-//		log.info("classNo : "+classNo);
-//		
-//		// Date 타입을 SQL Date로 변환
-//	    java.sql.Date sqlDate = new java.sql.Date(studyDate.getTime());
-//	 
-//		cservice.enroll(classNo, join, sqlDate, content, memberNo);
-//		
-//		rttr.addFlashAttribute("result", "enroll success");
-//		
-//		return "redirect:/member/club/list";
-//	}
 	
 	@PostMapping("/club/enroll")
 	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) int classNo, RedirectAttributes rttr) {
@@ -196,31 +155,20 @@ public class ClubMemberController {
 		
 		MemberVO member = (MemberVO)session.getAttribute("loginMember");
 		
-		// ClubVO에 memberNo 설정
-	    //club.setEnroll(new EnrollVO());  // 새 EnrollVO 인스턴스를 생성하여 할당
-	    //club.getEnroll().setMemberNo(member.getMemberNo());  // 세션에서 가져온 로그인 사용자 ID
-	    //club.getEnroll().setClassNo(classNo);  // 폼에서 전송된 classNo
-        
-	    // ClubVO에 EnrollVO 설정
-	    EnrollVO enroll = new EnrollVO();
-	    enroll.setMemberNo(member.getMemberNo()); // 로그인한 사용자의 memberNo 설정
-	    enroll.setClassNo(classNo); // 전달된 classNo 설정
+		int memberNo = member.getMemberNo();
+
+	    System.out.println("enroll post classNo : " + classNo);
 	    
-	    club.setEnroll(enroll); // ClubVO에 EnrollVO 설정
-	    
-	    cservice.enroll(club);
+	    cservice.enroll(club, classNo, memberNo);
 	    
 		rttr.addFlashAttribute("result", "enroll success");
 		System.out.println("classNo : "+classNo);
 		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
-	//조회 HttpSession session
+	//조회
 	@GetMapping("/club/get")
 	public void clubGetPageGET(int clubNo, Model model, int rn) {
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
-		//model.addAttribute("member", member);
-		
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		model.addAttribute("rownum", rn);
@@ -334,10 +282,10 @@ public class ClubMemberController {
 	
 	//삭제
 	@PostMapping("/club/delete")
-	public String clubDeletePOST(int clubNo, RedirectAttributes rttr) {
+	public String clubDeletePOST(int clubNo, RedirectAttributes rttr, @RequestParam(value = "classNo", required = false) int classNo) {
 		cservice.delete(clubNo);
 		rttr.addFlashAttribute("result", "delete success");
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 

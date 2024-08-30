@@ -65,6 +65,11 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 메인 박스 부분 CSS 수정 */
 .container {
     background-color: #ffffff;

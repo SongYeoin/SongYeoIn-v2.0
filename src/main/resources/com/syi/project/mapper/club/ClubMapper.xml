@@ -74,36 +74,14 @@
 	WHERE e.member_no = #{memberNo}
 </select>
 
-  <!-- 리스트 -->
-  <!-- <select id="getList" resultMap="clubResultMap">
-    SELECT 
-      a.club_no,
-      a.club_study_date,
-      a.club_reg_date,
-      a.club_check_status,
-      a.club_check_cmt,
-      b.member_no,
-      b.enroll_no,
-      c.member_name,
-      a.file_name
-    FROM club a 
-    JOIN enroll b ON a.enroll_no = b.enroll_no
-    join member c on b.member_no = c.member_no
-    where c.member_status = 'Y' and b.class_no = #{classNo}
-    order by a.club_reg_date desc, a.club_study_date desc
-  </select> -->
-  
   <!-- 등록 -->
- <insert id="enroll">
+ <insert id="enroll">    		
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 
-    		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
+    	SELECT #{club.join}, #{club.studyDate}, #{club.content}, e.enroll_no
+    	FROM enroll e
+    	WHERE e.class_no = #{classNo} AND e.member_no = #{memberNo}
  </insert>
-<!--  <insert id="enroll">
-    INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 1)
-  </insert> -->
-  
+   
   <!-- 조회 -->
   <select id="getPage" resultMap="clubResultMap">
   select 
@@ -141,9 +119,10 @@ where club_No = #{clubNo}
   <delete id="delete">
   	delete from club where club_no = #{clubNo}
   </delete>
-  <delete id="deleteAdmin">
+  
+<!--   <delete id="deleteAdmin">
   	delete from club where club_no = #{clubNo}
-  </delete>
+  </delete> -->
   
   
   <!-- 게시물 목록(페이징) -->
@@ -191,7 +170,7 @@ where club_No = #{clubNo}
       AND RN <= #{cri.pageNum} * #{cri.amount}
   ]]>
   </select>
-
+  
   <!-- 게시물 총 갯수 -->
   <select id="getTotal" resultType="int">
   	select count(*) 
@@ -206,7 +185,6 @@ where club_No = #{clubNo}
   
   <!-- 검색 조건문 -->
   <sql id="criteria">
-  
   <choose>
   <when test="cri.type == 'W'.toString()">
   	AND C.MEMBER_NAME like '%'||#{cri.keyword}||'%'
@@ -218,31 +196,6 @@ where club_No = #{clubNo}
   	AND A.CLUB_CHECK_STATUS like '%'||#{cri.keyword}||'%'
   </when>
   </choose>
+  </sql>
 
-  
-  </sql>
-  
-  <!-- 검색 조건문 -->
-  <!-- 
-  <sql id="criteria">
-  <trim prefix="AND (" suffix=")" prefixOverrides="OR">
-  <foreach collection="typeArr" item="type">
-  <trim prefix="OR">
-  <choose>
-  <when test="cri.type == 'W'.toString()">
-  	C.MEMBER_NAME like '%'||#{cri.keyword}||'%'
-  </when>
-  <when test="cri.type == 'J'.toString()">
-  	A.CLUB_JOIN like '%'||#{cri.keyword}||'%'
-  </when>
-  <when test="cri.type == 'C'.toString()">
-  	A.CLUB_CHECK_STATUS like '%'||#{cri.keyword}||'%'
-  </when>
-  </choose>
-  </trim>
-  </foreach>
-  </trim>
-  
-  </sql>
-   -->
 </mapper>

@@ -162,36 +162,28 @@ textarea {
 					type="hidden" name="type" value="${cri.type}">
 					<input type="hidden" id="rn" name="rn"
 					value='<c:out value="${rownum }"/>'>
-					<input type="hidden" name="classNo" value="${param.classNo}">
+					<input type="hidden" id="classNo" value="${param.classNo}">
 			</form>
-
-
 		</div>
-
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
-
 	<script>
 		let form = $("#infoForm");
 
 		$("#list_btn").on("click", function(e) {
-			/* form.find("#clubNo").remove();
-			form.attr("action", "/member/club/list");
-			form.submit(); */
-			window.history.back();
+			var classNo = $("#classNo").val();
+			window.location.href = "/member/club/list?classNo=" + classNo;
 		});
 
 		$("#modify_btn").on("click", function(e) {
-			 //e.preventDefault();
 			form.attr("action", "/member/club/modify");
 			form.submit();
 		});
 		
 		$("#delete_btn").on("click", function(e){
-			 //e.preventDefault();
 			form.attr("action", "/member/club/delete");
 			form.attr("method", "post");
 			form.submit();
