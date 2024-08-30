@@ -82,13 +82,15 @@ header {
 .modal-content-header {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #888;
     width: 100%;
     height: 50%;
     max-width: 500px;
     text-align: center;
     border-radius: 8px;
+    overflow: hidden; /* 자식 요소가 튀어나오지 않도록 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 /* Close Button */
@@ -106,19 +108,53 @@ header {
     cursor: pointer;
 }
 .profile-image {
-    width: 100%; /* 원하는 크기로 설정 */
-    height: 100%; /* 원하는 크기로 설정 */
-    background-color: #f0f0f0; /* 배경색 설정 */
-    gap: 30px;
+    width: 100%; 
+    height: 100%; 
+    gap: 10px;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    max-width: 100%; /* 부모 요소의 크기 내에서만 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 /* 자식 요소들 크기 맞춤 */
-.profile-image img,
+/* .profile-image img,
 .profile-image i {
-    max-width: 100px; /* 부모의 크기를 초과하지 않도록 */
-    max-height: 100px; /* 부모의 크기를 초과하지 않도록 */
+    width: 100%; 
+    height: 100%; 
     border-radius: 50%;
-    object-fit: cover; /* 이미지가 자리를 꽉 채우도록 */
+    object-fit: cover;
+} */
+
+#profileImg {
+    width: 100%;
+    height: 100%;
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover; /* 이미지가 영역을 꽉 채우면서 비율을 유지 */
+    border: 1px solid #333; /* 두꺼운 테두리 */
+    border-radius: 50%;
+}
+
+#profileIcon {
+    font-size: 80px; /* 아이콘 크기를 조정하여 div 안에 꽉 차도록 */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #333; /* 두꺼운 테두리 */
+    border-radius: 50%;
+    color: black;
+}
+
+
+.profile-image label {
+    color: black;
+    text-align: center; /* 가운데 정렬 */
+    margin-top: 10px; /* 라벨 위에 간격 추가 */
+    max-width: 90%; /* 부모 요소 내에서 크기 조정 */
 }
 
 /* Profile Image */
@@ -191,14 +227,17 @@ header {
 	        <div class="modal-content-header">
 	            <span id="closeModalBtn" class="header-close">&times;</span>
 	            <div class="profile-image">
-	            	<c:choose>
-	            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
-			                <img src="${sessionScope.loginMember.memberProfileUrl}" alt="Profile Image" id="profileImg">
-	            		</c:when>
-	            		<c:otherwise>
-	            			<i class="bi bi-person-circle fs-2" id="profileIcon"></i>
-	            		</c:otherwise>
-	            	</c:choose>
+	            	<div id="profileOrIcon" style="width:100px; height:100px;">
+		            	<c:choose>
+		            		<c:when test="${not empty sessionScope.loginMember.memberProfileUrl }">
+				                <img src="${sessionScope.loginMember.memberProfileUrl}" alt="Profile Image" id="profileImg">
+		            		</c:when>
+		            		<c:otherwise>
+		            			<i class="bi bi-person-circle fs-2" id="profileIcon"></i>
+		            		</c:otherwise>
+		            	</c:choose>
+		            	<img id="previewProfile" alt="previewProfile" src="" style="display: none;">
+	            	</div>
 	            	<label for="profileImage" style="color:black;">프로필 이미지를 선택하세요 (JPG, PNG 형식만 가능)</label>
 	            	<c:choose>
 	            		<c:when test="${sessionScope.loginMember.memberRole == 'ROLE_MEMBER'}">
@@ -289,17 +328,21 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 // Open modal
 showProfileDetail.onclick = function() {
 	profileModal.style.display = 'block';
+	
 };
 
 // Close modal
 closeModalBtn.onclick = function() {
 	profileModal.style.display = 'none';
+	window.location.reload();
 };
 
 // Close modal when clicking outside the modal content
 window.onclick = function(event) {
+	
     if (event.target === profileModal) {
     	profileModal.style.display = 'none';
+    	window.location.reload();
     }
     
     if (event.target == chatModal) {
@@ -311,6 +354,7 @@ window.onclick = function(event) {
 const profileImageInput = document.getElementById('profileImage');
 const profileImg = document.getElementById('profileImg');
 const profileIcon = document.getElementById('profileIcon');
+let fileSelected = false;
 
 // 파일 선택 시 이벤트 핸들러
 profileImageInput.addEventListener('change', function(event) {
@@ -318,6 +362,7 @@ profileImageInput.addEventListener('change', function(event) {
 
     // 파일이 선택된 경우
     if (file) {
+    	fileSelected = true;
         const reader = new FileReader();
         
         // 파일을 읽었을 때 실행되는 이벤트 핸들러
@@ -335,7 +380,7 @@ profileImageInput.addEventListener('change', function(event) {
                 const newImg = document.createElement('img');
                 newImg.id = 'profileImg';
                 newImg.alt = 'Profile Image';
-                document.querySelector('.profile-image').prepend(newImg);
+                document.querySelector('#profileOrIcon').append(newImg);
             }
 
             // 이미지 요소에 이미지 URL 설정
