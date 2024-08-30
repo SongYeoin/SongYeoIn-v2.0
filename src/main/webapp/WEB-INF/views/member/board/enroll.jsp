@@ -138,7 +138,7 @@ button:hover {
 						</tr>
 						<tr>
 							<th>작성자</th>
-							<td>${sessionScope.loginMember.memberName}</td>
+							<td>${sessionScope.loginMember.memberNickname}</td>
 						</tr>
 						<tr>
 							<th>내용</th>

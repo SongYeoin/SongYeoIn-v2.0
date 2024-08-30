@@ -106,25 +106,6 @@ button:hover {
     gap: 20px;
 }
 
-.file-list {
-    margin-top: 10px;
-    list-style: none;
-    padding: 0;
-}
-
-.file-list li {
-    margin-bottom: 10px;
-}
-
-.file-list a {
-    text-decoration: none;
-    color: #007bff;
-}
-
-.file-list a:hover {
-    text-decoration: underline;
-}
-
 .heart-container {
 	color: red;
 }
@@ -207,6 +188,7 @@ button:hover {
                 </thead>
             </table>
             
+            
             <!-- 좋아요 기능 -->    
             <div class="button-container">
             	<div class="heart-container">
@@ -214,6 +196,7 @@ button:hover {
 	                <span id="boardHeartCount">${board.boardHeartCount}</span> 
                 </div>
             </div>
+            
 
             <!-- 댓글 추가 폼 -->
             <div class="comment-form-container">
@@ -224,54 +207,55 @@ button:hover {
 	            </form>
             </div>
             
+            
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
             	<c:choose>
-            	<c:when test="${comment.commentStatus eq 'N'}">
-            	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                <p>사용자에 의해 삭제된 댓글입니다.</p>
-	            </div>
-	        	</c:when>
+            		<c:when test="${comment.commentStatus eq 'N'}">
+	            		<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
+	                		<p>사용자에 의해 삭제된 댓글입니다.</p>
+		            	</div>
+	        		</c:when>
 	        	
-	        	<c:otherwise>
-                <div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                	<c:if test="${comment.commentParentNo != null}">
-                		<i class="bi bi-arrow-return-right"></i>
-                	</c:if>
-                    <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
-                    
-                    <!-- 댓글 버튼 -->
-			        <div class="comment-button-container">
-				        <button id="replyBtn-${comment.commentNo}" class="replyBtn" onclick="showReplyForm(${comment.commentNo})">답글</button>
-                    	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
-			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
-                    	</c:if>
-			        </div>
-			        
-			        <!-- 댓글 수정 폼 -->
-			        <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
-			        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
-	                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                    <div class="comment-button-container">
-	                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-	                    </div>
-	                </form>
-	                
-			        <!-- 답글 작성 폼 -->
-			        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
-			            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-			                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-			                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
-			                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
-			                <button type="submit">등록</button>
-			            </form>
-			        </div>
-				</div>
-				</c:otherwise>
-    		</c:choose>
+		        	<c:otherwise>
+	                	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
+	                		<c:if test="${comment.commentParentNo != null}">
+	                			<i class="bi bi-arrow-return-right"></i>
+	                		</c:if>
+	                    	<p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
+	                    	<p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+	                    
+	                    	<!-- 댓글 버튼 -->
+				        	<div class="comment-button-container">
+					        	<button id="replyBtn-${comment.commentNo}" class="replyBtn" onclick="showReplyForm(${comment.commentNo})">답글</button>
+	                    		<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
+				            		<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+				            		<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
+	                    		</c:if>
+				        	</div>
+				        
+				        	<!-- 댓글 수정 폼 -->
+				        	<form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
+					        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
+			                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+			                    <div class="comment-button-container">
+			                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+			                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+			                    </div>
+			                </form>
+		                
+					        <!-- 답글 작성 폼 -->
+					        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
+					            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+					                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+					                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
+					                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
+					                <button type="submit">등록</button>
+					            </form>
+					        </div>
+						</div>
+					</c:otherwise>
+    			</c:choose>
 			</c:forEach>
 
 
@@ -458,7 +442,6 @@ button:hover {
             });
         }
     }
-    
 
     </script>
 
