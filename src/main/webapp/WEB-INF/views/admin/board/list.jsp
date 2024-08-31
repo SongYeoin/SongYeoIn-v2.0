@@ -36,18 +36,6 @@ main {
 	height: 100%;
 }
 
-/*
-.title-container{
-	display: flex;
-    align-items: center; 
-}
-
-.title-container h1{
-	margin-right: 20px; 
-	font-weight: bold;
-}
-*/
-
 .container {
 	margin: 20px auto;
 	background-color: #f9fafc;
@@ -98,65 +86,66 @@ main {
 }
 
 .table_wrap {
-    margin-left: 12px;
-    margin-right: 12px;
+    margin: 50px 50px 0 50px;
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    white-space: nowrap;
 }
 
 thead {
     background-color: #f5f5f5;
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
+table thead tr {
+    cursor: default; 
 }
 
 table tbody tr {
     cursor: pointer;  
 }
 
+table th, table td {
+	padding: 10px;
+	text-align: left;
+}
+
 .pageMaker_wrap {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.pageMaker_wrap a {
-    color: black;
-}
-
-.pageMaker {
-    list-style: none;
-    display: inline-block;
+	text-align: center; 
+	margin: 20px; 
 }
 
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
 
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	background-color: #f8f9fa; 
+	color: #007bff; 
+	text-decoration: none; 
+	border-radius: 5px; 
+	font-weight: bold; 
 }
 
-.next a, .prev a {
-    color: #ccc;
+.pageMaker_btn a:hover {
+	background-color: #e9ecef; 
 }
 
-.active { 
-    border: 2px solid black;
-    font-weight: 400;
+.pageMaker_btn.active a {
+	background-color: #007bff; 
+	color: white; 
+}
+
+.pageMaker_btn.previous a:hover, 
+.pageMaker_btn.next a:hover {
+	background-color: #0056b3; 
+	color: white; 
 }
 
 </style>
@@ -181,7 +170,7 @@ table tbody tr {
                 <div class="search_area">
 					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/board/list" method="get">
                   		<div class="search_input">
-                     		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     		<input type="search" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
                      		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
                      		<input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
                      		<input type="hidden" name="classNo" value='<c:out value="${param.classNo}"></c:out>'>
@@ -196,8 +185,8 @@ table tbody tr {
                     <thead>
                         <tr>
                             <th>번호</th>
-                            <th width="60%">제목</th>
-                            <th>글쓴이</th>
+                            <th width="50%">제목</th>
+                            <th>작성자</th>
                             <th>조회수</th>
                             <th>등록일</th>
                         </tr>
@@ -233,7 +222,6 @@ table tbody tr {
                         <c:if test="${pageMaker.next}">
                             <li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1}">다음</a></li>
                         </c:if>
-
                     </ul>
                 </div>
                 <form id="moveForm" action="/admin/board/list" method="get">

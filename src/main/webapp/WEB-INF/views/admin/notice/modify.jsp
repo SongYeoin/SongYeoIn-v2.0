@@ -187,7 +187,6 @@ button:hover {
     <main>
         <!-- Main content -->
         <div class="notice-wrapper">
-            <h2 align="center">공지사항</h2>
             <form id="noticeForm" action="/admin/class/notice/modify" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="noticeNo" value="${notice.noticeNo}" />
                 <table>
@@ -213,8 +212,8 @@ button:hover {
                    						<a href="${pageContext.servletContext.contextPath}/admin/class/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
 					                   		${file.fileOriginalName}
 					                   	</a>
-                                        <input type="checkbox" id="file_${file.fileNo}" name="deleteFileNos" value="${file.fileNo}"/>
-                                        <label for="file_${file.fileNo}">삭제</label>
+                                        <input type="checkbox" id="file-${file.fileNo}" name="deleteFileNos" value="${file.fileNo}"/>
+                                        <label for="file-${file.fileNo}">삭제</label>
                                     </li>
                                 </c:forEach>
                             </ul>

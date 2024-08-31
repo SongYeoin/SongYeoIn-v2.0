@@ -75,17 +75,17 @@ main {
     border-radius: 5px;
 }
 
-
-/* 테이블 스타일 */
 .table-wrap{
 	margin-left: 12px;
     margin-right: 12px;
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    white-space: nowrap;
 }
 
 table th {
@@ -107,53 +107,48 @@ tr:hover {
     background-color: #e0e0e0; 
 }
 
-/* 승인 상태 스타일 */
 .approval-status {
     cursor: pointer;
     pointer-events: auto;
 }
 
-/* 승인 상태 td에 대한 호버 효과 */
 .approval-status:hover {
     background-color: #c5c5c5;
 }
 
-/* 페이지 이동 인터페이스 스타일 */
 .pageMaker_wrap {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.pageMaker_wrap a {
-    color: black;
-}
-
-.pageMaker {
-    list-style: none;
-    display: inline-block;
+	text-align: center; 
+	margin: 20px; 
 }
 
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
 
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	background-color: #f8f9fa; 
+	color: #007bff; 
+	text-decoration: none; 
+	border-radius: 5px; 
+	font-weight: bold; 
 }
 
-.next a, .prev a {
-    color: #ccc;
+.pageMaker_btn a:hover {
+	background-color: #e9ecef; 
 }
 
-.active { 
-    border: 2px solid black;
-    font-weight: 400;
+.pageMaker_btn.active a {
+	background-color: #007bff; 
+	color: white; 
+}
+
+.pageMaker_btn.previous a:hover, 
+.pageMaker_btn.next a:hover {
+	background-color: #0056b3; 
+	color: white; 
 }
 
 </style>
@@ -175,12 +170,9 @@ tr:hover {
             <div class="search_wrap">
                <form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/member/list" method="get">
                   <div class="search_input">
-                     <input type="text" name="keyword"
-                        value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
-                     <input type="hidden" name="pageNum"
-                        value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
-                     <input type="hidden" name="amount"
-                        value='${pageMaker.cri.amount}'>
+                     <input type="search" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
+                     <input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
                      <button class='btn search_btn'><i class="bi bi-search"></i></button>
                   </div>
                </form>

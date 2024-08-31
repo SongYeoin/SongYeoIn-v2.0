@@ -122,62 +122,66 @@ main {
 }
 
 .table_wrap {
-	margin: 50px 50px 0 50px;
-}
-
-table thead tr {
-    cursor: default; /* 기본 커서 */
-}
-
-table tbody tr {
-    cursor: pointer;  /* 포인터 커서 */
+    margin: 50px 50px 0 50px;
+    overflow-x: auto;
 }
 
 table {
- 	width: 100%;
-	border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
 }
 
 thead {
-	background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
-th, td {
+table thead tr {
+    cursor: default; 
+}
+
+table tbody tr {
+    cursor: pointer;  
+}
+
+table th, table td {
 	padding: 10px;
 	text-align: left;
-	border: 1px solid #ddd;
 }
 
-.pageMaker_wrap{
-	text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+.pageMaker_wrap {
+	text-align: center; 
+	margin: 20px; 
 }
 
-.pageMaker_wrap a{
-	color : black;
-}
-.pageMaker{
-    list-style: none;
-    display: inline-block;
-}	
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	background-color: #f8f9fa; 
+	color: #007bff; 
+	text-decoration: none; 
+	border-radius: 5px; 
+	font-weight: bold; 
 }
-.next a, .prev a {
-    color: #ccc;
+
+.pageMaker_btn a:hover {
+	background-color: #e9ecef; 
 }
-.active {							
-	border : 2px solid black;
-	font-weight:400;
+
+.pageMaker_btn.active a {
+	background-color: #007bff; 
+	color: white; 
+}
+
+.pageMaker_btn.previous a:hover, 
+.pageMaker_btn.next a:hover {
+	background-color: #0056b3; 
+	color: white; 
 }
 
 </style>
@@ -204,7 +208,7 @@ th, td {
 				<div class="search_area">
 					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/class/notice/list" method="get">
                   		<div class="search_input">
-                     		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     		<input type="search" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
                      		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
                      		<input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
                      		<button class='btn search_btn'><i class="bi bi-search"></i></button>
@@ -260,9 +264,7 @@ th, td {
 						<c:if test="${pageMaker.next}">
 							<li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1 }">다음</a></li>
 						</c:if>
-
 					</ul>
-
 				</div>
 				<form id="moveForm" action="${ pageContext.servletContext.contextPath }/admin/class/notice/list" method="get">
 					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
