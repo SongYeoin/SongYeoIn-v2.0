@@ -98,11 +98,11 @@ table th, table td {
 	border: 1px solid #ddd;
 }
 
-tr {
+tbody tr {
     transition: background-color 0.3s;
 }
 
-tr:hover {
+tbody tr:hover {
 	cursor: pointer;
     background-color: #e0e0e0; 
 }
