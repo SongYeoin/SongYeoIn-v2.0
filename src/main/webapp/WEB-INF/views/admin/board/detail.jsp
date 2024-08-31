@@ -148,6 +148,22 @@ button:hover {
     gap: 10px;
 }
 
+.comment-button-container button {
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    color: #007bff;
+    background-color: transparent;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.comment-button-container button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
 .pageMaker_wrap {
     text-align: center;
     margin-top: 30px;
@@ -268,13 +284,13 @@ button:hover {
 								        </c:otherwise>
 								    </c:choose>
 								</strong>
-	                    	${comment.commentRegDate}
+	                    		${comment.commentRegDate}
 	                    	</p>
 	                    	<p id="comment-content-${comment.commentNo}">
 	                    		<c:if test="${comment.commentParentNo != null}">
 	                    			<strong style="color: blue;">@${comment.parentNickname} </strong>
 	                    		</c:if>
-							${comment.commentContent}
+								${comment.commentContent}
 							</p>
 	                    
 	                    	<!-- 댓글 버튼 -->
