@@ -99,7 +99,7 @@ textarea {
 			<h1>조회 페이지</h1>
 			<div class="input_wrap">
 				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${pageInfo.rn }"/>'>
+					value='<c:out value="${rownum }"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>작성자</label> <input name="memberName" readonly="readonly"
@@ -160,25 +160,22 @@ textarea {
 					value='<c:out value="${pageInfo.clubNo }"/>'> <input
 					type="hidden" name="keyword" value="${cri.keyword}"> <input
 					type="hidden" name="type" value="${cri.type}">
+					<input type="hidden" id="rn" name="rn"
+					value='<c:out value="${rownum }"/>'>
+					<input type="hidden" id="classNo" value="${param.classNo}">
 			</form>
-
-
 		</div>
-
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
-
 	<script>
 		let form = $("#infoForm");
 
 		$("#list_btn").on("click", function(e) {
-			/* form.find("#clubNo").remove();
-			form.attr("action", "/member/club/list");
-			form.submit(); */
-			window.history.back();
+			var classNo = $("#classNo").val();
+			window.location.href = "/member/club/list?classNo=" + classNo;
 		});
 
 		$("#modify_btn").on("click", function(e) {

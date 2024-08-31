@@ -91,7 +91,7 @@ public class ClubMemberController {
 	    System.out.println("classNo after service call: " + classNo);
 	   
 		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
-		System.out.println(classNo);
+		System.out.println("classNo : " + classNo);
 		System.out.println("controller : " +list);
 		model.addAttribute("list", list);
 		
@@ -104,25 +104,10 @@ public class ClubMemberController {
 		List<SyclassVO> classList = cservice.getClassNoListByMember(memberNo);
 		model.addAttribute("classList", classList);
 		
-		//model.addAttribute("selectedClassNo", classNo); // 선택된 클래스 번호 추가
-		
 	    return "member/club/list";
 		
 	}
-	
-//	@GetMapping("/club/list/getByClass")
-//	@ResponseBody
-//	public List<ClubVO> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo, Criteria cri) {
-//		if (classNo == null) {
-//	        // classNo가 null인 경우, 기본값 설정하거나 빈 리스트 반환
-//	        return new ArrayList<>();
-//	    }
-//		
-//		List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
-//	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
-//
-//	}
-	
+		
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
 	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
@@ -135,84 +120,72 @@ public class ClubMemberController {
 	    }
 	    cri.setPageNum(pageNum);
 	    cri.setType(type);
-	    cri.setKeyword(keyword.equals("승인") ? "Y" : (keyword.equals("미승인") ? "N": "W"));
+	    
+	    // 승인 상태 키워드 변환	    
+	    if ("C".equals(type)) {
+	        cri.setKeyword("대기".equals(keyword) ? "W" : "승인".equals(keyword) ? "Y" : "미승인".equals(keyword) ? "N" : "");
+	    } else {
+	        cri.setKeyword(keyword);
+	    }
 	    
 	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
 	    int total = cservice.getTotal(cri, classNo);
 
 	    PageDTO pageMake = new PageDTO(cri, total);
-
+	    System.out.println(classNo);
+	    
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("list", clubs);
 	    response.put("pageInfo", pageMake);
+	    response.put("classNo", classNo);
 	    return response;
 	}
 	
 	//등록페이지
 	@GetMapping("/club/enroll")
-	public void clubEnrollGET() {
+	public void clubEnrollGET(@RequestParam(value = "classNo", required = false) Integer classNo) {
 		log.info("등록 페이지 진입");
+		
+		System.out.println("enroll get classNo : " + classNo);
 	}
-	
-//	@PostMapping("/club/enroll")
-//	public String clubEnrollPOST(@RequestParam(value = "classNo", required = false) Integer classNo, 
-//            @RequestParam("join") String join, 
-//            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") java.util.Date studyDate, 
-//            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException{
-//		
-//		MemberVO member = (MemberVO)session.getAttribute("loginMember");
-//		int memberNo = member.getMemberNo();
-//		
-//		if(classNo == null) {
-//			System.out.println("classNo null");
-//			classNo = cservice.getDefaultClassNoByMember(memberNo);
-//		}
-//		
-//		log.info("classNo : "+classNo);
-//		
-//		// Date 타입을 SQL Date로 변환
-//	    java.sql.Date sqlDate = new java.sql.Date(studyDate.getTime());
-//	 
-//		cservice.enroll(classNo, join, sqlDate, content, memberNo);
-//		
-//		rttr.addFlashAttribute("result", "enroll success");
-//		
-//		return "redirect:/member/club/list";
-//	}
 	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(ClubVO club, RedirectAttributes rttr) {
+	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) int classNo, RedirectAttributes rttr) {
 		log.info("ClubVO : "+club);
 		
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
+		MemberVO member = (MemberVO)session.getAttribute("loginMember");
 		
-		cservice.enroll(club);
-		
+		int memberNo = member.getMemberNo();
+
+	    System.out.println("enroll post classNo : " + classNo);
+	    
+	    cservice.enroll(club, classNo, memberNo);
+	    
 		rttr.addFlashAttribute("result", "enroll success");
-		
-		return "redirect:/member/club/list";
+		System.out.println("classNo : "+classNo);
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
-	//조회 HttpSession session
+	//조회
 	@GetMapping("/club/get")
-	public void clubGetPageGET(int clubNo, Model model) {
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
-		//model.addAttribute("member", member);
-		
+	public void clubGetPageGET(int clubNo, Model model, int rn) {
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
+		model.addAttribute("rownum", rn);
 		
 		// 선택 할 반 정보 프론트로 보내기
 		List<SyclassVO> classList = syclassService.getClassList();
 		model.addAttribute("classList", classList);
+
 	}
 	
 	//수정페이지 이동
 	@GetMapping("/club/modify")
-	public void clubModifyGET(int clubNo, Model model) {
+	public void clubModifyGET(int clubNo, Model model, int rn) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		System.out.println("modifypage : " +cservice.getPage(clubNo));
 		
+		model.addAttribute("rownum", rn);
 		
 		//현재 날짜 추가
 		LocalDate today = LocalDate.now();
@@ -225,7 +198,7 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam(value = "classNo", required = false) int classNo, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
 		
 		// 파일 업로드 처리
@@ -266,12 +239,12 @@ public class ClubMemberController {
 	            throw new Exception("파일 업로드 실패: " + fileName, e);
 	        }
 	    }
-
+	    
 	    cservice.modify(club);
 	    System.out.println("modify : " +cservice.modify(club));
 		rttr.addFlashAttribute("result", "modify success");
 		
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 	/* 첨부파일 다운로드 */
@@ -309,10 +282,10 @@ public class ClubMemberController {
 	
 	//삭제
 	@PostMapping("/club/delete")
-	public String clubDeletePOST(int clubNo, RedirectAttributes rttr) {
+	public String clubDeletePOST(int clubNo, RedirectAttributes rttr, @RequestParam(value = "classNo", required = false) int classNo) {
 		cservice.delete(clubNo);
 		rttr.addFlashAttribute("result", "delete success");
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 

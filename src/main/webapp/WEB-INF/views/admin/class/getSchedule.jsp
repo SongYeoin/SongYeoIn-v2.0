@@ -88,6 +88,11 @@ th {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 시간표 추가하기 버튼 스타일 */
 .add-schedule-btn {
     position: absolute;
