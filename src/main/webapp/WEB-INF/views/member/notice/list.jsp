@@ -252,7 +252,10 @@ table th, table td {
                 	<c:forEach items="${noticeList}" var="notice">
                 		<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
                     		<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
-							<td>${ notice.noticeTitle }</td>
+							<td>
+								<c:if test="${notice.hasFiles}"><i class="bi bi-paperclip"></i></c:if>
+								${ notice.noticeTitle }
+							</td>
 							<td>${ notice.noticeCount }</td>
 							<td>${ notice.noticeRegDate }</td>
 					</tr>
@@ -300,23 +303,20 @@ table th, table td {
 		alert(message);
 	}
 	
-	// 검색 버튼 클릭 시 페이지 번호를 1로 설정하고 폼 제출
     $('#searchForm').on('submit', function() {
         let form = $(this);
         form.find("input[name='pageNum']").val('1');
-        return true;  // 폼 제출
+        return true;  
     });
 
     function sendClassChange(classNo) {
         let url = new URL(window.location.href);
         url.searchParams.set('classNo', classNo);
-     	// 페이지 번호, 검색어 지우기
         url.searchParams.delete('pageNum');
         url.searchParams.delete('keyword');
         window.location.href = url.toString();
     }
     
-    // 페이지 이동 버튼
     $(".pageMaker_btn a").on("click", function(e) {
         e.preventDefault();
         let pageNum = $(this).attr("href");

@@ -179,7 +179,7 @@ button:hover {
 							<td colspan="3"><input type="file" id="files" name="files" multiple></td>
 						</tr>
 						<tr>
-							<th>전체</th>
+							<th>옵션</th>
 							<td>
 								<input type="checkbox" id="allNotice" name="allNotice" value="true"/>
   								<label for="allNotice">전체 공지</label>

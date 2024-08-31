@@ -83,12 +83,10 @@ main {
     margin: 20px auto;
 }
 
-/* 공지사항 제목 스타일 */
 .notice-wrapper h2 {
     margin-bottom: 30px;
 }
 
-/* 테이블 스타일 */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -102,7 +100,6 @@ table th, table td {
     font-size: 14px;
 }
 
-/* 테이블 헤더 스타일 */
 table th {
     background-color: #f4f4f4;
     color: #333;
@@ -125,12 +122,12 @@ button {
 } 
 
 button {
-    background-color: #007bff; /* 버튼 배경색 */
+    background-color: #007bff; 
     transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3; /* 버튼 호버시 배경색 */
+    background-color: #0056b3; 
 }
 
 .button-container {
@@ -170,13 +167,8 @@ button:hover {
 .deleteButton {
     color: #dc3545; 
     cursor: pointer;
-    font-size: 20px; 
+    font-size: 18px; 
     transition: color 0.3s ease, transform 0.3s ease; 
-}
-
-.deleteButton:hover {
-    color: #c82333; 
-    transform: scale(1.2); 
 }
 
 </style>
@@ -232,7 +224,7 @@ button:hover {
                         </td>
                     </tr>
                     <tr>
-                        <th>전체</th>
+                        <th>옵션</th>
                         <td>
                             <input type="checkbox" id="allNotice" name="allNotice" value="true" ${notice.noticeClassNo eq 0 ? 'checked' : ''}/>
                             <label for="allNotice">전체 공지</label>

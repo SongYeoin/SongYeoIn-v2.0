@@ -238,7 +238,10 @@ table th, table td {
                 	<c:forEach items="${ noticeList }" var="notice">
 					<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/admin/class/notice/detail?noticeNo=${notice.noticeNo}'">
 						<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
-						<td>${ notice.noticeTitle }</td>
+						<td>
+							<c:if test="${notice.hasFiles}"><i class="bi bi-paperclip"></i></c:if>
+							${ notice.noticeTitle }
+						</td>
 						<td>${ notice.noticeCount }</td>
 						<td>${ notice.noticeRegDate }</td>
 					</tr>
@@ -286,8 +289,13 @@ table th, table td {
 		alert(message);
 	}
 	
+	$('#searchForm').on('submit', function() {
+        let form = $(this);
+        form.find("input[name='pageNum']").val('1');
+        return true;  
+    });
+	
 	let moveForm = $('#moveForm');
-	//페이지 이동 버튼
 	$(".pageMaker_btn a").on("click", function(e){
 	    e.preventDefault();
 	    let pageNum = $(this).attr("href");

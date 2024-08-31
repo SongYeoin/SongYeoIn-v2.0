@@ -72,7 +72,6 @@ public class AdminBoardController {
 		
 	    System.out.println(">>> 조회 소요 시간 : " + timeInSeconds + " 초");
 	    
-	    System.out.println("역할 : " + commentList);
 		return "admin/board/detail";
 	}
 
