@@ -38,5 +38,8 @@
 		select * from ATTENDANCE where CLASS_NO = #{classNo} and MEMBER_NO = #{memberNo}
 	</select>
    
+   <select id="getAttendanceByDateAndMember" resultMap="attendanceResultMap">
+   		select * from ATTENDANCE where ATTENDANCE_DATE = #{date} and MEMBER_NO = #{memberNo}
+   </select>
 
 </mapper>

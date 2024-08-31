@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -163,6 +164,21 @@ public class AdminAttendanceController {
 	@PostMapping
 	public void updateAttendancePOST() {
 		
+	}
+	
+	/* 일괄 결석 처리 */
+	@PostMapping("/class/attendance/absent")
+	public ResponseEntity<?> updateAbsentStatus() {
+		
+		// 현재 날짜를 조회하고 하루 전 날짜를 계산
+	    LocalDate yesterday = LocalDate.now().minusDays(1);
+	    
+	    // LocalDate를 Date로 변환
+	    Date date = Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	    
+		attendanceService.updateAbsentStatus(date);
+		
+		return ResponseEntity.ok("자동 결석 처리가 완료되었습니다!");
 	}
 
 	
