@@ -73,15 +73,18 @@ main {
         	<h1>강의실 신청 등록</h1>
 
 		<div class="input_wrap">
-			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
+			<label>작성자</label>
+			<input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
 		<input type="hidden" name="classNo" value="${param.classNo }">
 		<div class="input_wrap">
-			<label>참여자</label> <input type="text" name="join" id="joinInput">
+			<label>참여자</label>
+			<input type="text" name="join" id="joinInput">
 		</div>
 		<div class="input_wrap">
-			<label>활동일</label> <input type="date" name="studyDate" id="studyDateInput">
+			<label>활동일</label>
+			<input type="date" name="studyDate" id="studyDateInput">
 		</div>
 		<div class="input_wrap">
 			<label>내용</label>

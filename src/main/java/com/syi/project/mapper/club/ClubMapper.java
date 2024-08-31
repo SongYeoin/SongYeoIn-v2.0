@@ -11,7 +11,7 @@ import com.syi.project.model.syclass.SyclassVO;
 public interface ClubMapper {
 
 	//동아리 등록
-	public void enroll(@Param("club")ClubVO club, @Param("classNo") int classNo, @Param("memberNo")int memberNo);
+	public void enroll(@Param("club")ClubVO club, @Param("classNo") Integer classNo, @Param("memberNo")int memberNo);
 	
 	//동아리 조회
 	public ClubVO getPage(int clubNo);
@@ -22,7 +22,6 @@ public interface ClubMapper {
 	
 	//동아리 삭제
 	public int delete(int clubNo);
-	public int deleteAdmin(int clubNo);
 	
 	//동아리 로드시 반 번호
 	public Integer getDefaultClassNoByMember(Integer classNo);

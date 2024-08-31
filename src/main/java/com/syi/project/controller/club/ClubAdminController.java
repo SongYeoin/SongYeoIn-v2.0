@@ -5,19 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +26,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.club.ClubVO;
-import com.syi.project.model.member.MemberVO;
-import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.club.ClubService;
-import com.syi.project.service.syclass.SyclassService;
 
 @Controller
 @RequestMapping("/admin")
@@ -53,9 +40,6 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 	
 	@Autowired
 	private ClubService cservice;
-	
-	@Autowired
-	private SyclassService syclassService;
 	
 	//파일 업로드 경로 저장할 필드
 	@Value("${file.upload.path}")
@@ -110,24 +94,22 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("list", clubs);
 	    response.put("pageInfo", pageMake);
-	    response.put("classNo", classNo);
+
 	    return response;
 	}
 	
 	//조회
 	@GetMapping("/class/club/get")
-	public void clubGetPageGET(int clubNo, Model model, int rn) {
+	public void clubGetPageGET(@RequestParam("clubNo")int clubNo, Model model) {
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
-		model.addAttribute("rownum", rn);
 	}
 	
 	//수정페이지 이동
 	@GetMapping("/class/club/modify")
-	public void clubModifyAdminGET(int clubNo, Model model, int rn) {
+	public void clubModifyAdminGET(@RequestParam("clubNo")int clubNo, Model model) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		System.out.println("modifypage : " +cservice.getPage(clubNo));
-		model.addAttribute("rownum", rn);
 	}
 	
 	//수정
@@ -175,7 +157,7 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 	
 	//삭제
 	@PostMapping("/class/club/delete")
-	public String clubDeletePOST(int clubNo, @RequestParam(value = "classNo", required = false) Integer classNo, RedirectAttributes rttr) {
+	public String clubDeletePOST(@RequestParam("clubNo")int clubNo, @RequestParam(value = "classNo", required = false) Integer classNo, RedirectAttributes rttr) {
 		cservice.delete(clubNo);
 		rttr.addFlashAttribute("result", "delete success");
 		return "redirect:/admin/class/club/list?classNo=" + (classNo != null ? classNo : "");
@@ -185,8 +167,6 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 	@ResponseBody
 	public String clubDeleteAdminPOST(int clubNo) throws Exception{
 		
-		//rttr.addFlashAttribute("result", "delete success");
-		
 		try {
 			int deleteResult = cservice.delete(clubNo);
 			return deleteResult > 0 ? "success" : "fail";
@@ -195,6 +175,4 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 			return "fail";
 		}
 	}
-	
-
 }

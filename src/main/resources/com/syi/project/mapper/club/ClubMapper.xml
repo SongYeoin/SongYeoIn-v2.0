@@ -113,18 +113,12 @@ where club_No = #{clubNo}
   set club_check_cmt = #{checkCmt}, club_check_status = #{checkStatus, jdbcType=VARCHAR}
   where club_no = #{clubNo}
   </update>
-  
-  
+   
   <!-- 삭제 -->
   <delete id="delete">
-  	delete from club where club_no = #{clubNo}
+  delete from club where club_no = #{clubNo}
   </delete>
-  
-<!--   <delete id="deleteAdmin">
-  	delete from club where club_no = #{clubNo}
-  </delete> -->
-  
-  
+   
   <!-- 게시물 목록(페이징) -->
   <select id="getListPaging" resultMap="clubResultMap">
   <![CDATA[

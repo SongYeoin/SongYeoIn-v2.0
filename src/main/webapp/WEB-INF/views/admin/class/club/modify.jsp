@@ -66,6 +66,11 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 .input_wrap {
 	padding: 5px 20px;
 }
@@ -112,11 +117,6 @@ textarea {
 	margin-top: 50px;
 }
 
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
-}
-
 </style>
 </head>
 <body>
@@ -140,63 +140,49 @@ textarea {
 			<form id="modifyForm" action="/admin/class/club/modify" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="classNo" value='<c:out value="${param.classNo }"/>'>
 			<input type="hidden" id="checkStatusHidden" name="checkStatus" value="N">
+			<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
 			
 			<div class="input_wrap">
-				<label>번호</label> <input name="clubNo" readonly="readonly"
-					value='<c:out value="${pageInfo.clubNo }"/>'>
+				<label>번호</label>
+				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성자</label> <input name="memberName" readonly="readonly"
-					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
+				<label>작성자</label>
+				<input name="memberName" readonly="readonly" value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여자</label> <input name="join" class="large-input" id="joinInput" readonly="readonly"
-					value='<c:out value="${pageInfo.join}"/>'>
+				<label>참여자</label>
+				<input name="join" class="large-input" id="joinInput" readonly="readonly" value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>내용</label>
-				<textarea rows="3" name="content" readonly="readonly"><c:out
-						value="${pageInfo.content}" /></textarea>
+				<textarea rows="3" name="content" readonly="readonly"><c:out value="${pageInfo.content}" /></textarea>
 			</div>
-		<!-- 	<div class="input_wrap">
-				<label>승인상태</label>
-				<input type="checkbox" id="approveCheckbox" name="approve" value="Y">
-			    <label for="approveCheckbox">승인</label>
-			    <input type="checkbox" id="denyCheckbox" name="deny" value="N">
-			    <label for="denyCheckbox">미승인</label>
-			</div> -->
-			
-			
-			
-			    <div class="input_wrap">
-        <label>승인상태</label>
-        <input type="checkbox" id="approveCheckbox" name="approve" value="Y" <c:if test="${pageInfo.checkStatus == 'Y'}">checked</c:if>>
-        <label for="approveCheckbox">승인</label>
-        <input type="checkbox" id="denyCheckbox" name="deny" value="N" <c:if test="${pageInfo.checkStatus == 'N'}">checked</c:if>>
-        <label for="denyCheckbox">미승인</label>
-    </div>
-    
- 
-			
-			  <div class="input_wrap">
-        <label>승인메시지</label>
-        <input name="checkCmt" id="checkCmt" value='<c:out value="${pageInfo.checkCmt }"/>'>
-    </div>
-			
-			
+						
+			<div class="input_wrap">
+        		<label>승인상태</label>
+        		<input type="checkbox" id="approveCheckbox" name="approve" value="Y" <c:if test="${pageInfo.checkStatus == 'Y'}">checked</c:if>>
+        		<label for="approveCheckbox">승인</label>
+        		<input type="checkbox" id="denyCheckbox" name="deny" value="N" <c:if test="${pageInfo.checkStatus == 'N'}">checked</c:if>>
+        		<label for="denyCheckbox">미승인</label>
+    		</div>
+
+			<div class="input_wrap">
+        		<label>승인메시지</label>
+        		<input name="checkCmt" id="checkCmt" value='<c:out value="${pageInfo.checkCmt }"/>'>
+    		</div>
 			
 			<div class="input_wrap">
-				<label>활동일</label> <input type="date" name="studyDate" id="studyDateInput" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
+				<label>활동일</label>
+				<input type="date" name="studyDate" id="studyDateInput" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성일</label> <input name="regDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.regDate }"/>'>
+				<label>작성일</label>
+				<input name="regDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.regDate }"/>'>
 			</div>
 		
 			<div class="input_wrap">
 				<label>첨부파일</label>
-				<%-- <input name="file" readonly="readonly" value="${pageInfo.fileName == null ? '첨부파일 없음' : '<c:out value="${pageInfo.fileName }"/>'}"> --%>
 				<c:choose>
 				<c:when test="${pageInfo.fileName != null && !pageInfo.fileName.isEmpty() }">
 				<input name="file" readonly="readonly" class="large-input" value='<c:out value="${pageInfo.fileName }"/>'>
@@ -212,30 +198,29 @@ textarea {
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="list_btn">취소</a>
 			</div>
-			<form id="infoForm" action="/admin/class/club/modify" method="get">
+			
+			<form id="infoForm" action="/admin/class/club/list" method="get">
 				<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
 				<input type="hidden" id="classNo" name="classNo" value='<c:out value="${param.classNo }"/>'>
-				<input type="hidden" name="keyword" value="${cri.keyword}">
-				<input type="hidden" name="type" value="${cri.type}">
+				<input type="hidden" id="keyword" name="keyword" value="${cri.keyword}">
+				<input type="hidden" id="type" name="type" value="${cri.type}">
 			</form>
-
-
 		</div>
-
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../../common/footer.jsp"%>
 
-
 	<script>
 	$(document).ready(function() {
-		let form = $("#infoForm"); //리스트, 조회
+		let form = $("#infoForm"); //리스트
 		let mForm = $("#modifyForm"); //수정
 
 		$("#list_btn").on("click", function(e) {
 			e.preventDefault();
 			form.find("#clubNo").remove();
+			form.find("#keyword").remove();
+			form.find("#type").remove();
 			form.attr("action", "/admin/class/club/list");
 			form.submit();
 		});
@@ -293,21 +278,7 @@ textarea {
             $("#approveCheckbox").prop("checked", false);
         }
     });
-    
-	/* document.addEventListener('DOMContentLoaded', function() {
-        var checkStatus = '${pageInfo.checkStatus}';
-        if (checkStatus === 'Y') {
-            document.getElementById('approveCheckbox').checked = true;
-            document.getElementById('denyCheckbox').checked = false;
-        } else if (checkStatus === 'N') {
-            document.getElementById('approveCheckbox').checked = false;
-            document.getElementById('denyCheckbox').checked = true;
-        } else {
-            document.getElementById('approveCheckbox').checked = false;
-            document.getElementById('denyCheckbox').checked = false;
-        }
-    }); */
-		
+    		
 	</script>
 
 </body>

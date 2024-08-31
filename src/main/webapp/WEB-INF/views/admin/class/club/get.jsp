@@ -66,6 +66,11 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 .input_wrap {
 	padding: 5px 20px;
 }
@@ -112,11 +117,6 @@ textarea {
 	margin-top: 50px;
 }
 
-.bi-house-fill {
-	cursor: pointer;
-	font-size: 20px;
-}
-
 </style>
 </head>
 <body>
@@ -138,40 +138,40 @@ textarea {
 		<div>
 			<h1>조회 페이지</h1>
 			<div class="input_wrap">
-				<label>번호</label> <input name="clubNo" readonly="readonly"
-					value='<c:out value="${pageInfo.clubNo }"/>'>
+				<label>번호</label>
+				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성자</label> <input name="memberName" readonly="readonly"
-					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
+				<label>작성자</label>
+				<input name="memberName" readonly="readonly" value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여자</label> <input name="join" readonly="readonly" class="large-input"
-					value='<c:out value="${pageInfo.join}"/>'>
+				<label>참여자</label>
+				<input name="join" readonly="readonly" class="large-input" value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>내용</label>
-				<textarea rows="3" name="content" readonly="readonly"><c:out
-						value="${pageInfo.content}" /></textarea>
+				<textarea rows="3" name="content" readonly="readonly"><c:out value="${pageInfo.content}" /></textarea>
 			</div>
 			<div class="input_wrap">
-				<label>승인상태</label> <input name="checkStatus" readonly="readonly"
+				<label>승인상태</label>
+				<input name="checkStatus" readonly="readonly"
 					value="${pageInfo.checkStatus == 'W' ? '대기' :
                   (pageInfo.checkStatus == 'Y' ? '승인' :
                   (pageInfo.checkStatus == 'N' ? '미승인' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
-				<label>승인메시지</label> <input name="checkCmt" readonly="readonly"
-					value='<c:out value="${pageInfo.checkCmt }"/>'>
+				<label>승인메시지</label>
+				<input name="checkCmt" readonly="readonly" value='<c:out value="${pageInfo.checkCmt }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>활동일</label> <input name="studyDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy/MM/dd" value="${pageInfo.studyDate }"/>'>
+				<label>활동일</label>
+				<input name="studyDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy/MM/dd" value="${pageInfo.studyDate }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성일</label> <input name="regDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy/MM/dd" value="${pageInfo.regDate }"/>'>
+				<label>작성일</label>
+				<input name="regDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy/MM/dd" value="${pageInfo.regDate }"/>'>
 			</div>
 			
 			<div class="input_wrap">
@@ -188,50 +188,48 @@ textarea {
 			
 			<div class="btn_wrap">
 				<a class="btn" id="list_btn" >목록 페이지</a>
-				<%-- <c:if test="${pageInfo.enroll.member.memberNo == sessionScope.loginMember.memberNo }">
-				<c:if test="${pageInfo.checkStatus != 'N' }">
-				<a class="btn" id="modify_btn">수정</a>
-				<a class="btn" id="delete_btn">삭제</a>
-				</c:if>
-				</c:if> --%>
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="delete_btn">삭제</a>
 			</div>
 			<form id="infoForm" action="/admin/class/club/modify" method="get">
 				<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
 				<input type="hidden" id="classNo" name="classNo" value='<c:out value="${param.classNo }"/>'>
-				<input type="hidden" name="keyword" value="${cri.keyword}">
-				<input type="hidden" name="type" value="${cri.type}">
+				<input type="hidden" id="keyword" name="keyword" value="${cri.keyword}">
+				<input type="hidden" id="type" name="type" value="${cri.type}">
+				<input type="hidden" id="rn" name="rn" value='<c:out value="${param.rn }"/>'>
 			</form>
-
-
 		</div>
-
 	</main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../../common/footer.jsp"%>
 
-
 	<script>
 		let form = $("#infoForm");
 		
-
 		$("#list_btn").on("click", function(e) {
 			form.find("#clubNo").remove();
+			form.find("#rn").remove();
+			form.find("#keyword").remove();
+			form.find("#type").remove();
 			form.attr("action", "/admin/class/club/list");
 			form.submit();
 		});
 
 		$("#modify_btn").on("click", function(e) {
+			form.find("#keyword").remove();
+			form.find("#type").remove();
 			form.attr("action", "/admin/class/club/modify");
 			form.submit();
 		});
 		
 		$("#delete_btn").on("click", function(e){
-			form.attr("action", "/admin/class/club/delete");
-			form.attr("method", "post");
-			form.submit();
+			e.preventDefault(); // 폼의 기본 제출을 방지
+	        if (confirm("정말로 삭제하시겠습니까?")) {
+	        	form.attr("action", "/admin/class/club/delete");
+				form.attr("method", "post");
+				form.submit();
+	        }
 		});
 		
 	</script>

@@ -49,12 +49,9 @@ main {
 
 .container {
 	margin: 20px auto;
-	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	/* width: 1320px; */
 	max-width: 1320px;
-	/* height: 710px; */
 	border-radius: 10px;
 	padding-bottom: 20px;
     
@@ -71,7 +68,6 @@ main {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ddd;
 	background-color: #e2eff9;
-	/* padding: 20px; */
 	
 	padding-top: 40px;
     padding-right: 32px;
@@ -136,21 +132,6 @@ main {
 	margin: 50px 50px 0 50px;
 }
 
-.top_btn {
-	font-size: 20px;
-	padding: 6px 12px;
-	background-color: #28a745;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-weight: 600;
-	cursor: pointer;
-}
-
-.top_btn:hover {
-	background-color: #218838;
-}
-
 table thead tr {
     cursor: default; /* 기본 커서 */
 }
@@ -172,56 +153,6 @@ th, td {
 	padding: 10px;
 	text-align: center !important;
 	border: 1px solid #ddd;
-}
-
-.status-active {
-	color: green;
-	font-weight: bold;
-}
-
-.status-inactive {
-	color: red;
-	font-weight: bold;
-}
-
-.footer {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 20px;
-}
-
-/* 드롭다운 메뉴 스타일 */
-.dropdown {
-	position: relative;
-	display: inline-block;
-}
-
-.dropdown-content {
-	display: none;
-	position: absolute;
-	background-color: #f9f9f9;
-	min-width: 100px;
-	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-	z-index: 1;
-}
-
-.dropdown-content a {
-	color: black;
-	padding: 10px 12px;
-	text-decoration: none;
-	display: block;
-}
-
-.dropdown-content a:hover {
-	background-color: #f1f1f1;
-}
-
-.dropbtn {
-	background-color: transparent;
-	border: none;
-	font-size: 16px;
-	cursor: pointer;
-	padding: 0;
 }
 
 /*  .pageInfo {
@@ -319,7 +250,6 @@ a:link, a:visited, a:hover {
 
 .bi-paperclip{
 	cursor: pointer;
-	/* font-size: 20px; */
 }
 
 /* 중복된 아이콘을 숨깁니다 */
@@ -348,7 +278,7 @@ a:link, a:visited, a:hover {
 			    </c:forEach>
 			</select>
 		</div>
-</div>
+	</div>
 
 		<!-- Main content -->
 		<div class="container">
@@ -438,6 +368,12 @@ a:link, a:visited, a:hover {
 		    const type = searchForm.find("select[name='type']").val() || 'W'; // 기본값 설정
 	        const keyword = searchForm.find("input[name='keyword']").val() || '';
 
+	     	// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
+	        }
+	     
 	        loadPageData(classNo, pageNum, type, keyword);
 		}
     
@@ -452,10 +388,11 @@ a:link, a:visited, a:hover {
 		        success: function(response) {
 		        	console.log('Response:', response); // 응답 데이터 확인
 		        	 if (!response.list || response.list.length === 0) {
-		                 $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+		        		if (keyword.trim()) { // 공백이 아닌 경우에만 "데이터가 없습니다." 표시
+			         		$('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+			        	}
 		             } else {
 		                 updateTable(response.list, currentClassNo);
-		       
 		             }
 		             updatePagination(response.pageInfo);
 		        },
@@ -563,6 +500,12 @@ a:link, a:visited, a:hover {
 				alert("검색 종류를 선택하세요");
 				return false;
 			}
+			
+			// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
+	        }
 			
 			// 폼 필드 업데이트
 	        $('#searchForm').find("input[name='type']").val(type);

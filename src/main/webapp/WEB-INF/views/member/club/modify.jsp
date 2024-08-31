@@ -98,45 +98,45 @@ textarea {
 		<div>
 			<h1>수정 페이지</h1>
 			<form id="modifyForm" action="/member/club/modify" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="classNo" value="${param.classNo}">
-			<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'> 
+			<input type="hidden" name="classNo" value="${param.classNo }"> 
+			<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
 			
 			<c:if test="${pageInfo.checkStatus == 'W' }">
 			<div class="input_wrap">
-				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${rownum }"/>'>
+				<label>번호</label>
+				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성자</label> <input name="memberName" readonly="readonly"
-					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
+				<label>작성자</label>
+				<input name="memberName" readonly="readonly" value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여자</label> <input name="join" class="large-input" id="joinInput"
-					value='<c:out value="${pageInfo.join}"/>'>
+				<label>참여자</label>
+				<input name="join" class="large-input" id="joinInput" value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>내용</label>
-				<textarea rows="3" name="content" ><c:out
-						value="${pageInfo.content}" /></textarea>
+				<textarea rows="3" name="content" ><c:out value="${pageInfo.content}" /></textarea>
 			</div>
 			<div class="input_wrap">
-				<label>승인상태</label> <input name="checkStatus" readonly="readonly" id="checkStatusInput"
+				<label>승인상태</label>
+				<input name="checkStatus" readonly="readonly" id="checkStatusInput"
 					value="${pageInfo.checkStatus == 'W' ? '대기' :
                   (pageInfo.checkStatus == 'Y' ? '승인' :
                   (pageInfo.checkStatus == 'N' ? '미승인' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
-				<label>승인메시지</label> <input name="checkCmt" readonly="readonly"
-					value='<c:out value="${pageInfo.checkCmt }"/>'>
+				<label>승인메시지</label>
+				<input name="checkCmt" readonly="readonly" value='<c:out value="${pageInfo.checkCmt }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>활동일</label> <input type="date" name="studyDate" id="studyDateInput"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
+				<label>활동일</label>
+				<input type="date" name="studyDate" id="studyDateInput" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성일</label> <input name="regDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${currentDate }"/>'>
+				<label>작성일</label>
+				<input name="regDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${currentDate }"/>'>
 			</div>
 		
 			<div class="input_wrap">
@@ -148,40 +148,40 @@ textarea {
 			
 			<c:if test="${pageInfo.checkStatus == 'Y' }">
 			<div class="input_wrap">
-				<label>번호</label> <input name="rn" readonly="readonly"
-					value='<c:out value="${rownum }"/>'>
+				<label>번호</label>
+				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성자</label> <input name="memberName" readonly="readonly"
-					value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
+				<label>작성자</label>
+				<input name="memberName" readonly="readonly" value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>참여자</label> <input name="join" readonly="readonly" class="large-input"
-					value='<c:out value="${pageInfo.join}"/>'>
+				<label>참여자</label>
+				<input name="join" readonly="readonly" class="large-input" value='<c:out value="${pageInfo.join}"/>'>
 			</div>
 			<div class="input_wrap">
 				<label>내용</label>
-				<textarea rows="3" name="content" readonly="readonly"><c:out
-						value="${pageInfo.content}" /></textarea>
+				<textarea rows="3" name="content" readonly="readonly"><c:out value="${pageInfo.content}" /></textarea>
 			</div>
 			<div class="input_wrap">
-				<label>승인상태</label> <input name="checkStatus" readonly="readonly"
+				<label>승인상태</label>
+				<input name="checkStatus" readonly="readonly"
 					value="${pageInfo.checkStatus == 'W' ? '대기' :
                   (pageInfo.checkStatus == 'Y' ? '승인' :
                   (pageInfo.checkStatus == 'N' ? '미승인' : '알 수 없음'))}">
 			</div>
                   
 			<div class="input_wrap">
-				<label>승인메시지</label> <input name="checkCmt" readonly="readonly"
-					value='<c:out value="${pageInfo.checkCmt }"/>'>
+				<label>승인메시지</label>
+				<input name="checkCmt" readonly="readonly" value='<c:out value="${pageInfo.checkCmt }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>활동일</label> <input name="studyDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
+				<label>활동일</label>
+				<input name="studyDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
 			</div>
 			<div class="input_wrap">
-				<label>작성일</label> <input name="regDate" readonly="readonly"
-					value='<fmt:formatDate pattern="yyyy-MM-dd" value="${currentDate }"/>'>
+				<label>작성일</label>
+				<input name="regDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${currentDate }"/>'>
 			</div>
 		
 			<div class="input_wrap">
@@ -195,6 +195,13 @@ textarea {
 				<a class="btn" id="modify_btn">수정</a>
 				<a class="btn" id="list_btn">취소</a>
 			</div>
+			
+			<form id="infoForm" action="/member/club/list" method="get">
+				<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
+				<input type="hidden" id="classNo" name="classNo" value='<c:out value="${param.classNo }"/>'>
+				<input type="hidden" id="keyword" name="keyword" value="${cri.keyword}">
+				<input type="hidden" id="type" name="type" value="${cri.type}">
+			</form>
 		</div>
 
 	</main>
@@ -204,12 +211,16 @@ textarea {
 
 	<script>
 	$(document).ready(function() {
-		let form = $("#infoForm"); //리스트, 조회
+		let form = $("#infoForm"); //리스트
 		let mForm = $("#modifyForm"); //수정
 
 		$("#list_btn").on("click", function(e) {
 			e.preventDefault();
-			window.location.href = "/member/club/list?classNo=" + encodeURIComponent('<c:out value="${param.classNo}"/>');
+			form.find("#clubNo").remove();
+			form.find("#keyword").remove();
+			form.find("#type").remove();
+			form.attr("action", "/member/club/list");
+			form.submit();	
 		});
 	
 		$("#modify_btn").on("click", function(e) {
