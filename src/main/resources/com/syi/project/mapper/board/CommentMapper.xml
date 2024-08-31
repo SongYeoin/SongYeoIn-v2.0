@@ -14,6 +14,7 @@
 	    <result property="commentStatus" column="COMMENT_STATUS"/>
 	    <result property="commentMemberNo" column="COMMENT_MEMBER_NO"/>
 	    <result property="commentBoardNo" column="COMMENT_BOARD_NO"/>
+	    <result property="parentNickname" column="PARENT_NICKNAME"/>
 	    <association property="member" resultMap="memberResultMap"/>
     </resultMap>
 
@@ -76,16 +77,20 @@
 		<![CDATA[
 		SELECT * 
 	    FROM (
-	        SELECT LEVEL AS COMMENT_LEVEL,
-		       C.*,
-		       M.MEMBER_NICKNAME
+			SELECT LEVEL AS COMMENT_LEVEL,
+			       C.*,
+			       M.MEMBER_NICKNAME,
+			       (SELECT PARENT_M.MEMBER_NICKNAME 
+			          FROM COMMENTS PARENT_C
+			          JOIN MEMBER PARENT_M ON PARENT_C.COMMENT_MEMBER_NO = PARENT_M.MEMBER_NO
+			         WHERE PARENT_C.COMMENT_NO = C.COMMENT_PARENT_NO) AS PARENT_NICKNAME
 			FROM COMMENTS C
 			JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
-			WHERE C.COMMENT_BOARD_NO = #{boardNo}
+			WHERE C.COMMENT_BOARD_NO = #{ boardNo }
 			START WITH C.COMMENT_PARENT_NO IS NULL
 			CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
 			ORDER SIBLINGS BY C.COMMENT_REG_DATE
-	    )
+		)
 	    OFFSET (#{cri.pageNum} - 1) * #{cri.amount} ROWS FETCH NEXT #{cri.amount} ROWS ONLY 
     ]]>
 	</select>

@@ -260,7 +260,7 @@ button:hover {
 	                			<i class="bi bi-arrow-return-right"></i>
 	                		</c:if>
 	                    	<p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-	                    	<p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+	                    	<p id="comment-content-${comment.commentNo}"><c:if test="${comment.commentParentNo != null}"><strong style="color: blue;">@${comment.parentNickname}</strong></c:if> ${comment.commentContent}</p>
 	                    
 	                    	<!-- 댓글 버튼 -->
 				        	<div class="comment-button-container">
