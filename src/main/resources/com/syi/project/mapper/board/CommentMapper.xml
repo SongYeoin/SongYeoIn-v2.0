@@ -79,6 +79,7 @@
 	    FROM (
 			SELECT LEVEL AS COMMENT_LEVEL,
 			       C.*,
+			       M.MEMBER_ROLE,
 			       M.MEMBER_NICKNAME,
 			       (SELECT PARENT_M.MEMBER_NICKNAME 
 			          FROM COMMENTS PARENT_C

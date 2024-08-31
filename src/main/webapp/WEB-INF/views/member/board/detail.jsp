@@ -221,7 +221,6 @@ button:hover {
 					        </div>
 						</td>
                     </tr>
-                    
                 </thead>
             </table>
             
@@ -259,8 +258,31 @@ button:hover {
 	                		<c:if test="${comment.commentParentNo != null}">
 	                			<i class="bi bi-arrow-return-right"></i>
 	                		</c:if>
-	                    	<p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-	                    	<p id="comment-content-${comment.commentNo}"><c:if test="${comment.commentParentNo != null}"><strong style="color: blue;">@${comment.parentNickname}</strong></c:if> ${comment.commentContent}</p>
+	                    	<p>
+	                    		<strong>
+								    <c:choose>
+								        <c:when test="${board.boardMemberNo == comment.commentMemberNo}">
+								            ${comment.member.memberNickname}
+								            <span style="color: skyblue;">(작성자)</span>
+								        </c:when>
+								
+								        <c:when test="${comment.member.memberRole == 'ROLE_ADMIN'}">
+								            <span style="color: red;">관리자</span>
+								        </c:when>
+								
+								        <c:otherwise>
+								        	${comment.member.memberNickname}
+								        </c:otherwise>
+								    </c:choose>
+								</strong>
+	                    	${comment.commentRegDate}
+	                    	</p>
+	                    	<p id="comment-content-${comment.commentNo}">
+	                    		<c:if test="${comment.commentParentNo != null}">
+	                    			<strong style="color: blue;">@${comment.parentNickname} </strong>
+	                    		</c:if>
+							${comment.commentContent}
+							</p>
 	                    
 	                    	<!-- 댓글 버튼 -->
 				        	<div class="comment-button-container">
