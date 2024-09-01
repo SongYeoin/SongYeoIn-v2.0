@@ -193,7 +193,9 @@ main {
 				<c:if test="${pageInfo.enroll.member.memberNo == sessionScope.loginMember.memberNo }">
 				<c:if test="${pageInfo.checkStatus != 'N' }">
 				<a class="btn modify" id="modify_btn">수정</a>
+				<c:if test="${pageInfo.checkStatus != 'Y' }">
 				<a class="btn delete" id="delete_btn">삭제</a>
+				</c:if>
 				</c:if>
 				</c:if>
 			</div>
