@@ -49,15 +49,11 @@ main {
 
 .container {
 	margin: 20px auto;
-	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	/* width: 1320px; */
 	max-width: 1320px;
-	/* height: 710px; */
 	border-radius: 10px;
 	padding-bottom: 20px;
-    
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -71,8 +67,6 @@ main {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ddd;
 	background-color: #e2eff9;
-	/* padding: 20px; */
-	
 	padding-top: 40px;
     padding-right: 32px;
     padding-left: 32px;
@@ -136,21 +130,6 @@ main {
 	margin: 50px 50px 0 50px;
 }
 
-.top_btn {
-	font-size: 20px;
-	padding: 6px 12px;
-	background-color: #28a745;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-weight: 600;
-	cursor: pointer;
-}
-
-.top_btn:hover {
-	background-color: #218838;
-}
-
 table thead tr {
     cursor: default; /* 기본 커서 */
 }
@@ -174,122 +153,55 @@ th, td {
 	border: 1px solid #ddd;
 }
 
-.status-active {
-	color: green;
-	font-weight: bold;
-}
-
-.status-inactive {
-	color: red;
-	font-weight: bold;
-}
-
-.footer {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 20px;
-}
-
-/* 드롭다운 메뉴 스타일 */
-.dropdown {
-	position: relative;
-	display: inline-block;
-}
-
-.dropdown-content {
-	display: none;
-	position: absolute;
-	background-color: #f9f9f9;
-	min-width: 100px;
-	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-	z-index: 1;
-}
-
-.dropdown-content a {
-	color: black;
-	padding: 10px 12px;
-	text-decoration: none;
-	display: block;
-}
-
-.dropdown-content a:hover {
-	background-color: #f1f1f1;
-}
-
-.dropbtn {
-	background-color: transparent;
-	border: none;
-	font-size: 16px;
-	cursor: pointer;
-	padding: 0;
-}
-
-/*  .pageInfo {
-	list-style: none;
-	display: inline-block;
-	margin: 50px 0 0 100px;
-}
-
-.pageInfo li {
-	float: left;
-	font-size: 20px;
-	margin-left: 18px;
-	padding: 7px;
-	font-weight: 500;
-}
-
-a:link {
-	color: black;
-	text-decoration: none;
-}
-
-a:visited {
-	color: black;
-	text-decoration: none;
-}
-
-a:hover {
-	color: black;
-	text-decoration: none;
-}
-
-.active {
-	background-color: #cdd5ec;
-} */
-
+/* 페이지 정보 영역의 스타일 설정 */
 .pageInfo_area {
-    text-align: center; /* 중앙 정렬 */
-    margin-top: 50px;
+	text-align: center; /* 가운데 정렬 */
+	margin-top: 20px; /* 여백을 20px로 설정 */
 }
 
-.pageInfo {
-    list-style: none;
-    display: inline-block; /* inline-block을 사용하여 중앙 정렬 */
-    padding: 0;
-    margin: 0;
+.pageInfo{
+	margin: 0px;
 }
 
-.pageInfo li {
-    display: inline; /* inline으로 설정하여 목록 항목을 나란히 배치 */
-    font-size: 20px;
-    margin: 0 9px;  /* 양쪽 여백을 조정 */
-    padding: 7px;
-    font-weight: 500;
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn {
+	display: inline-block; /* 인라인 블록으로 설정 */
+	margin: 0 5px; /* 좌우 여백을 5px로 설정 */
 }
 
-a:link, a:visited, a:hover {
-    color: black;
-    text-decoration: none;
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn a {
+	display: block; /* 블록 요소로 설정 */
+	padding: 10px 15px; /* 상하 패딩 10px, 좌우 패딩 15px으로 설정 */
+	text-decoration: none;  /* 밑줄 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+	color: black !important;
 }
 
-.pageInfo .active {
-    background-color: #cdd5ec !important;
-    font-weight: bold !important; /* 강조된 페이지의 텍스트를 굵게 표시 */
+/* 페이지 정보 버튼 호버 시 스타일 설정 */
+.pageInfo_btn a:hover {
+	background-color: #e9ecef; /* 호버 시 배경색을 더 진한 회색으로 설정 */
 }
 
+/* 페이지 정보 버튼 활성 상태의 스타일 설정 */
+.pageInfo_btn.active a {
+	background-color: #007bff !important; /* 활성화된 버튼의 배경색을 파란색으로 설정 */
+	color: white !important; /* 활성화된 버튼의 텍스트 색상을 흰색으로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 스타일 설정 */
 .pageInfo_btn.previous a, .pageInfo_btn.next a {
-    font-weight: bold; /* 이전 및 다음 버튼 텍스트 굵게 표시 */
-    color: black; /* 버튼 텍스트 색상 */
+	font-weight: bold; /* 텍스트 굵기를 bold로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 커서 스타일 설정 */
+.pageInfo_btn.previous a:hover, .pageInfo_btn.next a:hover {
+	background-color: #0056b3; /* 호버 시 배경색을 더 어두운 파란색으로 설정 */
+	color: white !important; /* 호버 시 텍스트 색상을 흰색으로 설정 */
+}
+
+.totalCount {
+	text-align: right;
 }
 
 /* Adjusted select box style */
@@ -319,7 +231,6 @@ a:link, a:visited, a:hover {
 
 .bi-paperclip{
 	cursor: pointer;
-	/* font-size: 20px; */
 }
 
 /* 중복된 아이콘을 숨깁니다 */
@@ -348,7 +259,7 @@ a:link, a:visited, a:hover {
 			    </c:forEach>
 			</select>
 		</div>
-</div>
+	</div>
 
 		<!-- Main content -->
 		<div class="container">
@@ -390,27 +301,14 @@ a:link, a:visited, a:hover {
                 <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
                 	</tbody>
 			</table>
-			
 				<div class="pageInfo_area">
 					<ul id="pageInfo" class="pageInfo">
-					
-					<!-- 이전페이지 버튼 -->
-					<c:if test="${pageMaker.prev }">
-						<li class="pageInfo_btn previous"><a href="${pageMaker.pageStart-1 }">Previous</a></li>
-					</c:if>
-					
-					<!-- 각 번호 페이지 버튼 -->
-					<c:forEach var="num" begin="${pageMaker.pageStart }" end="${pageMaker.pageEnd }">
-						<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a href="${num }">${num }</a></li>
-					</c:forEach>
-					
-					<!-- 다음페이지 버튼 -->
-					<c:if test="${pageMaker.next }">
-						<li class="pageInfo_btn next"><a href="${pageMaker.pageEnd+1 }">Next</a></li>
-					</c:if>
-					
+				<!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->	
 					</ul>
 				</div>
+				<div id="totalCount" class="totalCount">
+				<!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
+				</div>	
 			</div>
 		</div>
 	</main>
@@ -438,6 +336,12 @@ a:link, a:visited, a:hover {
 		    const type = searchForm.find("select[name='type']").val() || 'W'; // 기본값 설정
 	        const keyword = searchForm.find("input[name='keyword']").val() || '';
 
+	     	// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
+	        }
+	     
 	        loadPageData(classNo, pageNum, type, keyword);
 		}
     
@@ -452,10 +356,11 @@ a:link, a:visited, a:hover {
 		        success: function(response) {
 		        	console.log('Response:', response); // 응답 데이터 확인
 		        	 if (!response.list || response.list.length === 0) {
-		                 $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+		        		if (keyword.trim()) { // 공백이 아닌 경우에만 "데이터가 없습니다." 표시
+			         		$('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+			        	}
 		             } else {
 		                 updateTable(response.list, currentClassNo);
-		       
 		             }
 		             updatePagination(response.pageInfo);
 		        },
@@ -495,20 +400,26 @@ a:link, a:visited, a:hover {
 		    $('.file-download').on('click', function(event) {
 		        event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
 		    });
+		 
 		}
 
 		function updatePagination(pageInfo) {
 		    var pageUl = $('#pageInfo');
 		    pageUl.empty();
 		    if (pageInfo.prev) {
-		        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">Previous</a></li>');
+		        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">◀</a></li>');
 		    }
 		    for (var num = pageInfo.pageStart; num <= pageInfo.pageEnd; num++) {
-		        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.currentPage == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
+		        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.cri.pageNum == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
 		    }
 		    if (pageInfo.next) {
-		        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">Next</a></li>');
+		        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">▶</a></li>');
 		    }
+		    
+		    var totalUl = $('#totalCount');
+		    totalUl.empty();
+		    totalUl.append('<p>총 ' + pageInfo.total +'건</p>');
+
 		}
 
 		function formatDate(date) {
@@ -563,6 +474,12 @@ a:link, a:visited, a:hover {
 				alert("검색 종류를 선택하세요");
 				return false;
 			}
+			
+			// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
+	        }
 			
 			// 폼 필드 업데이트
 	        $('#searchForm').find("input[name='type']").val(type);

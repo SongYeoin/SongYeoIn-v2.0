@@ -18,14 +18,14 @@ public class ClubServiceImpl implements ClubService{
 	
 	//리스트(페이징)
 	@Override
-	public List<ClubVO> getListPaging(Criteria cri, int classNo) {
+	public List<ClubVO> getListPaging(Criteria cri, Integer classNo) {
 		System.out.println("service: " + mapper.getListPaging(cri, classNo));
 		return mapper.getListPaging(cri, classNo);
 	}
 
 	//등록
 	@Override
-	public void enroll(ClubVO club, int classNo, int memberNo) {
+	public void enroll(ClubVO club, Integer classNo, int memberNo) {
 		mapper.enroll(club, classNo, memberNo);
 	}
 
@@ -50,10 +50,6 @@ public class ClubServiceImpl implements ClubService{
 	public int delete(int clubNo) {
 		return mapper.delete(clubNo);
 	}
-	@Override
-	public int deleteAdmin(int clubNo) {
-		return mapper.deleteAdmin(clubNo);
-	}
 
 	//로드시 반 번호
 	@Override
@@ -69,7 +65,7 @@ public class ClubServiceImpl implements ClubService{
 	
 	//동아리 신청 총 갯수
 	@Override
-	public int getTotal(Criteria cri, int classNo) {
+	public int getTotal(Criteria cri, Integer classNo) {
 		return mapper.getTotal(cri, classNo);
 	}
 }

@@ -10,16 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -27,9 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,15 +38,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
-import com.syi.project.model.EnrollVO;
 import com.syi.project.model.PageDTO;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.club.ClubService;
 import com.syi.project.service.syclass.SyclassService;
-
-
 
 @Controller
 @RequestMapping("/member")
@@ -73,7 +63,7 @@ public class ClubMemberController {
 
 	//리스트(페이징)
 	@GetMapping("/club/list")
-	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, Criteria cri, HttpSession session, Model model) {
+	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
 		
 		// 로그인한 멤버 정보 가져오기
@@ -89,15 +79,6 @@ public class ClubMemberController {
 	    }
 		
 	    System.out.println("classNo after service call: " + classNo);
-	   
-		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
-		System.out.println("classNo : " + classNo);
-		System.out.println("controller : " +list);
-		model.addAttribute("list", list);
-		
-		int total = cservice.getTotal(cri, classNo);
-		PageDTO pageMake = new PageDTO(cri, total);
-		model.addAttribute("pageMaker", pageMake);
 		
 		//수강 반 목록
 		Integer memberNo = member.getMemberNo();
@@ -137,7 +118,7 @@ public class ClubMemberController {
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("list", clubs);
 	    response.put("pageInfo", pageMake);
-	    response.put("classNo", classNo);
+
 	    return response;
 	}
 	
@@ -145,12 +126,11 @@ public class ClubMemberController {
 	@GetMapping("/club/enroll")
 	public void clubEnrollGET(@RequestParam(value = "classNo", required = false) Integer classNo) {
 		log.info("등록 페이지 진입");
-		
 		System.out.println("enroll get classNo : " + classNo);
 	}
 	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) int classNo, RedirectAttributes rttr) {
+	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) Integer classNo, RedirectAttributes rttr) {
 		log.info("ClubVO : "+club);
 		
 		MemberVO member = (MemberVO)session.getAttribute("loginMember");
@@ -162,31 +142,28 @@ public class ClubMemberController {
 	    cservice.enroll(club, classNo, memberNo);
 	    
 		rttr.addFlashAttribute("result", "enroll success");
-		System.out.println("classNo : "+classNo);
+		
 		return "redirect:/member/club/list?classNo=" + classNo;
 	}
-	
+
 	//조회
 	@GetMapping("/club/get")
-	public void clubGetPageGET(int clubNo, Model model, int rn) {
+	public void clubGetPageGET(@RequestParam("clubNo")int clubNo, Model model) {
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
-		model.addAttribute("rownum", rn);
 		
 		// 선택 할 반 정보 프론트로 보내기
 		List<SyclassVO> classList = syclassService.getClassList();
 		model.addAttribute("classList", classList);
 
 	}
-	
+
 	//수정페이지 이동
 	@GetMapping("/club/modify")
-	public void clubModifyGET(int clubNo, Model model, int rn) {
+	public void clubModifyGET(@RequestParam("clubNo")int clubNo, Model model) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		System.out.println("modifypage : " +cservice.getPage(clubNo));
-		
-		model.addAttribute("rownum", rn);
-		
+
 		//현재 날짜 추가
 		LocalDate today = LocalDate.now();
 		model.addAttribute("currentDate", Date.valueOf(today));
@@ -198,8 +175,17 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam(value = "classNo", required = false) int classNo, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam("clubNo")int clubNo, @RequestParam(value = "classNo", required = false) Integer classNo,
+								@RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
+		// 승인 상태일 때 파일 첨부 검증
+	    if ("승인".equals(club.getCheckStatus())) {
+	        if (file == null || file.isEmpty()) {
+	        	rttr.addFlashAttribute("fileError", "파일을 선택해 주세요");
+	        	rttr.addFlashAttribute("club", club); // 현재 입력된 데이터를 유지하기 위해
+	            return "redirect:/member/club/modify?clubNo=" + clubNo + "&rn=" + club.getRn() + "&classNo=" + classNo;
+	        }
+	    }		
 		
 		// 파일 업로드 처리
 	    if (file != null && !file.isEmpty()) {
@@ -282,11 +268,9 @@ public class ClubMemberController {
 	
 	//삭제
 	@PostMapping("/club/delete")
-	public String clubDeletePOST(int clubNo, RedirectAttributes rttr, @RequestParam(value = "classNo", required = false) int classNo) {
+	public String clubDeletePOST(@RequestParam("clubNo")int clubNo, RedirectAttributes rttr, @RequestParam(value = "classNo", required = false) Integer classNo) {
 		cservice.delete(clubNo);
 		rttr.addFlashAttribute("result", "delete success");
 		return "redirect:/member/club/list?classNo=" + classNo;
 	}
-	
-
 }
