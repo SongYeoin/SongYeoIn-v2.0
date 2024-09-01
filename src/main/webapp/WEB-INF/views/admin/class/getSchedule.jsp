@@ -197,7 +197,7 @@ td {
         <!-- Main content -->
         <div class="content">
             <button class="add-schedule-btn" onclick="location.href='${pageContext.servletContext.contextPath}/admin/class/enrollSchedule'">시간표 추가하기</button>
-            <h2>등록된 시간표 조회</h2>
+            <h2>시간표 조회</h2>
             <c:choose>
                 <c:when test="${result == 'null'}">
                     <p>등록된 시간표가 없습니다.</p>
