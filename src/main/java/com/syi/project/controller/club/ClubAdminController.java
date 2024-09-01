@@ -47,19 +47,10 @@ private static final Logger log = LoggerFactory.getLogger(ClubMemberController.c
 
 	//리스트
 	@GetMapping("/class/club/list")
-	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, Criteria cri, Model model) {
+	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo) {
 		log.info("목록 페이지 진입");
 		
 	    System.out.println("classNo after service call: " + classNo);
-	    
-	    List<ClubVO> list =  cservice.getListPaging(cri, classNo);
-		System.out.println("classNo : " + classNo);
-		System.out.println("controller : " +list);
-		model.addAttribute("list", list);
-		
-		int total = cservice.getTotal(cri, classNo);
-		PageDTO pageMake = new PageDTO(cri, total);
-		model.addAttribute("pageMaker", pageMake);
 		
 	    return "admin/class/club/list";
 		

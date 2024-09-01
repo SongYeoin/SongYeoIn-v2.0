@@ -63,7 +63,7 @@ public class ClubMemberController {
 
 	//리스트(페이징)
 	@GetMapping("/club/list")
-	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, Criteria cri, HttpSession session, Model model) {
+	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
 		
 		// 로그인한 멤버 정보 가져오기
@@ -79,15 +79,6 @@ public class ClubMemberController {
 	    }
 		
 	    System.out.println("classNo after service call: " + classNo);
-	   
-		List<ClubVO> list =  cservice.getListPaging(cri, classNo);
-		System.out.println("classNo : " + classNo);
-		System.out.println("controller : " +list);
-		model.addAttribute("list", list);
-		
-		int total = cservice.getTotal(cri, classNo);
-		PageDTO pageMake = new PageDTO(cri, total);
-		model.addAttribute("pageMaker", pageMake);
 		
 		//수강 반 목록
 		Integer memberNo = member.getMemberNo();
