@@ -272,14 +272,12 @@ table th, table td {
         alert(message);
     }
 
-    // 검색 버튼 클릭 시 페이지 번호를 1로 설정하고 폼 제출
     $('#searchForm').on('submit', function() {
         let form = $(this);
         form.find("input[name='pageNum']").val('1');
         return true;  
     });
 
-    // 페이지 이동 버튼
     $(".pageMaker_btn a").on("click", function(e) {
         e.preventDefault();
         let pageNum = $(this).attr("href");

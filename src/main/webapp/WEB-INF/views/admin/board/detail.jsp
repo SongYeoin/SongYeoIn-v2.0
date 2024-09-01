@@ -165,42 +165,33 @@ button:hover {
 }
 
 .pageMaker_wrap {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.pageMaker_wrap a {
-    color: black;
-}
-
-.pageMaker {
-    list-style: none;
-    display: inline-block;
+	text-align: center; 
+	margin: 20px; 
 }
 
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
 
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	border: 1px solid #007bff;
+    border-radius: 4px; 
+    background-color: transparent !important;
+	color: #007bff !important; 
+	text-decoration: none; 
+	font-size: 15px;
 }
 
-.next a, .prev a {
-    color: #ccc;
+.pageMaker_btn a:hover {
+	background-color: #f4f4f4 !important; 
 }
 
-.active { /* 현재 페이지 버튼 */
-    border: 2px solid black;
-    font-weight: 400;
+.pageMaker_btn.active a {
+	border: 2px solid #000000 !important;
 }
-
 
 </style>
 </head>
@@ -241,17 +232,7 @@ button:hover {
                     </tr>
                 </thead>
             </table>
-            
-            
-            <!-- 댓글 추가 폼 -->
-            <div class="comment-form-container">
-	            <form action="${pageContext.request.contextPath}/admin/board/comment/add" method="post">
-	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-	                <button type="submit">등록</button>
-	            </form>
-            </div>
-            
+
             
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
@@ -352,6 +333,16 @@ button:hover {
 				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 				<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 			</form>
+			
+			
+            <!-- 댓글 추가 폼 -->
+            <div class="comment-form-container">
+	            <form action="${pageContext.request.contextPath}/admin/board/comment/add" method="post">
+	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
+	                <button type="submit">등록</button>
+	            </form>
+            </div>
             
             
 			<!-- 게시글 버튼 -->

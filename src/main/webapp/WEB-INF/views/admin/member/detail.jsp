@@ -114,11 +114,6 @@ label {
     transition: color 0.3s ease, transform 0.3s ease; 
 }
 
-.deleteButton:hover {
-    color: #c82333; 
-    transform: scale(1.2); 
-}
-
 .button-container {
     text-align: center;
     margin-top: 20px;
