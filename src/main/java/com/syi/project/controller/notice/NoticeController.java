@@ -3,8 +3,11 @@ package com.syi.project.controller.notice;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -48,17 +52,19 @@ public class NoticeController {
 
 	@Autowired
 	private NoticeService noticeService;
+	
+	// 파일 업로드 경로를 저장할 필드
+	@Value("C:/upload/temp")
+	private String fileUploadPath;
 
 	// 공지사항 조회
 	@GetMapping("list")
 	public String noticeList(Criteria cri, Model model, HttpSession session) throws Exception {
-		logger.info("공지사항 조회 페이지");
+		logger.info("공지사항 조회");
 
 		SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
 		int syclassNo = syclass.getClassNo();
-
 		
-		// 전체 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
 		model.addAttribute("noticeList", noticeList);
 		
@@ -74,18 +80,22 @@ public class NoticeController {
 		logger.info("상세 조회");
 		NoticeVO notice = noticeService.selectNoticeDetail(noticeNo);
 		model.addAttribute("notice", notice);
+		
 		List<NoticeFileVO> fileList = noticeService.selectNoticeFiles(noticeNo);
 		model.addAttribute("fileList", fileList);
 		return "admin/notice/detail";
 	}
 
+	// 공지사항 파일 다운로드
 	@GetMapping("/download")
 	public ResponseEntity<Resource> downloadAttachment(@RequestParam("fileNo") int fileNo) {
-		// 파일 정보 조회
 		NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+		
 		String filePath = file.getFilePath();
-		Path path = Paths.get("C:\\upload\\temp" + filePath);
+		Path path = Paths.get(filePath);
 		Resource resource = new FileSystemResource(path);
+		
+		logger.info("파일 경로: " + filePath);
 
 		if (!resource.exists()) {
 			return ResponseEntity.notFound().build();
@@ -126,45 +136,45 @@ public class NoticeController {
 			noticeVO.setNoticeClassNo(syclassNo);
 		}
 
-		// 공지사항을 데이터베이스에 저장하고, 생성된 공지사항의 ID를 반환합니다.
 		int noticeNo = noticeService.insertNotice(noticeVO);
-		logger.info("Inserted noticeNo: " + noticeNo);
+		logger.info("공지사항 번호 : " + noticeNo);
 
 		if (noticeNo <= 0) {
 			rttr.addFlashAttribute("message", "공지사항 등록에 실패하였습니다.");
 			return "redirect:/admin/class/notice/enroll";
 		}
 
-		// 업로드된 파일들을 처리합니다.
+		// 업로드된 파일 처리
 		for (MultipartFile file : files) {
-			if (!file.isEmpty()) { // 파일이 비어있지 않은 경우만 처리합니다.
-				// 파일의 원본 이름을 안전하게 처리합니다.
+			if (!file.isEmpty()) { // 파일이 비어있지 않은 경우
+				// 파일의 원본 이름을 안전하게 처리
 				String fileOriginalName = StringUtils.cleanPath(file.getOriginalFilename());
 
 				// UUID를 생성하여 파일 이름에 추가
 				String uniqueId = UUID.randomUUID().toString();
 				String fileSavedName = uniqueId + "_" + fileOriginalName;
 
-				// 파일을 저장할 경로를 설정합니다.
-				String filePath = "/" + fileSavedName;
+				// 날짜별 디렉토리 생성 (yyyy-MM-dd)
+                String dateDir = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                Path noticeDir = Paths.get(fileUploadPath, "notice", dateDir);
+                Files.createDirectories(noticeDir);
 
-				// 파일을 저장할 위치를 지정하는 File 객체를 생성합니다.
-				File destinationFile = new File(filePath);
+                // 파일을 저장할 경로를 설정
+                Path filePath = noticeDir.resolve(fileSavedName);
 
-				// MultipartFile 객체를 사용하여 파일을 지정한 경로에 저장합니다.
-				file.transferTo(destinationFile);
-				logger.info("File saved: " + filePath);
+                // MultipartFile 객체를 사용하여 파일을 지정한 경로에 저장
+                file.transferTo(filePath.toFile());
+                logger.info("파일 저장 경로 : " + filePath);
 
-				// 파일 정보를 담기 위한 NoticeFileVO 객체를 생성합니다.
+				// 파일 정보 설정
 				NoticeFileVO noticeFileVO = new NoticeFileVO();
 				noticeFileVO.setFileOriginalName(fileOriginalName); // 원본 파일 이름
-				noticeFileVO.setFileSavedName(fileSavedName); // 저장된 파일 이름 (원본과 같음)
-				noticeFileVO.setFileType(file.getContentType()); // 파일 타입 (예: image/jpeg)
-				noticeFileVO.setFileSize(file.getSize()); // 파일 크기
-				noticeFileVO.setFilePath(filePath); // 파일 저장 경로
-				noticeFileVO.setFileNoticeNo(noticeNo); // 공지사항 ID
+				noticeFileVO.setFileSavedName(fileSavedName); 		// 저장된 파일 이름
+				noticeFileVO.setFileType(file.getContentType()); 	// 파일 타입
+				noticeFileVO.setFileSize(file.getSize()); 			// 파일 크기
+				noticeFileVO.setFilePath(filePath.toString()); 		// 파일 저장 경로
+				noticeFileVO.setFileNoticeNo(noticeNo); 			// 공지사항 번호
 
-				// NoticeFileVO 객체를 사용하여 파일 정보를 데이터베이스에 저장합니다.
 				int fileResult = noticeService.insertNoticeFile(noticeFileVO);
 				if (fileResult <= 0) {
 					rttr.addFlashAttribute("message", "파일 등록에 실패했습니다.");
@@ -173,10 +183,7 @@ public class NoticeController {
 			}
 		}
 
-		// 공지사항이 성공적으로 등록되었음을 사용자에게 알리는 메시지를 설정합니다.
 		rttr.addFlashAttribute("message", "공지사항이 등록되었습니다.");
-
-		// 공지사항 목록 페이지로 리다이렉트합니다.
 		return "redirect:/admin/class/notice/list";
 	}
 
@@ -200,48 +207,51 @@ public class NoticeController {
 
 		logger.info("공지사항 수정");
 
-		// 공지사항 정보를 업데이트합니다.
 		int result = noticeService.updateNotice(notice);
 		if (result <= 0) {
 			rttr.addFlashAttribute("message", "공지사항 수정에 실패하였습니다.");
 			return "redirect:/admin/class/notice/modify?noticeNo=" + notice.getNoticeNo();
 		}
 
-		// 삭제할 파일이 있는 경우 처리합니다.
+		// 삭제할 파일이 있는 경우 처리
 		if (deleteFileNos != null && !deleteFileNos.isEmpty()) {
 			for (int fileNo : deleteFileNos) {
 				NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
 				String filePath = file.getFilePath();
-				File fileToDelete = new File("C:\\upload\\temp" + filePath);
+				File fileToDelete = new File(fileUploadPath + filePath);
 				if (fileToDelete.exists()) {
 					if (fileToDelete.delete()) {
-						logger.info("Deleted file: " + filePath);
+						logger.info("파일 삭제 완료 : " + filePath);
 					} else {
-						logger.error("Failed to delete file: " + filePath);
+						logger.error("파일 삭제 실패 : " + filePath);
 					}
 				}
 				noticeService.deleteNotcieFile(fileNo); 
 			}
 		}
 
-		// 업로드된 파일들을 처리합니다.
+		// 업로드된 파일 처리
 		for (MultipartFile file : files) {
 			if (!file.isEmpty()) {
 				String fileOriginalName = StringUtils.cleanPath(file.getOriginalFilename());
 				String uniqueId = UUID.randomUUID().toString();
 				String fileSavedName = uniqueId + "_" + fileOriginalName;
-				String filePath = "/" + fileSavedName;
+				
+				// 날짜별 디렉토리 생성 (yyyy-MM-dd)
+                String dateDir = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                Path noticeDir = Paths.get(fileUploadPath, "notice", dateDir);
+                Files.createDirectories(noticeDir);
 
-				File destinationFile = new File("C:\\upload\\temp" + filePath);
-				file.transferTo(destinationFile);
-				logger.info("File saved: " + filePath);
+                Path filePath = noticeDir.resolve(fileSavedName);
+                file.transferTo(filePath.toFile());
+                logger.info("파일 저장 경로 : " + filePath);
 
 				NoticeFileVO noticeFileVO = new NoticeFileVO();
 				noticeFileVO.setFileOriginalName(fileOriginalName);
 				noticeFileVO.setFileSavedName(fileSavedName);
 				noticeFileVO.setFileType(file.getContentType());
 				noticeFileVO.setFileSize(file.getSize());
-				noticeFileVO.setFilePath(filePath);
+				noticeFileVO.setFilePath(filePath.toString());
 				noticeFileVO.setFileNoticeNo(notice.getNoticeNo());
 
 				int fileResult = noticeService.insertNoticeFile(noticeFileVO);
@@ -251,7 +261,6 @@ public class NoticeController {
 				}
 			}
 		}
-
 		rttr.addFlashAttribute("message", "공지사항이 수정되었습니다.");
 		return "redirect:/admin/class/notice/detail?noticeNo=" + notice.getNoticeNo();
 	}
@@ -261,28 +270,31 @@ public class NoticeController {
 	@ResponseBody
 	public String noticeDelete(int noticeNo) {
 		logger.info("공지사항 삭제");
-
 		List<NoticeFileVO> fileList = noticeService.selectNoticeFiles(noticeNo);
 
-		// 파일 삭제
+		// 서버 파일 삭제
 		for (NoticeFileVO file : fileList) {
 			String filePath = file.getFilePath();
-			File fileToDelete = new File("C:\\upload\\temp" + filePath);
+			File fileToDelete = new File(fileUploadPath, filePath);
 
 			if (fileToDelete.exists()) {
 				if (fileToDelete.delete()) {
-					logger.info("Deleted file: " + filePath);
+					logger.info("파일 삭제 완료 : " + filePath);
 				} else {
-					logger.error("Failed to delete file: " + filePath);
+					logger.error("파일 삭제 실패 : " + filePath);
 				}
 			}
+			
+			// 파일 정보 삭제
 			int fileDeleteResult = noticeService.deleteNoticeFiles(noticeNo);
 			if (fileDeleteResult <= 0) {
 				return "fail";
 			}
 		}
 
+		// 공지사항 삭제
 		int result = noticeService.deleteNotice(noticeNo);
 		return result > 0 ? "success" : "fail";
 	}
+	
 }

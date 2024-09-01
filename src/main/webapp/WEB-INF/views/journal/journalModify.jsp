@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
@@ -50,74 +51,84 @@ main {
 	padding: 20px;
 }
 
-.box {
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	padding: 20px;
-	max-width: 800px;
-	margin: 0 auto; /* 페이지 중앙 정렬 */
+
+/* 기존 CSS는 그대로 유지하고 아래 스타일을 추가합니다 */
+
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-	margin-bottom: 20px;
-	color: #333;
-	font-size: 24px;
-	border-bottom: 2px solid #007bff;
-	padding-bottom: 10px;
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
 }
 
-form {
-	display: flex;
-	flex-direction: column;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-form div {
-	margin-bottom: 15px;
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
 }
 
-label {
-	display: block;
-	margin-bottom: 5px;
-	font-weight: bold;
-	color: #333;
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-input[type="text"], input[type="date"] {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
+.warn-message {
+    display: none;
+    color: #d9534f;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-input[type="file"] {
-	border: none;
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
 }
 
-button {
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	padding: 10px 15px;
-	border-radius: 5px;
-	cursor: pointer;
-	margin-right: 10px;
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
 }
 
-button:hover {
-	background-color: #0056b3;
+.btn-primary {
+    background-color: #007bff;
+    color: white;
 }
 
-a.button {
-	background-color: #6c757d;
-	color: #fff;
-	padding: 10px 15px;
-	text-decoration: none;
-	border-radius: 5px;
+.btn-primary:hover {
+    background-color: #0056b3;
 }
 
-a.button:hover {
-	background-color: #5a6268;
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
 }
 </style>
 </head>
@@ -126,41 +137,41 @@ a.button:hover {
 	<!-- 메뉴바 연결 -->
 	<%@ include file="../common/header.jsp"%>
 
-	<!-- 사이드바 연결 -->
-	<%@ include file="../member/aside.jsp"%>
+	<!-- 사용자 역할일 때 사이드바 -->
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_MEMBER'}">
+		<%@ include file="../member/aside.jsp"%>
+	</c:if>
+	<!-- 관리자 역할일 때 사이드바 -->
+	<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+		<%@ include file="../admin/aside.jsp"%>
+	</c:if>
 
 	<main>
-		<div class="box">
-			<h1>교육일지 수정</h1>
-
-			<form
-				action="${pageContext.request.contextPath}/journal/journalModify.do"
-				method="post" id="modifyForm" enctype="multipart/form-data">
-				<input type="hidden" name="journalNo" value="${journal.journalNo}" />
-
-				<div>
-					<label for="journalTitle">제목:</label> <input type="text"
-						id="journalTitle" name="journalTitle"
-						value="${journal.journalTitle}" required />
-				</div>
-
-				<div>
-					<label for="journalWriteDate">작성일자:</label> <input type="date"
-						id="journalWriteDate" name="journalWriteDate"
-						value="${journal.journalWriteDate}" required />
-				</div>
-
-				<div>
-					<label for="file">첨부파일:</label> <input type="file" id="file"
-						name="file" />
-				</div>
-
-				<div>
-					<button type="button" id="cancelBtn" class="btn">취 소</button>
-					<button type="button" id="enrollBtn" class="btn">확인</button>
-				</div>
-			</form>
-		</div>
+    <div class="form-container">
+        <h1 class="form-title">교육일지 수정</h1>
+	        <form action="${pageContext.request.contextPath}/journal/journalModify.do" method="post" id="modifyForm" enctype="multipart/form-data">
+	            <input type="hidden" name="journalNo" value="${journal.journalNo}" />
+            	<div class="form-group">
+	                <label for="journalTitle">제목</label>
+	                <input type="text" id="journalTitle" name="journalTitle" value="${journal.journalTitle}" required />
+                <span class="warn-message" id="warn_journalTitle">교육일지 제목을 입력 해주세요.</span>
+	            </div>
+            	<div class="form-group">
+	                <label for="journalWriteDate">작성일자</label>
+	                <input type="date" id="journalWriteDate" name="journalWriteDate" value="${journal.journalWriteDate}" required />
+                <span class="warn-message" id="warn_date">날짜를 선택해주세요.</span>
+	            </div>
+            	<div class="form-group">
+	                <label for="file">첨부파일</label>
+	                <input type="file" id="file" name="file" />
+                <span class="warn-message" id="warn_file">교육일지 파일을 첨부해주세요.</span>
+	            </div>
+	            <div class="button-group">
+	                <button type="button" id="cancelBtn" class="btn btn-secondary">취 소</button>
+	                <button type="button" id="enrollBtn" class="btn btn-primary">확 인</button>
+	            </div>
+	        </form>
+	    </div>
 	</main>
 	<script>
 		/* 등록 버튼 */

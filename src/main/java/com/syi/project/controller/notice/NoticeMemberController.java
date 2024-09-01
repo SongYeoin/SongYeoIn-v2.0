@@ -1,5 +1,6 @@
 package com.syi.project.controller.notice;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +48,10 @@ public class NoticeMemberController {
 
 	@Autowired
 	private EnrollService enrollService;
+	
+	// 파일 업로드 경로를 저장할 필드
+	@Value("C:/upload/temp")
+	private String fileUploadPath;
 
 	// 공지사항 조회
 	@GetMapping("list")
@@ -58,7 +64,8 @@ public class NoticeMemberController {
 
 		// classNo가 null 이거나 유효하지 않을 떄
 		int syclassNo = (classNo != null && classNo > 0) ? classNo : enrollService.selectClassNo(memberNo);
-		// 전체 공지 조회
+		
+		// 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
 		model.addAttribute("noticeList", noticeList);
 
@@ -92,11 +99,13 @@ public class NoticeMemberController {
 
 	@GetMapping("/download")
 	public ResponseEntity<Resource> downloadAttachment(@RequestParam("fileNo") int fileNo) {
-		// 파일 정보 조회
 		NoticeFileVO file = noticeService.selectNoticeFile(fileNo);
+		
 		String filePath = file.getFilePath();
-		Path path = Paths.get("C:\\upload\\temp" + filePath);
+		Path path = Paths.get(filePath);
 		Resource resource = new FileSystemResource(path);
+		
+		logger.info("파일 경로: " + filePath);
 
 		if (!resource.exists()) {
 			return ResponseEntity.notFound().build();

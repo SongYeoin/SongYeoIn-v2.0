@@ -58,5 +58,8 @@ public class MemberVO {
 	
 	// 멤버 역할
 	private String memberRole;
+	
+	// 멤버 프로필 URL
+	private String memberProfileUrl;
 
 }

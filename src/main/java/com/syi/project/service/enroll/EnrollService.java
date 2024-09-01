@@ -12,4 +12,6 @@ public interface EnrollService {
 	// 수강 중인 반에서 classNo 작은 값 조회
 	int selectClassNo(int memberNo);
 
+	// 특정 클래스의 수강 중인 수강생 조회
+    List<EnrollVO> selectMemberList(int classNo);
 }
