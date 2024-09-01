@@ -72,11 +72,21 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 테이블 스타일 */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+}
+
+a {
+    text-decoration: none !important; /* 링크의 밑줄 제거 */
+    color: inherit !important; /* 부모 요소의 글자색 상속 */
 }
 
 table, th, td {
