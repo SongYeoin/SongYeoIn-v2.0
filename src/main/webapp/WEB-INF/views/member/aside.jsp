@@ -17,7 +17,7 @@ body {
     width: 250px;
     background-color: #F2F2F2;
     color: #333333;
-    height: 960px;
+    height: 100%;
     position: fixed;
     top: 70px;
     overflow-y: auto;
