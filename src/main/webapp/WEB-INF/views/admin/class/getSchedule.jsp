@@ -47,19 +47,24 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    margin-left: 5px;
+    border: 1px solid #ddd; /* 테두리 추가 */
 }
 
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
+th, td, tr {
+    padding: 10px 0px 10px 0px;
+    text-align: center;
+    border-left: 1px solid #ddd; /* 왼쪽 테두리 추가 */
+    border-right: 1px solid #ddd; /* 오른쪽 테두리 추가 */
 }
 
 th {
     background-color: #f4f4f4;
+    border-bottom: 1px solid #ddd; /* 아래쪽 테두리 추가 */
+}
+
+td {
+    border-bottom: 1px solid #ddd; /* 아래쪽 테두리 추가 */
 }
 
 /* 반 별 홈 세미헤더 */
@@ -98,34 +103,38 @@ th {
     position: absolute;
     right: 20px;
     top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
+    padding: 5px 10px;
+    background-color: RoyalBlue; 
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 */
 }
 
 .add-schedule-btn:hover {
-    background-color: #218838;
+    background-color: CornflowerBlue; /* 약간 어두운 회색으로 호버 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 살짝 부각되도록 그림자 효과 */
 }
 
 /* 수정 버튼 스타일 */
 .edit-schedule-btn {
     margin-left: 10px;
     padding: 5px 10px;
-    background-color: #ffc107;
+    background-color: lightsteelblue; 
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 */
 }
 
 .edit-schedule-btn:hover {
-    background-color: #e0a800;
+    background-color: SteelBlue; /* 약간 어두운 회색으로 호버 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 살짝 부각되도록 그림자 효과 */
 }
 
 /* 저장 버튼 스타일 */
@@ -162,9 +171,10 @@ th {
 
 /* 구분선 스타일 */
 .separator {
-    border: 0;
+    border: none;
     border-top: 2px solid #ccc;
-    margin: 20px 0;
+    margin: 0; /* 기본 여백 제거 */
+    width: 100%; /* 테두리까지 확장 */
 }
 </style>
 </head>

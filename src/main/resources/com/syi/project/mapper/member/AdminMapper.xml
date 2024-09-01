@@ -46,6 +46,7 @@
 		<result property="enrollDate" column="ENROLL_DATE"/>
 		<result property="modifiedDate" column="MODIFIED_DATE"/>
 		<result property="classStatus" column="CLASS_STATUS"/>
+		<result property="isDeleted" column="is_deleted"/>
 	</resultMap>
 
 	
