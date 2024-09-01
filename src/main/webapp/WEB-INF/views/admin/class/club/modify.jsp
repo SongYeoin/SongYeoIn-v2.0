@@ -27,7 +27,6 @@ body {
 	font-family: Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
-	/* min-height: 100vh; */
 }
 
 main {
@@ -71,50 +70,104 @@ main {
 	font-size: 20px;
 }
 
-.input_wrap {
-	padding: 5px 20px;
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-label {
-	display: block;
-	margin: 10px 0;
-	font-size: 20px;
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
 }
 
-input {
-	padding: 5px;
-	font-size: 17px;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-.large-input{
-	width: 500px;
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
 }
 
-textarea {
-	width: 800px;
-	height: 95px;
-	font-size: 15px;
-	padding: 10px;
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem; /* 체크박스와 라벨 사이의 간격 */
+}
+
+.checkbox input[type="checkbox"] {
+    margin: 0; /* 기본 마진 제거 */
+    width: auto;
+}
+
+.checkbox label {
+    margin: 0; /* 기본 마진 제거 */
+}
+
+.warn-message {
+    display: block;
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.btn_group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
 }
 
 .btn {
-	display: inline-block;
-	font-size: 22px;
-	padding: 6px 12px;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	font-weight: 600;
-	width: 140px;
-	height: 41px;
-	line-height: 39px;
-	text-align: center;
-	margin-left: 30px;
-	cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
 }
 
-.btn_wrap {
-	padding-left: 80px;
-	margin-top: 50px;
+.btn:focus{
+	box-shadow: none !important;
+}
+
+.btn.modify {
+    border-color: #0d6efd;
+    background-color: #0d6efd;
+    color: white !important;
+}
+
+.btn.modify:hover {
+    border-color: #0b5ed7;
+    background-color: #0b5ed7;
+}
+
+.btn.cancel {
+    border-color: #6c757d;
+    background-color: #6c757d;
+    color: white !important;
+}
+
+.btn.cancel:hover {
+    border-color: #5c636a;
+    background-color: #5c636a;
 }
 
 </style>
@@ -135,53 +188,57 @@ textarea {
 
 	<main>
 		<!-- Main content -->
-		<div>
-			<h1>수정 페이지</h1>
+		<div class="form-container">
+			<h1 class="form-title">강의실 신청 수정</h1>
 			<form id="modifyForm" action="/admin/class/club/modify" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="classNo" value='<c:out value="${param.classNo }"/>'>
 			<input type="hidden" id="checkStatusHidden" name="checkStatus" value="N">
 			<input type="hidden" id="clubNo" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
 			
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>번호</label>
 				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
 			</div>
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>작성자</label>
 				<input name="memberName" readonly="readonly" value='<c:out value="${pageInfo.enroll.member.memberName }"/>'>
 			</div>
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>참여자</label>
 				<input name="join" class="large-input" id="joinInput" readonly="readonly" value='<c:out value="${pageInfo.join}"/>'>
 			</div>
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>내용</label>
 				<textarea rows="3" name="content" readonly="readonly"><c:out value="${pageInfo.content}" /></textarea>
 			</div>
 						
-			<div class="input_wrap">
+			<div class="form-group">
         		<label>승인상태</label>
+        		<div class="checkbox">
         		<input type="checkbox" id="approveCheckbox" name="approve" value="Y" <c:if test="${pageInfo.checkStatus == 'Y'}">checked</c:if>>
         		<label for="approveCheckbox">승인</label>
         		<input type="checkbox" id="denyCheckbox" name="deny" value="N" <c:if test="${pageInfo.checkStatus == 'N'}">checked</c:if>>
         		<label for="denyCheckbox">미승인</label>
+        		</div>
+        		<span id="statusWarn" class="warn-message"></span>
     		</div>
 
-			<div class="input_wrap">
+			<div class="form-group">
         		<label>승인메시지</label>
         		<input name="checkCmt" id="checkCmt" value='<c:out value="${pageInfo.checkCmt }"/>'>
+    			<span id="cmtWarn" class="warn-message"></span>
     		</div>
 			
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>활동일</label>
 				<input type="date" name="studyDate" id="studyDateInput" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.studyDate }"/>'>
 			</div>
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>작성일</label>
 				<input name="regDate" readonly="readonly" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${pageInfo.regDate }"/>'>
 			</div>
 		
-			<div class="input_wrap">
+			<div class="form-group">
 				<label>첨부파일</label>
 				<c:choose>
 				<c:when test="${pageInfo.fileName != null && !pageInfo.fileName.isEmpty() }">
@@ -194,9 +251,9 @@ textarea {
 			</div>
 			</form>
 	
-			<div class="btn_wrap">
-				<a class="btn" id="modify_btn">수정</a>
-				<a class="btn" id="list_btn">취소</a>
+			<div class="btn_group">
+				<a class="btn modify" id="modify_btn">수정</a>
+				<a class="btn cancel" id="list_btn">취소</a>
 			</div>
 			
 			<form id="infoForm" action="/admin/class/club/list" method="get">
@@ -251,17 +308,21 @@ textarea {
 		    // 승인 메시지를 확인합니다.
 		    let checkCmt = $("#checkCmt").val().trim();
 		    
+		 	// 에러 메시지 초기화
+            $("#statusWarn").text('');
+            $("#cmtWarn").text('');
+		    
 		 	// 승인 상태 체크박스와 승인 메시지 검증
 		    if (!approveChecked && !denyChecked) {
-		        alert('승인 상태를 선택해 주세요.');
+		        $("#statusWarn").text('승인 여부를 선택해 주세요');
 		        return false; // 폼 제출을 막습니다.
 		    }
-
-		    if (checkCmt === '') {
-		        alert('승인 메시지를 입력해 주세요.');
-		        return false; // 폼 제출을 막습니다.
-		    }
-		    
+		 	
+		    if (!checkCmt) {
+	        	 $("#cmtWarn").text('전달사항을 입력해 주세요');
+                return false; // 폼 제출을 막습니다.
+           	}
+		 
 		    return true; // 폼 제출을 허용합니다.
 		}
 	});

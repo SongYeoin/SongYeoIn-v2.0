@@ -175,9 +175,18 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam(value = "classNo", required = false) Integer classNo,
+	public String clubModifyPOST(ClubVO club, @RequestParam("clubNo")int clubNo, @RequestParam(value = "classNo", required = false) Integer classNo,
 								@RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
-				
+		
+		// 승인 상태일 때 파일 첨부 검증
+	    if ("승인".equals(club.getCheckStatus())) {
+	        if (file == null || file.isEmpty()) {
+	        	rttr.addFlashAttribute("fileError", "파일을 선택해 주세요");
+	        	rttr.addFlashAttribute("club", club); // 현재 입력된 데이터를 유지하기 위해
+	            return "redirect:/member/club/modify?clubNo=" + clubNo + "&rn=" + club.getRn() + "&classNo=" + classNo;
+	        }
+	    }		
+		
 		// 파일 업로드 처리
 	    if (file != null && !file.isEmpty()) {
 	        // 파일 이름 정리 (파일의 불필요한 경로, 요소를 제거하고 이름만 남겨놓음)
