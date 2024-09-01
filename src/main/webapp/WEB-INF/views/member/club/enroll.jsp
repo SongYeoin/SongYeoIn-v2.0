@@ -27,7 +27,6 @@ body {
 	font-family: Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
-	/* min-height: 100vh; */
 }
 
 main {
@@ -38,25 +37,92 @@ main {
 	height: 100%;
 }
 
-.btn {
-	display: inline-block;
-	font-size: 22px;
-	padding: 6px 12px;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	font-weight: 600;
-	width: 140px;
-	height: 41px;
-	line-height: 39px;
-	text-align: center;
-	margin-left: 30px;
-	cursor: pointer;
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.btn_wrap {
-	padding-left: 80px;
-	margin-top: 50px;
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
 }
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.writer,
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.warn-message {
+    display: block;
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.btn_group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.btn:focus{
+	box-shadow: none !important;
+}
+
+.btn.enroll {
+	border-color: #0d6efd;
+    background-color: #0d6efd;
+    color: white !important;
+}
+
+.btn.enroll:hover {
+	border-color: #0b5ed7;
+    background-color: #0b5ed7;
+}
+
+.btn.cancel {
+	border-color: #6c757d;
+    background-color: #6c757d;
+    color: white !important;
+}
+
+.btn.cancel:hover {
+	border-color: #5c636a;
+    background-color: #5c636a;
+}
+
 </style>
 </head>
 <body>
@@ -69,27 +135,31 @@ main {
 
    <main>
         <!-- Main content -->   
-        <div class="box">
-        	<h1>강의실 신청 등록</h1>
-
-		<div class="input_wrap">
-			<label>작성자</label><input name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
+        <div class="form-container">
+        	<h1 class="form-title">강의실 신청 등록</h1>
+		<div class="form-group">
+			<label>작성자</label>
+			<input class="writer" name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
 		</div>
 	<form action="/member/club/enroll" method="post" onsubmit="return validateForm()">
-		<%-- <input type="hidden" name="classNo" value="${param.classNo }"> --%>
-		<div class="input_wrap">
-			<label>참여자</label> <input type="text" name="join" id="joinInput">
+		<input type="hidden" name="classNo" value="${param.classNo }">
+		<div class="form-group">
+			<label>참여자</label>
+			<input type="text" name="join" id="joinInput" placeholder="본인 포함 참여자를 입력하세요">
+			<span id="joinWarn" class="warn-message"></span>
 		</div>
-		<div class="input_wrap">
-			<label>활동일</label> <input type="date" name="studyDate" id="studyDateInput">
+		<div class="form-group">
+			<label>활동일</label>
+			<input type="date" name="studyDate" id="studyDateInput">
+			<span id="dateWarn" class="warn-message"></span>
 		</div>
-		<div class="input_wrap">
+		<div class="form-group">
 			<label>내용</label>
 			<textarea rows="3" name="content"></textarea>
 		</div>
-		<div class="btn_wrap">
-		<input type="submit" value="등록" class="btn">
-		<button type="button" class="btn" onclick="cancelForm()">취소</button>
+		<div class="btn_group">
+		<input type="submit" value="등록" class="btn enroll">
+		<button type="button" class="btn cancel" onclick="cancelForm()">취소</button>
 		</div>
 	</form>
         </div>
@@ -98,21 +168,32 @@ main {
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
-	
 	<script>
 		function validateForm() {
-		    var joinInput = document.getElementById('joinInput').value;
+			// 에러 메시지 초기화
+            document.getElementById('joinWarn').textContent = '';
+            document.getElementById('dateWarn').textContent = '';
+            
+            var joinInput = document.getElementById('joinInput').value.trim(); // 공백 제거
 		    var studyDateInput = document.getElementById('studyDateInput').value;
-
-		    if (!joinInput || !studyDateInput) {
-		        alert('참여자 또는 활동일을 입력해 주세요.');
-		        return false; // 폼 제출을 막습니다.
-		    }
-		    return true; // 폼 제출을 허용합니다.
+			var isValid = true;
+			
+			if(!joinInput){
+				document.getElementById('joinWarn').textContent = '본인 포함 참여자를 입력해 주세요';
+                isValid = false;
+			}
+			
+			if(!studyDateInput){
+				document.getElementById('dateWarn').textContent = '날짜를 선택해 주세요';
+                isValid = false;
+			}
+			
+			return isValid;
 		}
 		
-		function cancelForm() {
-			window.location.href = '/member/club/list'; // 목록 페이지로 이동
+		function cancelForm() {			
+			var classNo = document.querySelector("input[name='classNo']").value;
+            window.location.href = '/member/club/list?classNo=' + encodeURIComponent(classNo); // 목록 페이지로 이동하며 classNo를 유지합니다.      
 		}
 	</script>
 </body>

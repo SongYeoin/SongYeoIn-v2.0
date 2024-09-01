@@ -3,6 +3,7 @@ package com.syi.project.service.enroll;
 import java.util.List;
 
 import com.syi.project.model.EnrollVO;
+import com.syi.project.model.member.MemberVO;
 
 public interface EnrollService {
 
@@ -14,4 +15,8 @@ public interface EnrollService {
 
 	// 특정 클래스의 수강 중인 수강생 조회
     List<EnrollVO> selectMemberList(int classNo);
+
+	// 반 별 수강생 리스트 조회
+	List<MemberVO> selectStudentList(int classNo);
+
 }

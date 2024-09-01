@@ -49,15 +49,11 @@ main {
 
 .container {
 	margin: 20px auto;
-	/* padding: 20px; */
 	background-color: #f9fafc;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	/* width: 1320px; */
 	max-width: 1320px;
-	/* height: 710px; */
 	border-radius: 10px;
 	padding-bottom: 20px;
-    
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -71,8 +67,6 @@ main {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ddd;
 	background-color: #e2eff9;
-	/* padding: 20px; */
-	
 	padding-top: 40px;
     padding-right: 32px;
     padding-left: 32px;
@@ -136,21 +130,6 @@ main {
 	margin: 50px 50px 0 50px;
 }
 
-.top_btn {
-	font-size: 20px;
-	padding: 6px 12px;
-	background-color: #28a745;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-weight: 600;
-	cursor: pointer;
-}
-
-.top_btn:hover {
-	background-color: #218838;
-}
-
 table thead tr {
     cursor: default; /* 기본 커서 */
 }
@@ -174,122 +153,55 @@ th, td {
 	border: 1px solid #ddd;
 }
 
-.status-active {
-	color: green;
-	font-weight: bold;
-}
-
-.status-inactive {
-	color: red;
-	font-weight: bold;
-}
-
-.footer {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 20px;
-}
-
-/* 드롭다운 메뉴 스타일 */
-.dropdown {
-	position: relative;
-	display: inline-block;
-}
-
-.dropdown-content {
-	display: none;
-	position: absolute;
-	background-color: #f9f9f9;
-	min-width: 100px;
-	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-	z-index: 1;
-}
-
-.dropdown-content a {
-	color: black;
-	padding: 10px 12px;
-	text-decoration: none;
-	display: block;
-}
-
-.dropdown-content a:hover {
-	background-color: #f1f1f1;
-}
-
-.dropbtn {
-	background-color: transparent;
-	border: none;
-	font-size: 16px;
-	cursor: pointer;
-	padding: 0;
-}
-
-/*  .pageInfo {
-	list-style: none;
-	display: inline-block;
-	margin: 50px 0 0 100px;
-}
-
-.pageInfo li {
-	float: left;
-	font-size: 20px;
-	margin-left: 18px;
-	padding: 7px;
-	font-weight: 500;
-}
-
-a:link {
-	color: black;
-	text-decoration: none;
-}
-
-a:visited {
-	color: black;
-	text-decoration: none;
-}
-
-a:hover {
-	color: black;
-	text-decoration: none;
-}
-
-.active {
-	background-color: #cdd5ec;
-} */
-
+/* 페이지 정보 영역의 스타일 설정 */
 .pageInfo_area {
-    text-align: center; /* 중앙 정렬 */
-    margin-top: 50px;
+	text-align: center; /* 가운데 정렬 */
+	margin-top: 20px; /* 여백을 20px로 설정 */
 }
 
-.pageInfo {
-    list-style: none;
-    display: inline-block; /* inline-block을 사용하여 중앙 정렬 */
-    padding: 0;
-    margin: 0;
+.pageInfo{
+	margin: 0px;
 }
 
-.pageInfo li {
-    display: inline; /* inline으로 설정하여 목록 항목을 나란히 배치 */
-    font-size: 20px;
-    margin: 0 9px;  /* 양쪽 여백을 조정 */
-    padding: 7px;
-    font-weight: 500;
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn {
+	display: inline-block; /* 인라인 블록으로 설정 */
+	margin: 0 5px; /* 좌우 여백을 5px로 설정 */
 }
 
-a:link, a:visited, a:hover {
-    color: black;
-    text-decoration: none;
+/* 페이지 정보 버튼의 기본 스타일 설정 */
+.pageInfo_btn a {
+	display: block; /* 블록 요소로 설정 */
+	padding: 10px 15px; /* 상하 패딩 10px, 좌우 패딩 15px으로 설정 */
+	text-decoration: none;  /* 밑줄 제거 */
+	border-radius: 5px; /* 모서리를 둥글게 설정 */
+	color: black !important;
 }
 
-.pageInfo .active {
-    background-color: #cdd5ec !important;
-    font-weight: bold !important; /* 강조된 페이지의 텍스트를 굵게 표시 */
+/* 페이지 정보 버튼 호버 시 스타일 설정 */
+.pageInfo_btn a:hover {
+	background-color: #e9ecef; /* 호버 시 배경색을 더 진한 회색으로 설정 */
 }
 
+/* 페이지 정보 버튼 활성 상태의 스타일 설정 */
+.pageInfo_btn.active a {
+	background-color: #007bff !important; /* 활성화된 버튼의 배경색을 파란색으로 설정 */
+	color: white !important; /* 활성화된 버튼의 텍스트 색상을 흰색으로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 스타일 설정 */
 .pageInfo_btn.previous a, .pageInfo_btn.next a {
-    font-weight: bold; /* 이전 및 다음 버튼 텍스트 굵게 표시 */
-    color: black; /* 버튼 텍스트 색상 */
+	font-weight: bold; /* 텍스트 굵기를 bold로 설정 */
+}
+
+/* 페이지 정보 버튼 '다음'과 '이전' 버튼의 커서 스타일 설정 */
+.pageInfo_btn.previous a:hover, .pageInfo_btn.next a:hover {
+	background-color: #0056b3; /* 호버 시 배경색을 더 어두운 파란색으로 설정 */
+	color: white !important; /* 호버 시 텍스트 색상을 흰색으로 설정 */
+}
+
+.totalCount {
+	text-align: right;
 }
 
 /* Adjusted select box style */
@@ -319,7 +231,6 @@ a:link, a:visited, a:hover {
 
 .bi-paperclip{
 	cursor: pointer;
-	/* font-size: 20px; */
 }
 
 /* 중복된 아이콘을 숨깁니다 */
@@ -329,167 +240,6 @@ a:link, a:visited, a:hover {
 
 </style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
-<script>
- /* function sendClassChange() {
-    var classNo = $('#classSelect').val();
-    if (!classNo) {
-        console.error("classNo 값이 누락되었습니다.");
-        return; // classNo가 없으면 요청을 중단합니다.
-    }
-    
-    console.log("비동기 요청 시작 classNo: " + classNo);
-
-    $.ajax({
-        url: '/member/club/list/getByClass', // AJAX 요청 URL
-        type: 'GET',
-        dataType: 'json', // 데이터 타입을 JSON으로 설정
-        data: { classNo: classNo },
-        success: function(response) {
-        	console.log('서버 응답:', response); // 응답 데이터 로그
-        	
-        	var tableBody = $('#tableContainer table tbody');
-            tableBody.empty(); // 기존 데이터 제거
-            
-                // 배열일 때 테이블의 tbody 부분을 업데이트
-                response.forEach(function(item) {
-                    var studyDate = new Date(item.studyDate);
-                    var regDate = new Date(item.regDate);
-
-                    var formattedStudyDate = formatDate(studyDate);
-                    var formattedRegDate = formatDate(regDate);
-                    
-                    if(item.checkCmt == null){
-                    	item.checkCmt = "";
-                    }
-
-                    var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
-                                '<td>' + item.clubNo + '</td>' +
-                                '<td>' + item.enroll.member.memberName + '</td>' +
-                                '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
-                                '<td>' + item.checkCmt + '</td>' +
-                                '<td>' + formattedStudyDate + '</td>' +
-                                '<td>' + formattedRegDate + '</td>' +
-                                '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
-                              '</tr>';
-                    tableBody.append(row);   
-                });
-            
-             // 첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
-                $('.file-download').on('click', function(event) {
-                    event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
-                });
-            
-        },
-        error: function() {
-        	
-            alert('데이터를 가져오는 데 실패했습니다.');
-        }
-    });
-
-    function formatDate(date) {
-        var year = date.getFullYear();
-        var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월을 2자리로 포맷
-        var day = ('0' + date.getDate()).slice(-2); // 일을 2자리로 포맷
-        return year + '/' + month + '/' + day;
-    }
-} */
-
-function sendClassChange() {
-    const classNo = $('#classSelect').val();
-    if (!classNo) {
-        console.error("classNo 값이 누락되었습니다.");
-        return;
-    }
-    const pageNum = 1; // 기본적으로 첫 페이지 로드
-    
-    const searchForm = $('#searchForm');
-
-    // 검색 조건 초기화
-    searchForm.find("select[name='type']").val('');
-    searchForm.find("input[name='keyword']").val('');
-    
-    loadPageData(classNo, pageNum); 
-}
-
-function loadPageData(classNo, pageNum) {
-	 const type = $("select[name='type']").val();
-	 const keyword = $("input[name='keyword']").val();
-	 
-
-	 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
-	 
-    $.ajax({
-        url: '/member/club/list/getByClass',
-        type: 'GET',
-        dataType: 'json',
-        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
-        success: function(response) {
-        	console.log('Response:', response); // 응답 데이터 확인
-            updateTable(response.list);
-            updatePagination(response.pageInfo);
-        },
-        error: function() {
-            alert('데이터를 가져오는 데 실패했습니다.');
-        }
-    });
-}
-
-function updateTable(data) {
-	console.log('테이블 데이터:', data); // 데이터 확인
-    var tableBody = $('#tableContainer table tbody');
-    tableBody.empty();
-    if (!data || data.length === 0) {
-        tableBody.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
-        return;
-    }
-    data.forEach(function(item) {
-        var studyDate = new Date(item.studyDate);
-        var regDate = new Date(item.regDate);
-        var formattedStudyDate = formatDate(studyDate);
-        var formattedRegDate = formatDate(regDate);
-     
-        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '\'">' +
-                    '<td>' + item.rn + '</td>' +
-                    '<td>' + item.enroll.member.memberName + '</td>' +
-                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
-                    '<td>' + (item.checkCmt || '') + '</td>' +
-                    '<td>' + formattedStudyDate + '</td>' +
-                    '<td>' + formattedRegDate + '</td>' +
-                    '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
-                  '</tr>';
-        tableBody.append(row);   
-    });
-    
-  //첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
-    $('.file-download').on('click', function(event) {
-        event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
-    });
-}
-
-function updatePagination(pageInfo) {
-    var pageUl = $('#pageInfo');
-    pageUl.empty();
-    if (pageInfo.prev) {
-        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">Previous</a></li>');
-    }
-    for (var num = pageInfo.pageStart; num <= pageInfo.pageEnd; num++) {
-        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.currentPage == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
-    }
-    if (pageInfo.next) {
-        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">Next</a></li>');
-    }
-}
-
-function formatDate(date) {
-    var year = date.getFullYear();
-    var month = ('0' + (date.getMonth() + 1)).slice(-2);
-    var day = ('0' + date.getDate()).slice(-2);
-    return year + '/' + month + '/' + day;
-}
-
-</script>
-
 </head>
 <body>
 
@@ -509,28 +259,17 @@ function formatDate(date) {
 			    </c:forEach>
 			</select>
 		</div>
-</div>
-		<%-- <div class="title-container">
-            <h1>동아리</h1>
-            <div class="select-box">
-                <select id="classSelect" name="classSelect" onchange="sendClassChange()">
-                    <c:forEach var="classItem" items="${classList}">
-                        <option value="${classItem.classNo}" 
-                            <c:if test="${classItem.classNo == selectedClassNo}">selected</c:if>>
-                            ${classItem.className}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-        </div> --%>
+	</div>
 
 		<!-- Main content -->
 		<div class="container">
 			<div class="header">
-				<h2>강의실 신청 목록</h2>
+				<h2>강의실 신청</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/member/club/list">
-						<%-- <input type="text" placeholder="Search..." id="search"> --%>
+						<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
+						<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
+						<input type="hidden" name="classNo" value="${param.classNo}"> 
                         <select name="type">
                         	<option value="W" <c:out value="${pageMaker.cri.type eq 'W'? 'selected':''}"/>>작성자</option>
                         	<option value="J" <c:out value="${pageMaker.cri.type eq 'J'? 'selected':''}"/>>참여자</option>
@@ -541,12 +280,11 @@ function formatDate(date) {
 					</form>
 				</div>
 				<div class="icons">
-					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a>
+ 					<a href="/member/club/enroll"><i class="fas fa-square-plus"></i></a> 
 				</div>
 			</div>
 
 			<div id="tableContainer" class="table_wrap">
-				
 			<table>
 					<thead>
 						<tr>
@@ -562,102 +300,135 @@ function formatDate(date) {
 					<tbody>
                 <!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
                 	</tbody>
-			
 			</table>
-			
 				<div class="pageInfo_area">
 					<ul id="pageInfo" class="pageInfo">
-					
-					<!-- 이전페이지 버튼 -->
-					<c:if test="${pageMaker.prev }">
-						<li class="pageInfo_btn previous"><a href="${pageMaker.pageStart-1 }">Previous</a></li>
-					</c:if>
-					
-					<!-- 각 번호 페이지 버튼 -->
-					<c:forEach var="num" begin="${pageMaker.pageStart }" end="${pageMaker.pageEnd }">
-						<li class="pageInfo_btn ${pageMaker.cri.pageNum == num? "active":"" }"><a href="${num }">${num }</a></li>
-					</c:forEach>
-					
-					<!-- 다음페이지 버튼 -->
-					<c:if test="${pageMaker.next }">
-						<li class="pageInfo_btn next"><a href="${pageMaker.pageEnd+1 }">Next</a></li>
-					</c:if>
-					
+				<!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->	
 					</ul>
 				</div>
-
-			<form id="moveForm" method="get">
-				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
-				<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
-				<input type="hidden" name="keyword" value="${pageMaker.cri.keyword }">
-				<input type="hidden" name="type" value="${pageMaker.cri.type }">
-			</form>
-
-
-
-			<%-- <div class="table_wrap">
-			
-				<table>
-					<thead>
-						<tr>
-							<th class="clubNo_width">번호</th>
-							<th class="writer_width">작성자</th>
-							<th class="checkStatus_width">승인상태</th>
-							<th class="checkCmt_width">승인메시지</th>
-							<th class="studyDate_width">활동일</th>
-							<th class="regDate_width">작성일</th>
-							<th class="file_width">첨부</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${list }" var="list">
-							<tr onclick="location.href='/member/club/get?clubNo=${list.clubNo}'">
-								<td><c:out value="${list.clubNo }" /></td>
-								<td><c:out value="${list.enroll.member.memberName }" /></td>
-								<td>
-									<c:choose>
-										<c:when test="${list.checkStatus == 'W'}">대기</c:when>
-										<c:when test="${list.checkStatus == 'Y'}">승인</c:when>
-										<c:when test="${list.checkStatus == 'N'}">미승인</c:when>
-										<c:otherwise>알 수 없음</c:otherwise>
-									</c:choose>
-								</td>
-								<td><c:out value="${list.checkCmt }" /></td>
-								<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.studyDate }" /></td>
-								<td><fmt:formatDate pattern="yyyy/MM/dd" value="${list.regDate }" /></td>
-								<td>
-									<c:choose>
-										<c:when test="${list.fileName != null }">
-										<a href="/member/club/downloadFile?fileName=${list.fileName}" download="${list.fileName}" title="${list.fileName}" onclick="event.stopPropagation();">
-											<i class="bi bi-paperclip"></i>
-                            			</a>
-										</c:when>
-										<c:otherwise>
-											<c:out value="" />
-										</c:otherwise>
-									</c:choose>
-								</td>
-								
-							</tr>
-						</c:forEach>
-						</tbody>
-				</table>
-			
-				
-			</div> --%>
+				<div id="totalCount" class="totalCount">
+				<!-- 데이터는 AJAX 호출 후 여기에 삽입됩니다 -->
+				</div>	
 			</div>
 		</div>
 	</main>
 
-
-
-	
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
 
-
 	<script>
 	$(document).ready(function(){
+		let currentClassNo = '<c:out value="${param.classNo}"/>'; // 초기값 설정
+		
+		function sendClassChange() {
+		    const classNo = $('#classSelect').val();
+		    if (!classNo) {
+		        console.error("classNo 값이 누락되었습니다.");
+		        return;
+		    }
+		    currentClassNo = classNo; // 현재 classNo 업데이트
+		    
+		    const pageNum = 1; // 기본적으로 첫 페이지 로드
+		    
+		    const searchForm = $('#searchForm');
+
+		    // 검색 조건 초기화
+		    const type = searchForm.find("select[name='type']").val() || 'W'; // 기본값 설정
+	        const keyword = searchForm.find("input[name='keyword']").val() || '';
+
+	     	// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
+	        }
+	     
+	        loadPageData(classNo, pageNum, type, keyword);
+		}
+    
+		function loadPageData(classNo, pageNum, type, keyword) {
+			 console.log('AJAX 요청 데이터:', { classNo, pageNum, type, keyword });
+			 
+		    $.ajax({
+		        url: '/member/club/list/getByClass',
+		        type: 'GET',
+		        dataType: 'json',
+		        data: { classNo: classNo, pageNum: pageNum, type: type, keyword: keyword },
+		        success: function(response) {
+		        	console.log('Response:', response); // 응답 데이터 확인
+		        	 if (!response.list || response.list.length === 0) {
+		        		if (keyword.trim()) { // 공백이 아닌 경우에만 "데이터가 없습니다." 표시
+			         		$('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+			        	}
+		             } else {
+		                 updateTable(response.list, currentClassNo);
+		             }
+		             updatePagination(response.pageInfo);
+		        },
+		        error: function() {
+		            alert('데이터를 가져오는 데 실패했습니다.');
+		        }
+		    });
+		}
+
+		function updateTable(data, classNo) {
+			console.log('테이블 데이터:', data); // 데이터 확인
+		    var tableBody = $('#tableContainer table tbody');
+		    tableBody.empty();
+		    if (!data || data.length === 0) {
+		        tableBody.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+		        return;
+		    }
+		    data.forEach(function(item) {
+		        var studyDate = new Date(item.studyDate);
+		        var regDate = new Date(item.regDate);
+		        var formattedStudyDate = formatDate(studyDate);
+		        var formattedRegDate = formatDate(regDate);
+		     
+		        var row = '<tr onclick="location.href=\'/member/club/get?clubNo=' + item.clubNo + '&rn=' + item.rn + '&classNo=' + classNo + '\'">' +
+		                    '<td>' + item.rn + '</td>' +
+		                    '<td>' + item.enroll.member.memberName + '</td>' +
+		                    '<td>' + (item.checkStatus === 'W' ? '대기' : item.checkStatus === 'Y' ? '승인' : '미승인') + '</td>' +
+		                    '<td>' + (item.checkCmt || '') + '</td>' +
+		                    '<td>' + formattedStudyDate + '</td>' +
+		                    '<td>' + formattedRegDate + '</td>' +
+		                    '<td>' + (item.fileName ? '<a href="/member/club/downloadFile?fileName=' + item.fileName + '" download="' + item.fileName + '" title="' + item.fileName + '" class="file-download"><i class="bi bi-paperclip"></i></a>' : '') + '</td>' +
+		                  '</tr>';
+		        tableBody.append(row);   
+		    });
+		    
+		  	//첨부파일 다운로드 링크에 대한 클릭 이벤트 핸들러 추가
+		    $('.file-download').on('click', function(event) {
+		        event.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
+		    });
+		 
+		}
+
+		function updatePagination(pageInfo) {
+		    var pageUl = $('#pageInfo');
+		    pageUl.empty();
+		    if (pageInfo.prev) {
+		        pageUl.append('<li class="pageInfo_btn previous"><a href="' + (pageInfo.pageStart - 1) + '">◀</a></li>');
+		    }
+		    for (var num = pageInfo.pageStart; num <= pageInfo.pageEnd; num++) {
+		        pageUl.append('<li class="pageInfo_btn ' + (pageInfo.cri.pageNum == num ? 'active' : '') + '"><a href="' + num + '">' + num + '</a></li>');
+		    }
+		    if (pageInfo.next) {
+		        pageUl.append('<li class="pageInfo_btn next"><a href="' + (pageInfo.pageEnd + 1) + '">▶</a></li>');
+		    }
+		    
+		    var totalUl = $('#totalCount');
+		    totalUl.empty();
+		    totalUl.append('<p>총 ' + pageInfo.total +'건</p>');
+
+		}
+
+		function formatDate(date) {
+		    var year = date.getFullYear();
+		    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+		    var day = ('0' + date.getDate()).slice(-2);
+		    return year + '/' + month + '/' + day;
+		}
+		
 		//결과 메시지 처리
 		let result = '<c:out value="${result}"/>';
 		checkAlert(result);
@@ -678,21 +449,24 @@ function formatDate(date) {
 		}
 		
 		// 페이지 로드 시, 선택된 classNo에 따라 데이터를 불러오기
-        sendClassChange();
-		
+	 	const classNo = '<c:out value="${param.classNo}"/>';
+        if (classNo) {
+            $('#classSelect').val(classNo);
+            sendClassChange();
+        } else {
+            sendClassChange();
+        }
+        
+    
      	// 반 선택 시 동작
-        //$('#classSelect').change(sendClassChange);
-$('#classSelect').change(function() {
-    sendClassChange();
-});
-
-        const moveForm = $('#moveForm');
+		$('#classSelect').change(function() {
+		    sendClassChange();
+		});
         
         $('.search_area button').on('click', function(e) {
             e.preventDefault();
             
             //검색조건확인
-            //let type = $(".search_area select").val();
             let type = $(".search_area select[name='type']").val();
 			let keyword = $(".search_area input[name='keyword']").val();
 						
@@ -701,9 +475,10 @@ $('#classSelect').change(function() {
 				return false;
 			}
 			
-			if (!keyword) {
-	            alert("키워드를 입력하세요");
-	            return false;
+			// 공백이 아닌 유효한 경우만 필터링 처리
+	        if (type === 'C' && keyword.trim() && !['대기', '승인', '미승인'].includes(keyword.trim())) {
+	            $('#tableContainer table tbody').html('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            return;
 	        }
 			
 			// 폼 필드 업데이트
@@ -711,11 +486,9 @@ $('#classSelect').change(function() {
 	        $('#searchForm').find("input[name='keyword']").val(keyword);
 	        $('#searchForm').find("input[name='pageNum']").val(1);
 	        
-	        // 폼 제출 (검색)
-	        //moveForm.submit();
-	        
             const classNo = $('#classSelect').val();
-            loadPageData(classNo, 1); // 검색 후 첫 페이지 로드
+            loadPageData(classNo, 1, type, keyword); // 검색 후 첫 페이지 로드
+
         });
         
      	// 페이지 번호 클릭 시 데이터 로드
@@ -723,46 +496,20 @@ $('#classSelect').change(function() {
             e.preventDefault();
             const pageNum = $(this).attr('href');
             const classNo = $('#classSelect').val();
-            loadPageData(classNo, pageNum);
+            const type = $(".search_area select[name='type']").val();
+            const keyword = $(".search_area input[name='keyword']").val();
+            loadPageData(classNo, pageNum, type, keyword);
+        });
+     	
+     	// 등록 페이지로 이동
+        $(document).on('click', '.icons a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href') + '?classNo=' + currentClassNo;
+            window.location.href = url;
         });
      	
 	}); 
        
-	
-	
-	
-		//페이지 정보 변경 처리
-	/* 	$(".pageInfo a").on("click", function(e) {
-			e.preventDefault();
-			moveForm.find("input[name='pageNum']").val($(this).attr("href"));
-			moveForm.attr("action", "/member/club/list");
-			moveForm.submit();
-		}); */
-
-		//검색처리
-		/* $(".search_area button").on("click", function(e) {
-			e.preventDefault();
-
-			
-			let type = $(".search_area select").val();
-			let keyword = $(".search_area input[name='keyword']").val();
-
-			if (!type) {
-				alert("검색 종류를 선택하세요");
-				return false;
-			}
-
-			if (!keyword) {
-				alert("키워드를 입력하세요");
-				return false;
-			}
-
-			moveForm.find("input[name='type']").val(type);
-			moveForm.find("input[name='keyword']").val(keyword);
-			moveForm.find("input[name='pageNum']").val(1);
-			moveForm.submit();
-		}); */
-        
 	</script>
 
 </body>

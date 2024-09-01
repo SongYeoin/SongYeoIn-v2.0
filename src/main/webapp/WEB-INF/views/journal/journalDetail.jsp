@@ -60,6 +60,10 @@ main {
 	margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
 
 /* journalEnroll과 동일한 스타일 적용 */
 .form-container {

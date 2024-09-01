@@ -74,6 +74,11 @@ main.admin {
 	margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 제목과 선택 박스를 감싸는 컨테이너의 스타일 설정 */
 .title-container {
     display: flex;

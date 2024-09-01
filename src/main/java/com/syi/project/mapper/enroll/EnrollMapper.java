@@ -3,6 +3,7 @@ package com.syi.project.mapper.enroll;
 import java.util.List;
 
 import com.syi.project.model.EnrollVO;
+import com.syi.project.model.member.MemberVO;
 
 public interface EnrollMapper {
 
@@ -14,4 +15,8 @@ public interface EnrollMapper {
 	
 	// 특정 클래스의 수강 중인 수강생 조회
     List<EnrollVO> selectMemberList(int classNo);
+
+	// 반 별 수강생 목록 조회
+    List<MemberVO> selectStudentList(int classNo);
+
 }
