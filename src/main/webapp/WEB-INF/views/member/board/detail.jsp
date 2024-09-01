@@ -147,41 +147,49 @@ button:hover {
     gap: 10px;
 }
 
+.comment-button-container button {
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    color: #007bff;
+    background-color: transparent;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.comment-button-container button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
 .pageMaker_wrap {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.pageMaker_wrap a {
-    color: black;
-}
-
-.pageMaker {
-    list-style: none;
-    display: inline-block;
+	text-align: center; 
+	margin: 20px; 
 }
 
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
 
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	border: 1px solid #007bff;
+    border-radius: 4px; 
+    background-color: transparent !important;
+	color: #007bff !important; 
+	text-decoration: none; 
+	font-size: 15px;
 }
 
-.next a, .prev a {
-    color: #ccc;
+.pageMaker_btn a:hover {
+	background-color: #f4f4f4 !important; 
 }
 
-.active { /* 현재 페이지 버튼 */
-    border: 2px solid black;
-    font-weight: 400;
+.pageMaker_btn.active a {
+	border: 2px solid #000000 !important;
 }
 
 </style>
@@ -221,7 +229,6 @@ button:hover {
 					        </div>
 						</td>
                     </tr>
-                    
                 </thead>
             </table>
             
@@ -233,18 +240,8 @@ button:hover {
 	                <span id="boardHeartCount">${board.boardHeartCount}</span> 
                 </div>
             </div>
-            
 
-            <!-- 댓글 추가 폼 -->
-            <div class="comment-form-container">
-	            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
-	                <button type="submit">등록</button>
-	            </form>
-            </div>
-            
-            
+
             <!-- 댓글 리스트 -->
             <c:forEach var="comment" items="${commentList}">
             	<c:choose>
@@ -253,14 +250,36 @@ button:hover {
 	                		<p>사용자에 의해 삭제된 댓글입니다.</p>
 		            	</div>
 	        		</c:when>
-	        	
 		        	<c:otherwise>
 	                	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
 	                		<c:if test="${comment.commentParentNo != null}">
 	                			<i class="bi bi-arrow-return-right"></i>
 	                		</c:if>
-	                    	<p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-	                    	<p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
+	                    	<p>
+	                    		<strong>
+								    <c:choose>
+								        <c:when test="${board.boardMemberNo == comment.commentMemberNo}">
+								            ${comment.member.memberNickname}
+								            <span style="color: skyblue;">(작성자)</span>
+								        </c:when>
+								
+								        <c:when test="${comment.member.memberRole == 'ROLE_ADMIN'}">
+								            <span style="color: red;">관리자</span>
+								        </c:when>
+								
+								        <c:otherwise>
+								        	${comment.member.memberNickname}
+								        </c:otherwise>
+								    </c:choose>
+								</strong>
+	                    		${comment.commentRegDate}
+	                    	</p>
+	                    	<p id="comment-content-${comment.commentNo}">
+	                    		<c:if test="${comment.commentParentNo != null}">
+	                    			<strong style="color: blue;">@${comment.parentNickname} </strong>
+	                    		</c:if>
+								${comment.commentContent}
+							</p>
 	                    
 	                    	<!-- 댓글 버튼 -->
 				        	<div class="comment-button-container">
@@ -295,6 +314,7 @@ button:hover {
     			</c:choose>
 			</c:forEach>
 
+
 			<!-- 페이지 이동 인터페이스 영역 -->
 			<div class="pageMaker_wrap">
 				<ul class="pageMaker">
@@ -320,6 +340,17 @@ button:hover {
 				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 				<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 			</form>
+			
+			
+			<!-- 댓글 추가 폼 -->
+            <div class="comment-form-container">
+	            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+	                <textarea name="commentContent" rows="4" placeholder="댓글을 입력하세요"></textarea>
+	                <button type="submit">등록</button>
+	            </form>
+            </div>
+
 
 			<!-- 게시글 버튼 -->
             <div class="button-container">

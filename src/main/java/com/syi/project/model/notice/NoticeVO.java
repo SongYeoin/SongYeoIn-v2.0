@@ -20,6 +20,7 @@ public class NoticeVO {
 	private String noticeStatus;
 	private int noticeClassNo;
 	private int noticeMemberNo;
+	private boolean hasFiles;
 	private SyclassVO syclass;
 	private MemberVO member;
 	private List<NoticeFileVO> fileList;

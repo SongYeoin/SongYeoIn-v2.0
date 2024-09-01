@@ -202,7 +202,6 @@ button:hover {
     <main>
         <!-- Main content -->
         <div class="notice-wrapper">
-            <h2>공지사항</h2>
             <table>
                 <thead>
                 	<tr>

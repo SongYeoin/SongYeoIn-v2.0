@@ -38,11 +38,11 @@ main {
 
 .title-container{
 	display: flex;
-    align-items: center; /* 수직 가운데 정렬 */
+    align-items: center; 
 }
 
 .title-container h1{
-	margin-right: 20px; /* 텍스트와 선택 박스 사이의 간격 */
+	margin-right: 20px; 
 	font-weight: bold;
 }
 
@@ -55,7 +55,6 @@ main {
 	height: 710px;
 	border-radius: 10px;
 	padding-bottom: 20px;
-    
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
@@ -80,18 +79,6 @@ main {
 .header h2 {
 	margin: 0;
 	flex-grow: 1;
-}
-
-.container {
-	margin: 20px auto;
-	background-color: #f9fafc;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	width: 1320px;
-	height: 710px;
-	border-radius: 10px;
-	padding-bottom: 20px;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
 }
 
 .search_area {
@@ -122,62 +109,65 @@ main {
 
 .table_wrap {
     margin: 50px 50px 0 50px;
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    white-space: nowrap;
 }
 
 thead {
     background-color: #f5f5f5;
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
+table thead tr {
+    cursor: default; 
 }
 
 table tbody tr {
-    cursor: pointer;  /* 포인터 커서 */
+    cursor: pointer;  
+}
+
+table th, table td {
+	padding: 10px;
+	text-align: left;
 }
 
 .pageMaker_wrap {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.pageMaker_wrap a {
-    color: black;
-}
-
-.pageMaker {
-    list-style: none;
-    display: inline-block;
+	text-align: center; 
+	margin: 20px; 
 }
 
 .pageMaker_btn {
-    float: left;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    margin-left: 20px;
+	display: inline-block; 
+	margin: 0 5px; 
 }
 
-.next, .prev {
-    border: 1px solid #ccc;
-    padding: 0 10px;
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	background-color: #f8f9fa; 
+	color: #007bff !important; 
+	text-decoration: none; 
+	border-radius: 5px; 
+	font-weight: bold; 
 }
 
-.next a, .prev a {
-    color: #ccc;
+.pageMaker_btn a:hover {
+	background-color: #e9ecef; 
 }
 
-.active { /* 현재 페이지 버튼 */
-    border: 2px solid black;
-    font-weight: 400;
+.pageMaker_btn.active a {
+	background-color: #007bff; 
+	color: white !important; 
+}
+
+.pageMaker_btn.previous a:hover, 
+.pageMaker_btn.next a:hover {
+	background-color: #0056b3; 
+	color: white; 
 }
 
 </style>
@@ -202,7 +192,7 @@ table tbody tr {
                 <div class="search_area">
 					<form id="searchForm" action="${ pageContext.servletContext.contextPath }/member/board/list" method="get">
                   		<div class="search_input">
-                     		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
+                     		<input type="search" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
                      		<input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum }"></c:out>'>
                      		<input type="hidden" name="amount" value='${pageMaker.cri.amount}'>
                      		<input type="hidden" name="classNo" value='<c:out value="${param.classNo}"></c:out>'>
@@ -221,8 +211,8 @@ table tbody tr {
                     <thead>
                         <tr>
                             <th>번호</th>
-                            <th width="60%">제목</th>
-                            <th>글쓴이</th>
+                            <th width="50%">제목</th>
+                            <th>작성자</th>
                             <th>조회수</th>
                             <th>댓글수</th>
                             <th>좋아요수</th>
@@ -262,7 +252,6 @@ table tbody tr {
                         <c:if test="${pageMaker.next}">
                             <li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1}">다음</a></li>
                         </c:if>
-
                     </ul>
                 </div>
                 <form id="moveForm" action="/member/board/list" method="get">
@@ -283,14 +272,12 @@ table tbody tr {
         alert(message);
     }
 
-    // 검색 버튼 클릭 시 페이지 번호를 1로 설정하고 폼 제출
     $('#searchForm').on('submit', function() {
         let form = $(this);
         form.find("input[name='pageNum']").val('1');
         return true;  
     });
 
-    // 페이지 이동 버튼
     $(".pageMaker_btn a").on("click", function(e) {
         e.preventDefault();
         let pageNum = $(this).attr("href");
