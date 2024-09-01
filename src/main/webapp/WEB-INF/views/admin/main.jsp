@@ -53,10 +53,30 @@ main {
         <div>
         	글자라도 써봅니다
         </div>
+        
+        <!-- 버튼 추가 -->
+        <div style="margin-top: 20px;">
+            <button id="attendanceButton" onclick="sendAttendanceRequest()">자동 결석 처리</button>
+        </div>
     </main>
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
+
+<script>
+function sendAttendanceRequest() {
+    $.ajax({
+        url: '<c:url value="/admin/class/attendance/absent" />', // 서버 요청 URL
+        type: 'POST',
+        success: function(response) {
+            alert("자동 결석 처리가 완료되었습니다!");
+        },
+        error: function(xhr, status, error) {
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
+        }
+    });
+}
+</script>
 
 </body>
 </html>

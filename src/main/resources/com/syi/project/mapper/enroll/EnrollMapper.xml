@@ -25,6 +25,11 @@
 		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
 		<result property="memberRole" column="MEMBER_ROLE"/>
 	</resultMap>
+	
+	<resultMap type="com.syi.project.model.member.MemberVO" id="studentResultMap">
+		<id property="memberNo" column="MEMBER_NO"/>
+		<result property="memberName" column="MEMBER_NAME"/>
+	</resultMap>
 
 	<resultMap type="com.syi.project.model.EnrollVO" id="enrollResultMap">
 		<id property="enrollNo" column="ENROLL_NO"/>
@@ -64,7 +69,7 @@
   	FROM ENROLL
   	WHERE MEMBER_NO = #{ memberNo }
   </select>
-  
+
  <!-- 특정 반의 수강 중인 모든 수강생 정보 조회 -->
   <select id="selectMemberList" resultMap="enrollResultMap">
     SELECT 
@@ -76,6 +81,15 @@
     LEFT JOIN CLASS s ON e.CLASS_NO = s.CLASS_NO
     WHERE e.CLASS_NO = #{classNo}
     ORDER BY m.MEMBER_NAME ASC
+    </select>
+
+  <!-- 반 별 수강생 목록(PK, Name) 조회 _ 출석조회 시 사용 -->
+  <select id="selectStudentList" resultMap="studentResultMap" parameterType="int">
+    SELECT e.MEMBER_NO, m.MEMBER_NAME
+    FROM ENROLL e
+    JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
+    WHERE e.CLASS_NO = #{classNo}
+    ORDER BY m.MEMBER_NAME
   </select>
   
   </mapper>

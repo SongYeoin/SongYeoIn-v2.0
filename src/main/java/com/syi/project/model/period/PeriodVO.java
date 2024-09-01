@@ -17,4 +17,6 @@ public class PeriodVO {
 	
 	private String endTime;
 	
+	private int classNo;
+	
 }

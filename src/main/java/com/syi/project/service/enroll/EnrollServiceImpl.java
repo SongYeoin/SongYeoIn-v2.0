@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.syi.project.mapper.enroll.EnrollMapper;
 import com.syi.project.model.EnrollVO;
+import com.syi.project.model.member.MemberVO;
 
 @Service
 public class EnrollServiceImpl implements EnrollService {
@@ -32,4 +33,11 @@ public class EnrollServiceImpl implements EnrollService {
 	public List<EnrollVO> selectMemberList(int classNo) {
 		return enrollMapper.selectMemberList(classNo);
 	}
+
+	// 반 별 수강생 리스트 조회
+	@Override
+	public List<MemberVO> selectStudentList(int classNo) {
+		return enrollMapper.selectStudentList(classNo);
+	}
+	
 }
