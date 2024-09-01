@@ -26,4 +26,7 @@ public interface PeriodMapper {
 	/* 요일에 따른 교시 정보 조회 */
 	List<PeriodVO> getScheduleByDayOfWeek(@Param(value = "dayOfweekString") String dayOfweekString);
 
+	/* 교시 삭제 */
+	void deletePeriod(PeriodVO period);
+
 }

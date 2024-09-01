@@ -1,8 +1,5 @@
 package com.syi.project.mapper.schedule;
 
-import java.util.List;
-
-import com.syi.project.model.period.PeriodVO;
 import com.syi.project.model.schedule.ScheduleVO;
 
 public interface ScheduleMapper {
@@ -15,5 +12,8 @@ public interface ScheduleMapper {
 
 	/* 시간표 수정 */
 	void updateSchedule(int scheduleNo);
+
+	/* 시간표 삭제 */
+	void deleteSchedule(int scheduleNo);
 
 }

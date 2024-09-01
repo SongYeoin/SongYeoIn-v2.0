@@ -1,5 +1,9 @@
 package com.syi.project.config;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
@@ -18,21 +22,24 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import com.syi.project.service.attendance.AttendanceService;
 
 @Configuration
 @EnableBatchProcessing
+@EnableScheduling
 public class BatchConfig extends DefaultBatchConfigurer {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
 	
 	@Autowired
-    private DataSource dataSource;
-	@Autowired
 	private JobLauncher jobLauncher;
+	
 	@Autowired
-	private Job updateAbsentJob;
+	private AttendanceService attendanceService; 
 	
 	public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
         this.jobBuilderFactory = jobBuilderFactory;
@@ -42,7 +49,7 @@ public class BatchConfig extends DefaultBatchConfigurer {
 	@Override
     public void setDataSource(DataSource dataSource) {
         // Spring Batch가 사용할 DataSource 설정
-        super.setDataSource(this.dataSource);
+        super.setDataSource(dataSource);
     }
 	
 	@Bean
@@ -57,7 +64,7 @@ public class BatchConfig extends DefaultBatchConfigurer {
 	@Bean
 	public Job updateAbsentJob() {
 		return jobBuilderFactory.get("updateAbsentJob")
-				.incrementer(new RunIdIncrementer()) // job실행할떄마다 파라미터 id를 자동생성
+				.incrementer(new RunIdIncrementer()) // job실행할 때마다 파라미터 id를 자동생성
 				.start(updateAbsentStep()) // 최초 실행 step
 				.build();
 	}
@@ -77,16 +84,20 @@ public class BatchConfig extends DefaultBatchConfigurer {
 			// 배치 로직 구현
 			System.out.println("학생의 미출석을 결석으로 상태 업데이트중...");
 			
-			// 특정 날짜에 출석 정보가 없는 학생들을 조회하고 "결석"으로 상태 업데이트
+			// 현재 날짜를 조회하고 하루 전 날짜를 계산
+			LocalDate yesterday = LocalDate.now().minusDays(1);
+			Date date = Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			
+			attendanceService.updateAbsentStatus(date);
 			
 			return RepeatStatus.FINISHED; // Tasklet 의 성공적 완료 반환
 		};
 	}
 	
-	@Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+	@Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
     public void performJob() throws Exception {
         System.out.println("Scheduled job started...");
-        jobLauncher.run(updateAbsentJob, new JobParametersBuilder().toJobParameters());
+        jobLauncher.run(updateAbsentJob(), new JobParametersBuilder().toJobParameters());
     }
 	
 }

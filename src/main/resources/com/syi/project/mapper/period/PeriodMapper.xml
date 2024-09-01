@@ -44,6 +44,11 @@
     WHERE PERIOD_NO=#{periodNo, jdbcType=INTEGER}
     </update>
     
+    <!-- 교시 삭제 -->
+    <delete id="deletePeriod" parameterType="com.syi.project.model.period.PeriodVO">
+    DELETE FROM PERIOD WHERE PERIOD_NO=#{periodNo, jdbcType=INTEGER}
+    </delete>
+    
     <!-- 요일 정보로 교시정보 조회(결석 배치를 위한) -->
     <select id="getScheduleByDayOfWeek" parameterType="String" resultMap="periodResultMap">
     	SELECT DISTINCT 
