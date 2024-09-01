@@ -5,46 +5,48 @@
   
   <mapper namespace="com.syi.project.mapper.board.BoardMapper">
   	<resultMap id="BoardResultMap" type="com.syi.project.model.board.BoardVO">
-        <id column="BOARD_NO" property="boardNo"/>
-        <result column="BOARD_TITLE" property="boardTitle"/>
-        <result column="BOARD_CONTENT" property="boardContent"/>
-        <result column="BOARD_REG_DATE" property="boardRegDate"/>
-        <result column="BOARD_MODIFY_DATE" property="boardModifyDate"/>
-        <result column="BOARD_COUNT" property="boardCount"/>
-        <result column="BOARD_HEART_COUNT" property="boardHeartCount"/>
-        <result column="BOARD_COMMENTS_COUNT" property="boardCommentsCount"/>
-        <result column="BOARD_STATUS" property="boardStatus"/>
-        <result column="BOARD_MEMBER_NO" property="boardMemberNo"/>
-        <association property="member" resultMap="memberResultMap"/>
-		<collection property="commentsList" resultMap="CommentResultMap"/>
+         <id property="boardNo" column="BOARD_NO"/>
+	    <result property="boardTitle" column="BOARD_TITLE"/>
+	    <result property="boardContent" column="BOARD_CONTENT"/>
+	    <result property="boardRegDate" column="BOARD_REG_DATE"/>
+	    <result property="boardModifyDate" column="BOARD_MODIFY_DATE"/>
+	    <result property="boardCount" column="BOARD_COUNT"/>
+	    <result property="boardHeartCount" column="BOARD_HEART_COUNT"/>
+	    <result property="boardCommentsCount" column="BOARD_COMMENTS_COUNT"/>
+	    <result property="boardStatus" column="BOARD_STATUS"/>
+	    <result property="boardMemberNo" column="BOARD_MEMBER_NO"/>
+	    <association property="member" resultMap="memberResultMap"/>
+	    <collection property="commentsList" resultMap="CommentResultMap"/>
     </resultMap>
 
     <resultMap id="CommentResultMap" type="com.syi.project.model.board.CommentsVO">
-        <id column="COMMENTS_NO" property="commentsNo"/>
-        <result column="COMMENT" property="comment"/>
-        <result column="COMMENT_REG_DATE" property="commentRegDate"/>
-        <result column="COMMENT_MODIFY_DATE" property="commentModifyDate"/>
-        <result column="COMMENT_STATUS" property="commentStatus"/>
-        <result column="COMMENT_MEMBER_NO" property="commentMemberNo"/>
-        <result column="COMMENT_BOARD_NO" property="commentBoardNo"/>
+        <id property="commentNo" column="COMMENT_NO"/>
+	    <result property="commentParentNo" column="COMMENT_PARENT_NO"/>
+	    <result property="commentContent" column="COMMENT_CONTENT"/>
+	    <result property="commentRegDate" column="COMMENT_REG_DATE"/>
+	    <result property="commentModifyDate" column="COMMENT_MODIFY_DATE"/>
+	    <result property="commentStatus" column="COMMENT_STATUS"/>
+	    <result property="commentMemberNo" column="COMMENT_MEMBER_NO"/>
+	    <result property="commentBoardNo" column="COMMENT_BOARD_NO"/>
+	    <association property="member" resultMap="memberResultMap"/>
     </resultMap>
 
     <resultMap id="HeartResultMap" type="com.syi.project.model.board.HeartVO">
-        <id column="HEART_ID" property="heartId"/>
-        <result column="HEART_REG_DATE" property="heartRegDate"/>
-        <result column="HEART_MEMBER_NO" property="heartMemberNo"/>
-        <result column="HEART_BOARD_NO" property="heartBoardNo"/>
+         <id property="heartId" column="HEART_ID"/>
+	    <result property="heartRegDate" column="HEART_REG_DATE"/>
+	    <result property="heartMemberNo" column="HEART_MEMBER_NO"/>
+	    <result property="heartBoardNo" column="HEART_BOARD_NO"/>
     </resultMap>
 
     <resultMap id="BoardFileResultMap" type="com.syi.project.model.board.BoardFileVO">
-        <id column="FILE_NO" property="fileNo"/>
-        <result column="FILE_ORIGINAL_NAME" property="fileOriginalName"/>
-        <result column="FILE_SAVED_NAME" property="fileSavedName"/>
-        <result column="FILE_TYPE" property="fileType"/>
-        <result column="FILE_SIZE" property="fileSize"/>
-        <result column="FILE_PATH" property="filePath"/>
-        <result column="FILE_REG_DATE" property="fileRegDate"/>
-        <result column="FILE_BOARD_NO" property="fileBoardNo"/>
+        <id property="fileNo" column="FILE_NO"/>
+        <result property="fileOriginalName" column="FILE_ORIGINAL_NAME"/>
+	    <result property="fileSavedName" column="FILE_SAVED_NAME"/>
+	    <result property="fileType" column="FILE_TYPE"/>
+	    <result property="fileSize" column="FILE_SIZE"/>
+	    <result property="filePath" column="FILE_PATH"/>
+	    <result property="fileRegDate" column="FILE_REG_DATE"/>
+	    <result property="fileBoardNo" column="FILE_BOARD_NO"/>
     </resultMap>
     
     <resultMap type="com.syi.project.model.member.MemberVO" id="memberResultMap">
@@ -69,19 +71,37 @@
     
     <!-- 게시판 목록 -->
     <select id="selectBoards" resultMap="BoardResultMap">
-    	<![CDATA[
-		    SELECT BOARD.*, MEMBER.*
-		    FROM (
-		        SELECT BOARD.*, ROW_NUMBER() OVER (ORDER BY BOARD_NO) AS RN
-		        FROM BOARD
-		        WHERE BOARD_STATUS = 'Y'
-		    ) BOARD
-		    LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
-		    WHERE RN > (#{ pageNum } - 1) * #{ amount }
-		    AND RN <= #{ pageNum } * #{ amount }
-		    ORDER BY BOARD_REG_DATE DESC
-		 ]]>
-    </select>
+    <![CDATA[
+	    SELECT BOARD.*, MEMBER.*,
+	    		(SELECT COUNT(*) FROM HEART WHERE HEART.HEART_BOARD_NO = BOARD.BOARD_NO) AS BOARD_HEART_COUNT,
+	    		(SELECT COUNT(*) FROM COMMENTS WHERE COMMENTS.COMMENT_BOARD_NO = BOARD.BOARD_NO AND COMMENTS.COMMENT_STATUS='Y') AS BOARD_COMMENTS_COUNT
+	    FROM (
+	        SELECT BOARD.*,
+	               ROW_NUMBER() OVER (
+	                   ORDER BY BOARD_REG_DATE DESC
+	               ) AS RN
+	        FROM BOARD
+	        LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
+	        WHERE BOARD.BOARD_STATUS = 'Y'
+	    ) BOARD
+	    LEFT JOIN MEMBER ON BOARD.BOARD_MEMBER_NO = MEMBER.MEMBER_NO
+	    WHERE RN > (#{pageNum} - 1) * #{amount}
+	      AND RN <= #{pageNum} * #{amount}
+	    ]]>
+	    <if test="keyword != null and keyword.trim() != ''">
+	        AND BOARD.BOARD_TITLE LIKE '%' || #{keyword} || '%'
+	    </if>
+	</select>
+
+    <!-- 게시글 총 수 -->
+    <select id="selectBoardTotal" resultType="int">
+	    SELECT COUNT(*)
+	    FROM BOARD
+	    WHERE BOARD_STATUS = 'Y'
+	    <if test="keyword != null and keyword.trim() != ''">
+	        AND (BOARD_TITLE LIKE '%' || #{ keyword } || '%')
+	    </if>
+	</select>
     
     <!-- 게시글 조회수 증가 -->
   	<update id="updateBoardCount">
@@ -92,7 +112,9 @@
   	
   	<!-- 게시글 상세 조회 -->
   	<select id="selectBoardByBoardNo" parameterType="_int" resultMap="BoardResultMap">
-  		SELECT b.*, m.*
+  		SELECT b.*, m.*,
+  				(SELECT COUNT(*) FROM HEART WHERE HEART.HEART_BOARD_NO = b.BOARD_NO) AS BOARD_HEART_COUNT,
+  				(SELECT COUNT(*) FROM COMMENTS WHERE COMMENTS.COMMENT_BOARD_NO = b.BOARD_NO) AS BOARD_COMMENTS_COUNT
     	FROM BOARD b
     		LEFT JOIN MEMBER m ON b.BOARD_MEMBER_NO = m.MEMBER_NO
     	WHERE b.BOARD_NO = #{ boardNo }
@@ -121,19 +143,33 @@
 	</update>
 	
 	<!-- 좋아요 -->
-	<!-- 좋아요 추가 -->
-	<insert id="insertHeart" parameterType="com.syi.project.model.board.HeartVO">
-    	INSERT INTO HEART (HEART_BOARD_NO, HEART_MEMBER_NO)
-    	VALUES (#{ heartBoardNo }, #{ heartMemberNo })
-    </insert>
+	<!-- 좋아요 총 갯수 -->
+    <select id="selectHeartTotal" resultType="_int">
+    	SELECT COUNT(*)
+    	FROM HEART
+    	WHERE HEART_BOARD_NO = #{ heartBoardNo }
+    </select>
     
-    <!-- 좋아요 확인 -->
+	<!-- 좋아요 확인 -->
     <select id="selectMyHeart" resultType="_int">
     	SELECT COUNT(*)
     	FROM HEART
     	WHERE HEART_BOARD_NO = #{ heartBoardNo }
     		AND HEART_MEMBER_NO = #{ heartMemberNo }
     </select>
+    
+	<!-- 좋아요 추가 -->
+	<insert id="insertHeart" parameterType="com.syi.project.model.board.HeartVO">
+    	INSERT INTO HEART (HEART_BOARD_NO, HEART_MEMBER_NO)
+    	VALUES (#{ heartBoardNo }, #{ heartMemberNo })
+    </insert>
+    
+    <!-- 좋아요 수 증가 -->
+    <update id="increaseHeartCount">
+    	UPDATE BOARD
+    	SET BOARD_HEART_COUNT = BOARD_HEART_COUNT + 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
     
     <!-- 좋아요 취소 -->
     <delete id="deleteHeart">
@@ -143,24 +179,13 @@
     		AND HEART_MEMBER_NO = #{ heartMemberNo }
     </delete>
     
-    <!-- 좋아요 총 갯수 -->
-    <select id="selectHeartTotal" resultType="_int">
-    	SELECT COUNT(*)
-    	FROM HEART
-    	WHERE HEART_BOARD_NO = #{ heartBoardNo }
-    </select>
+    <!-- 좋아요 수 감소 -->
+    <update id="decreaseHeartCount">
+    	UPDATE BOARD
+    	SET BOARD_HEART_COUNT = BOARD_HEART_COUNT - 1
+    	WHERE BOARD_NO = #{ boardNo }
+    </update>
     
-	<!-- 댓글 -->
-	<insert id="insertComment" parameterType="com.syi.project.model.board.CommentsVO">
-	    INSERT INTO COMMENTS (COMMENT_MEMBER_NO, COMMENT_MEMBER_NO, COMMENT)
-	    VALUES (#{ commentBoardNo }, #{ commentMemberNo }, #{ comment })
-	</insert>
-
-	<delete id="deleteComment" parameterType="_int">
-	    DELETE FROM COMMENTS WHERE COMMENT_ID = #{ commentId }
-	</delete>
-	
-	
-	
-  
+    
   </mapper>
+  

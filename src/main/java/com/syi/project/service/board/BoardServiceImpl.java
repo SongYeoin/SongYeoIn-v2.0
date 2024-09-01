@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.syi.project.mapper.board.BoardMapper;
 import com.syi.project.model.Criteria;
 import com.syi.project.model.board.BoardVO;
-import com.syi.project.model.board.CommentsVO;
 import com.syi.project.model.board.HeartVO;
 
 @Service
@@ -22,6 +21,12 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public List<BoardVO> selectBoards(Criteria cri) {
 		return boardMapper.selectBoards(cri);
+	}
+
+	// 게시글 총 수
+	@Override
+	public int selectBoardTotal(Criteria cri) {
+		return boardMapper.selectBoardTotal(cri);
 	}
 
 	// 게시글 조회수 증가
@@ -59,10 +64,10 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.deleteBoard(boardNo);
 	}
 
-	// 좋아요 추가
+	// 좋아요 총 갯수
 	@Override
-	public int insertHeart(HeartVO heart) {
-		return boardMapper.insertHeart(heart);
+	public int selectHeartTotal(HeartVO heart) {
+		return boardMapper.selectHeartTotal(heart);
 	}
 
 	// 좋아요 확인
@@ -71,27 +76,32 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.selectMyHeart(heart);
 	}
 
+	// 좋아요 추가
+	@Transactional
+	@Override
+	public int insertHeart(HeartVO heart) {
+		return boardMapper.insertHeart(heart);
+	}
+
+	// 좋아요 수 증가
+	@Transactional
+	@Override
+	public void increaseHeartCount(int boardNo) {
+		boardMapper.increaseHeartCount(boardNo);
+	}
+
 	// 좋아요 취소
+	@Transactional
 	@Override
 	public int deleteHeart(HeartVO heart) {
 		return boardMapper.deleteHeart(heart);
 	}
 
-	// 좋아요 총 갯수
+	// 좋아요 수 감소
+	@Transactional
 	@Override
-	public int selectHeartTotal(HeartVO heart) {
-		return boardMapper.selectHeartTotal(heart);
-	}
-
-	// 댓글
-	@Override
-	public int insertComment(CommentsVO comment) {
-		return boardMapper.insertComment(comment);
-	}
-
-	@Override
-	public int deleteComment(int commentId) {
-		return boardMapper.deleteComment(commentId);
+	public void decreaseHeartCount(int boardNo) {
+		boardMapper.decreaseHeartCount(boardNo);
 	}
 
 }

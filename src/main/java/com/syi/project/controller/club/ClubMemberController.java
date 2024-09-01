@@ -10,13 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -24,9 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,14 +38,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
-import com.syi.project.model.EnrollVO;
+import com.syi.project.model.PageDTO;
 import com.syi.project.model.club.ClubVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
 import com.syi.project.service.club.ClubService;
 import com.syi.project.service.syclass.SyclassService;
-
-
 
 @Controller
 @RequestMapping("/member")
@@ -67,7 +61,7 @@ public class ClubMemberController {
 	@Value("${file.upload.path}")
 	private String fileUploadPath;   
 
-	//리스트
+	//리스트(페이징)
 	@GetMapping("/club/list")
 	public String clubListGET(@RequestParam(value = "classNo", required = false)Integer classNo, HttpSession session, Model model) {
 		log.info("목록 페이지 진입");
@@ -85,11 +79,6 @@ public class ClubMemberController {
 	    }
 		
 	    System.out.println("classNo after service call: " + classNo);
-	    
-		List<ClubVO> list =  cservice.getList(classNo);
-		System.out.println(classNo);
-		System.out.println("controller : " +list);
-		model.addAttribute("list", list);
 		
 		//수강 반 목록
 		Integer memberNo = member.getMemberNo();
@@ -99,60 +88,82 @@ public class ClubMemberController {
 	    return "member/club/list";
 		
 	}
-	
+		
 	@GetMapping("/club/list/getByClass")
 	@ResponseBody
-	public List<ClubVO> getClubListByClassNo(@RequestParam("classNo") Integer classNo) {
-	    List<ClubVO> clubs = cservice.getList(classNo);
-	   
-	    return clubs != null ? clubs : new ArrayList<>(); // null을 방지하기 위해 빈 리스트 반환
+	public Map<String, Object> getClubListByClassNo(@RequestParam(value = "classNo", required = false) Integer classNo,
+	                                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+	                                                 @RequestParam(value = "type", required = false) String type,
+	                                                 @RequestParam(value = "keyword", required = false) String keyword,
+	                                                 Criteria cri) {
+	    if (classNo == null) {
+	        return Collections.emptyMap();
+	    }
+	    cri.setPageNum(pageNum);
+	    cri.setType(type);
+	    
+	    // 승인 상태 키워드 변환	    
+	    if ("C".equals(type)) {
+	        cri.setKeyword("대기".equals(keyword) ? "W" : "승인".equals(keyword) ? "Y" : "미승인".equals(keyword) ? "N" : "");
+	    } else {
+	        cri.setKeyword(keyword);
+	    }
+	    
+	    List<ClubVO> clubs = cservice.getListPaging(cri, classNo);
+	    int total = cservice.getTotal(cri, classNo);
 
+	    PageDTO pageMake = new PageDTO(cri, total);
+	    System.out.println(classNo);
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("list", clubs);
+	    response.put("pageInfo", pageMake);
+
+	    return response;
 	}
 	
 	//등록페이지
 	@GetMapping("/club/enroll")
-	public void clubEnrollGET() {
+	public void clubEnrollGET(@RequestParam(value = "classNo", required = false) Integer classNo) {
 		log.info("등록 페이지 진입");
+		System.out.println("enroll get classNo : " + classNo);
 	}
 	
 	@PostMapping("/club/enroll")
-	public String clubEnrollPOST(@RequestParam("classNo") Integer classNo, 
-            @RequestParam("join") String join, 
-            @RequestParam("studyDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date studyDate, 
-            @RequestParam("content") String content, HttpSession session, RedirectAttributes rttr) throws ParseException {
-		log.info("classNo : "+classNo);
+	public String clubEnrollPOST(ClubVO club, HttpSession session, @RequestParam(value = "classNo", required = false) Integer classNo, RedirectAttributes rttr) {
+		log.info("ClubVO : "+club);
 		
 		MemberVO member = (MemberVO)session.getAttribute("loginMember");
+		
 		int memberNo = member.getMemberNo();
 
-		cservice.enroll(classNo, join, studyDate, content, memberNo);
-		
+	    System.out.println("enroll post classNo : " + classNo);
+	    
+	    cservice.enroll(club, classNo, memberNo);
+	    
 		rttr.addFlashAttribute("result", "enroll success");
 		
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
-	
-	//조회 HttpSession session
+
+	//조회
 	@GetMapping("/club/get")
-	public void clubGetPageGET(int clubNo, Model model) {
-		//MemberVO member = (MemberVO)session.getAttribute("loginMember");
-		//model.addAttribute("member", member);
-		
+	public void clubGetPageGET(@RequestParam("clubNo")int clubNo, Model model) {
 		System.out.println("controllerGET : " +cservice.getPage(clubNo));
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		
 		// 선택 할 반 정보 프론트로 보내기
 		List<SyclassVO> classList = syclassService.getClassList();
 		model.addAttribute("classList", classList);
+
 	}
-	
+
 	//수정페이지 이동
 	@GetMapping("/club/modify")
-	public void clubModifyGET(int clubNo, Model model) {
+	public void clubModifyGET(@RequestParam("clubNo")int clubNo, Model model) {
 		model.addAttribute("pageInfo", cservice.getPage(clubNo));
 		System.out.println("modifypage : " +cservice.getPage(clubNo));
-		
-		
+
 		//현재 날짜 추가
 		LocalDate today = LocalDate.now();
 		model.addAttribute("currentDate", Date.valueOf(today));
@@ -164,8 +175,17 @@ public class ClubMemberController {
 	
 	//수정
 	@PostMapping("/club/modify")
-	public String clubModifyPOST(ClubVO club, @RequestParam("file") MultipartFile file, RedirectAttributes rttr) throws Exception {
+	public String clubModifyPOST(ClubVO club, @RequestParam("clubNo")int clubNo, @RequestParam(value = "classNo", required = false) Integer classNo,
+								@RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes rttr) throws Exception {
 		
+		// 승인 상태일 때 파일 첨부 검증
+	    if ("승인".equals(club.getCheckStatus())) {
+	        if (file == null || file.isEmpty()) {
+	        	rttr.addFlashAttribute("fileError", "파일을 선택해 주세요");
+	        	rttr.addFlashAttribute("club", club); // 현재 입력된 데이터를 유지하기 위해
+	            return "redirect:/member/club/modify?clubNo=" + clubNo + "&rn=" + club.getRn() + "&classNo=" + classNo;
+	        }
+	    }		
 		
 		// 파일 업로드 처리
 	    if (file != null && !file.isEmpty()) {
@@ -205,12 +225,12 @@ public class ClubMemberController {
 	            throw new Exception("파일 업로드 실패: " + fileName, e);
 	        }
 	    }
-
+	    
 	    cservice.modify(club);
 	    System.out.println("modify : " +cservice.modify(club));
 		rttr.addFlashAttribute("result", "modify success");
 		
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
 	
 	/* 첨부파일 다운로드 */
@@ -248,15 +268,9 @@ public class ClubMemberController {
 	
 	//삭제
 	@PostMapping("/club/delete")
-	public String clubDeletePOST(int clubNo, RedirectAttributes rttr) {
+	public String clubDeletePOST(@RequestParam("clubNo")int clubNo, RedirectAttributes rttr, @RequestParam(value = "classNo", required = false) Integer classNo) {
 		cservice.delete(clubNo);
 		rttr.addFlashAttribute("result", "delete success");
-		return "redirect:/member/club/list";
+		return "redirect:/member/club/list?classNo=" + classNo;
 	}
-	
-	//리스트 페이징 적용
-	
-	
-	
-
 }

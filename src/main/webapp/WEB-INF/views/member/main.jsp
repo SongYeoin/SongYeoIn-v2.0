@@ -146,9 +146,10 @@ body {
 		</div>
 		<div class="section section2">
 			<div class="menu-title">Daily Log Submission <br>교육일지</div>
-			<div class="submenu pd-top">
+			<div class="submenu pd-top" onclick="location.href='${pageContext.servletContext.contextPath}/journal/journalList'">
 				<p>교육일지 제출</p>
 				<p>교육일지 조회</p>
+				<p>교육일정 조회</p>
 			</div>
 		</div>
       </div>
@@ -177,14 +178,6 @@ body {
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../common/footer.jsp"%>
-
-<script>
-    $(document).ready(function() {
-        $('.section2').click(function() {
-            window.location.href = '${pageContext.servletContext.contextPath}/journal/scheduleList';
-        });
-    });
-</script>
 
 </body>
 </html>

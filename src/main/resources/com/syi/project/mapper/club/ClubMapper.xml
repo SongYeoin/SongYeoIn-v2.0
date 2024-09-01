@@ -13,6 +13,7 @@
     <result property="checkStatus" column="CLUB_CHECK_STATUS"/>
     <result property="checkCmt" column="CLUB_CHECK_CMT"/>
     <result property="fileName" column="FILE_NAME"/>
+    <result property="rn" column="RN"/>  <!-- RN 컬럼을 매핑 -->
     <association property="enroll" resultMap="enrollResultMap"/>
   </resultMap>
   
@@ -73,33 +74,14 @@
 	WHERE e.member_no = #{memberNo}
 </select>
 
-  <!-- 리스트 -->
-  <select id="getList" resultMap="clubResultMap">
-    SELECT 
-      a.club_no,
-      a.club_study_date,
-      a.club_reg_date,
-      a.club_check_status,
-      a.club_check_cmt,
-      b.member_no,
-      b.enroll_no,
-      c.member_name,
-      a.file_name
-    FROM club a 
-    JOIN enroll b ON a.enroll_no = b.enroll_no
-    join member c on b.member_no = c.member_no
-    where c.member_status = 'Y' and b.class_no = #{classNo}
-    order by a.club_reg_date desc, a.club_study_date desc
-  </select>
-  
   <!-- 등록 -->
- <insert id="enroll">
+ <insert id="enroll">    		
     INSERT INTO club(club_join, club_study_date, club_content, enroll_no)
-    VALUES (#{join}, #{studyDate}, #{content}, 
-    		(SELECT enroll_no FROM enroll WHERE class_no = #{classNo} AND member_no = #{memberNo}))
+    	SELECT #{club.join}, #{club.studyDate}, #{club.content}, e.enroll_no
+    	FROM enroll e
+    	WHERE e.class_no = #{classNo} AND e.member_no = #{memberNo}
  </insert>
-  
-  
+   
   <!-- 조회 -->
   <select id="getPage" resultMap="clubResultMap">
   select 
@@ -126,116 +108,88 @@ where club_No = #{clubNo}
   where club_no = #{clubNo}
   </update>
   
+  <update id="modifyAdmin">
+  update club 
+  set club_check_cmt = #{checkCmt}, club_check_status = #{checkStatus, jdbcType=VARCHAR}
+  where club_no = #{clubNo}
+  </update>
+   
   <!-- 삭제 -->
   <delete id="delete">
-  	delete from club where club_no = #{clubNo}
+  delete from club where club_no = #{clubNo}
   </delete>
-  
-  
+   
   <!-- 게시물 목록(페이징) -->
-  <select id="getListPaging" resultType="com.syi.project.model.club.ClubVO">
+  <select id="getListPaging" resultMap="clubResultMap">
   <![CDATA[
-  	select 
-  	a.club_no,
-      a.club_study_date,
-      a.club_reg_date,
-      a.club_check_status,
-      a.club_check_cmt,
-      b.member_no,
-      b.enroll_no,
-      c.member_name 
-    from(
-  		select /*+INDEX_DESC(club pk_club) */ rownum as rn, 
-  		a.club_no,
-      a.club_study_date,
-      a.club_reg_date,
-      a.club_check_status,
-      a.club_check_cmt,
-      b.member_no,
-      b.enroll_no,
-      c.member_name
-  		from club a JOIN enroll b ON a.enroll_no = b.enroll_no
-    join member c on b.member_no = c.member_no
-    where c.member_status = 'Y' and rownum <= #{pageNum} * #{amount}
-    order by a.club_reg_date desc, a.club_study_date desc
-	  		
-  ]]>		
-  		<if test="keyword != null">
-  			<include refid="criteria"></include>
-  		</if>			
-  <![CDATA[		
-  		)
-  	where rn > (#{pageNum}-1) * #{amount}	  
+      SELECT 
+      A.RN,
+      A.CLUB_NO,
+      A.CLUB_STUDY_DATE,
+      A.CLUB_REG_DATE,
+      A.CLUB_CHECK_STATUS,
+      A.CLUB_CHECK_CMT,
+      A.MEMBER_NO,
+      A.ENROLL_NO,
+      A.MEMBER_NAME,
+      A.FILE_NAME,
+      A.CLUB_JOIN
+    FROM (
+    	SELECT 
+	      A.CLUB_NO,
+	      A.CLUB_STUDY_DATE,
+	      A.CLUB_REG_DATE,
+	      A.CLUB_CHECK_STATUS,
+	      A.CLUB_CHECK_CMT,
+	      B.MEMBER_NO,
+	      B.ENROLL_NO,
+	      C.MEMBER_NAME,
+	      A.FILE_NAME,
+	      A.CLUB_JOIN,
+	      ROW_NUMBER() OVER (ORDER BY A.CLUB_REG_DATE DESC, A.CLUB_STUDY_DATE DESC) AS RN
+      	FROM 
+        	CLUB A 
+        	JOIN ENROLL B ON A.ENROLL_NO = B.ENROLL_NO
+        	JOIN MEMBER C ON B.MEMBER_NO = C.MEMBER_NO
+      	WHERE 
+        	C.MEMBER_STATUS = 'Y' AND B.CLASS_NO = #{classNo}
+    ]]>
+      <if test="cri.keyword != null">
+        <include refid="criteria"></include>
+      </if>
+      <![CDATA[
+    ) A
+    WHERE 
+      RN > (#{cri.pageNum} - 1) * #{cri.amount}
+      AND RN <= #{cri.pageNum} * #{cri.amount}
   ]]>
   </select>
-  
-  <!-- <select id="getListPaging" resultMap="clubResultMap">
-  <![CDATA[
-    SELECT 
-    a.club_no,
-      a.club_study_date,
-      a.club_reg_date,
-      a.club_check_status,
-      a.club_check_cmt,
-      b.member_no,
-      b.enroll_no,
-      c.member_name 
-      FROM (
-      SELECT a.club_no,
-             a.club_study_date,
-             a.club_reg_date,
-             a.club_check_status,
-             a.club_check_cmt,
-             b.member_no,
-             b.enroll_no,
-             c.member_name,
-             ROW_NUMBER() OVER (ORDER BY a.club_reg_date DESC) AS rn
-      FROM club a 
-      JOIN enroll b ON a.enroll_no = b.enroll_no
-      JOIN member c ON b.member_no = c.member_no
-      WHERE c.member_status = 'Y'
-    )
-    WHERE rn > (#{pageNum} - 1) * #{amount}
-      AND rn <= #{pageNum} * #{amount}
-  ]]>
-</select>
-   -->
-  
-  
-  
-  
   
   <!-- 게시물 총 갯수 -->
- <!--  <select id="getTotal" resultType="int">
-  	select count(*) from lbi_board
-  	
-  	<if test="keyword != null">
-  		Oracle
-  		where bno > 0 <include refid="criteria"></include>
+  <select id="getTotal" resultType="int">
+  	select count(*) 
+  	from club A
+  	JOIN ENROLL B ON A.ENROLL_NO = B.ENROLL_NO
+    JOIN MEMBER C ON B.MEMBER_NO = C.MEMBER_NO
+  	where C.MEMBER_STATUS = 'Y' AND B.CLASS_NO = #{classNo}
+  	<if test="cri.keyword != null">
+  		and A.club_no > 0 <include refid="criteria"></include>
   	</if>
   </select>
-   -->
+  
   <!-- 검색 조건문 -->
   <sql id="criteria">
-  <trim prefix="AND (" suffix=")" prefixOverrides="OR">
-  <foreach collection="typeArr" item="type">
-  <trim prefix="OR">
   <choose>
-  <when test="type == 'W'.toString()">
-  	writer like '%'||#{keyword}||'%'
+  <when test="cri.type == 'W'.toString()">
+  	AND C.MEMBER_NAME like '%'||#{cri.keyword}||'%'
   </when>
-  <when test="type == 'H'.toString()">
-  	checkStatus like '%'||#{keyword}||'%'
+  <when test="cri.type == 'J'.toString()">
+  	AND A.CLUB_JOIN like '%'||#{cri.keyword}||'%'
   </when>
-  <when test="type == 'C'.toString()">
-  	content like '%'||#{keyword}||'%'
+  <when test="cri.type == 'C'.toString()">
+  	AND A.CLUB_CHECK_STATUS like '%'||#{cri.keyword}||'%'
   </when>
-
-  
   </choose>
-  </trim>
-  </foreach>
-  </trim>
-  
   </sql>
+
 </mapper>

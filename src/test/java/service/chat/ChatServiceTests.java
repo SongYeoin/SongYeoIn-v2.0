@@ -37,7 +37,7 @@ public class ChatServiceTests {
 	@Test
 	public void selectClassMemberList() {
 		int adminNo = 4;
-		chatRoomService.selectClassMemberList(adminNo);
+		chatRoomService.getClassMemberList(adminNo);
 	}
 
 	/*

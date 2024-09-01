@@ -205,6 +205,11 @@ main {
     
     margin-left: 10px;
 }
+
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
 </style>
 </head>
 <body>

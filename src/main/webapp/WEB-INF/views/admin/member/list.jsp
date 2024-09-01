@@ -22,54 +22,50 @@ html, body {
 }
 
 body {
-	font-family: Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
-	/* min-height: 100vh; */
 }
 
 /* 메인 영역 스타일 */
 main {
     flex: 1;
-    margin-left: 300px; /* 사이드바의 너비와 일치 */
-    margin-top: 160px; /* 메뉴바의 높이와 일치 */
+    margin-left: 300px; 
+    margin-top: 160px; 
     overflow-y: auto;
-    padding: 20px;
+    height: 100%;
 }
 
-.memberList-wrapper {
-    margin: 20px auto;
-    background-color: #f9fafc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 1200px;
-    border-radius: 10px;
-    padding-bottom: 20px;
-    
+.container {
+	margin: 20px auto;
+	background-color: #f9fafc;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 1320px;
+	height: 710px;
+	border-radius: 10px;
+	padding-bottom: 20px;
     padding-left: 0 !important;
     padding-right: 0 !important;
-   
 }
 
 .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    background-color: #e2eff9;
-    
-    padding-top: 40px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+	background-color: #e2eff9;
+	padding-top: 40px;
     padding-right: 32px;
     padding-left: 32px;
     padding-bottom: 20px;
     border-radius: 10px 10px 0 0;
 }
 
-.header h1 {
-    margin: 0;
-    flex-grow: 1;
+.header h2 {
+	margin: 0;
+	flex-grow: 1;
 }
 
 .header input {
@@ -79,8 +75,9 @@ main {
     border-radius: 5px;
 }
 
+
 /* 테이블 스타일 */
-.div-table{
+.table-wrap{
 	margin-left: 12px;
     margin-right: 12px;
 }
@@ -105,7 +102,6 @@ tr {
     transition: background-color 0.3s;
 }
 
-/* 테이블 행에 대한 기본 호버 효과 */
 tr:hover {
 	cursor: pointer;
     background-color: #e0e0e0; 
@@ -122,53 +118,43 @@ tr:hover {
     background-color: #c5c5c5;
 }
 
-/* 검색 영역 스타일 */
-.search_input {
-    display: flex;
-    justify-content: center;
-}
-
-.search_input input[type="text"] {
-    padding: 10px;
-    width: 200px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
 /* 페이지 이동 인터페이스 스타일 */
 .pageMaker_wrap {
-    margin-top: 20px;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.pageMaker_wrap a {
+    color: black;
 }
 
 .pageMaker {
-    display: flex;
-    justify-content: center;
     list-style: none;
-    padding: 0;
+    display: inline-block;
 }
 
 .pageMaker_btn {
-    margin: 0 5px;
+    float: left;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    margin-left: 20px;
 }
 
-.pageMaker_btn a {
-    text-decoration: none;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #007bff;
-    display: block;
+.next, .prev {
+    border: 1px solid #ccc;
+    padding: 0 10px;
 }
 
-.pageMaker_btn a:hover {
-    background-color: #e2eff9;
+.next a, .prev a {
+    color: #ccc;
 }
 
-.pageMaker_btn.active a {
-    background-color: #007bff;
-    color: #fff;
+.active { 
+    border: 2px solid black;
+    font-weight: 400;
 }
-
 
 </style>
 </head>
@@ -182,12 +168,12 @@ tr:hover {
 
    <main>
         <!-- Main content -->
-        <div class="memberList-wrapper">
+        <div class="container">
          <div class="header">
-            <h1>Member</h1>
+            <h2>Member</h2>
             <!-- 검색 영역 -->
             <div class="search_wrap">
-               <form id="searchForm" action="/admin/member/list" method="get">
+               <form id="searchForm" action="${ pageContext.servletContext.contextPath }/admin/member/list" method="get">
                   <div class="search_input">
                      <input type="text" name="keyword"
                         value='<c:out value="${pageMaker.cri.keyword}"></c:out>'>
@@ -201,37 +187,38 @@ tr:hover {
             </div>
          </div>
 
-         <div class="div-table">
+         <div class="table-wrap">
             <table>
-               <tr>
-                  <th>번호</th>
-                  <th>이름</th>
-                  <th>전화번호</th>
-                  <th>가입일</th>
-                  <th width=15%>승인</th>
-               </tr>
-               <c:forEach items="${ memberList }" var="member">
-                  <tr onclick="showMemberDetail(event, ${member.memberNo})">
-                     <td>${ member.memberNo }</td>
-                     <td>${ member.memberName }</td>
-                     <td>${ member.memberPhone }</td>
-                     <td>${ member.memberEnrollDate }</td>
-                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}, event);">
-                        <c:choose>
-                           <c:when test="${member.memberCheckStatus == 'W'}">대기</c:when>
-                           <c:when test="${member.memberCheckStatus == 'Y'}">승인</c:when>
-                           <c:when test="${member.memberCheckStatus == 'N'}">미승인</c:when>
-                        </c:choose>
-                     </td>
-                  </tr>
-
-               </c:forEach>
+            	<thead>
+	               <tr>
+	                  <th>번호</th>
+	                  <th>이름</th>
+	                  <th>전화번호</th>
+	                  <th>가입일</th>
+	                  <th width=15%>승인</th>
+	               </tr>
+               	</thead>
+               	<tbody>
+	               	<c:forEach items="${ memberList }" var="member">
+	                  <tr onclick="showMemberDetail(event, ${member.memberNo})">
+	                     <td>${ member.memberNo }</td>
+	                     <td>${ member.memberName }</td>
+	                     <td>${ member.memberPhone }</td>
+	                     <td>${ member.memberEnrollDate }</td>
+	                     <td class="approval-status" onclick="changeApprovalStatus(${member.memberNo}, event);">
+	                        <c:choose>
+	                           <c:when test="${member.memberCheckStatus == 'W'}">대기</c:when>
+	                           <c:when test="${member.memberCheckStatus == 'Y'}">승인</c:when>
+	                           <c:when test="${member.memberCheckStatus == 'N'}">미승인</c:when>
+	                        </c:choose>
+	                     </td>
+	                  </tr>
+	               </c:forEach>
+               </tbody>
             </table>
-            </div>
             
             <!-- 페이지 이동 인터페이스 영역 -->
             <div class="pageMaker_wrap">
-
                <ul class="pageMaker">
 
                   <!-- 이전 버튼 -->
@@ -241,25 +228,22 @@ tr:hover {
 
                   <!-- 페이지 번호 -->
                   <c:forEach begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}" var="num">
-                     <li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="${num}">${num}</a>
-                     </li>
+                     <li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="${num}">${num}</a></li>
                   </c:forEach>
 
                   <!-- 다음 버튼 -->
                   <c:if test="${pageMaker.next}">
                      <li class="pageMaker_btn next"><a href="${pageMaker.pageEnd + 1 }">다음</a></li>
                   </c:if>
-
                </ul>
-
             </div>
-            <form id="moveForm" action="/admin/member/list" method="get">
+            <form id="moveForm" action="${ pageContext.servletContext.contextPath }/admin/member/list" method="get">
                <input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
                <input type="hidden" name="amount" value="${pageMaker.cri.amount}">
                <input type="hidden" name="keyword" value="${pageMaker.cri.keyword}">
             </form>
          </div>
-
+		</div>
    </main>
 
    <!-- 푸터 연결 -->
@@ -269,6 +253,14 @@ tr:hover {
 
 <script>
 let moveForm = $('#moveForm');
+
+//검색 버튼 클릭 시 페이지 번호를 1로 설정하고 폼 제출
+$('#searchForm').on('submit', function() {
+    let form = $(this);
+    form.find("input[name='pageNum']").val('1');
+    return true;  // 폼 제출
+});
+
 //페이지 이동 버튼
 $(".pageMaker_btn a").on("click", function(e){
     e.preventDefault();

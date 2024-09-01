@@ -32,16 +32,16 @@ public class JournalServiceImpl implements JournalService {
 
 	// 일지 목록 조회 (페이징)
 	@Override
-	public List<JournalVO> journalList(Criteria cri) throws Exception {
+	public List<JournalVO> journalList(Criteria cri, int classNo, int memberNo) throws Exception {
 		logger.info(">>>>>>>>>>>>>>>>>  journalList  >>");
-		return journalMapper.journalList(cri);
+		return journalMapper.journalList(cri, classNo, memberNo);
 	}
 
 	// 일지 갯수
 	@Override
-	public int journalGetTotal(Criteria cri) throws Exception {
+	public int journalGetTotal(Criteria cri, int classNo, int memberNo) throws Exception {
 		logger.info(">>>>>>>>>>>>>>>>>  journalGetTotal  >>");
-		return journalMapper.journalGetTotal(cri);
+		return journalMapper.journalGetTotal(cri, classNo, memberNo);
 	}
 
 	// 일지 상세 조회
@@ -68,9 +68,9 @@ public class JournalServiceImpl implements JournalService {
 
 	// 캘린더 전체 일지 조회
 	@Override
-	public List<JournalVO> journalAllList() {
-		List<JournalVO> journalAllList = journalMapper.journalAllList();
-		logger.info("---------> 서비스 : journalAllList : " + journalAllList);
+	public List<JournalVO> journalAllList(int classNo, int memberNo) {
+        logger.info("---------> 서비스 : journalAllList : classNo , memberNo = " + classNo, memberNo);
+		List<JournalVO> journalAllList = journalMapper.journalAllList(classNo, memberNo);
 		return journalAllList;
 	}
 

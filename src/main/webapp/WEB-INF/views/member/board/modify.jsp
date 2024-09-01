@@ -154,7 +154,7 @@ button:hover {
     <main>
         <!-- Main content -->
         <div class="board-wrapper">
-            <h2 align="center">공지사항</h2>
+            <h2 align="center"></h2>
             <form id="boardForm" action="${pageContext.servletContext.contextPath}/member/board/modify" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="boardNo" value="${board.boardNo}" />
                 <table>

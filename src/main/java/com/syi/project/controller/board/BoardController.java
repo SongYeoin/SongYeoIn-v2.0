@@ -18,10 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.syi.project.model.Criteria;
+import com.syi.project.model.PageDTO;
 import com.syi.project.model.board.BoardVO;
 import com.syi.project.model.board.CommentsVO;
+import com.syi.project.model.board.HeartVO;
 import com.syi.project.model.member.MemberVO;
 import com.syi.project.service.board.BoardService;
+import com.syi.project.service.board.CommentService;
 
 @Controller
 @RequestMapping("/member/board")
@@ -31,17 +34,43 @@ public class BoardController {
 
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private CommentService commentService;
 
 	@GetMapping("/list")
 	public void listBoards(Criteria cri, Model model) {
 		List<BoardVO> boardList = boardService.selectBoards(cri);
 		model.addAttribute("boardList", boardList);
+		int total = boardService.selectBoardTotal(cri);
+		PageDTO pageMaker = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMaker);
 	}
 
 	@GetMapping("/detail")
-	public String detailBoard(int boardNo, Model model) {
+	public String detailBoard(int boardNo, Criteria cri, HeartVO heart, Model model, HttpSession session) {
+		long start = System.currentTimeMillis();
+		MemberVO member = (MemberVO) session.getAttribute("loginMember");
+		
 		BoardVO board = boardService.selectBoardByBoardNo(boardNo);
+		List<CommentsVO> commentList = commentService.selectCommentList(boardNo, cri);
+		
+		heart.setHeartBoardNo(boardNo);
+		heart.setHeartMemberNo(member.getMemberNo());
+		int heartCount = boardService.selectMyHeart(heart);
+		
 		model.addAttribute("board", board);
+		model.addAttribute("commentList", commentList);
+		model.addAttribute("heartCount", heartCount);
+		
+		long end = System.currentTimeMillis();
+		double timeInSeconds = (end - start) / 1000.0;
+		
+		int total = commentService.selectCommentTotal(boardNo);
+		PageDTO pageMaker = new PageDTO(cri, total);
+		model.addAttribute("pageMaker", pageMaker);
+		
+	    System.out.println(">>> 조회 소요 시간 : " + timeInSeconds + " 초");
 		return "member/board/detail";
 	}
 
@@ -91,42 +120,30 @@ public class BoardController {
 	}
 
 	// 좋아요
-	@PostMapping("/like")
+	@PostMapping("/heart")
 	@ResponseBody
-	public String likeBoard(@RequestParam("boardNo") int boardNo, HttpSession session) {
+	public String heartBoard(@RequestParam int boardNo, HttpSession session) {
 		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-		int result = boardService.insertHeart(null);
-		return result > 0 ? "success" : "fail";
-	}
-	
-	
-	
-	
-	// 댓글
-	@PostMapping("/comment/add")
-	public String addComment(@ModelAttribute CommentsVO comment, @RequestParam("boardNo") int boardNo,
-			HttpSession session, RedirectAttributes rttr) {
-		MemberVO member = (MemberVO) session.getAttribute("loginMember");
-		int memberNo = member.getMemberNo();
-
-		comment.setCommentBoardNo(boardNo);
-		comment.setCommentMemberNo(memberNo);
-
-		int result = boardService.insertComment(comment);
-		if (result > 0) {
-			rttr.addFlashAttribute("message", "댓글이 등록되었습니다.");
+		
+		HeartVO heart = new HeartVO();
+		heart.setHeartBoardNo(boardNo);
+		heart.setHeartMemberNo(member.getMemberNo());
+		
+		int heartCount = boardService.selectMyHeart(heart);
+		
+		if(heartCount > 0) {
+			int result = boardService.deleteHeart(heart);
+			if(result > 0) {
+				boardService.decreaseHeartCount(boardNo);
+				return "heartRemoved";
+			}
 		} else {
-			rttr.addFlashAttribute("message", "댓글 등록에 실패하였습니다.");
+			int result = boardService.insertHeart(heart);
+			if(result > 0) {
+				boardService.increaseHeartCount(boardNo);
+				return "heartAdded";
+			}
 		}
-		return "redirect:/member/board/detail?boardNo=" + comment.getCommentBoardNo();
+		return "fail";
 	}
-
-	@PostMapping("/comment/delete")
-	@ResponseBody
-	public String deleteComment(@RequestParam("commentId") int commentId) {
-		int result = boardService.deleteComment(commentId);
-		return result > 0 ? "success" : "fail";
-	}
-
 }

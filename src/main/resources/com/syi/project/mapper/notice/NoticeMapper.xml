@@ -177,6 +177,7 @@
         DELETE FROM NOTICE_FILE
         WHERE FILE_NO = #{ fileNo }
     </delete>
-  
+
   
   </mapper>
+  

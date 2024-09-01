@@ -24,6 +24,7 @@
 		<result property="memberStatus" column="MEMBER_STATUS"/>
 		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
 		<result property="memberRole" column="MEMBER_ROLE"/>
+		<result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
 	</resultMap>
 
 	<resultMap type="com.syi.project.model.EnrollVO" id="enrollResultMap">
@@ -184,5 +185,18 @@
 		WHERE MEMBER_NO = #{ memberNo }
 	</update>
 	
+	<update id="updateMemberProfileUrl" parameterType="com.syi.project.model.member.MemberVO">
+		UPDATE
+			MEMBER
+		SET MEMBER_PROFILE_URL = #{memberProfileUrl}
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
+	
+	<update id="deleteMemberProfileUrl" parameterType="int">
+		UPDATE
+			MEMBER
+		SET MEMBER_PROFILE_URL = NULL
+		WHERE MEMBER_NO = #{ memberNo }
+	</update>
   
   </mapper>
