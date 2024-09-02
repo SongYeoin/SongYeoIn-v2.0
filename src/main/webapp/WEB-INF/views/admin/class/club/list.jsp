@@ -69,6 +69,11 @@ main {
 	font-size: 20px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 .container {
     margin: 20px auto;
     background-color: #f9fafc;

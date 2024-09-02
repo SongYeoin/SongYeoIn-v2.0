@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.syi.project.model.period.PeriodVO;
 import com.syi.project.model.schedule.ScheduleVO;
@@ -112,13 +113,15 @@ public class ScheduleController {
 	
 	/* 시간표 등록 */
 	@PostMapping("/class/enrollSchedule")
-	public void enrollSchedulePOST(HttpServletRequest request, ScheduleVO schedule) throws Exception{
+	public RedirectView enrollSchedulePOST(HttpServletRequest request, ScheduleVO schedule) throws Exception{
 		
 		HttpSession session = request.getSession();
 		int classNo = ((SyclassVO) session.getAttribute("syclass")).getClassNo();
 		schedule.setClassNo(classNo);
 		
 		scheduleService.enrollSchedule(request, schedule);
+		
+		return new RedirectView("/admin/class/getSchedule");
 		
 	}
 	

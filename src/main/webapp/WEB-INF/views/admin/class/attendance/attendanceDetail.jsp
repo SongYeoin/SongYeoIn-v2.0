@@ -72,6 +72,11 @@ main {
     margin-left: 10px;
 }
 
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
+
 /* 수강생 정보 박스 스타일 */
 .student-info-box {
     border: 1px solid #ddd;

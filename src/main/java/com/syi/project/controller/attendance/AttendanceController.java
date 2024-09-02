@@ -104,7 +104,6 @@ public class AttendanceController {
 				
 				// 몇교시가 출석 가능한 상태인지 맵에 담기 (교시번호, 출석가능상태)
 				boolean isAttendanceEnabled = checkIfWithinTimeWindow(period).equals("출석") || checkIfWithinTimeWindow(period).equals("지각");
-				System.out.println(period.getPeriodName() + "의 출석 가능 상태는? " + isAttendanceEnabled);
 				attendanceStatus.put(period.getPeriodNo(), isAttendanceEnabled);
 			}
 			
@@ -436,7 +435,7 @@ public class AttendanceController {
 	    // 192.168.1.0/24 네트워크 범위를 사용하는 경우
 	    String[] allowedNetworks = {
 	        "127.0.0.1/32", // 로컬, 추가 네트워크 범위가 있을 경우 추가 가능
-	    		"192.168.0.0/24" // 학원 와이파이
+	    		"192.168.0.0/24" // 학원 네트워크
 	    };
 	    
 	    for (String network : allowedNetworks) {
