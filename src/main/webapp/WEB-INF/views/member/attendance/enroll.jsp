@@ -265,18 +265,17 @@ main {
 						        <div>
 						            <c:choose>
 						                <c:when test="${periodAttendanceStatus[period.periodNo] != '미출석'}">
-		                                            <!-- 출석 상태를 업데이트된 상태로 표시 -->
-		                                            <button class="attendance-btn" disabled>${periodAttendanceStatus[period.periodNo]}</button>
-		                                        </c:when>
-		                                        <c:when test="${attendanceStatus[period.periodNo]}">
-		                                            <form action="/member/attendance/enroll" method="post" onsubmit="return setDayOfWeek(this);">
-		                                            	<input type="hidden" name="classNo" value="${param.classNo}">
-		                                                <input type="hidden" name="periodNo" value="${period.periodNo}">
-		                                                <input type="hidden" name="dayOfWeek" value="">
-		                                                <button type="submit" class="attendance-btn">출석하기</button>
-		                                            </form>
-						                </c:when>
-
+                                            <!-- 출석 상태를 업데이트된 상태로 표시 -->
+                                            <button class="attendance-btn" disabled>${periodAttendanceStatus[period.periodNo]}</button>
+                                        </c:when>
+                                        <c:when test="${attendanceStatus[period.periodNo]}">
+                                            <form action="/member/attendance/enroll" method="post" onsubmit="return setDayOfWeek(this);">
+                                            	<input type="hidden" name="classNo" value="${param.classNo}">
+                                                <input type="hidden" name="periodNo" value="${period.periodNo}">
+                                                <input type="hidden" name="dayOfWeek" value="">
+                                                <button type="submit" class="attendance-btn">출석하기</button>
+                                            </form>
+				                		</c:when>
 						            </c:choose>
 						        </div>
 						    </div>
