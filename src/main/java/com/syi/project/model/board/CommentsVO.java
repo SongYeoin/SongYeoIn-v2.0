@@ -19,6 +19,6 @@ public class CommentsVO {
 	private int commentMemberNo;
 	private int commentBoardNo;
 	private MemberVO member;
-	private List<CommentsVO> replyList;
+	private String  parentNickname;
 	
 }

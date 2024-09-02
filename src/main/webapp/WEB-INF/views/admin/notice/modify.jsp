@@ -83,12 +83,10 @@ main {
     margin: 20px auto;
 }
 
-/* 공지사항 제목 스타일 */
 .notice-wrapper h2 {
     margin-bottom: 30px;
 }
 
-/* 테이블 스타일 */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -102,7 +100,6 @@ table th, table td {
     font-size: 14px;
 }
 
-/* 테이블 헤더 스타일 */
 table th {
     background-color: #f4f4f4;
     color: #333;
@@ -125,12 +122,12 @@ button {
 } 
 
 button {
-    background-color: #007bff; /* 버튼 배경색 */
+    background-color: #007bff; 
     transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3; /* 버튼 호버시 배경색 */
+    background-color: #0056b3; 
 }
 
 .button-container {
@@ -167,6 +164,13 @@ button:hover {
     text-decoration: underline;
 }
 
+.deleteButton {
+    color: #dc3545; 
+    cursor: pointer;
+    font-size: 18px; 
+    transition: color 0.3s ease, transform 0.3s ease; 
+}
+
 </style>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
@@ -187,9 +191,9 @@ button:hover {
     <main>
         <!-- Main content -->
         <div class="notice-wrapper">
-            <h2 align="center">공지사항</h2>
             <form id="noticeForm" action="/admin/class/notice/modify" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="noticeNo" value="${notice.noticeNo}" />
+                <input type="hidden" id="deleteFileNos" name="deleteFileNos" value="" />
                 <table>
                     <tr>
                         <th>제목</th>
@@ -213,15 +217,14 @@ button:hover {
                    						<a href="${pageContext.servletContext.contextPath}/admin/class/notice/download?fileNo=${file.fileNo}" download="${file.fileOriginalName}">
 					                   		${file.fileOriginalName}
 					                   	</a>
-                                        <input type="checkbox" id="file_${file.fileNo}" name="deleteFileNos" value="${file.fileNo}"/>
-                                        <label for="file_${file.fileNo}">삭제</label>
+					                   	<i class="bi bi-dash-circle deleteButton" value="${file.fileNo}"></i>
                                     </li>
                                 </c:forEach>
                             </ul>
                         </td>
                     </tr>
                     <tr>
-                        <th>전체</th>
+                        <th>옵션</th>
                         <td>
                             <input type="checkbox" id="allNotice" name="allNotice" value="true" ${notice.noticeClassNo eq 0 ? 'checked' : ''}/>
                             <label for="allNotice">전체 공지</label>
@@ -244,6 +247,15 @@ button:hover {
 	if(message) {
 		alert(message);
 	}
+	
+	let deletedFiles = []; 
+
+    $(".deleteButton").click(function() {
+        let fileNo = $(this).attr("value");
+        $(this).closest('li').hide();
+        deletedFiles.push(fileNo);
+        $("#deleteFileNos").val(deletedFiles.join(","));
+    });
 	
     $("#listBtn").click(function() {
         window.location.href = '${pageContext.servletContext.contextPath}/admin/class/notice/list';

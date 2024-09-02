@@ -108,15 +108,10 @@ label {
 }
 
 .deleteButton {
-    color: #dc3545; /* Default color (red) */
+    color: #dc3545; 
     cursor: pointer;
-    font-size: 20px; /* Size of the icon */
-    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and size */
-}
-
-.deleteButton:hover {
-    color: #c82333; /* Darker red color on hover */
-    transform: scale(1.2); /* Slightly increase the size of the icon */
+    font-size: 20px; 
+    transition: color 0.3s ease, transform 0.3s ease; 
 }
 
 .button-container {

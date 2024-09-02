@@ -13,27 +13,27 @@
 <style>
 /* CSS Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 html, body {
-    height: 1080px;
+	height: auto; /* 고정 높이 제거 */
 }
 
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+    overflow-y: auto; /* 전체 페이지에 대한 스크롤 추가 */
 }
 
 main {
-    flex: 1;
-    margin-left: 300px;
+	flex: 1;
+	margin-left: 300px;
     margin-top: 160px;
-    overflow-y: auto;
-    height: 100%;
 }
 
 .classroom-header {
