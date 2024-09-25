@@ -4,42 +4,43 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syi.project.mapper.attendance.AttendanceMapper">
 
-	<resultMap id="attendanceResultMap" type="com.syi.project.model.attendance.AttendanceVO">
-		<id property="attendanceNo" column="ATTENDANCE_NO"/>
-		<result property="attendanceStatus" column="ATTENDANCE_STATUS"/>
-		<result property="attendanceDate" column="ATTENDANCE_DATE"/>
-		<result property="enrollDate" column="ENROLL_DATE"/>
-		<result property="modifiedDate" column="MODIFIED_DATE"/>
-		<result property="periodNo" column="PERIOD_NO"/>
-		<result property="classNo" column="CLASS_NO"/>
-		<result property="memberNo" column="MEMBER_NO"/>
-		<result property="memo" column="MEMO"/>
-	</resultMap>
+    <resultMap id="attendanceResultMap" type="com.syi.project.model.attendance.AttendanceVO">
+        <id property="attendanceNo" column="ATTENDANCE_NO"/>
+        <result property="attendanceStatus" column="ATTENDANCE_STATUS"/>
+        <result property="attendanceDate" column="ATTENDANCE_DATE"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="modifiedDate" column="MODIFIED_DATE"/>
+        <result property="periodNo" column="PERIOD_NO"/>
+        <result property="classNo" column="CLASS_NO"/>
+        <result property="memberNo" column="MEMBER_NO"/>
+        <result property="memo" column="MEMO"/>
+    </resultMap>
 
     <!-- 출석 등록 -->
     <insert id="enrollAttendance" parameterType="com.syi.project.model.attendance.AttendanceVO">
-	    insert into ATTENDANCE (ATTENDANCE_STATUS, ATTENDANCE_DATE, PERIOD_NO, CLASS_NO, MEMBER_NO
-	    <if test="memo != null">
-	        , MEMO
-	    </if>)
-	    values (#{attendanceStatus}, #{attendanceDate}, #{periodNo}, #{classNo}, #{memberNo}
-	    <if test="memo != null">
-	        , #{memo, jdbcType=VARCHAR}
-	    </if>)
-	</insert>
-	
-	<!-- 교시번호와 수강생번호로 단일 출석 조회하기 --> 
-	<select id="getAttendanceByPeriodAndMember" resultMap="attendanceResultMap">
-		select * from ATTENDANCE where PERIOD_NO = #{periodNo} and MEMBER_NO = #{memberNo} and ATTENDANCE_DATE = #{attendanceDate, jdbcType=DATE}
-	</select>
-	
-	<!-- 클래스번호와 수강생번호로 단일 출석 조회하기 --> 
-	<select id="getAttendanceByClassAndMember" resultMap="attendanceResultMap">
-		select * from ATTENDANCE where CLASS_NO = #{classNo} and MEMBER_NO = #{memberNo}
-	</select>
+        insert into ATTENDANCE (ATTENDANCE_STATUS, ATTENDANCE_DATE, PERIOD_NO, CLASS_NO, MEMBER_NO
+        <if test="memo != null">
+            , MEMO
+        </if>)
+        values (#{attendanceStatus}, #{attendanceDate, jdbcType=DATE}, #{periodNo}, #{classNo}, #{memberNo}
+        <if test="memo != null">
+            , #{memo, jdbcType=VARCHAR}
+        </if>)
+    </insert>
+    
+    <!-- 교시번호와 수강생번호로 단일 출석 조회하기 --> 
+    <select id="getAttendanceByPeriodAndMember" resultMap="attendanceResultMap">
+        SELECT * FROM ATTENDANCE WHERE PERIOD_NO = #{periodNo} AND MEMBER_NO = #{memberNo} AND ATTENDANCE_DATE = #{attendanceDate, jdbcType=DATE}
+    </select>
+    
+    <!-- 클래스번호와 수강생번호로 단일 출석 조회하기 --> 
+    <select id="getAttendanceByClassAndMember" resultMap="attendanceResultMap">
+        SELECT * FROM ATTENDANCE WHERE CLASS_NO = #{classNo} AND MEMBER_NO = #{memberNo}
+    </select>
    
-   <select id="getAttendanceByDateAndMember" resultMap="attendanceResultMap">
-   		select * from ATTENDANCE where ATTENDANCE_DATE = #{date} and MEMBER_NO = #{memberNo}
-   </select>
+    <!-- 날짜와 수강생번호로 출석 조회하기 -->
+    <select id="getAttendanceByDateAndMember" resultMap="attendanceResultMap">
+        SELECT * FROM ATTENDANCE WHERE ATTENDANCE_DATE = #{date, jdbcType=DATE} AND MEMBER_NO = #{memberNo}
+    </select>
 
 </mapper>

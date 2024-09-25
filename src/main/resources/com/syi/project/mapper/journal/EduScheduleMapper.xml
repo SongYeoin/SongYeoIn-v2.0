@@ -3,28 +3,21 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- MyBatis 매퍼 XML 파일의 시작 -->
-<mapper
-	namespace="com.syi.project.mapper.journal.EduScheduleMapper">
+<mapper namespace="com.syi.project.mapper.journal.EduScheduleMapper">
 
-	<resultMap id="EduScheduleResultMap"
-		type="com.syi.project.model.journal.EduScheduleVO">
+	<resultMap id="EduScheduleResultMap" type="com.syi.project.model.journal.EduScheduleVO">
 		<id property="scheduleNo" column="SCHEDULE_NO" />
 		<result property="scheduleDate" column="SCHEDULE_DATE" />
 		<result property="scheduleRegDate" column="SCHEDULE_REGDATE" />
-		<result property="scheduleModifyDate"
-			column="SCHEDULE_MODIFYDATE" />
+		<result property="scheduleModifyDate" column="SCHEDULE_MODIFYDATE" />
 		<result property="scheduleTitle" column="SCHEDULE_TITLE" />
-		<result property="scheduleDescription"
-			column="SCHEDULE_DESCRIPTION" />
-		<result property="scheduleInstructor"
-			column="SCHEDULE_INSTRUCTOR" />
+		<result property="scheduleDescription" column="SCHEDULE_DESCRIPTION" />
+		<result property="scheduleInstructor" column="SCHEDULE_INSTRUCTOR" />
 		<association property="syclass" resultMap="classResultMap" />
 		<association property="member" resultMap="memberResultMap" />
 	</resultMap>
 
-	<resultMap type="com.syi.project.model.syclass.SyclassVO"
-		id="classResultMap">
+	<resultMap id="classResultMap" type="com.syi.project.model.syclass.SyclassVO">
 		<id property="classNo" column="CLASS_NO" />
 		<result property="className" column="CLASS_NAME" />
 		<result property="description" column="DESCRIPTION" />
@@ -38,8 +31,7 @@
 		<result property="classStatus" column="CLASS_STATUS" />
 	</resultMap>
 
-	<resultMap type="com.syi.project.model.member.MemberVO"
-		id="memberResultMap">
+	<resultMap id="memberResultMap" type="com.syi.project.model.member.MemberVO">
 		<id property="memberNo" column="MEMBER_NO" />
 		<result property="memberId" column="MEMBER_ID" />
 		<result property="memberPwd" column="MEMBER_PWD" />
@@ -49,110 +41,97 @@
 		<result property="memberPhone" column="MEMBER_PHONE" />
 		<result property="memberEmail" column="MEMBER_EMAIL" />
 		<result property="memberAddress" column="MEMBER_ADDRESS" />
-		<result property="memberStreetAddress"
-			column="MEMBER_STREET_ADDRESS" />
-		<result property="memberDetailAddress"
-			column="MEMBER_DETAIL_ADDRESS" />
+		<result property="memberStreetAddress" column="MEMBER_STREET_ADDRESS" />
+		<result property="memberDetailAddress" column="MEMBER_DETAIL_ADDRESS" />
 		<result property="memberNickname" column="MEMBER_NICKNAME" />
 		<result property="memberEnrollDate" column="MEMBER_ENROLL_DATE" />
-		<result property="memberCheckStatus"
-			column="MEMBER_CHECK_STATUS" />
+		<result property="memberCheckStatus" column="MEMBER_CHECK_STATUS" />
 		<result property="memberStatus" column="MEMBER_STATUS" />
 		<result property="memberSubType" column="MEMBER_SUB_TYPE" />
 		<result property="memberRole" column="MEMBER_ROLE" />
 	</resultMap>
 
 	<!-- 교육 일정 등록 (수정됨: 반 정보 추가) -->
-	<insert id="scheduleCreate"
-		parameterType="com.syi.project.model.journal.EduScheduleVO"
-		useGeneratedKeys="true" keyProperty="scheduleNo">
-		INSERT INTO EDU_SCHEDULE
-		(SCHEDULE_DATE, SCHEDULE_TITLE,
-		SCHEDULE_DESCRIPTION,
-		SCHEDULE_INSTRUCTOR, CLASS_NO, MEMBER_NO)
-		VALUES (#{scheduleDate},
-		#{scheduleTitle}, #{scheduleDescription},
-		#{scheduleInstructor},
-		#{syclass.classNo}, #{memberNo})
+	<insert id="scheduleCreate" parameterType="com.syi.project.model.journal.EduScheduleVO" useGeneratedKeys="true" keyProperty="scheduleNo">
+		INSERT INTO EDU_SCHEDULE (SCHEDULE_DATE, SCHEDULE_TITLE, SCHEDULE_DESCRIPTION, SCHEDULE_INSTRUCTOR, CLASS_NO, MEMBER_NO)
+		VALUES (#{scheduleDate}, #{scheduleTitle}, #{scheduleDescription}, #{scheduleInstructor}, #{syclass.classNo}, #{memberNo})
 	</insert>
 
 	<!-- 교육 일정 전체 조회 (페이징, 검색, 반별 필터링) -->
 	<select id="scheduleList" resultMap="EduScheduleResultMap">
-    <![CDATA[
-    SELECT * 
-    FROM (
-        SELECT rn, schedule_no, schedule_date, schedule_title, schedule_description, schedule_instructor, class_no
-        FROM (
-            SELECT es.schedule_no, es.schedule_date, es.schedule_title, es.schedule_description, es.schedule_instructor, es.class_no,
-                   ROW_NUMBER() OVER (
-                       ORDER BY 
-                           CASE
-                               WHEN es.class_no = #{classNo} THEN 1
-                               WHEN es.class_no IS NULL THEN 2
-                               ELSE 3
-                           END,
-                           es.schedule_date DESC
-                   ) AS rn
-            FROM edu_schedule es
-            WHERE 1=1
-            AND (es.class_no = #{classNo} OR es.class_no IS NULL)
-    ]]>
-		<if test="cri.category == 'title'">
-			AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
-		</if>
-		<if test="cri.category == 'description'">
-			AND UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
-		</if>
-		<if test="cri.category == 'instructor'">
-			AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
-		</if>
-		<if test="cri.category == 'all'">
-			AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
-			OR UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
-			OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
-		</if>
-		<if test="cri.year != null and cri.year != ''">
-			AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}
-		</if>
-		<if test="cri.month != null and cri.month != ''">
-			AND EXTRACT(MONTH FROM es.schedule_date) = #{cri.month}
-		</if>
-    <![CDATA[
-        )
-        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount} AND rn <= #{cri.pageNum} * #{cri.amount}
-    )
-    ]]>
+	    <![CDATA[
+	    SELECT * 
+	    FROM (
+	        SELECT rn, SCHEDULE_NO, SCHEDULE_DATE, SCHEDULE_TITLE, SCHEDULE_DESCRIPTION, SCHEDULE_INSTRUCTOR, CLASS_NO
+	        FROM (
+	            SELECT es.SCHEDULE_NO, es.SCHEDULE_DATE, es.SCHEDULE_TITLE, es.SCHEDULE_DESCRIPTION, es.SCHEDULE_INSTRUCTOR, es.CLASS_NO,
+	                   ROW_NUMBER() OVER (
+	                       ORDER BY 
+	                           CASE
+	                               WHEN es.CLASS_NO = #{classNo} THEN 1
+	                               WHEN es.CLASS_NO IS NULL THEN 2
+	                               ELSE 3
+	                           END,
+	                           es.SCHEDULE_DATE DESC
+	                   ) AS rn
+	            FROM EDU_SCHEDULE es
+	            WHERE 1=1
+	            AND (es.CLASS_NO = #{classNo} OR es.CLASS_NO IS NULL)
+	        ) AS subquery_alias  -- 서브쿼리 별칭 추가
+	        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount} AND rn <= #{cri.pageNum} * #{cri.amount}
+	    ) AS main_alias  -- 메인 쿼리 별칭 추가
+	    ]]>
+	        <!-- 검색 조건 -->
+			<if test="cri.category == 'title'">
+				AND UPPER(es.SCHEDULE_TITLE) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+			</if>
+			<if test="cri.category == 'description'">
+				AND UPPER(es.SCHEDULE_DESCRIPTION) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+			</if>
+			<if test="cri.category == 'instructor'">
+				AND UPPER(es.SCHEDULE_INSTRUCTOR) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+			</if>
+			<if test="cri.category == 'all'">
+				AND (UPPER(es.SCHEDULE_TITLE) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+				OR UPPER(es.SCHEDULE_DESCRIPTION) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+				OR UPPER(es.SCHEDULE_INSTRUCTOR) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%')))
+			</if>
+			<if test="cri.year != null and cri.year != ''">
+				AND YEAR(es.SCHEDULE_DATE) = #{cri.year}
+			</if>
+			<if test="cri.month != null and cri.month != ''">
+				AND MONTH(es.SCHEDULE_DATE) = #{cri.month}
+			</if>
 	</select>
+
 
 	<!-- 교육 일정 총 갯수 조회 (반별 필터링) -->
 	<select id="scheduleGetTotal" resultType="int">
 		SELECT COUNT(*)
-		FROM edu_schedule es
+		FROM EDU_SCHEDULE es
 		WHERE 1=1
-		AND (es.class_no =
-		#{classNo} OR es.class_no IS NULL)
+		AND (es.CLASS_NO = #{classNo} OR es.CLASS_NO IS NULL)
 		<if test="cri.category == 'title'">
-			AND UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
+			AND UPPER(es.SCHEDULE_TITLE) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
 		</if>
 		<if test="cri.category == 'description'">
-			AND UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
+			AND UPPER(es.SCHEDULE_DESCRIPTION) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
 		</if>
 		<if test="cri.category == 'instructor'">
-			AND UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%')
+			AND UPPER(es.SCHEDULE_INSTRUCTOR) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
 		</if>
 		<if test="cri.category == 'all'">
-			AND (UPPER(es.schedule_title) LIKE UPPER('%' || #{cri.keyword} || '%')
-			OR UPPER(es.schedule_description) LIKE UPPER('%' || #{cri.keyword} || '%')
-			OR UPPER(es.schedule_instructor) LIKE UPPER('%' || #{cri.keyword} || '%'))
+			AND (UPPER(es.SCHEDULE_TITLE) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+			OR UPPER(es.SCHEDULE_DESCRIPTION) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%'))
+			OR UPPER(es.SCHEDULE_INSTRUCTOR) LIKE UPPER(CONCAT('%', #{cri.keyword}, '%')))
 		</if>
 		<if test="cri.year != null and cri.year != ''">
-			AND EXTRACT(YEAR FROM es.schedule_date) = #{cri.year}
+			AND YEAR(es.SCHEDULE_DATE) = #{cri.year}
 		</if>
 		<if test="cri.month != null and cri.month != ''">
-			AND EXTRACT(MONTH FROM es.schedule_date) = #{cri.month}
+			AND MONTH(es.SCHEDULE_DATE) = #{cri.month}
 		</if>
 	</select>
-
 
 	<!-- 교육 일정 상세 조회 -->
 	<select id="scheduleDetail" resultMap="EduScheduleResultMap">
@@ -161,21 +140,18 @@
 	</select>
 
 	<!-- 교육 일정 수정 (반 정보 추가) -->
-	<update id="scheduleUpdate"
-		parameterType="com.syi.project.model.journal.EduScheduleVO">
+	<update id="scheduleUpdate" parameterType="com.syi.project.model.journal.EduScheduleVO">
 		UPDATE EDU_SCHEDULE
 		SET SCHEDULE_DATE = #{scheduleDate},
 		SCHEDULE_TITLE = #{scheduleTitle},
-		SCHEDULE_DESCRIPTION =
-		#{scheduleDescription},
+		SCHEDULE_DESCRIPTION = #{scheduleDescription},
 		SCHEDULE_INSTRUCTOR = #{scheduleInstructor}
 		WHERE SCHEDULE_NO = #{scheduleNo}
 	</update>
 
 	<!-- 교육 일정 삭제 -->
 	<delete id="scheduleDelete">
-		DELETE FROM EDU_SCHEDULE WHERE SCHEDULE_NO =
-		#{scheduleNo}
+		DELETE FROM EDU_SCHEDULE WHERE SCHEDULE_NO = #{scheduleNo}
 	</delete>
 
 	<!-- 캘린더 전체 일정 조회 쿼리 (반별 필터링 추가) -->

@@ -4,19 +4,19 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syi.project.mapper.period.PeriodMapper">
 
-	<resultMap id="periodResultMap" type="com.syi.project.model.period.PeriodVO">
-		<id property="periodNo" column="PERIOD_NO"/>
-		<result property="scheduleNo" column="SCHEDULE_NO"/>
-		<result property="dayOfWeek" column="DAY_OF_WEEK" jdbcType="VARCHAR"/>
-		<result property="periodName" column="PERIOD_NAME"/>
-		<result property="startTime" column="START_TIME"/>
-		<result property="endTime" column="END_TIME"/>
-		<result property="classNo" column="CLASS_NO"/>
-	</resultMap>
+    <resultMap id="periodResultMap" type="com.syi.project.model.period.PeriodVO">
+        <id property="periodNo" column="PERIOD_NO"/>
+        <result property="scheduleNo" column="SCHEDULE_NO"/>
+        <result property="dayOfWeek" column="DAY_OF_WEEK" jdbcType="VARCHAR"/>
+        <result property="periodName" column="PERIOD_NAME"/>
+        <result property="startTime" column="START_TIME"/>
+        <result property="endTime" column="END_TIME"/>
+        <result property="classNo" column="CLASS_NO"/>
+    </resultMap>
 
     <!-- 교시 등록 -->
     <insert id="enrollPeriod" parameterType="com.syi.project.model.period.PeriodVO">
-    insert into period (SCHEDULE_NO, DAY_OF_WEEK, PERIOD_NAME, START_TIME, END_TIME)
+    insert into PERIOD (SCHEDULE_NO, DAY_OF_WEEK, PERIOD_NAME, START_TIME, END_TIME)
     values (#{scheduleNo}, #{dayOfWeek}, #{periodName}, #{startTime}, #{endTime})
     </insert>
     
@@ -25,15 +25,15 @@
     SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
     </select>
     
-    <!-- 교시 리스트 조회 -->
+    <!-- 교시 리스트 조회 (요일 포함) -->
     <select id="getPeriodsWithDayOfWeek" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE SCHEDULE_NO=#{scheduleNo}
     <if test="dayOfWeek != null and dayOfWeek != ''">
-        AND DAY_OF_WEEK LIKE '%' || #{dayOfWeek} || '%'
+        AND DAY_OF_WEEK LIKE CONCAT('%', #{dayOfWeek}, '%')
     </if>
     </select>
    
-   	<!-- 교시 번호로 교시 조회 -->
+    <!-- 교시 번호로 교시 조회 -->
     <select id="getPeriod" resultMap="periodResultMap">
     SELECT * FROM PERIOD WHERE PERIOD_NO=#{periodNo}
     </select>
@@ -51,16 +51,16 @@
     
     <!-- 요일 정보로 교시정보 조회(결석 배치를 위한) -->
     <select id="getScheduleByDayOfWeek" parameterType="String" resultMap="periodResultMap">
-    	SELECT DISTINCT 
-		    p.day_of_week, 
-		    p.schedule_no, 
-		    p.period_name, 
-		    p.period_no,
-		    s.class_no
-		FROM period p
-		JOIN schedule s ON p.schedule_no = s.schedule_no  
-		WHERE p.day_of_week LIKE '%' || #{dayOfweekString} || '%'
-		ORDER BY p.schedule_no
+        SELECT DISTINCT 
+            p.DAY_OF_WEEK, 
+            p.SCHEDULE_NO, 
+            p.PERIOD_NAME, 
+            p.PERIOD_NO,
+            s.CLASS_NO
+        FROM PERIOD p
+        JOIN SCHEDULE s ON p.SCHEDULE_NO = s.SCHEDULE_NO  
+        WHERE p.DAY_OF_WEEK LIKE CONCAT('%', #{dayOfweekString}, '%')
+        ORDER BY p.SCHEDULE_NO
     </select>
 
 </mapper>
