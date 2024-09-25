@@ -4,40 +4,40 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syi.project.mapper.syclass.SyclassMapper">
 
-	<resultMap id="classResultMap" type="com.syi.project.model.syclass.SyclassVO">
-		<id property="classNo" column="CLASS_NO"/>
-		<result property="className" column="CLASS_NAME"/>
-		<result property="description" column="description"/>
-		<result property="managerName" column="manager_name"/>
-		<result property="teacherName" column="teacher_name"/>
-		<result property="startDate" column="start_date"/>
-		<result property="endDate" column="end_date"/>
-		<result property="classroomName" column="classroom_name"/>
-		<result property="enrollDate" column="enroll_date"/>
-		<result property="modifiedDate" column="modified_date"/>
-		<result property="classStatus" column="class_status"/>
-		<result property="isDeleted" column="is_deleted"/>
-	</resultMap>
+    <resultMap id="classResultMap" type="com.syi.project.model.syclass.SyclassVO">
+        <id property="classNo" column="CLASS_NO"/>
+        <result property="className" column="CLASS_NAME"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="managerName" column="MANAGER_NAME"/>
+        <result property="teacherName" column="TEACHER_NAME"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="classroomName" column="CLASSROOM_NAME"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="modifiedDate" column="MODIFIED_DATE"/>
+        <result property="classStatus" column="CLASS_STATUS"/>
+        <result property="isDeleted" column="IS_DELETED"/>
+    </resultMap>
 
     <!-- 반 등록 -->
     <insert id="classEnroll" parameterType="com.syi.project.model.syclass.SyclassVO">
-    insert into class (class_Name, description, manager_Name, teacher_Name, start_Date, end_Date, classroom_Name)
+    insert into `CLASS` (CLASS_NAME, DESCRIPTION, MANAGER_NAME, TEACHER_NAME, START_DATE, END_DATE, CLASSROOM_NAME)
     values (#{className}, #{description}, #{managerName}, #{teacherName,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, #{classroomName,jdbcType=VARCHAR})
     </insert>
     
     <!-- 반 전체 조회 -->
     <select id="getClassList" resultMap="classResultMap">
-    SELECT * FROM class
+    SELECT * FROM `CLASS`
     </select>
     
     <!-- 반 상세 조회 -->
     <select id="getClassDetail" resultMap="classResultMap">
-    SELECT * FROM class WHERE class_no=#{classNo}
+    SELECT * FROM `CLASS` WHERE CLASS_NO = #{classNo}
     </select>
     
     <!-- 반 수정 -->
     <update id="updateClass" parameterType="com.syi.project.model.syclass.SyclassVO">
-    UPDATE class
+    UPDATE `CLASS`
     SET CLASS_NAME = #{className},
         DESCRIPTION = #{description},
         MANAGER_NAME = #{managerName},
@@ -45,16 +45,15 @@
         START_DATE = #{startDate},
         END_DATE = #{endDate},
         CLASSROOM_NAME = #{classroomName},
-        MODIFIED_DATE = SYSDATE,
+        MODIFIED_DATE = NOW(),
         CLASS_STATUS = #{classStatus}
     WHERE CLASS_NO = #{classNo}
     </update>
     
     <!-- 반 삭제 -->
     <update id="deleteClass" parameterType="com.syi.project.model.syclass.SyclassVO">
-    UPDATE class SET IS_DELETED = 'Y', MODIFIED_DATE = SYSDATE
+    UPDATE `CLASS` SET IS_DELETED = 'Y', MODIFIED_DATE = NOW()
     WHERE CLASS_NO = #{classNo}
     </update>
-   
 
 </mapper>
