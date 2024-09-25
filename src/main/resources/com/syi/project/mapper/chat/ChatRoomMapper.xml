@@ -54,7 +54,7 @@
 					AND C.CLASS_NO = #{cri.classNo}
 	  			</if>
 		  		<if test="cri.memberName != null">
-		  			AND M.MEMBER_NAME like '%'||#{cri.memberName}||'%'
+		  			AND M.MEMBER_NAME like CONCAT('%', #{cri.memberName}, '%')
 				</if>
 			</if>
 			<if test="cri == null">
@@ -69,69 +69,7 @@
 		AND CH.CHATROOM_STATUS = 'Y'
 		ORDER BY CH.CHATROOM_NO DESC
   	</select>
-  	
-  	
-  	
-  	<!-- <select id="selectChatRoomList" resultMap="chatRoomResultMap">
-  		SELECT CH.CHATROOM_NO,CH.CHATROOM_NAME
-  		<if test="loginMember.memberRole == 'ROLE_ADMIN'">
-  			<if test="cri != null">
-	  			FROM CLASS C
-				INNER JOIN MEMBER A ON (C.ADMIN_NO = A.MEMBER_NO)
-				INNER JOIN ENROLL E ON (C.CLASS_NO = E.CLASS_NO)
-				INNER JOIN MEMBER M ON (E.MEMBER_NO = M.MEMBER_NO)
-				INNER JOIN CHATROOM CH ON (M.MEMBER_NO = CH.CHATROOM_MEMBER_NO AND A.MEMBER_NO = CH.CHATROOM_ADMIN_NO)
-				WHERE CH.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
-	  			<if test="cri.classNo != null">
-					AND C.CLASS_NO = #{cri.classNo}
-	  			</if>
-		  		<if test="cri.memberName != null">
-		  			AND M.MEMBER_NAME like '%'||#{cri.memberName}||'%'
-				</if>
-			</if>
-			<if test="cri == null">
-				FROM CHATROOM CH JOIN MEMBER M ON(CH.CHATROOM_MEMBER_NO = M.MEMBER_NO)
-	  			WHERE CH.CHATROOM_ADMIN_NO = #{loginMember.memberNo}
-			</if>
-		</if>
-		<if test="loginMember.memberRole == 'ROLE_MEMBER'">
-  			FROM CHATROOM CH JOIN MEMBER M ON(CH.CHATROOM_ADMIN_NO = M.MEMBER_NO)
-			WHERE CH.CHATROOM_MEMBER_NO = #{loginMember.memberNo}
-		</if>
-		AND CH.CHATROOM_STATUS = 'Y'
-		ORDER BY CH.CHATROOM_NO DESC
-  	</select> -->
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	  <!-- <sql id="criteria">
-	  <trim prefix="AND (" suffix=")" prefixOverrides="OR">
-	  <foreach collection="typeArr" item="type">
-	  <trim prefix="OR">
-	  <choose>
-	  <when test="type == 'W'.toString()">
-	  	writer like '%'||#{keyword}||'%'
-	  </when>
-	  <when test="type == 'H'.toString()">
-	  	checkStatus like '%'||#{keyword}||'%'
-	  </when>
-	  <when test="type == 'C'.toString()">
-	  	content like '%'||#{keyword}||'%'
-	  </when> -->
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
+
   	
   	
   	<update id="updateChatRoomStatus" parameterType="_int">
@@ -150,18 +88,7 @@
   		ORDER BY B.ADMIN_NO
   	</select>
   	
-  	
-  	
-  	<!--담당자가 맡은 과목 조회 -->
-  	<!--수강생명, 수강과목명, 수강생 번호 -->
-  	<!-- <select id="selectClassList" resultMap="enrollResultMap">
-  		SELECT A.CLASS_NO,A.CLASS_NAME,B.MEMBER_NO,B.MEMBER_NAME
-  		FROM CLASS A JOIN ENROLL B ON(A.CLASS_NO=B.CLASS_NO)
-  		WHERE ADMIN_NO = #{memberNo}
-  	</select>
-	 -->
-	 
-	 
+
 	<!--담당자가 맡은 과목 조회 -->
 	<!--수강생명, 수강과목명, 수강생 번호 -->
 	<select id="selectClassMemberList" resultMap="enrollResultMap">
@@ -217,34 +144,6 @@
   		WHERE CHATROOM_NO=#{chatRoomNo}
   	</select>
   	
-  	
-  	<!-- <select id="selectAdminNoByClassNo" resultMap="enrollResultMap">
-  		SELECT ADMIN_NO
-  		FROM ENROLL A JOIN CLASS B ON (A.CLASS_NO = B.CLASS_NO)
-  		WHERE CLASS_NO = #{classNO}
-  	</select> -->
-  	
-  
-  
-  
-  <!--/////////////////////////////////////////////////////  -->
-  	<!--수강테이블 조회  -->
-  	<!-- <select id="selectEnrollListByMemberNo" resultMap="enrollResultMap">
-  		SELECT *
-  		FROM ENROLL
-  		WHERE MEMBER_NO = #{chatRoomMemberNo}
-  	</select> -->
-  
-  	<!--채팅방 존재 확인  -->
-  	<!-- <select id="selectCountByMemberNoAndAdminNo" resultType="_int">
-  		SELECT COUNT(*)
-  		FROM CHATROOM
-  		WHERE CHATROOM_MEMBER_NO = #{chatRoomMemberNo} AND CHATROOM_ADMIN_NO = #{chatRoomAdminNo}
-  	</select> -->
-  
-  	
-  	
-  	
-  
+
   
   </mapper>
