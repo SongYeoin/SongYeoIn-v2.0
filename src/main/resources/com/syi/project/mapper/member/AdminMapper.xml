@@ -2,36 +2,37 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="com.syi.project.mapper.member.AdminMapper">
 
+
   <resultMap type="com.syi.project.model.member.MemberVO" id="memberResultMap">
-		<id property="memberNo" column="MEMBER_NO"/>
-		<result property="memberId" column="MEMBER_ID"/>
-		<result property="memberPwd" column="MEMBER_PWD"/>
-		<result property="memberName" column="MEMBER_NAME"/>
-		<result property="memberBirthday" column="MEMBER_BIRTHDAY"/>
-		<result property="memberGender" column="MEMBER_GENDER"/>
-		<result property="memberPhone" column="MEMBER_PHONE"/>
-		<result property="memberEmail" column="MEMBER_EMAIL"/>
-		<result property="memberAddress" column="MEMBER_ADDRESS"/>
-		<result property="memberStreetAddress" column="MEMBER_STREET_ADDRESS"/>
-		<result property="memberDetailAddress" column="MEMBER_DETAIL_ADDRESS"/>
-		<result property="memberNickname" column="MEMBER_NICKNAME"/>
-		<result property="memberEnrollDate" column="MEMBER_ENROLL_DATE"/>
-		<result property="memberCheckStatus" column="MEMBER_CHECK_STATUS"/>
-		<result property="memberStatus" column="MEMBER_STATUS"/>
-		<result property="memberSubType" column="MEMBER_SUB_TYPE"/>
-		<result property="memberRole" column="MEMBER_ROLE"/>
-		<result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
-	</resultMap>
+    <id property="memberNo" column="MEMBER_NO"/>
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="memberPwd" column="MEMBER_PWD"/>
+    <result property="memberName" column="MEMBER_NAME"/>
+    <result property="memberBirthday" column="MEMBER_BIRTHDAY"/>
+    <result property="memberGender" column="MEMBER_GENDER"/>
+    <result property="memberPhone" column="MEMBER_PHONE"/>
+    <result property="memberEmail" column="MEMBER_EMAIL"/>
+    <result property="memberAddress" column="MEMBER_ADDRESS"/>
+    <result property="memberStreetAddress" column="MEMBER_STREET_ADDRESS"/>
+    <result property="memberDetailAddress" column="MEMBER_DETAIL_ADDRESS"/>
+    <result property="memberNickname" column="MEMBER_NICKNAME"/>
+    <result property="memberEnrollDate" column="MEMBER_ENROLL_DATE"/>
+    <result property="memberCheckStatus" column="MEMBER_CHECK_STATUS"/>
+    <result property="memberStatus" column="MEMBER_STATUS"/>
+    <result property="memberSubType" column="MEMBER_SUB_TYPE"/>
+    <result property="memberRole" column="MEMBER_ROLE"/>
+    <result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
+  </resultMap>
 
 	<resultMap type="com.syi.project.model.EnrollVO" id="enrollResultMap">
 		<id property="enrollNo" column="ENROLL_NO"/>
 		<association property="syclass" resultMap="classResultMap"/>
 		<association property="member" resultMap="memberResultMap"/>
 	</resultMap>
-	
+
 	<resultMap type="com.syi.project.model.syclass.SyclassVO" id="classResultMap">
 		<id property="classNo" column="CLASS_NO"/>
 		<result property="className" column="CLASS_NAME"/>
@@ -45,81 +46,86 @@
 		<result property="modifiedDate" column="MODIFIED_DATE"/>
 		<result property="classStatus" column="CLASS_STATUS"/>
 		<result property="isDeleted" column="IS_DELETED"/>
-	</resultMap>
+  </resultMap>
+
 
   <!-- 관리자 로그인 -->
   <select id="selectLoginAdmin" resultMap="memberResultMap">
-  	SELECT * 
-  	FROM MEMBER
-  	WHERE MEMBER_ID = #{memberId}
-  		AND MEMBER_STATUS = 'Y'
-  		AND MEMBER_CHECK_STATUS = 'Y'
-  		AND MEMBER_ROLE = 'ROLE_ADMIN'
+    SELECT *
+    FROM MEMBER
+    WHERE MEMBER_ID = #{memberId}
+    AND MEMBER_STATUS = 'Y'
+    AND MEMBER_CHECK_STATUS = 'Y'
+    AND MEMBER_ROLE = 'ROLE_ADMIN'
   </select>
-  
+
   <!-- 수강생 리스트 조회 -->
   <select id="selectMemberList" resultMap="memberResultMap">
    <![CDATA[
-	    SELECT * 
+	    SELECT *
 	    FROM (
-	        SELECT m.*, ROW_NUMBER() OVER (ORDER BY MEMBER_ENROLL_DATE DESC) AS RN 
-	        FROM MEMBER m 
-	        WHERE MEMBER_ROLE = 'ROLE_MEMBER' 
+	        SELECT m.*, ROW_NUMBER() OVER (ORDER BY MEMBER_ENROLL_DATE DESC) AS RN
+	        FROM MEMBER m
+	        WHERE MEMBER_ROLE = 'ROLE_MEMBER'
 	        AND MEMBER_STATUS = 'Y'
-	    ) AS alias_name  -- 여기서 alias 추가
-	    WHERE RN > (#{pageNum} - 1) * #{amount} 
+	        ]]>
+    <if test="keyword != null and keyword.trim() != ''">
+      AND (MEMBER_NAME LIKE CONCAT('%', #{keyword}, '%') OR MEMBER_PHONE LIKE CONCAT('%', #{keyword}, '%'))
+    </if>
+    <![CDATA[
+	    ) AS alias_name
+	    WHERE RN > (#{pageNum} - 1) * #{amount}
 	    AND RN <= #{pageNum} * #{amount}
     ]]>
 </select>
-  
   <!-- 회원 총 수 -->
   <select id="selectTotalCount" resultType="int">
-  	SELECT COUNT(MEMBER_NO)
-  	FROM MEMBER
-  	WHERE MEMBER_STATUS = 'Y'
-  		AND MEMBER_ROLE = 'ROLE_MEMBER'
-  	<if test="keyword != null and keyword.trim() != ''">
-  		AND (MEMBER_NAME LIKE CONCAT('%', #{keyword}, '%')
-        		OR MEMBER_PHONE LIKE CONCAT('%', #{keyword}, '%'))
-  	</if>
+    SELECT COUNT(MEMBER_NO)
+    FROM MEMBER
+    WHERE MEMBER_STATUS = 'Y'
+    AND MEMBER_ROLE = 'ROLE_MEMBER'
+    <if test="keyword != null and keyword.trim() != ''">
+      AND (MEMBER_NAME LIKE CONCAT('%', #{keyword}, '%')
+      OR MEMBER_PHONE LIKE CONCAT('%', #{keyword}, '%'))
+    </if>
   </select>
-  
+
   <!-- 승인처리 -->
   <update id="updateStatusY" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE MEMBER
 		SET MEMBER_CHECK_STATUS = 'Y'
 		WHERE MEMBER_NO = #{memberNo}
   </update>
-  
+
   <!-- 미승인처리 -->
   <update id="updateStatusN" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE MEMBER
 		SET MEMBER_CHECK_STATUS = 'N'
 		WHERE MEMBER_NO = #{memberNo}
   </update>
-  
+
   <!-- 회원 상세 페이지 -->
   <select id="selectMemberDetail" parameterType="int" resultMap="memberResultMap">
-  	SELECT * 
-  	FROM MEMBER
-  	WHERE MEMBER_NO = #{memberNo}
+    SELECT *
+    FROM MEMBER
+    WHERE MEMBER_NO = #{memberNo}
   </select>
-  
+
   <!-- 반 리스트 조회 -->
   <select id="selectClassList" resultMap="classResultMap">
-  	SELECT * FROM CLASS WHERE END_DATE > NOW()
+    SELECT * FROM CLASS WHERE END_DATE > NOW()
   </select>
-  
+
   <!-- 수강 이력 조회 -->
   <select id="selectEnrollList" resultMap="enrollResultMap">
-  	SELECT e.*, c.*, m.*
-  	FROM ENROLL e
-  		LEFT JOIN CLASS c ON e.CLASS_NO = c.CLASS_NO
-  		LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
-  	WHERE e.MEMBER_NO = #{memberNo}
-  	ORDER BY e.ENROLL_NO ASC
+    SELECT e.*, c.*, m.*
+    FROM ENROLL e
+    LEFT JOIN CLASS c ON e.CLASS_NO = c.CLASS_NO
+    LEFT JOIN MEMBER m ON e.MEMBER_NO = m.MEMBER_NO
+    WHERE e.MEMBER_NO = #{memberNo}
+    ORDER BY e.ENROLL_NO ASC
   </select>
- 
+
   <!-- 수강 신청 -->
   <insert id="insertEnroll" parameterType="com.syi.project.model.EnrollVO">
   	INSERT INTO ENROLL (
@@ -128,19 +134,19 @@
   		#{classNo}, #{memberNo}
   	)
   </insert>
-  
+
   <!-- 수강 신청 삭제 -->
   <delete id="deleteEnroll" parameterType="int">
-  	DELETE FROM ENROLL WHERE ENROLL_NO = #{enrollNo}
+    DELETE FROM ENROLL WHERE ENROLL_NO = #{enrollNo}
   </delete>
-  
+
   <!-- 이메일 중복체크 -->
   <select id="selectCountByMemberEmail" resultType="int">
   	SELECT COUNT(MEMBER_NO)
   	FROM MEMBER
   	WHERE MEMBER_EMAIL = #{memberEmail}
   </select>
-  
+
   <!-- 회원정보 수정 -->
   <update id="updateMember" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE MEMBER
@@ -155,7 +161,7 @@
 	 		AND MEMBER_STATUS = 'Y'
 	 		AND MEMBER_CHECK_STATUS = 'Y'
 	</update>
-	
+
 	<!-- 비밀번호 체크 -->
 	<select id="selectPwd" resultType="java.lang.String">
 		SELECT MEMBER_PWD
@@ -163,24 +169,24 @@
 		WHERE MEMBER_STATUS = 'Y'
 			AND MEMBER_ID = #{memberId}
 	</select>
-	
+
 	<!-- 회원탈퇴 -->
 	<update id="deleteMember" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE MEMBER
 		SET MEMBER_STATUS = 'N'
 		WHERE MEMBER_NO = #{memberNo}
 	</update>
-	
+
 	<update id="updateMemberProfileUrl" parameterType="com.syi.project.model.member.MemberVO">
 		UPDATE MEMBER
 		SET MEMBER_PROFILE_URL = #{memberProfileUrl}
 		WHERE MEMBER_NO = #{memberNo}
 	</update>
-	
+
 	<update id="deleteMemberProfileUrl" parameterType="int">
 		UPDATE MEMBER
 		SET MEMBER_PROFILE_URL = NULL
 		WHERE MEMBER_NO = #{memberNo}
 	</update>
-  
+
 </mapper>
