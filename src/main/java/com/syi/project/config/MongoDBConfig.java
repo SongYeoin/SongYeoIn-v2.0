@@ -12,7 +12,7 @@ import com.mongodb.client.MongoClients;
 @Configuration
 @EnableMongoRepositories(basePackages = "com.syi.project.mapper.chat")
 public class MongoDBConfig {
-	private static final String CONNECTION_STRING = "mongodb://songyeoin:1234@localhost:27017/chat?authSource=admin";
+	private static final String CONNECTION_STRING = "mongodb://songyeoin:songyeoin@localhost:27017/chat?authSource=admin";
 
 	
 	@Bean
