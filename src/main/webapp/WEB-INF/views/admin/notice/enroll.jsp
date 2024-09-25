@@ -83,7 +83,6 @@ main {
     margin: 20px auto;
 }
 
-/* 공지사항 제목 스타일 */
 .notice-wrapper h2 {
     margin-bottom: 30px;
 }
@@ -102,14 +101,12 @@ table th, table td {
     font-size: 14px;
 }
 
-/* 테이블 헤더 스타일 */
 table th {
     background-color: #f4f4f4;
     color: #333;
     font-weight: bold;
 }
 
-/* 테이블 행 스타일 */
 table tr {
     transition: background-color 0.3s ease;
 }
@@ -125,12 +122,12 @@ button {
 } 
 
 button {
-    background-color: #007bff; /* 버튼 배경색 */
+    background-color: #007bff; 
     transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3; /* 버튼 호버시 배경색 */
+    background-color: #0056b3; 
 }
 
 .button-container {
@@ -163,7 +160,6 @@ button:hover {
     <main>
         <!-- Main content -->
             <div class="notice-wrapper">
-				<h2 align="center">공지사항 글쓰기</h2>
 				<form id="noticeForm" action="${pageContext.servletContext.contextPath}/admin/class/notice/enroll" method="post" enctype="multipart/form-data">
 					<table>
 						<tr>
@@ -183,7 +179,7 @@ button:hover {
 							<td colspan="3"><input type="file" id="files" name="files" multiple></td>
 						</tr>
 						<tr>
-							<th>전체</th>
+							<th>옵션</th>
 							<td>
 								<input type="checkbox" id="allNotice" name="allNotice" value="true"/>
   								<label for="allNotice">전체 공지</label>

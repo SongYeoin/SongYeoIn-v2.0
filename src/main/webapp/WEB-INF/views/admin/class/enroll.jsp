@@ -80,7 +80,7 @@ main {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #28a745;
+    background-color: LightSteelBlue;
     color: white;
     border: none;
     border-radius: 4px;
@@ -89,16 +89,16 @@ main {
 }
 
 .form-group button:hover {
-    background-color: #218838;
+    background-color: SteelBlue;
 }                                  
 
 .form-group button#cancelButton {
-    background-color: #dc3545;
+    background-color: LightGrey;
     color: white;
 }
 
 .form-group button#cancelButton:hover {
-    background-color: #c82333;
+    background-color: LightSlateGrey;
 }
 </style>
 </head>

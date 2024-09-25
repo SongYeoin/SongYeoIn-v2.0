@@ -11,6 +11,7 @@
 		<result property="periodName" column="PERIOD_NAME"/>
 		<result property="startTime" column="START_TIME"/>
 		<result property="endTime" column="END_TIME"/>
+		<result property="classNo" column="CLASS_NO"/>
 	</resultMap>
 
     <!-- 교시 등록 -->
@@ -42,5 +43,24 @@
     UPDATE PERIOD SET DAY_OF_WEEK=#{dayOfWeek, jdbcType=VARCHAR}, START_TIME=#{startTime, jdbcType=VARCHAR}, END_TIME=#{endTime, jdbcType=VARCHAR}
     WHERE PERIOD_NO=#{periodNo, jdbcType=INTEGER}
     </update>
+    
+    <!-- 교시 삭제 -->
+    <delete id="deletePeriod" parameterType="com.syi.project.model.period.PeriodVO">
+    DELETE FROM PERIOD WHERE PERIOD_NO=#{periodNo, jdbcType=INTEGER}
+    </delete>
+    
+    <!-- 요일 정보로 교시정보 조회(결석 배치를 위한) -->
+    <select id="getScheduleByDayOfWeek" parameterType="String" resultMap="periodResultMap">
+    	SELECT DISTINCT 
+		    p.day_of_week, 
+		    p.schedule_no, 
+		    p.period_name, 
+		    p.period_no,
+		    s.class_no
+		FROM period p
+		JOIN schedule s ON p.schedule_no = s.schedule_no  
+		WHERE p.day_of_week LIKE '%' || #{dayOfweekString} || '%'
+		ORDER BY p.schedule_no
+    </select>
 
 </mapper>

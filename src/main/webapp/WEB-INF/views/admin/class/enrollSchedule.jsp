@@ -20,23 +20,20 @@
 }
 
 html, body {
-    height: 1080px;
+    height: 100%;
 }
 
 body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    min-height: 100vh;
 }
 
 main {
     flex: 1;
     margin-left: 250px;
-    padding-top: 90px;
-    overflow-y: auto;
-    top: 120px;
-    left: 250px;
+    padding-top: 200px; /* 헤더 높이만큼 추가 */
     background-color: white;
 }
 
@@ -46,6 +43,7 @@ main {
 
 .form-container {
     padding: 20px;
+    position: relative;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -104,11 +102,33 @@ main {
     align-items: center;
 }
 
-.add-period-btn, .add-day-group-btn {
+/* 교시 추가 버튼 스타일 */
+.add-period-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    background-color: #ddd;
+    color: gray;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.add-period-btn i {
+    font-size: 18px; /* 아이콘 크기 조절 */
+}
+
+/* 시간표 추가 버튼 스타일 */
+.add-day-group-btn {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #28a745;
+    background-color: darkgray;
     color: white;
     border: none;
     border-radius: 4px;
@@ -118,8 +138,27 @@ main {
     margin-top: 10px;
 }
 
-.add-period-btn:hover, .add-day-group-btn:hover {
-    background-color: #218838;
+.add-day-group-btn:hover {
+    background-color: LightGray;
+}
+
+/* 등록 버튼 스타일 */
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: RoyalBlue;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: RoyalBlue;
 }
 
 .day-checkboxes {
@@ -164,17 +203,16 @@ main {
     position: absolute;
     top: 10px;
     right: 10px;
-    padding: 3px 7px;
-    background-color: #dc3545;
-    color: white;
+    background-color: transparent; /* 배경 투명 */
     border: none;
-    border-radius: 4px;
-    font-size: 12px;
     cursor: pointer;
+    font-size: 18px; /* 아이콘 크기 조절 */
+    color: #dc3545; /* 아이콘 색상 */
+    padding: 0;
 }
 
 .remove-period-btn:hover {
-    background-color: #c82333;
+    color: #c82333; /* 호버 시 아이콘 색상 변경 */
 }
 
 /* 반 별 홈 세미헤더 */
@@ -205,6 +243,11 @@ main {
     
     margin-left: 10px;
 }
+
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
+}
 </style>
 </head>
 <body>
@@ -228,12 +271,12 @@ main {
             <h2>시간표 등록</h2>
             <form id="schedule-form" action="/admin/class/enrollSchedule" method="post">
                 <div class="form-group">
-                    <label for="className">반 : ${syclass.className}</label>
+                    <label for="className">과정명 : ${syclass.className}</label>
                 </div>
                 <div id="day-groups">
                     <div class="day-group" data-group-id="1">
                         <div class="form-group">
-                            <label>요일:</label>
+                            <label>요일 선택:</label>
                             <div class="day-checkboxes">
                                 <c:forEach var="day" items="${availableDays}">
 						            <label class="day-checkbox">
@@ -255,16 +298,16 @@ main {
                                         <input type="time" id="endTime1_1" name="endTime1_1" required>
                                     </div>
                                 </div>
-                                <button type="button" class="remove-period-btn">X</button>
+                                <button type="button" class="remove-period-btn"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
-                        <button type="button" class="add-period-btn" data-group-id="1">+ 교시 추가</button>
+                        <button type="button" class="add-period-btn" data-group-id="1"><i class="bi bi-plus-lg"></i></i></button>
                         <button type="button" class="remove-day-group-btn" style="display: none;">삭제</button>
                     </div>
                 </div>
                 <button type="button" class="add-day-group-btn">+ 시간표 추가</button>
                 <div class="form-group">
-                    <button type="submit" class="add-period-btn">등록</button>
+                    <button type="submit" class="submit-btn">등록</button>
                 </div>
             </form>
         </div>
@@ -390,10 +433,10 @@ $(document).ready(function() {
                                 <input type="time" id="endTime` + groupCount + `_1" name="endTime` + groupCount + `_1" required>
                             </div>
                         </div>
-                        <button type="button" class="remove-period-btn">X</button>
+                        <button type="button" class="remove-period-btn"><i class="bi bi-trash"></i></button>
                     </div>
                 </div>
-                <button type="button" class="add-period-btn" data-group-id="` + groupCount + `">+ 교시 추가</button>
+                <button type="button" class="add-period-btn" data-group-id="` + groupCount + `"><i class="bi bi-plus-lg"></i></button>
                 <button type="button" class="remove-day-group-btn">삭제</button>
             </div>
         `;
@@ -428,7 +471,7 @@ $(document).ready(function() {
                         <input type="time" id="endTime` + groupId + `_` + nextPeriodId + `" name="endTime` + groupId + `_` + nextPeriodId + `" required>
                     </div>
                 </div>
-                <button type="button" class="remove-period-btn">X</button>
+                <button type="button" class="remove-period-btn"><i class="bi bi-trash"></i></button>
             </div>
         `;
         $('#periods' + groupId).append(periodHtml);

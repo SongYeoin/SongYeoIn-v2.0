@@ -65,67 +65,101 @@ main {
     margin-left: 10px;
 }
 
-.main-content {
-	margin-left: 250px; /* 사이드바를 위한 여백 */
-	margin-bottom: 50px; /* 푸터를 위한 여백 */
-	padding: 20px;
+.bi-house-fill {
+	cursor: pointer;
+	font-size: 20px;
 }
 
+/* 메인 박스 부분 CSS 수정 */
 .container {
-	max-width: 800px;
-	margin: 0 auto;
-	background: #fff;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	margin-top: 20px; /* 헤더와의 간격 */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 h1 {
-	margin-bottom: 20px;
-	font-size: 28px;
-	font-weight: 600;
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 28px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
 }
 
-p {
-	font-size: 16px;
-	margin-bottom: 15px;
+.schedule-detail {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
 }
 
-a {
-	color: #007bff;
-	text-decoration: none;
-	font-size: 16px;
+.schedule-detail p {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #444;
+    line-height: 1.6;
 }
 
-a:hover {
-	text-decoration: underline;
+.schedule-detail strong {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-right: 10px;
 }
 
-button {
-	padding: 10px 15px;
-	border: none;
-	border-radius: 4px;
-	color: white;
-	cursor: pointer;
-	font-size: 16px;
-	margin-right: 10px;
+.buttons {
+    margin-top: 25px;
+    text-align: right;
 }
 
-button[type="submit"] {
-	background-color: #dc3545;
+.buttons a, .buttons button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 15px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-	background-color: #c82333;
+.buttons a:hover, .buttons button:hover {
+    background-color: #2980b9;
 }
 
-.btn-container {
-	margin-top: 20px;
+.buttons button[type="submit"] {
+    background-color: #e74c3c;
 }
 
-.btn-container a {
-	margin-right: 10px;
+.buttons button[type="submit"]:hover {
+    background-color: #c0392b;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-primary {
+    background-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
 }
 </style>
 </head>
@@ -155,44 +189,25 @@ button[type="submit"]:hover {
 
 	<!-- 메인 콘텐츠 영역 -->
 	<main>
-		<div class="main-content">
-			<div class="container">
-				<h1>단원명: ${scheduleDetail.scheduleTitle}</h1>
-				<!-- 일정 상세 정보 -->
-				<p>일자: ${scheduleDetail.scheduleDate}</p>
-				<!-- 일정 날짜 -->
-				<p>학습주제: ${scheduleDetail.scheduleDescription}</p>
-				<!-- 일정 설명 -->
-				<p>강사: ${scheduleDetail.scheduleInstructor}</p>
-				<!-- 강사 이름 -->
-
-				<!-- 버튼 컨테이너 (정렬을 위해) -->
-				<div class="btn-container">
-
-					<!-- 관리자 역할일 때만 수정 및 삭제 버튼 표시 -->
-					<c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
-						<!-- 일정 수정 버튼 -->
-						<a
-							href="${pageContext.request.contextPath}/journal/admin/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}"
-							class="btn btn-primary">수정</a>
-
-						<!-- 일정 삭제 버튼 -->
-						<form
-							action="${pageContext.request.contextPath}/journal/admin/scheduleDelete"
-							method="post" style="display: inline;">
-							<input type="hidden" name="scheduleNo"
-								value="${scheduleDetail.scheduleNo}" />
-							<button type="submit"
-								onclick="return confirm('해당 교육일정을 삭제하시겠습니까?');">삭제</button>
-						</form>
-					</c:if>
-
-					<!-- 목록으로 돌아가기 버튼 -->
-					<a href="${pageContext.request.contextPath}/journal/scheduleList"
-						class="btn btn-link">목록</a>
-				</div>
-			</div>
-		</div>
+	    <div class="container">
+	        <h1>교육일정 상세보기</h1>
+	        <div class="schedule-detail">
+	            <p><strong>단원명:</strong> <span><c:out value="${scheduleDetail.scheduleTitle}" /></span></p>
+	            <p><strong>일자:</strong> <span><c:out value="${scheduleDetail.scheduleDate}" /></span></p>
+	            <p><strong>학습주제:</strong> <span><c:out value="${scheduleDetail.scheduleDescription}" /></span></p>
+	            <p><strong>강사:</strong> <span><c:out value="${scheduleDetail.scheduleInstructor}" /></span></p>
+	        </div>
+	        <div class="buttons">
+	            <button class="btn btn-secondary" onclick="location.href='${pageContext.request.contextPath}/journal/scheduleList'">목록</button>
+	            <c:if test="${sessionScope.loginMember.memberRole eq 'ROLE_ADMIN'}">
+	                <a href="${pageContext.request.contextPath}/journal/admin/scheduleUpdate?scheduleNo=${scheduleDetail.scheduleNo}" class="btn btn-primary">수정</a>
+	                <form action="${pageContext.request.contextPath}/journal/admin/scheduleDelete" method="post" style="display: inline;">
+	                    <input type="hidden" name="scheduleNo" value="${scheduleDetail.scheduleNo}" />
+	                    <button type="submit" class="btn btn-danger" onclick="return confirm('해당 교육일정을 삭제하시겠습니까?');">삭제</button>
+	                </form>
+	            </c:if>
+	        </div>
+	    </div>
 	</main>
 
 	<!-- 푸터 영역 -->

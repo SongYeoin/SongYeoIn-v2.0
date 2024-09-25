@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 public class CommentsVO {
+	
 	private int commentNo;
 	private Integer commentParentNo;
 	private String commentContent;
@@ -18,5 +19,6 @@ public class CommentsVO {
 	private int commentMemberNo;
 	private int commentBoardNo;
 	private MemberVO member;
-	private List<CommentsVO> replyList;
+	private String  parentNickname;
+	
 }

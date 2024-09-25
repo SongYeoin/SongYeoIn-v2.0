@@ -29,15 +29,6 @@ body {
     flex-direction: column;
 }
 
-/* main {
-    flex: 1;
-    margin-left: 250px;
-    padding-top: 90px;
-    overflow-y: auto;
-    top: 120px;
-    left: 250px;
-} */
-
 main {
     flex: 1;
     margin-left: 300px;
@@ -45,10 +36,6 @@ main {
     overflow-y: auto;
     height: 100%;
 }
-
-/* .box {
-    height: 100%;
-} */
 
 .form-container {
     padding: 20px;
@@ -106,14 +93,6 @@ main {
 .form-group button#cancelButton:hover {
     background-color: #c82333;
 }
-
-/* main {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-    padding-top: 90px;
-    overflow-y: auto;
-} */
 
 .container {
     margin: 20px auto;
@@ -188,6 +167,19 @@ th, td {
     border: 1px solid #ddd;
 }
 
+a {
+    text-decoration: none !important; /* 링크의 밑줄 제거 */
+    color: inherit !important; /* 부모 요소의 글자색 상속 */
+}
+
+table tr {
+    cursor: pointer; /* 행에 마우스를 올리면 클릭 가능한 커서 표시 */
+}
+
+table tr:hover {
+    background-color: #f0f0f0 !important; /* 마우스 오버 시 행 배경색 변경 */
+}
+
 .status-active {
     color: green;
     font-weight: bold;
@@ -258,14 +250,14 @@ th, td {
                 <input type="text" placeholder="Search..." id="search">
                 <div class="icons">
                     <a href="/admin/class/enroll"><i class="fas fa-square-plus"></i></a>
-                    <i class="fas fa-filter"></i>
+                    <!-- <i class="fas fa-filter"></i> -->
                 </div>
             </div>
             <div class="div-table">
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox"></th>
+                        <!-- <th><input type="checkbox"></th> -->
                         <th>클래스명</th>
                         <th>담당자</th>
                         <th>개강일</th>
@@ -277,8 +269,10 @@ th, td {
                 <tbody id="class-table-body">
                     <c:forEach var="classItem" items="${classList}">
                     	<c:if test="${classItem.isDeleted == 'N'}">
-                        <tr>
-                            <td><input type="checkbox"></td>
+                        <tr onclick="location.href='<c:url value='/admin/class/main'>
+                                            <c:param name='classNo' value='${classItem.classNo}'/>
+                                        </c:url>';">
+                            <!-- <td><input type="checkbox"></td> -->
                             <td>
 							    <a href="<c:url value='/admin/class/main'>
 							                <c:param name='classNo' value='${classItem.classNo}'/>

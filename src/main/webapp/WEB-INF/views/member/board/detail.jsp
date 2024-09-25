@@ -106,25 +106,6 @@ button:hover {
     gap: 20px;
 }
 
-.file-list {
-    margin-top: 10px;
-    list-style: none;
-    padding: 0;
-}
-
-.file-list li {
-    margin-bottom: 10px;
-}
-
-.file-list a {
-    text-decoration: none;
-    color: #007bff;
-}
-
-.file-list a:hover {
-    text-decoration: underline;
-}
-
 .heart-container {
 	color: red;
 }
@@ -166,6 +147,51 @@ button:hover {
     gap: 10px;
 }
 
+.comment-button-container button {
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    color: #007bff;
+    background-color: transparent;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.comment-button-container button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pageMaker_wrap {
+	text-align: center; 
+	margin: 20px; 
+}
+
+.pageMaker_btn {
+	display: inline-block; 
+	margin: 0 5px; 
+}
+
+.pageMaker_btn a {
+	display: block; 
+	padding: 10px 15px; 
+	border: 1px solid #007bff;
+    border-radius: 4px; 
+    background-color: transparent !important;
+	color: #007bff !important; 
+	text-decoration: none; 
+	font-size: 15px;
+}
+
+.pageMaker_btn a:hover {
+	background-color: #f4f4f4 !important; 
+}
+
+.pageMaker_btn.active a {
+	border: 2px solid #000000 !important;
+}
+
 </style>
 </head>
 <body>
@@ -203,9 +229,9 @@ button:hover {
 					        </div>
 						</td>
                     </tr>
-                    
                 </thead>
             </table>
+            
             
             <!-- 좋아요 기능 -->    
             <div class="button-container">
@@ -215,7 +241,108 @@ button:hover {
                 </div>
             </div>
 
-            <!-- 댓글 추가 폼 -->
+
+            <!-- 댓글 리스트 -->
+            <c:forEach var="comment" items="${commentList}">
+            	<c:choose>
+            		<c:when test="${comment.commentStatus eq 'N'}">
+	            		<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
+	                		<p>사용자에 의해 삭제된 댓글입니다.</p>
+		            	</div>
+	        		</c:when>
+		        	<c:otherwise>
+	                	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
+	                		<c:if test="${comment.commentParentNo != null}">
+	                			<i class="bi bi-arrow-return-right"></i>
+	                		</c:if>
+	                    	<p>
+	                    		<strong>
+								    <c:choose>
+								        <c:when test="${board.boardMemberNo == comment.commentMemberNo}">
+								            ${comment.member.memberNickname}
+								            <span style="color: skyblue;">(작성자)</span>
+								        </c:when>
+								
+								        <c:when test="${comment.member.memberRole == 'ROLE_ADMIN'}">
+								            <span style="color: red;">관리자</span>
+								        </c:when>
+								
+								        <c:otherwise>
+								        	${comment.member.memberNickname}
+								        </c:otherwise>
+								    </c:choose>
+								</strong>
+	                    		${comment.commentRegDate}
+	                    	</p>
+	                    	<p id="comment-content-${comment.commentNo}">
+	                    		<c:if test="${comment.commentParentNo != null}">
+	                    			<strong style="color: blue;">@${comment.parentNickname} </strong>
+	                    		</c:if>
+								${comment.commentContent}
+							</p>
+	                    
+	                    	<!-- 댓글 버튼 -->
+				        	<div class="comment-button-container">
+					        	<button id="replyBtn-${comment.commentNo}" class="replyBtn" onclick="showReplyForm(${comment.commentNo})">답글</button>
+	                    		<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
+				            		<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
+				            		<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
+	                    		</c:if>
+				        	</div>
+				        
+				        	<!-- 댓글 수정 폼 -->
+				        	<form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
+					        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
+			                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
+			                    <div class="comment-button-container">
+			                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
+			                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
+			                    </div>
+			                </form>
+		                
+					        <!-- 답글 작성 폼 -->
+					        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
+					            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
+					                <input type="hidden" name="boardNo" value="${board.boardNo}" />
+					                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
+					                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
+					                <button type="submit">등록</button>
+					            </form>
+					        </div>
+						</div>
+					</c:otherwise>
+    			</c:choose>
+			</c:forEach>
+
+
+			<!-- 페이지 이동 인터페이스 영역 -->
+			<div class="pageMaker_wrap">
+				<ul class="pageMaker">
+					<!-- 이전 버튼 -->
+					<c:if test="${pageMaker.prev}">
+						<li class="pageMaker_btn prev"><a href="?boardNo=${board.boardNo}&pageNum=${pageMaker.pageStart - 1}">이전</a></li>
+					</c:if>
+
+					<!-- 페이지 번호 -->
+					<c:forEach begin="${pageMaker.pageStart}" end="${pageMaker.pageEnd}" var="num">
+						<li class="pageMaker_btn ${pageMaker.cri.pageNum == num ? "active" : ""}"><a href="?boardNo=${board.boardNo}&pageNum=${num}">${num}</a></li>
+					</c:forEach>
+
+					<!-- 다음 버튼 -->
+					<c:if test="${pageMaker.next}">
+						<li class="pageMaker_btn next"><a href="?boardNo=${board.boardNo}&pageNum=${pageMaker.pageEnd + 1}">다음</a></li>
+					</c:if>
+				</ul>
+			</div>
+			
+			<form id="moveForm" action="${pageContext.servletContext.contextPath}/member/board/detail" method="get">
+				<input type="hidden" name="boardNo" value="${board.boardNo}">
+				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+				<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+			</form>
+			
+			
+			<!-- 댓글 추가 폼 -->
             <div class="comment-form-container">
 	            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
 	                <input type="hidden" name="boardNo" value="${board.boardNo}" />
@@ -223,56 +350,6 @@ button:hover {
 	                <button type="submit">등록</button>
 	            </form>
             </div>
-            
-            <!-- 댓글 리스트 -->
-            <c:forEach var="comment" items="${commentList}">
-            	<c:choose>
-            	<c:when test="${comment.commentStatus eq 'N'}">
-            	<div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                <p>사용자에 의해 삭제된 댓글입니다.</p>
-	            </div>
-	        	</c:when>
-	        	
-	        	<c:otherwise>
-                <div id="comment-${comment.commentNo}" class="comment" style="${comment.commentParentNo != null ? 'margin-left: 40px;' : ''}">
-                	<c:if test="${comment.commentParentNo != null}">
-                		<i class="bi bi-arrow-return-right"></i>
-                	</c:if>
-                    <p><strong>${comment.member.memberNickname}</strong> ${comment.commentRegDate}</p>
-                    <p id="comment-content-${ comment.commentNo }">${comment.commentContent}</p>
-                    
-                    <!-- 댓글 버튼 -->
-			        <div class="comment-button-container">
-				        <button id="replyBtn-${comment.commentNo}" class="replyBtn" onclick="showReplyForm(${comment.commentNo})">답글</button>
-                    	<c:if test="${sessionScope.loginMember.memberNo eq comment.commentMemberNo}">
-			            	<button id="updateCommentBtn-${comment.commentNo}" onclick="editComment(${comment.commentNo})">수정</button>
-			            	<button id="deleteCommentBtn-${comment.commentNo}" onclick="deleteComment(${comment.commentNo}, ${comment.commentBoardNo })">삭제</button>
-                    	</c:if>
-			        </div>
-			        
-			        <!-- 댓글 수정 폼 -->
-			        <form id="edit-form-${comment.commentNo}" class="edit-form" style="display:none;">
-			        	<input type="hidden" name="commentNo" value="${comment.commentNo}" />
-	                    <textarea name="commentContent" rows="4">${comment.commentContent}</textarea>
-	                    <div class="comment-button-container">
-	                    	<button type="button" onclick="submitEdit(${comment.commentNo})">수정</button>
-	                    	<button type="button" onclick="cancelEdit(${comment.commentNo})">취소</button>
-	                    </div>
-	                </form>
-	                
-			        <!-- 답글 작성 폼 -->
-			        <div id="reply-form-${comment.commentNo}" class="reply-form" style="display:none;">
-			            <form action="${pageContext.request.contextPath}/member/board/comment/add" method="post">
-			                <input type="hidden" name="boardNo" value="${board.boardNo}" />
-			                <input type="hidden" name="parentCommentNo" value="${comment.commentNo}" />
-			                <textarea name="commentContent" rows="4" placeholder="답글을 입력하세요"></textarea>
-			                <button type="submit">등록</button>
-			            </form>
-			        </div>
-				</div>
-				</c:otherwise>
-    		</c:choose>
-			</c:forEach>
 
 
 			<!-- 게시글 버튼 -->
@@ -294,6 +371,14 @@ button:hover {
     if(message) {
         alert(message);
     }
+    
+  	//페이지 이동 버튼
+    $(".pageMaker_btn a").on("click", function(e){
+        e.preventDefault();
+        let pageNum = $(this).attr("href").split("pageNum=")[1];
+        $("#moveForm input[name='pageNum']").val(pageNum);
+        $("#moveForm").submit();
+    });
     
  	// 목록 버튼
     $("#listBtn").click(function() {
@@ -458,7 +543,6 @@ button:hover {
             });
         }
     }
-    
 
     </script>
 

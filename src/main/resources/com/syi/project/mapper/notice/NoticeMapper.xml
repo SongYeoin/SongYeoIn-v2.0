@@ -14,6 +14,7 @@
 		<result property="noticeStatus" column="NOTICE_STATUS"/>
 		<result property="noticeClassNo" column="NOTICE_CLASS_NO"/>
 		<result property="noticeMemberNo" column="NOTICE_MEMBER_NO"/>
+		<result property="hasFiles" column="HAS_FILES"/>
 		<association property="syclass" resultMap="classResultMap"/>
 		<association property="member" resultMap="memberResultMap"/>
 		<collection property="fileList" resultMap="FileResultMap"/>
@@ -69,7 +70,8 @@
   		<![CDATA[
 		    SELECT *
 		    FROM (
-		        SELECT n.*, 
+		        SELECT n.*,
+		        CASE WHEN nf.FILE_NO IS NOT NULL THEN 1 ELSE 0 END AS HAS_FILES, 
 		               ROW_NUMBER() OVER (
 		                   ORDER BY
 		                       CASE
@@ -79,6 +81,7 @@
 		                       n.NOTICE_REG_DATE DESC
 		               ) AS RN
 		        FROM NOTICE n
+		        LEFT JOIN NOTICE_FILE nf ON n.NOTICE_NO = nf.FILE_NOTICE_NO
 		        WHERE n.NOTICE_STATUS = 'Y'
 		        AND (n.NOTICE_CLASS_NO = #{syclassNo} OR n.NOTICE_CLASS_NO IS NULL)
 		  ]]>
@@ -177,6 +180,7 @@
         DELETE FROM NOTICE_FILE
         WHERE FILE_NO = #{ fileNo }
     </delete>
-  
+
   
   </mapper>
+  

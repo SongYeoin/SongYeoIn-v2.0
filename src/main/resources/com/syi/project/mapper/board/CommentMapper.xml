@@ -14,6 +14,7 @@
 	    <result property="commentStatus" column="COMMENT_STATUS"/>
 	    <result property="commentMemberNo" column="COMMENT_MEMBER_NO"/>
 	    <result property="commentBoardNo" column="COMMENT_BOARD_NO"/>
+	    <result property="parentNickname" column="PARENT_NICKNAME"/>
 	    <association property="member" resultMap="memberResultMap"/>
     </resultMap>
 
@@ -73,15 +74,31 @@
 
 	<!-- 댓글 조회 -->
 	<select id="selectCommentList" resultMap="CommentResultMap">
-		SELECT LEVEL AS COMMENT_LEVEL,
-		       C.*,
-		       M.MEMBER_NICKNAME
-		FROM COMMENTS C
-		JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
-		WHERE C.COMMENT_BOARD_NO = #{boardNo}
-		START WITH C.COMMENT_PARENT_NO IS NULL
-		CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
-		ORDER SIBLINGS BY C.COMMENT_REG_DATE
+		<![CDATA[
+		SELECT * 
+	    FROM (
+			SELECT LEVEL AS COMMENT_LEVEL,
+			       C.*,
+			       M.MEMBER_ROLE,
+			       M.MEMBER_NICKNAME,
+			       (SELECT 
+				        CASE 
+				            WHEN PARENT_M.MEMBER_ROLE = 'ROLE_ADMIN' THEN '관리자'
+				            ELSE PARENT_M.MEMBER_NICKNAME
+				        END AS PARENT_NICKNAME
+				     FROM COMMENTS PARENT_C
+				     JOIN MEMBER PARENT_M ON PARENT_C.COMMENT_MEMBER_NO = PARENT_M.MEMBER_NO
+				     WHERE PARENT_C.COMMENT_NO = C.COMMENT_PARENT_NO
+				    ) AS PARENT_NICKNAME
+			FROM COMMENTS C
+			JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
+			WHERE C.COMMENT_BOARD_NO = #{ boardNo }
+			START WITH C.COMMENT_PARENT_NO IS NULL
+			CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
+			ORDER SIBLINGS BY C.COMMENT_REG_DATE
+		)
+	    OFFSET (#{ cri.pageNum } - 1) * #{ cri.amount } ROWS FETCH NEXT #{ cri.amount } ROWS ONLY 
+    ]]>
 	</select>
 	
 	
@@ -96,6 +113,7 @@
 	    ORDER BY COMMENT_REG_DATE DESC
 	</select>
 	-->
+	
 	
 	<!-- 댓글 총 갯수 -->
 	<select id="selectCommentTotal" parameterType="_int" resultType="_int">
@@ -114,10 +132,10 @@
 	        <if test="commentParentNo != null">, COMMENT_PARENT_NO</if>
 	    	)
     	VALUES (
-	        #{commentBoardNo},
-	        #{commentMemberNo},
-	        #{commentContent}
-	        <if test="commentParentNo != null">, #{commentParentNo}</if>
+	        #{ commentBoardNo },
+	        #{ commentMemberNo },
+	        #{ commentContent }
+	        <if test="commentParentNo != null">, #{ commentParentNo }</if>
 	    	)
 	</insert>
 	
@@ -137,15 +155,17 @@
 		WHERE COMMENT_NO = #{ commentNo }
 	</update>
 	
-	<!-- 자식 댓글 조회 -->
-	<select id="selectChildrenCommentTotal" parameterType="_int" resultType="_int">
-		SELECT COUNT(*)
-		FROM COMMENTS
-		WHERE COMMENT_PARENT_NO = #{ commentNo }
-			AND COMMENT_STATUS = 'Y'
-	</select>
+	<!-- 댓글 조회 -->
+	<select id="getCommentByNo" resultMap="CommentResultMap">
+        SELECT * FROM COMMENTS WHERE COMMENT_NO = #{ commentNo }
+    </select>
 	
-	<!-- 댓글 삭제 상태로 변경 -->
+	<!-- 자식 댓글 조회 -->
+	<select id="getRepliesBycommentNo" parameterType="_int" resultMap="CommentResultMap">
+        SELECT * FROM COMMENTS WHERE COMMENT_PARENT_NO = #{ commentNo }
+    </select>
+	
+	<!-- 댓글 논리적 삭제 -->
 	<update id="updateCommentStatus" parameterType="_int">
 		UPDATE COMMENTS
 		SET
@@ -153,7 +173,7 @@
 		WHERE COMMENT_NO = #{ commentNo }
 	</update>
 	
-	<!-- 댓글 삭제  -->
+	<!-- 댓글 물리적 삭제  -->
 	<delete id="deleteComment" parameterType="_int">
 		DELETE FROM COMMENTS WHERE COMMENT_NO = #{ commentNo }
 	</delete>
@@ -164,27 +184,7 @@
     	SET BOARD_COMMENTS_COUNT = BOARD_COMMENTS_COUNT - 1
     	WHERE BOARD_NO = #{ boardNo }
     </update>
-    
-    <!-- 부모 번호 조회 -->
-    <select id="selectParentNo" parameterType="_int" resultType="_int">
-    	SELECT COMMENT_PARENT_NO
-        FROM COMMENTS
-        WHERE COMMENT_NO = #{ commentNo }
-    </select>
-    
-    <!-- 부모 댓글 조회 -->
-    <select id="selectParentComment" parameterType="_int" resultMap="CommentResultMap">
-    	SELECT *
-        FROM COMMENTS
-        WHERE COMMENT_NO = #{ commentNo }
-    </select>
-    
-    <!-- 댓글 상태 조회 -->
-    <select id="selectCommentStatus" parameterType="_int" resultType="String">
-    	SELECT COMMENT_STATUS
-        FROM COMMENTS
-        WHERE COMMENT_NO = #{ commentNo }
-    </select>
+
 
 </mapper>
   

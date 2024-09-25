@@ -67,7 +67,7 @@
 	    MEMBER_ADDRESS, 
 	    MEMBER_STREET_ADDRESS, 
 	    MEMBER_DETAIL_ADDRESS, 
-	    MEMBER_NICKNAME,
+	    MEMBER_NICKNAME
 	) VALUES (
 	    #{ memberId },
 	    #{ memberPwd },
@@ -79,7 +79,7 @@
 	    #{ memberAddress },
 	    #{ memberStreetAddress },
 	    #{ memberDetailAddress },
-	    #{ memberNickname },
+	    #{ memberNickname }
 	)
   </insert>
   

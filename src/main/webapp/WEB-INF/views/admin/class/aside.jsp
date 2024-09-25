@@ -12,7 +12,7 @@
 	width: 250px;
 	background-color: #2c2c2c;
 	color: white;
-	height: 950px;
+	height: 100%;
 	position: fixed;
 	top: 130px;
 	overflow-y: auto;
@@ -98,7 +98,7 @@
         <div class="menu-item">
             <div class="menu-title">
                 <div>
-                    <a><i class="fas fa-user"></i>출석 관리</a>
+                    <a href="/admin/class/attendance/attendanceList"><i class="fas fa-user"></i>출석 관리</a>
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
         </div>
         <div class="menu-item">
             <div class="menu-title">
-                <a a href="${ pageContext.servletContext.contextPath }/admin/class/notice/list"><i class="fas fa-home"></i>공지사항</a>
+                <a href="${ pageContext.servletContext.contextPath }/admin/class/notice/list"><i class="fas fa-home"></i>공지사항</a>
             </div>
         </div>
         <div class="menu-item">

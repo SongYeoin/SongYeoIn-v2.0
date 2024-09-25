@@ -2,6 +2,9 @@ package com.syi.project.model.journal;
 
 import java.sql.Date;
 
+import com.syi.project.model.member.MemberVO;
+import com.syi.project.model.syclass.SyclassVO;
+
 import lombok.Data;
 
 @Data
@@ -21,8 +24,11 @@ public class EduScheduleVO {
 	
 	private String scheduleInstructor; // 강사
 	
-	private int classNo; // 반 번호
-
+	private int classNo; // 클래서 번호
 	
+	private int memberNo; // 멤버번호
 	
+	private SyclassVO syclass; // 클래스VO
+	
+	private MemberVO member; // 멤버VO
 }

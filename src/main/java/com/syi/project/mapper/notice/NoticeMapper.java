@@ -46,4 +46,5 @@ public interface NoticeMapper {
     
     // 파일 삭제
     int deleteNoticeFile(int fileNo);
+    
 }

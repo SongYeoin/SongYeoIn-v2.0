@@ -17,7 +17,7 @@ body {
     width: 250px;
     background-color: #F2F2F2;
     color: #333333;
-    height: 960px;
+    height: 100%;
     position: fixed;
     top: 70px;
     overflow-y: auto;
@@ -45,7 +45,14 @@ body {
     justify-content: start;
     align-items: center;
     width: 100%;
-    flex-direction: row;
+    flex-direction: row;    
+    box-sizing: border-box; /* 패딩과 테두리를 포함하여 전체 크기 설정 */
+}
+
+.menu-title a {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: #333; /* 기본 링크 색상 설정 */
+    width: 100%; /* 전체 너비 차지 */
 }
 
 .menu-item i {
@@ -66,6 +73,12 @@ body {
     width: 100%;
 }
 
+.submenu-item a {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: #333; /* 기본 링크 색상 설정 */
+    width: 100%; /* 전체 너비 차지 */
+}
+
 .submenu-item i {
     margin-right: 10px;
 }
@@ -82,12 +95,6 @@ body {
     margin-left: auto;
 }
 
-/* 링크 기본 스타일 제거 */
-a {
-    text-decoration: none; /* 링크 밑줄 제거 */
-    color: #333; /* 기본 링크 색상 설정 (부모 요소의 색상과 동일) */
-}
-
 /* 링크 상태별 색상 설정 */
 a:link {
     color: #333; /* 기본 링크 색상 */
@@ -96,7 +103,6 @@ a:link {
 a:visited {
     color: #333; /* 방문한 링크 색상 */
 }
-
 
 </style>
 </head>
@@ -110,8 +116,8 @@ a:visited {
                 <i class="fas fa-chevron-down arrow"></i>
             </div>
             <div class="submenu">
-                <div class="submenu-item"><a><i class="fas fa-users"></i>출석하기</a></div>
-                <div class="submenu-item"><a><i class="fas fa-user-tie"></i>출석조회</a></div>
+                <div class="submenu-item"><a href="../attendance/enroll"><i class="fas fa-users"></i>출석하기</a></div>
+                <div class="submenu-item"><a href="../attendance/attendanceList"><i class="fas fa-user-tie"></i>출석조회</a></div>
             </div>
         </div>
         <div class="menu-item">
@@ -122,9 +128,8 @@ a:visited {
                 <i class="fas fa-chevron-down arrow"></i>
             </div>
             <div class="submenu">
-                <div class="submenu-item"><a href="../journal/journalEnroll"><i class="fas fa-users"></i>교육 일지 작성하기</a></div>
-                <div class="submenu-item"><a href="../journal/journalList"><i class="fas fa-user-tie"></i>교육 일지 조회하기</a></div>
-                <div class="submenu-item"><a href="../journal/scheduleList"><i class="fas fa-user-tie"></i>교육 일정</a></div>
+                <div class="submenu-item"><a href="${ pageContext.servletContext.contextPath }/journal/journalList"><i class="fas fa-users"></i>교육일지 작성 및 조회</a></div>
+                <div class="submenu-item"><a href="${ pageContext.servletContext.contextPath }/journal/scheduleList"><i class="fas fa-user-tie"></i>교육 일정</a></div>
             </div>
         </div>
         <div class="menu-item">

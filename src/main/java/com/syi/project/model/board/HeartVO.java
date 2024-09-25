@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class HeartVO {
+	
 	private int heartNo;
 	private Date heartRegDate;
 	private int heartMemberNo;
