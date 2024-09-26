@@ -64,7 +64,7 @@ public class NoticeMemberController {
 
 		// classNo가 null 이거나 유효하지 않을 떄
 		int syclassNo = (classNo != null && classNo > 0) ? classNo : enrollService.selectClassNo(memberNo);
-		
+
 		// 공지 조회
 		List<NoticeVO> noticeList = noticeService.selectNoticeList(cri, syclassNo);
 		model.addAttribute("noticeList", noticeList);

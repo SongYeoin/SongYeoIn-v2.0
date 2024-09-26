@@ -71,32 +71,43 @@
     <result property="memberRole" column="MEMBER_ROLE"/>
   </resultMap>
 
-
+  <!-- 댓글 조회 -->
   <select id="selectCommentList" resultMap="CommentResultMap">
+    <bind name="offset" value="(cri.pageNum - 1) * cri.amount"/>
     <![CDATA[
-		SELECT *
-	    FROM (
-			SELECT LEVEL AS COMMENT_LEVEL,
-			       C.*,
-			       M.MEMBER_ROLE,
-			       M.MEMBER_NICKNAME,
-			       (SELECT
-				        CASE
-				            WHEN PARENT_M.MEMBER_ROLE = 'ROLE_ADMIN' THEN '관리자'
-				            ELSE PARENT_M.MEMBER_NICKNAME
-				        END AS PARENT_NICKNAME
-				     FROM COMMENTS PARENT_C
-				     JOIN MEMBER PARENT_M ON PARENT_C.COMMENT_MEMBER_NO = PARENT_M.MEMBER_NO
-				     WHERE PARENT_C.COMMENT_NO = C.COMMENT_PARENT_NO
-				    ) AS PARENT_NICKNAME
-			FROM COMMENTS C
-			JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
-			WHERE C.COMMENT_BOARD_NO = #{ boardNo }
-			START WITH C.COMMENT_PARENT_NO IS NULL
-			CONNECT BY PRIOR C.COMMENT_NO = C.COMMENT_PARENT_NO
-			ORDER SIBLINGS BY C.COMMENT_REG_DATE
-		)
-	    OFFSET (#{ cri.pageNum } - 1) * #{ cri.amount } ROWS FETCH NEXT #{ cri.amount } ROWS ONLY
+    WITH RECURSIVE CommentCTE AS (
+        SELECT
+            C.*,
+            M.MEMBER_ROLE,
+            M.MEMBER_NICKNAME,
+            1 AS COMMENT_LEVEL,
+            CAST(LPAD(C.COMMENT_NO, 10, '0') AS CHAR(1000)) AS SORT_KEY
+        FROM COMMENTS C
+        JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
+        WHERE C.COMMENT_BOARD_NO = #{boardNo} AND C.COMMENT_PARENT_NO IS NULL
+        UNION ALL
+        SELECT
+            C.*,
+            M.MEMBER_ROLE,
+            M.MEMBER_NICKNAME,
+            CC.COMMENT_LEVEL + 1,
+            CONCAT(CC.SORT_KEY, '-', LPAD(C.COMMENT_NO, 10, '0'))
+        FROM COMMENTS C
+        JOIN MEMBER M ON C.COMMENT_MEMBER_NO = M.MEMBER_NO
+        JOIN CommentCTE CC ON C.COMMENT_PARENT_NO = CC.COMMENT_NO
+        WHERE C.COMMENT_BOARD_NO = #{boardNo}
+    )
+    SELECT
+        CTE.*,
+        CASE
+            WHEN PARENT_M.MEMBER_ROLE = 'ROLE_ADMIN' THEN '관리자'
+            ELSE PARENT_M.MEMBER_NICKNAME
+        END AS PARENT_NICKNAME
+    FROM CommentCTE CTE
+    LEFT JOIN COMMENTS PARENT_C ON CTE.COMMENT_PARENT_NO = PARENT_C.COMMENT_NO
+    LEFT JOIN MEMBER PARENT_M ON PARENT_C.COMMENT_MEMBER_NO = PARENT_M.MEMBER_NO
+    ORDER BY CTE.SORT_KEY
+    LIMIT #{cri.amount} OFFSET #{offset}
     ]]>
   </select>
 
@@ -150,7 +161,7 @@
     UPDATE COMMENTS
     SET
     COMMENT_CONTENT = #{ commentContent },
-    COMMENT_MODIFY_DATE = SYSDATE
+    COMMENT_MODIFY_DATE = NOW()
     WHERE COMMENT_NO = #{ commentNo }
   </update>
 

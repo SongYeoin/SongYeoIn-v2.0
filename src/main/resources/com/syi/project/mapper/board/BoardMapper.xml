@@ -132,7 +132,7 @@
     UPDATE BOARD
     SET BOARD_TITLE = #{ boardTitle },
     BOARD_CONTENT = #{ boardContent },
-    BOARD_MODIFY_DATE = SYSDATE
+    BOARD_MODIFY_DATE = NOW()
     WHERE BOARD_NO = #{ boardNo }
   </update>
 
