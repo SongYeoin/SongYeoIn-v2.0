@@ -201,11 +201,23 @@ public class NoticeController {
 
 	// 공지사항 수정
 	@PostMapping("modify")
-	public String noticeModify(NoticeVO notice, @RequestParam("files") List<MultipartFile> files,
-			@RequestParam(value = "deleteFileNos", required = false) List<Integer> deleteFileNos, HttpSession session,
+	public String noticeModify(
+			NoticeVO notice,
+			@RequestParam("files") List<MultipartFile> files,
+			@RequestParam(value = "deleteFileNos", required = false) List<Integer> deleteFileNos,
+			@RequestParam(value = "allNotice", required = false) Boolean allNotice,
+			HttpSession session,
 			RedirectAttributes rttr) throws IOException {
 
 		logger.info("공지사항 수정");
+
+		if (Boolean.TRUE.equals(allNotice)) {
+			notice.setNoticeClassNo(null);
+		} else {
+			SyclassVO syclass = (SyclassVO) session.getAttribute("syclass");
+			int syclassNo = syclass.getClassNo();
+			notice.setNoticeClassNo(syclassNo);
+		}
 
 		int result = noticeService.updateNotice(notice);
 		if (result <= 0) {

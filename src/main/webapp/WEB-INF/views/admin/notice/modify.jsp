@@ -226,7 +226,7 @@ button:hover {
                     <tr>
                         <th>옵션</th>
                         <td>
-                            <input type="checkbox" id="allNotice" name="allNotice" value="true" ${notice.noticeClassNo eq 0 ? 'checked' : ''}/>
+                            <input type="checkbox" id="allNotice" name="allNotice" value="true" ${notice.noticeClassNo eq null ? 'checked' : ''}/>
                             <label for="allNotice">전체 공지</label>
                         </td>
                     </tr>

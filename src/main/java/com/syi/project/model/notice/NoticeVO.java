@@ -18,7 +18,7 @@ public class NoticeVO {
 	private Date noticeModifyDate;
 	private int noticeCount;
 	private String noticeStatus;
-	private int noticeClassNo;
+	private Integer noticeClassNo;
 	private int noticeMemberNo;
 	private boolean hasFiles;
 	private SyclassVO syclass;
