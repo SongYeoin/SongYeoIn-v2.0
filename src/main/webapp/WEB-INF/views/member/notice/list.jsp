@@ -251,7 +251,7 @@ table th, table td {
 				<tbody>
                 	<c:forEach items="${noticeList}" var="notice">
                 		<tr onclick="window.location.href='${pageContext.servletContext.contextPath}/member/notice/detail?noticeNo=${notice.noticeNo}'">
-                    		<td>${ notice.noticeClassNo == 0 ? '전체' : notice.noticeNo }</td>
+                    		<td>${ notice.noticeClassNo == null ? '전체' : notice.noticeNo }</td>
 							<td>
 								<c:if test="${notice.hasFiles}"><i class="bi bi-paperclip"></i></c:if>
 								${ notice.noticeTitle }
