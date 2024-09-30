@@ -1,5 +1,7 @@
 package com.syi.project.service.member;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +69,13 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int deleteMemberProfileUrl(int memberNo) {
 		return memberMapper.deleteMemberProfileUrl(memberNo);
+	}
+
+	// 관리자 목록 불러오기
+	@Override
+	public List<MemberVO> getAdminList() {
+		
+		return memberMapper.getAdminList();
 	}
 	
 }

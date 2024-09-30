@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.syi.project.model.member.MemberVO;
 import com.syi.project.model.syclass.SyclassVO;
+import com.syi.project.service.member.MemberService;
 import com.syi.project.service.syclass.SyclassService;
 
 import lombok.extern.log4j.Log4j2;
@@ -27,10 +29,18 @@ public class SyclassController {
 	@Autowired
 	SyclassService syclassService;
 	
+	@Autowired
+	MemberService memberService;
+	
 	/* 반 등록 페이지 이동 */
 	@GetMapping("/class/enroll")
-	public void classEnrollGET() throws Exception{
+	public void classEnrollGET(Model model) throws Exception{
 		log.info("반 등록 페이지 이동");
+		
+		// 담당자 목록 불러오기
+		List<MemberVO> adminList = memberService.getAdminList();
+		model.addAttribute("adminList",adminList);
+		System.out.println(adminList);
 	}
 	
 	/* 반 조회 페이지 이동 */

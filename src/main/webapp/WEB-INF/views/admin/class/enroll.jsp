@@ -124,8 +124,13 @@ main {
 	                <textarea id="description" name="description" required></textarea>
 	            </div>
 	            <div class="form-group">
-	                <label for="managerName">관리자명:</label>
-	                <input type="text" id="managerName" name="managerName" required>
+	                <label for="adminNo">관리자명:</label>
+	                <select id="adminNo" name="adminNo" required>
+					    <option value="" disabled selected>관리자 선택</option>
+					    <c:forEach var="admin" items="${adminList}">
+					        <option value="${admin.memberNo}">${admin.memberName}</option>
+					    </c:forEach>
+					</select>
 	            </div>
 	            <div class="form-group">
 	                <label for="teacherName">강사명:</label>
@@ -153,6 +158,7 @@ main {
 
 	<!-- 푸터 연결 -->
 	<%@ include file="../../common/footer.jsp"%>
+	
 <script>
 
 $(document).ready(function() {

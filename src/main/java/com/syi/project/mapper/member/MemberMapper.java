@@ -1,5 +1,7 @@
 package com.syi.project.mapper.member;
 
+import java.util.List;
+
 import com.syi.project.model.member.MemberVO;
 
 public interface MemberMapper {
@@ -28,5 +30,8 @@ public interface MemberMapper {
 	int updateMemberProfileUrl(MemberVO updateProfileMember);
 
 	int deleteMemberProfileUrl(int memberNo);
+
+	// 관리자 목록 불러오기
+	List<MemberVO> getAdminList();
 
 }
