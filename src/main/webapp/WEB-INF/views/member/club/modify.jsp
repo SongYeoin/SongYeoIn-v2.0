@@ -134,7 +134,7 @@ main {
 	<main>
 		<!-- Main content -->
 		<div class="form-container">
-			<h1 class="form-title">강의실 신청 수정</h1>
+			<h1 class="form-title">동아리실 신청 수정</h1>
 			<form id="modifyForm" action="/member/club/modify" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="classNo" value="${param.classNo }"> 
 			<input type="hidden" name="clubNo" value='<c:out value="${pageInfo.clubNo }"/>'>
