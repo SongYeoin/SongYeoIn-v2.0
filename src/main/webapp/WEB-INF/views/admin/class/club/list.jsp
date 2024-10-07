@@ -304,7 +304,7 @@ th, td {
 	 <main>
 		<div class="container">
 			<div class="header">
-				<h2>강의실 신청</h2>
+				<h2>동아리실 신청</h2>
 				<div class="search_area">
 					<form id="searchForm" method="get" action="/admin/class/club/list">
 						<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">
