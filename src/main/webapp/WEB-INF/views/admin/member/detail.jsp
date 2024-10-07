@@ -18,7 +18,7 @@
 }
 
 html, body {
-	height: 1080px;
+	height: auto;
 }
 
 body {
@@ -33,6 +33,7 @@ main {
 	padding: 20px;
 	padding-top: 90px;
 	overflow-y: auto;
+	min-height: 100vh;
 }
 
 .box {
