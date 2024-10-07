@@ -18,7 +18,7 @@
 }
 
 html, body {
-    height: 1080px;
+    height: auto;
 }
 
 body {
@@ -31,7 +31,7 @@ main {
     margin-left: 250px;
     margin-top: 160px;
     overflow-y: auto;
-    height: 100%;
+    min-height: 100vh;
 }
 
 .board-wrapper {
