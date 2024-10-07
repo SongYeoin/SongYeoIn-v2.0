@@ -32,7 +32,6 @@ main {
 	padding-top: 90px;
 	overflow-y: auto;
 	top: 120px;
-	min-height: 100vh;
 }
 
 .mypage-wrapper {
