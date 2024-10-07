@@ -136,7 +136,7 @@ main {
    <main>
         <!-- Main content -->   
         <div class="form-container">
-        	<h1 class="form-title">강의실 신청 등록</h1>
+        	<h1 class="form-title">동아리실 신청 등록</h1>
 		<div class="form-group">
 			<label>작성자</label>
 			<input class="writer" name="memberName" readonly="readonly" value="${sessionScope.loginMember.memberName }">
