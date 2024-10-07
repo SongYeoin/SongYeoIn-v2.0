@@ -19,7 +19,7 @@
 }
 
 html, body {
-	height: 1080px;
+	height: auto;
 }
 
 body {
@@ -36,6 +36,7 @@ main {
 	overflow-y: auto;
 	top: 120px;
 	left: 250px;
+	min-height: 100vh;
 }
 
 .box {
