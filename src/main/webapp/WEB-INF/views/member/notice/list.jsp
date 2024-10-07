@@ -20,7 +20,7 @@
 }
 
 html, body {
-	height: 1080px;
+	height: auto;
 }
 
 body {
@@ -33,7 +33,7 @@ main {
 	margin-left: 300px;
 	margin-top: 110px;
 	overflow-y: auto;
-	height: 100%;
+	min-height: 100vh;
 }
 
 .title-container{
