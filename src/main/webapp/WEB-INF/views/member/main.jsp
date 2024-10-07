@@ -155,7 +155,7 @@ body {
       </div>
       <div class="part2">
 		<div class="section section3">
-			<div class="menu-title">Room Booking <br>동아리 신청</div>
+			<div class="menu-title">Room Booking <br>동아리</div>
 			<div class="submenu" onclick="location.href='${pageContext.servletContext.contextPath}/member/club/list'">
 				<p>동아리실 신청</p>
 				<p>동아리일지 제출</p>
