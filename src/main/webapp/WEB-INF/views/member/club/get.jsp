@@ -138,7 +138,7 @@ main {
 	<main>
 		<!-- Main content -->
 		<div class="form-container">
-			<h1 class="form-title">강의실 신청 상세</h1>
+			<h1 class="form-title">동아리실 신청 상세</h1>
 			<div class="form-group">
 				<label>번호</label>
 				<input name="rn" readonly="readonly" value='<c:out value="${param.rn }"/>'>
