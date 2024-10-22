@@ -20,9 +20,9 @@ public class JDBCTest {
 	@Test
 	public void testConnection() {
 		try(Connection con = DriverManager.getConnection(
-				"jdbc:oracle:thin:@localhost:1521:XE",
+				"jdbc:mysql://localhost:3306/songyeoin",
 				"songyeoin",
-				"1234")){
+				"songyeoin")){
 			System.out.println(con);
 		}catch (Exception e) {
 			fail(e.getMessage());

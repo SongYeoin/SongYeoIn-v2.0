@@ -26,6 +26,11 @@
 		<result property="memberRole" column="MEMBER_ROLE"/>
 		<result property="memberProfileUrl" column="MEMBER_PROFILE_URL"/>
 	</resultMap>
+	
+	<resultMap type="com.syi.project.model.member.MemberVO" id="adminResultMap">
+		<id property="memberNo" column="MEMBER_NO"/>
+		<result property="memberName" column="MEMBER_NAME"/>
+	</resultMap>
 
 	
 
@@ -128,5 +133,11 @@
 		SET MEMBER_PROFILE_URL = NULL
 		WHERE MEMBER_NO = #{ memberNo }
 	</update>
+	
+	<select id="getAdminList" resultMap="adminResultMap">
+		SELECT MEMBER_NO, MEMBER_NAME
+		FROM MEMBER
+		WHERE MEMBER_STATUS = 'Y' AND MEMBER_ROLE = 'ROLE_ADMIN'
+	</select>
   
   </mapper>

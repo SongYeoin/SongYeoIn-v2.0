@@ -187,6 +187,5 @@
     WHERE BOARD_NO = #{ boardNo }
   </update>
 
-
 </mapper>
   

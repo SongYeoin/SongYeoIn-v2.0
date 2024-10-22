@@ -1,5 +1,7 @@
 package com.syi.project.service.member;
 
+import java.util.List;
+
 import com.syi.project.model.member.MemberVO;
 
 public interface MemberService {
@@ -28,5 +30,8 @@ public interface MemberService {
 	public int updateMemberProfileUrl(MemberVO updateProfileMember);
 
 	public int deleteMemberProfileUrl(int memberNo);
+
+	// 담당자 목록 조회
+	public List<MemberVO> getAdminList();
 
 }
