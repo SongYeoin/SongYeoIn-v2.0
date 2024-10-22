@@ -3,6 +3,7 @@ web.xml
 Servers
 .DS_Store
 target/
+src/main/webapp/WEB-INF/spring/root-context.xml
 
 ### Maven ###
 target/
